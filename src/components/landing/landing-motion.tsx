@@ -17,8 +17,19 @@ export function LandingMotion({ children }: LandingMotionProps) {
 
   useGSAP(
     () => {
+      const previousScrollRestoration = window.history.scrollRestoration;
+      window.history.scrollRestoration = "manual";
+      window.scrollTo(0, 0);
+
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        return;
+        gsap.set(".back-to-top", {
+          autoAlpha: 1,
+          pointerEvents: "auto",
+        });
+
+        return () => {
+          window.history.scrollRestoration = previousScrollRestoration;
+        };
       }
 
       const lenis = new Lenis({
@@ -93,9 +104,9 @@ export function LandingMotion({ children }: LandingMotionProps) {
         },
         {
           backdropFilter: "blur(18px)",
-          backgroundColor: "rgba(23, 34, 23, 0.88)",
-          borderColor: "rgba(255, 253, 247, 0.22)",
-          boxShadow: "0 18px 55px rgba(23, 34, 23, 0.18)",
+          backgroundColor: "rgba(23, 34, 23, 0.2)",
+          borderColor: "rgba(255, 253, 247, 0.18)",
+          boxShadow: "0 12px 36px rgba(23, 34, 23, 0.1)",
           ease: "none",
           scrollTrigger: {
             trigger: ".landing-hero",
@@ -115,6 +126,19 @@ export function LandingMotion({ children }: LandingMotionProps) {
           start: "top top",
           end: "bottom top",
           scrub: true,
+        },
+      });
+
+      gsap.to(".back-to-top", {
+        autoAlpha: 1,
+        pointerEvents: "auto",
+        y: 0,
+        duration: 0.25,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".landing-hero",
+          start: "bottom 85%",
+          toggleActions: "play none none reverse",
         },
       });
 
@@ -173,10 +197,10 @@ export function LandingMotion({ children }: LandingMotionProps) {
       gsap.fromTo(
         ".footer-parallax",
         {
-          yPercent: 30,
+          yPercent: 14,
         },
         {
-          yPercent: -22,
+          yPercent: -12,
           ease: "none",
           scrollTrigger: {
             trigger: ".footer-parallax",
@@ -193,6 +217,7 @@ export function LandingMotion({ children }: LandingMotionProps) {
         });
         gsap.ticker.remove(updateLenis);
         lenis.destroy();
+        window.history.scrollRestoration = previousScrollRestoration;
       };
     },
     { scope },

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { IconButton } from "@/components/ui/icon-button";
+import nilokaLogo from "@/public/assets/logo/logo.png";
 import {
   ArrowRightIcon,
   CartIcon,
@@ -49,12 +50,22 @@ export default function Home() {
 
   return (
     <LandingMotion>
-      <main className="min-h-screen overflow-hidden bg-cream-50 text-ink-900">
+      <main className="min-h-screen overflow-hidden bg-cream-50 text-ink-900" id="top">
         <header className="site-nav page-shell fixed inset-x-0 top-2 z-50">
-          <div className="site-nav-surface grid min-h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-full border border-transparent bg-transparent px-4 text-white-soft sm:px-5">
+          <div className="site-nav-surface grid min-h-14 grid-cols-[auto_1fr_auto] items-center gap-4 rounded-full border border-transparent bg-transparent px-4 text-white-soft sm:px-5">
+            <a className="flex items-center" href="#top" aria-label="NILOKA home">
+              <Image
+                alt="NILOKA"
+                className="h-auto w-28 brightness-0 invert sm:w-32"
+                priority
+                sizes="(min-width: 640px) 128px, 112px"
+                src={nilokaLogo}
+              />
+            </a>
+
             <nav
               aria-label="Navigasi utama"
-              className="hidden items-center gap-5 text-sm font-bold lg:flex"
+              className="hidden items-center justify-center gap-7 text-sm font-bold lg:flex"
             >
               <a href="#products">Shop</a>
               <a href="#aromamatch">AromaMatch AI</a>
@@ -63,12 +74,8 @@ export default function Home() {
               <a href="#seller">Seller</a>
             </nav>
 
-            <a className="text-lg font-extrabold" href="#">
-              NILOKA
-            </a>
-
             <div className="flex items-center justify-end gap-2">
-              <label className="hidden h-10 w-[min(30vw,360px)] items-center gap-2 rounded-full bg-white-soft px-4 text-sm font-semibold text-ink-600 shadow-sm md:flex">
+              <label className="hidden h-10 w-[min(28vw,360px)] items-center gap-2 rounded-full bg-white-soft px-4 text-sm font-semibold text-ink-600 shadow-sm md:flex">
                 <SearchIcon className="text-brand-700" />
                 <span className="sr-only">Cari produk</span>
                 <input
@@ -87,7 +94,7 @@ export default function Home() {
           </div>
         </header>
 
-        <section className="page-shell pt-2">
+        <section className="page-shell py-2">
           <div className="hero-card landing-hero relative min-h-[calc(100svh-1rem)] overflow-hidden rounded-[36px] bg-brand-950 text-white-soft">
             <Image
               alt="Koleksi produk aromaterapi dan kosmetik natural sebagai visual utama NILOKA."
@@ -151,6 +158,7 @@ export default function Home() {
                   alt={category.imageAlt}
                   className="object-cover opacity-72 transition-transform duration-500 group-hover:scale-105"
                   fill
+                  loading="lazy"
                   sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
                   src={category.imageUrl}
                 />
@@ -190,6 +198,7 @@ export default function Home() {
                     alt={product.imageAlt}
                     className="object-cover"
                     fill
+                    loading="lazy"
                     sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw"
                     src={product.imageUrl}
                   />
@@ -221,6 +230,7 @@ export default function Home() {
               alt="Botol minyak atsiri sebagai representasi kualitas nilam Aceh."
               className="object-cover opacity-68"
               fill
+              loading="lazy"
               sizes="(min-width: 1024px) 55vw, 100vw"
               src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=1600&q=85"
             />
@@ -282,6 +292,7 @@ export default function Home() {
               alt="Bahan alami dan minyak nilam sebagai bagian dari ekonomi sirkular."
               className="object-cover opacity-70"
               fill
+              loading="lazy"
               sizes="(min-width: 1024px) 58vw, 100vw"
               src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1600&q=85"
             />
@@ -329,7 +340,7 @@ export default function Home() {
         </section>
 
         <footer className="mt-8 border-t border-line bg-cream-100" id="seller">
-          <div className="page-shell py-12">
+          <div className="page-shell pb-8 pt-12">
             <div className="grid gap-10 lg:grid-cols-[1.25fr_1fr]">
               <div>
                 <p className="max-w-lg text-sm font-bold leading-6 text-ink-900">
@@ -383,14 +394,29 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="footer-parallax mt-12 flex items-end gap-5 overflow-hidden sm:gap-8">
+            <div className="footer-parallax mt-12 flex items-end gap-5 pb-8 sm:gap-8">
               <p className="footer-word text-[24vw] font-black leading-[0.72] text-brand-900 sm:text-[20vw] lg:text-[18vw]">
                 niloka
               </p>
               <div className="footer-word-line mb-[2.2vw] h-[clamp(5px,0.75vw,13px)] min-w-16 flex-1 rounded-full bg-brand-900" />
             </div>
+
+            <div className="border-t border-brand-900/15 pt-5 text-xs font-semibold text-ink-600 sm:flex sm:items-center sm:justify-between">
+              <p>© 2026 Niloka. All rights reserved.</p>
+              <p className="mt-2 sm:mt-0">
+                Curated in Aceh for a more transparent patchouli ecosystem.
+              </p>
+            </div>
           </div>
         </footer>
+
+        <a
+          aria-label="Kembali ke atas"
+          className="back-to-top pointer-events-none fixed bottom-5 right-5 z-40 flex size-11 items-center justify-center rounded-full border border-white-soft/30 bg-brand-950/80 text-white-soft opacity-0 shadow-lg backdrop-blur transition-colors hover:bg-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+          href="#top"
+        >
+          <ArrowRightIcon className="-rotate-90" />
+        </a>
       </main>
     </LandingMotion>
   );

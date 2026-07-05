@@ -68,7 +68,7 @@ export const categoryTiles: CategoryTile[] = [
     label: "Seller Terkurasi",
     description: "UMKM dan penyuling bergabung dalam ekosistem hulu-hilir.",
     imageUrl:
-      "https://images.unsplash.com/photo-1608571423539-e951b9b3871c?auto=format&fit=crop&w=700&q=80",
+      "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=700&q=80",
     imageAlt: "Produk natural tersusun rapi di studio.",
   },
 ];
