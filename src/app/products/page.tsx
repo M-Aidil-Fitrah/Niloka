@@ -1,7 +1,17 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { getPublishedProducts, getProductCategories, getSellers } from "@/lib/mock-queries";
-import { CatalogShell } from "@/components/catalog/catalog-shell";
 import { SectionShell } from "@/components/ui/section-shell";
+import { CatalogSkeleton } from "@/components/ui/skeletons";
+
+// Dynamically import CatalogShell with Server-Side Rendering enabled but chunking the Client JS
+const CatalogShell = dynamic(
+  () => import("@/components/catalog/catalog-shell").then((m) => m.CatalogShell),
+  {
+    loading: () => <CatalogSkeleton />,
+    ssr: true,
+  }
+);
 
 export const metadata: Metadata = {
   title: "Katalog Produk - NILOKA",

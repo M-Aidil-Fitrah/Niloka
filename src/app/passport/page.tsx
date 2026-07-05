@@ -1,7 +1,17 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { getPublishedProducts, getPassports } from "@/lib/mock-queries";
-import { PassportShell } from "@/components/passport/passport-shell";
 import { SectionShell } from "@/components/ui/section-shell";
+import { PassportSkeleton } from "@/components/ui/skeletons";
+
+// Dynamically import PassportShell with SSR enabled for SEO indexing
+const PassportShell = dynamic(
+  () => import("@/components/passport/passport-shell").then((m) => m.PassportShell),
+  {
+    loading: () => <PassportSkeleton />,
+    ssr: true,
+  }
+);
 
 export const metadata: Metadata = {
   title: "Nilam Passport - NILOKA",
