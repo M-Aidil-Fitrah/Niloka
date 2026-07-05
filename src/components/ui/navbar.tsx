@@ -28,7 +28,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "Ampas Nilam",
-    href: "/#circular",
+    href: "/ampas",
   },
   {
     label: "Seller",
