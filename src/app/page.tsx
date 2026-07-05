@@ -50,8 +50,8 @@ export default function Home() {
   return (
     <LandingMotion>
       <main className="min-h-screen overflow-hidden bg-cream-50 text-ink-900">
-        <header className="site-nav page-shell fixed inset-x-0 top-3 z-50">
-          <div className="grid min-h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-full border border-white/18 bg-brand-950/20 px-4 text-white-soft backdrop-blur-xl sm:px-5">
+        <header className="site-nav page-shell fixed inset-x-0 top-2 z-50">
+          <div className="site-nav-surface grid min-h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-full border border-transparent bg-transparent px-4 text-white-soft sm:px-5">
             <nav
               aria-label="Navigasi utama"
               className="hidden items-center gap-5 text-sm font-bold lg:flex"
@@ -87,8 +87,8 @@ export default function Home() {
           </div>
         </header>
 
-        <section className="page-shell pt-3">
-          <div className="hero-card landing-hero relative min-h-[calc(100svh-1.5rem)] overflow-hidden rounded-[32px] bg-brand-950 text-white-soft">
+        <section className="page-shell pt-2">
+          <div className="hero-card landing-hero relative min-h-[calc(100svh-1rem)] overflow-hidden rounded-[36px] bg-brand-950 text-white-soft">
             <Image
               alt="Koleksi produk aromaterapi dan kosmetik natural sebagai visual utama NILOKA."
               className="object-cover opacity-75"
@@ -99,10 +99,10 @@ export default function Home() {
             />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_68%_18%,rgba(214,170,91,0.22),transparent_28%),linear-gradient(90deg,rgba(23,34,23,0.96),rgba(32,52,31,0.72),rgba(32,52,31,0.1))]" />
 
-            <div className="relative flex min-h-[calc(100svh-1.5rem)] flex-col p-5 sm:p-7 lg:p-9">
-              <div className="mt-auto grid gap-7 pb-4 pt-28 lg:grid-cols-[minmax(0,1fr)_330px] lg:items-end">
+            <div className="relative flex min-h-[calc(100svh-1rem)] flex-col p-5 sm:p-7 lg:p-9">
+              <div className="mt-auto grid gap-7 pb-3 pt-24 lg:grid-cols-[minmax(0,1fr)_330px] lg:items-end">
                 <div className="max-w-4xl">
-                  <h1 className="hero-title max-w-4xl text-6xl font-extrabold leading-[0.9] sm:text-7xl lg:text-8xl xl:text-9xl">
+                  <h1 className="hero-title max-w-4xl text-6xl font-extrabold leading-[0.88] sm:text-7xl lg:text-[7.5rem] xl:text-[8.5rem]">
                     Nilam Aceh
                     <span className="font-accent italic"> autentik</span>,
                     dari hulu ke hilir.
@@ -216,7 +216,7 @@ export default function Home() {
         </section>
 
         <section className="page-shell grid gap-3 py-8 lg:grid-cols-[1.05fr_0.95fr]">
-              <div className="story-panel reveal-block relative min-h-[520px] overflow-hidden rounded-[28px] bg-brand-950 text-white-soft">
+          <div className="story-panel reveal-block relative min-h-[520px] overflow-hidden rounded-[28px] bg-brand-950 text-white-soft">
             <Image
               alt="Botol minyak atsiri sebagai representasi kualitas nilam Aceh."
               className="object-cover opacity-68"
@@ -328,7 +328,7 @@ export default function Home() {
           </div>
         </section>
 
-        <footer className="mt-8 border-t border-line bg-[#f1efed]" id="seller">
+        <footer className="mt-8 border-t border-line bg-cream-100" id="seller">
           <div className="page-shell py-12">
             <div className="grid gap-10 lg:grid-cols-[1.25fr_1fr]">
               <div>
@@ -383,11 +383,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="footer-line mt-12 h-px w-full bg-brand-900/25" />
-
-            <p className="footer-word mt-10 text-[22vw] font-black leading-[0.72] text-brand-900 sm:text-[20vw] lg:text-[18vw]">
-              niloka
-            </p>
+            <div className="footer-parallax mt-12 flex items-end gap-5 overflow-hidden sm:gap-8">
+              <p className="footer-word text-[24vw] font-black leading-[0.72] text-brand-900 sm:text-[20vw] lg:text-[18vw]">
+                niloka
+              </p>
+              <div className="footer-word-line mb-[2.2vw] h-[clamp(5px,0.75vw,13px)] min-w-16 flex-1 rounded-full bg-brand-900" />
+            </div>
           </div>
         </footer>
       </main>
