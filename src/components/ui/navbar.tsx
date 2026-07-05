@@ -7,6 +7,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import { CartIcon, SearchIcon, UserIcon } from "@/components/ui/icons";
 import nilokaLogo from "@/public/assets/logo/logo.png";
 import { cn } from "@/lib/styles";
+import { useCart } from "@/context/cart-context";
 
 type NavItem = {
   label: string;
@@ -40,6 +41,7 @@ export function SiteNavbar() {
   const pathname = usePathname();
   // We use light theme navbar on any page that is NOT the landing page
   const isLight = pathname !== "/";
+  const { totalCount } = useCart();
 
   return (
     <header className="site-nav page-shell fixed inset-x-0 top-6 z-50">
@@ -102,9 +104,16 @@ export function SiteNavbar() {
               type="search"
             />
           </label>
-          <IconButton label="Buka keranjang" theme={isLight ? "light" : "dark"}>
-            <CartIcon />
-          </IconButton>
+          <Link href="/checkout" className="relative block">
+            <IconButton label="Buka keranjang" theme={isLight ? "light" : "dark"}>
+              <CartIcon />
+            </IconButton>
+            {totalCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-extrabold text-white-soft animate-in zoom-in duration-300">
+                {totalCount}
+              </span>
+            )}
+          </Link>
           <IconButton label="Buka akun" theme={isLight ? "light" : "dark"}>
             <UserIcon />
           </IconButton>

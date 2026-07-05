@@ -1,8 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatRupiah } from "@/lib/formatters";
 import { MapPinIcon, StarIcon } from "@/components/ui/icons";
 import type { Product, Seller } from "@/lib/contracts";
+import { useCart } from "@/context/cart-context";
 
 type ProductInfoProps = {
   product: Product;
@@ -18,6 +22,22 @@ const tagLabels: Record<string, string> = {
 };
 
 export function ProductInfo({ product, seller }: ProductInfoProps) {
+  const { addItem } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleAddToCart = () => {
+    addItem({
+      kind: "product",
+      productId: product.id,
+      ampasListingId: null,
+      quantity: 1,
+      unitPrice: product.price,
+    });
+    setIsAdded(true);
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
+  };
   return (
     <div className="flex flex-col">
       {/* Badges */}
@@ -88,9 +108,15 @@ export function ProductInfo({ product, seller }: ProductInfoProps) {
       </div>
 
       {/* Actions */}
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <Button className="flex-1" size="md">
-          Masukkan Keranjang
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row relative">
+        <Button
+          className={`flex-1 transition-all duration-300 ${
+            isAdded ? "bg-emerald-700 hover:bg-emerald-600" : ""
+          }`}
+          size="md"
+          onClick={handleAddToCart}
+        >
+          {isAdded ? "✓ Berhasil Ditambahkan!" : "Masukkan Keranjang"}
         </Button>
         <a
           href={`https://wa.me/6281234567890?text=Halo%20${encodeURIComponent(
