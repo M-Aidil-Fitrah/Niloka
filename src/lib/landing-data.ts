@@ -140,7 +140,7 @@ export const categoryTiles: CategoryTile[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=700&q=80",
     imageAlt: "Koleksi produk turunan nilam siap pakai.",
-    href: "#products",
+    href: "/products",
   },
 ];
 

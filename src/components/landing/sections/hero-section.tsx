@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@/components/ui/icons";
 
@@ -34,11 +35,11 @@ export function HeroSection() {
             </p>
 
             <div className="hero-actions mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href="#products" className="inline-block">
+              <Link href="/products" className="inline-block">
                 <Button>
                   Jelajahi Produk <ArrowRightIcon />
                 </Button>
-              </a>
+              </Link>
 
               <a href="#passport" className="inline-block">
                 <Button variant="secondary">
