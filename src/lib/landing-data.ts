@@ -134,13 +134,13 @@ export const categoryTiles: CategoryTile[] = [
     href: "#circular",
   },
   {
-    id: "seller",
-    label: "Seller Terkurasi",
-    description: "UMKM dan penyuling bergabung dalam ekosistem hulu-hilir.",
+    id: "products",
+    label: "Produk Nilam",
+    description: "Minyak atsiri, roll-on relief, sabun artisan, dan produk turunan nilam.",
     imageUrl:
-      "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Produk natural tersusun rapi di studio.",
-    href: "#seller",
+      "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=700&q=80",
+    imageAlt: "Koleksi produk turunan nilam siap pakai.",
+    href: "#products",
   },
 ];
 

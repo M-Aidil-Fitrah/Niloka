@@ -13,11 +13,11 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 function getVariantClass(variant: ButtonVariant): string {
   switch (variant) {
     case "primary":
-      return "bg-brand-900 text-white-soft hover:bg-brand-800";
+      return "bg-brand-900 text-white-soft hover:bg-brand-700 hover:ring-2 hover:ring-gold-500/40 hover:scale-[1.02] active:scale-[0.98]";
     case "secondary":
-      return "border border-line bg-white-soft text-brand-900 hover:border-brand-700";
+      return "border border-line bg-white-soft text-brand-900 hover:bg-cream-50 hover:border-brand-700 hover:ring-2 hover:ring-gold-500/30 hover:scale-[1.02] active:scale-[0.98]";
     case "ghost":
-      return "text-brand-900 hover:bg-brand-100";
+      return "text-brand-900 hover:bg-brand-100 hover:scale-[1.02] active:scale-[0.98]";
   }
 }
 
@@ -41,7 +41,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 disabled:pointer-events-none disabled:opacity-50",
         getVariantClass(variant),
         getSizeClass(size),
         className,
