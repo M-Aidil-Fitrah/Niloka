@@ -83,7 +83,7 @@ export default function Home() {
             {categoryTiles.map((category) => (
               <a
                 className="category-card group relative min-h-72 overflow-hidden rounded-[28px] bg-brand-900 text-white-soft"
-                href={category.id === "ampas" ? "#circular" : "#passport"}
+                href={category.href}
                 key={category.id}
               >
                 <Image

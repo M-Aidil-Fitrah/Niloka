@@ -1,0 +1,7 @@
+export function formatRupiah(amount: number): string {
+  return new Intl.NumberFormat("id-ID", {
+    currency: "IDR",
+    maximumFractionDigits: 0,
+    style: "currency",
+  }).format(amount);
+}
