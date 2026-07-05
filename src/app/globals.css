@@ -43,7 +43,6 @@
   --color-line: var(--line);
   --color-white-soft: var(--white-soft);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
   --font-serif-accent: var(--font-serif-accent);
 }
 
@@ -78,4 +77,50 @@ button {
 
 .font-accent {
   font-family: var(--font-serif-accent), Georgia, serif;
+}
+
+.page-shell {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1920px;
+  padding-inline: clamp(0.625rem, 1vw, 1.125rem);
+}
+
+.section-heading {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--gold-600);
+}
+
+.section-title {
+  max-width: 760px;
+  font-size: clamp(2rem, 3.8vw, 4.25rem);
+  font-weight: 800;
+  line-height: 0.98;
+  color: var(--brand-950);
+}
+
+.section-copy {
+  max-width: 560px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.75;
+  color: var(--ink-600);
+}
+
+@media (min-width: 768px) {
+  .section-heading {
+    align-items: flex-end;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
