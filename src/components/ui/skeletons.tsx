@@ -135,3 +135,54 @@ export function AromaMatchSkeleton() {
     </div>
   );
 }
+
+export function AmpasSkeleton() {
+  return (
+    <div className="grid gap-8 lg:grid-cols-[280px_1fr] animate-in fade-in duration-300">
+      {/* Sidebar Bulk Calculator Skeleton */}
+      <div className="rounded-[32px] border border-line bg-white-soft p-5 h-fit space-y-6">
+        <div className="space-y-2">
+          <div className="h-5 w-1/2 rounded bg-cream-100/80 animate-pulse" />
+          <div className="h-3 w-5/6 rounded bg-cream-100/80 animate-pulse" />
+        </div>
+        <div className="space-y-3">
+          <div className="h-10 w-full rounded-xl bg-cream-100/50 animate-pulse" />
+          <div className="h-10 w-full rounded-xl bg-cream-100/50 animate-pulse" />
+        </div>
+        <div className="h-11 w-full rounded-xl bg-cream-100/70 animate-pulse" />
+      </div>
+
+      {/* Main Listings Skeleton */}
+      <div className="space-y-6">
+        {/* Banner Penafian */}
+        <div className="h-16 w-full rounded-2xl bg-cream-100/30 animate-pulse" />
+
+        {/* Toolbar Filter */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex gap-2">
+            <div className="h-8 w-20 rounded-full bg-cream-100/80 animate-pulse" />
+            <div className="h-8 w-24 rounded-full bg-cream-100/80 animate-pulse" />
+          </div>
+          <div className="h-8 w-24 rounded-xl bg-cream-100/80 animate-pulse" />
+        </div>
+
+        {/* Table/List Skeleton */}
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="rounded-2xl border border-line bg-white-soft p-5 flex flex-col md:flex-row justify-between gap-4"
+            >
+              <div className="space-y-2 flex-1">
+                <div className="h-4 w-1/4 rounded bg-cream-100/80 animate-pulse" />
+                <div className="h-5 w-1/2 rounded bg-cream-100/80 animate-pulse" />
+                <div className="h-3 w-3/4 rounded bg-cream-100/80 animate-pulse" />
+              </div>
+              <div className="h-10 w-28 rounded-xl bg-cream-100/60 animate-pulse md:self-center" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
