@@ -78,6 +78,10 @@ export function getPassportByProductId(productId: ProductId): NilamPassport | nu
   );
 }
 
+export function getPassports(): NilamPassport[] {
+  return nilamPassports;
+}
+
 export function getFeaturedPassport(): NilamPassport {
   return firstItem(nilamPassports, "Nilam Passport");
 }
