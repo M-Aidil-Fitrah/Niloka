@@ -20,6 +20,8 @@ export const metadata: Metadata = {
     "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport, AromaMatch AI, dan ekosistem sirkular ampas nilam.",
 };
 
+import { CartProvider } from "@/context/cart-context";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,7 +33,7 @@ export default function RootLayout({
       className={`${plusJakartaSans.variable} ${cormorant.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-cream-50 text-ink-900" suppressHydrationWarning>
-        {children}
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );

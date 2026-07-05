@@ -186,3 +186,40 @@ export function AmpasSkeleton() {
     </div>
   );
 }
+
+export function CheckoutSkeleton() {
+  return (
+    <div className="grid gap-8 lg:grid-cols-[1fr_360px] animate-in fade-in duration-300">
+      {/* Left Column: Cart items + Shipping fields */}
+      <div className="space-y-6">
+        <div className="rounded-[32px] border border-line bg-white-soft p-6 space-y-4">
+          <div className="h-6 w-1/4 rounded bg-cream-100/80 animate-pulse" />
+          <div className="space-y-3">
+            <div className="h-16 w-full rounded-2xl bg-cream-100/40 animate-pulse" />
+            <div className="h-16 w-full rounded-2xl bg-cream-100/40 animate-pulse" />
+          </div>
+        </div>
+
+        <div className="rounded-[32px] border border-line bg-white-soft p-6 space-y-6">
+          <div className="h-6 w-1/3 rounded bg-cream-100/80 animate-pulse" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="h-10 w-full rounded-xl bg-cream-100/50 animate-pulse" />
+            <div className="h-10 w-full rounded-xl bg-cream-100/50 animate-pulse" />
+            <div className="h-10 w-full rounded-xl bg-cream-100/50 animate-pulse sm:col-span-2" />
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column: Checkout Summary sticky card */}
+      <div className="rounded-[32px] border border-line bg-white-soft p-6 h-fit space-y-6">
+        <div className="h-5 w-1/2 rounded bg-cream-100/80 animate-pulse" />
+        <div className="space-y-2">
+          <div className="h-4 w-full rounded bg-cream-100/50 animate-pulse" />
+          <div className="h-4 w-full rounded bg-cream-100/50 animate-pulse" />
+        </div>
+        <hr className="border-line/60" />
+        <div className="h-12 w-full rounded-2xl bg-cream-100/80 animate-pulse" />
+      </div>
+    </div>
+  );
+}
