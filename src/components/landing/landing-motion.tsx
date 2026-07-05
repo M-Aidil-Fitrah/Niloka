@@ -29,16 +29,16 @@ export function LandingMotion({ children }: LandingMotionProps) {
           duration: 1.1,
         })
         .from(
-          ".landing-nav",
+          ".site-nav",
           {
             autoAlpha: 0,
-            y: -18,
+            y: -24,
             duration: 0.7,
           },
           "-=0.55",
         )
         .from(
-          ".hero-reveal, .hero-title, .hero-copy, .hero-actions",
+          ".hero-title, .hero-copy, .hero-actions",
           {
             autoAlpha: 0,
             y: 42,
@@ -46,25 +46,17 @@ export function LandingMotion({ children }: LandingMotionProps) {
             stagger: 0.08,
           },
           "-=0.35",
-        )
-        .from(
-          ".hero-panel",
-          {
-            autoAlpha: 0,
-            rotate: -2,
-            scale: 0.92,
-            y: 36,
-            duration: 0.85,
-          },
-          "-=0.5",
         );
 
-      gsap.to(".hero-panel", {
-        y: -18,
-        duration: 3.8,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
+      gsap.to(".site-nav > div", {
+        backgroundColor: "rgba(23, 34, 23, 0.86)",
+        borderColor: "rgba(255, 253, 247, 0.26)",
+        scrollTrigger: {
+          trigger: ".landing-hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
       });
 
       gsap.utils.toArray<HTMLElement>(".category-card").forEach((element, index) => {
@@ -108,17 +100,33 @@ export function LandingMotion({ children }: LandingMotionProps) {
         });
       });
 
-      gsap.from(".footer-word", {
-        autoAlpha: 0,
-        yPercent: 22,
-        letterSpacing: "0.08em",
-        duration: 1,
+      gsap.from(".footer-line", {
+        scaleX: 0,
+        transformOrigin: "left center",
+        duration: 0.9,
         ease: "power3.out",
         scrollTrigger: {
-          trigger: ".footer-word",
+          trigger: ".footer-line",
           start: "top 92%",
         },
       });
+
+      gsap.fromTo(
+        ".footer-word",
+        {
+          yPercent: 18,
+        },
+        {
+          yPercent: -8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".footer-word",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        },
+      );
     },
     { scope },
   );

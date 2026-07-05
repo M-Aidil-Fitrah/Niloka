@@ -30,7 +30,9 @@ export default function RootLayout({
       lang="id"
       className={`${plusJakartaSans.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-cream-50 text-ink-900">{children}</body>
+      <body className="min-h-full bg-cream-50 text-ink-900" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }
