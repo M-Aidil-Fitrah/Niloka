@@ -1,0 +1,245 @@
+export type CurrencyCode = "IDR";
+
+export type Money = {
+  amount: number;
+  currency: CurrencyCode;
+};
+
+export type ImageAsset = {
+  src: string;
+  alt: string;
+};
+
+export type MarketplaceLocation = {
+  province: string;
+  city: string;
+  district: string;
+};
+
+export type SellerId = string;
+export type ProductCategoryId = string;
+export type ProductId = string;
+export type NilamPassportId = string;
+export type AmpasListingId = string;
+export type ReviewId = string;
+export type PromoId = string;
+export type BundleId = string;
+export type CartItemId = string;
+export type OrderId = string;
+export type AromaMatchQuestionId = string;
+export type AromaMatchRecommendationId = string;
+export type AdminValidationItemId = string;
+
+export type SellerType = "umkm" | "distiller" | "cooperative";
+export type SellerVerificationStatus = "pending" | "verified" | "rejected";
+
+export type ProductTargetMarket = "b2c" | "b2b";
+export type ProductStatus = "draft" | "published" | "archived";
+export type ProductForm =
+  | "essential-oil"
+  | "roll-on"
+  | "soap"
+  | "diffuser"
+  | "perfume"
+  | "body-oil"
+  | "bundle";
+export type ProductFunction =
+  | "relaxation"
+  | "focus"
+  | "sleep-support"
+  | "skin-care"
+  | "home-fragrance"
+  | "gift";
+export type ProductTag =
+  | "best-seller"
+  | "new-arrival"
+  | "nilam-passport"
+  | "aroma-calm"
+  | "limited-batch";
+
+export type PassportValidationStatus = "draft" | "pending-review" | "validated";
+
+export type AmpasCondition = "wet" | "dry" | "mixed";
+export type AmpasUsageTag =
+  | "compost"
+  | "briquette"
+  | "mushroom-media"
+  | "mulch"
+  | "animal-feed"
+  | "industrial-cellulose";
+export type AmpasListingStatus = "draft" | "active" | "sold" | "archived";
+
+export type ReviewTag =
+  | "authentic-aroma"
+  | "fast-delivery"
+  | "clear-passport"
+  | "good-packaging"
+  | "repeat-order";
+
+export type PromoType = "percentage" | "fixed-amount" | "free-shipping";
+export type BundleType = "single-seller" | "cross-seller";
+
+export type CartItemKind = "product" | "ampas-listing";
+export type OrderStatus = "draft" | "pending-payment" | "paid" | "fulfilled";
+
+export type AromaMatchQuestionKind = "single-choice" | "multi-choice" | "budget-range";
+
+export type AdminValidationTarget = "seller" | "product" | "nilam-passport";
+export type AdminValidationStatus = "queued" | "approved" | "rejected";
+
+export type Seller = {
+  id: SellerId;
+  slug: string;
+  displayName: string;
+  type: SellerType;
+  location: MarketplaceLocation;
+  verificationStatus: SellerVerificationStatus;
+  joinedAt: string;
+  ratingAverage: number;
+  totalReviews: number;
+  contactChannel: string;
+};
+
+export type ProductCategory = {
+  id: ProductCategoryId;
+  slug: string;
+  name: string;
+  description: string;
+  targetMarket: ProductTargetMarket;
+  image: ImageAsset;
+};
+
+export type Product = {
+  id: ProductId;
+  slug: string;
+  sellerId: SellerId;
+  categoryId: ProductCategoryId;
+  passportId: NilamPassportId;
+  name: string;
+  shortDescription: string;
+  form: ProductForm;
+  functions: ProductFunction[];
+  tags: ProductTag[];
+  price: Money;
+  stock: number;
+  status: ProductStatus;
+  image: ImageAsset;
+  gallery: ImageAsset[];
+  featuredRank: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type NilamPassport = {
+  id: NilamPassportId;
+  productId: ProductId;
+  origin: string;
+  productKind: ProductForm;
+  aromaProfile: string[];
+  functions: ProductFunction[];
+  usage: string;
+  safetyNotes: string;
+  validationStatus: PassportValidationStatus;
+  validatedBy: string;
+  validatedAt: string;
+};
+
+export type AmpasListing = {
+  id: AmpasListingId;
+  slug: string;
+  sellerId: SellerId;
+  condition: AmpasCondition;
+  quantityKg: number;
+  pricePerKg: Money;
+  location: MarketplaceLocation;
+  distillationProcess: string;
+  usageTags: AmpasUsageTag[];
+  status: AmpasListingStatus;
+  image: ImageAsset;
+  disclaimer: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Review = {
+  id: ReviewId;
+  productId: ProductId;
+  sellerId: SellerId;
+  authorName: string;
+  rating: number;
+  tags: ReviewTag[];
+  body: string;
+  createdAt: string;
+};
+
+export type Promo = {
+  id: PromoId;
+  sellerId: SellerId;
+  title: string;
+  type: PromoType;
+  value: number;
+  startsAt: string;
+  endsAt: string;
+  productIds: ProductId[];
+};
+
+export type Bundle = {
+  id: BundleId;
+  slug: string;
+  title: string;
+  type: BundleType;
+  productIds: ProductId[];
+  price: Money;
+  description: string;
+};
+
+export type CartItem = {
+  id: CartItemId;
+  kind: CartItemKind;
+  productId: ProductId | null;
+  ampasListingId: AmpasListingId | null;
+  quantity: number;
+  unitPrice: Money;
+};
+
+export type OrderSummary = {
+  id: OrderId;
+  status: OrderStatus;
+  items: CartItem[];
+  subtotal: Money;
+  platformFee: Money;
+  shippingEstimate: Money;
+  grandTotal: Money;
+};
+
+export type AromaMatchOption = {
+  id: string;
+  label: string;
+  productFunctions: ProductFunction[];
+};
+
+export type AromaMatchQuestion = {
+  id: AromaMatchQuestionId;
+  step: number;
+  prompt: string;
+  kind: AromaMatchQuestionKind;
+  options: AromaMatchOption[];
+};
+
+export type AromaMatchRecommendation = {
+  id: AromaMatchRecommendationId;
+  productId: ProductId;
+  score: number;
+  reason: string;
+  matchedTags: ProductTag[];
+};
+
+export type AdminValidationItem = {
+  id: AdminValidationItemId;
+  target: AdminValidationTarget;
+  targetId: string;
+  status: AdminValidationStatus;
+  submittedBy: SellerId;
+  submittedAt: string;
+  notes: string;
+};

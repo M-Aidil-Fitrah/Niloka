@@ -1,9 +1,19 @@
+import type { AmpasUsageTag, ProductTag } from "@/lib/contracts";
+import { formatRupiah } from "@/lib/formatters";
+import {
+  getFeaturedAmpasListing,
+  getFeaturedPassport,
+  getFeaturedProductCategory,
+  getFeaturedProducts,
+} from "@/lib/mock-queries";
+
 export type CategoryTile = {
   id: string;
   label: string;
   description: string;
   imageUrl: string;
   imageAlt: string;
+  href: string;
 };
 
 export type ProductCard = {
@@ -22,7 +32,7 @@ export type PassportItem = {
 };
 
 export type CircularUse = {
-  id: string;
+  id: AmpasUsageTag;
   label: string;
 };
 
@@ -38,104 +48,30 @@ export type FooterColumn = {
   links: string[];
 };
 
-export const categoryTiles: CategoryTile[] = [
+const productTagLabels: { id: ProductTag; label: string }[] = [
   {
-    id: "aroma",
-    label: "AromaMatch AI",
-    description: "Temukan produk berdasarkan tujuan, aroma, bentuk, dan budget.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Produk kosmetik dan aromaterapi di atas meja.",
+    id: "best-seller",
+    label: "Best seller",
   },
   {
-    id: "passport",
+    id: "new-arrival",
+    label: "New arrival",
+  },
+  {
+    id: "nilam-passport",
     label: "Nilam Passport",
-    description: "Lihat asal bahan, profil aroma, fungsi, cara pakai, dan keamanan.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Botol minyak atsiri di dekat tanaman hijau.",
   },
   {
-    id: "ampas",
-    label: "Ampas Nilam",
-    description: "Listing B2B untuk kompos, briket, media tanam, dan biomassa.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Bahan natural untuk ekonomi sirkular.",
+    id: "aroma-calm",
+    label: "Aroma calm",
   },
   {
-    id: "seller",
-    label: "Seller Terkurasi",
-    description: "UMKM dan penyuling bergabung dalam ekosistem hulu-hilir.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Produk natural tersusun rapi di studio.",
+    id: "limited-batch",
+    label: "Limited batch",
   },
 ];
 
-export const bestSellerProducts: ProductCard[] = [
-  {
-    id: "roll-on-relief",
-    name: "Roll-on Nilam Relief",
-    tag: "Best seller",
-    price: "Rp89.000",
-    imageUrl:
-      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80",
-    imageAlt: "Produk kosmetik natural dengan kuas dan botol kecil.",
-  },
-  {
-    id: "essential-oil",
-    name: "Essential Oil Aceh",
-    tag: "Nilam Passport",
-    price: "Rp145.000",
-    imageUrl:
-      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=900&q=80",
-    imageAlt: "Botol essential oil amber di atas dudukan kayu.",
-  },
-  {
-    id: "artisan-soap",
-    name: "Sabun Nilam Artisan",
-    tag: "New arrival",
-    price: "Rp42.000",
-    imageUrl:
-      "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=900&q=80",
-    imageAlt: "Produk sabun natural di studio cerah.",
-  },
-  {
-    id: "diffuser-blend",
-    name: "Diffuser Blend Patchouli",
-    tag: "Aroma calm",
-    price: "Rp128.000",
-    imageUrl:
-      "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
-    imageAlt: "Botol parfum dan aroma diffuser di meja elegan.",
-  },
-];
-
-export const passportItems: PassportItem[] = [
-  {
-    id: "origin",
-    label: "Asal bahan",
-    value: "Aceh Selatan",
-  },
-  {
-    id: "profile",
-    label: "Profil aroma",
-    value: "Woody, earthy, calming",
-  },
-  {
-    id: "usage",
-    label: "Cara pakai",
-    value: "Roll-on titik nadi",
-  },
-  {
-    id: "safety",
-    label: "Catatan aman",
-    value: "Patch test disarankan",
-  },
-];
-
-export const circularUses: CircularUse[] = [
+const ampasUsageLabels: CircularUse[] = [
   {
     id: "compost",
     label: "Pupuk kompos",
@@ -145,7 +81,7 @@ export const circularUses: CircularUse[] = [
     label: "Briket biomassa",
   },
   {
-    id: "mushroom",
+    id: "mushroom-media",
     label: "Media tanam jamur",
   },
   {
@@ -153,10 +89,98 @@ export const circularUses: CircularUse[] = [
     label: "Mulsa pertanian",
   },
   {
-    id: "cellulose",
+    id: "animal-feed",
+    label: "Pakan ternak",
+  },
+  {
+    id: "industrial-cellulose",
     label: "Selulosa industri",
   },
 ];
+
+function getProductTagLabel(tags: ProductTag[]): string {
+  const label = productTagLabels.find((item) => tags.includes(item.id));
+  return label?.label ?? "Curated";
+}
+
+const featuredPassport = getFeaturedPassport();
+const featuredAmpasListing = getFeaturedAmpasListing();
+const featuredProductCategory = getFeaturedProductCategory();
+
+export const categoryTiles: CategoryTile[] = [
+  {
+    id: "aroma",
+    label: "AromaMatch AI",
+    description: "Temukan produk berdasarkan tujuan, aroma, bentuk, dan budget.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=80",
+    imageAlt: "Produk kosmetik dan aromaterapi di atas meja.",
+    href: "#aromamatch",
+  },
+  {
+    id: "passport",
+    label: "Nilam Passport",
+    description: "Lihat asal bahan, profil aroma, fungsi, cara pakai, dan keamanan.",
+    imageUrl: featuredProductCategory.image.src,
+    imageAlt: featuredProductCategory.image.alt,
+    href: "#passport",
+  },
+  {
+    id: "ampas",
+    label: "Ampas Nilam",
+    description: "Listing B2B untuk kompos, briket, media tanam, dan biomassa.",
+    imageUrl: featuredAmpasListing.image.src,
+    imageAlt: featuredAmpasListing.image.alt,
+    href: "#circular",
+  },
+  {
+    id: "seller",
+    label: "Seller Terkurasi",
+    description: "UMKM dan penyuling bergabung dalam ekosistem hulu-hilir.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=700&q=80",
+    imageAlt: "Produk natural tersusun rapi di studio.",
+    href: "#seller",
+  },
+];
+
+export const bestSellerProducts: ProductCard[] = getFeaturedProducts(4).map(
+  (product) => ({
+    id: product.id,
+    name: product.name,
+    tag: getProductTagLabel(product.tags),
+    price: formatRupiah(product.price.amount),
+    imageUrl: product.image.src,
+    imageAlt: product.image.alt,
+  }),
+);
+
+export const passportItems: PassportItem[] = [
+  {
+    id: "origin",
+    label: "Asal bahan",
+    value: featuredPassport.origin,
+  },
+  {
+    id: "profile",
+    label: "Profil aroma",
+    value: featuredPassport.aromaProfile.join(", "),
+  },
+  {
+    id: "usage",
+    label: "Cara pakai",
+    value: featuredPassport.usage,
+  },
+  {
+    id: "safety",
+    label: "Catatan aman",
+    value: featuredPassport.safetyNotes,
+  },
+];
+
+export const circularUses: CircularUse[] = ampasUsageLabels.filter((item) =>
+  featuredAmpasListing.usageTags.includes(item.id),
+);
 
 export const storyMetrics: StoryMetric[] = [
   {
