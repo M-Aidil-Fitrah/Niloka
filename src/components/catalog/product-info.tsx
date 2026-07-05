@@ -1,0 +1,112 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { formatRupiah } from "@/lib/formatters";
+import { MapPinIcon, StarIcon } from "@/components/ui/icons";
+import type { Product, Seller } from "@/lib/contracts";
+
+type ProductInfoProps = {
+  product: Product;
+  seller: Seller;
+};
+
+const tagLabels: Record<string, string> = {
+  "best-seller": "Best Seller",
+  "new-arrival": "Baru",
+  "nilam-passport": "Passport Terverifikasi",
+  "aroma-calm": "Aroma Calm",
+  "limited-batch": "Limited Batch",
+};
+
+export function ProductInfo({ product, seller }: ProductInfoProps) {
+  return (
+    <div className="flex flex-col">
+      {/* Badges */}
+      {product.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {product.tags.map((tag) => (
+            <Badge key={tag} tone={tag === "best-seller" ? "gold" : "brand"}>
+              {tagLabels[tag] ?? tag}
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      {/* Title */}
+      <h1 className="mt-4 text-3xl font-bold leading-tight text-brand-950 sm:text-4xl">
+        {product.name}
+      </h1>
+
+      {/* Price */}
+      <p className="mt-3 text-2xl font-bold text-brand-900">
+        {formatRupiah(product.price.amount)}
+      </p>
+
+      <hr className="my-6 border-line" />
+
+      {/* Description */}
+      <div className="space-y-4">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-ink-600">
+          Deskripsi Produk
+        </h2>
+        <p className="text-base leading-relaxed text-ink-800">
+          {product.shortDescription}
+        </p>
+        <p className="text-sm leading-relaxed text-ink-600">
+          Setiap tetes minyak atsiri dan produk turunan nilam kami melalui proses seleksi ketat untuk menjamin keaslian wewangian khas nilam Aceh yang kaya, tahan lama, dan menenangkan. Cocok sebagai bagian dari ritual kebersihan, perawatan diri, maupun sebagai pengharum ruangan.
+        </p>
+      </div>
+
+      <hr className="my-6 border-line" />
+
+      {/* Seller Panel */}
+      <div className="rounded-2xl border border-line bg-white-soft p-4 sm:p-5">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-semibold text-brand-950">Penjual</h3>
+            <p className="mt-1 text-base font-bold text-brand-900">
+              {seller.displayName}
+            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-600">
+              <span className="flex items-center gap-1">
+                <MapPinIcon className="h-3.5 w-3.5 text-brand-700" />
+                {seller.location.city}, {seller.location.province}
+              </span>
+              <span className="capitalize">Tipe: {seller.type}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-end shrink-0">
+            <span className="flex items-center gap-1 text-sm font-bold text-brand-950">
+              <StarIcon className="h-4 w-4 text-gold-500" />
+              {seller.ratingAverage.toFixed(1)}
+            </span>
+            <span className="mt-1 text-[11px] text-ink-600">
+              {seller.totalReviews} Ulasan
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <Button className="flex-1" size="md">
+          Masukkan Keranjang
+        </Button>
+        <a
+          href={`https://wa.me/6281234567890?text=Halo%20${encodeURIComponent(
+            seller.displayName
+          )},%20saya%20tertarik%20dengan%20produk%20${encodeURIComponent(
+            product.name
+          )}.`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1"
+        >
+          <Button variant="secondary" className="w-full" size="md">
+            Hubungi Penjual
+          </Button>
+        </a>
+      </div>
+    </div>
+  );
+}

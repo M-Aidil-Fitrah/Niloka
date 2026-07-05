@@ -68,6 +68,10 @@ export function getProductById(productId: ProductId): Product | null {
   return products.find((product) => product.id === productId) ?? null;
 }
 
+export function getProductBySlug(slug: string): Product | null {
+  return products.find((product) => product.slug === slug && product.status === "published") ?? null;
+}
+
 export function getPassportByProductId(productId: ProductId): NilamPassport | null {
   return (
     nilamPassports.find((passport) => passport.productId === productId) ?? null
