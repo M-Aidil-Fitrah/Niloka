@@ -20,7 +20,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "AromaMatch AI",
-    href: "/#aromamatch",
+    href: "/aromamatch",
   },
   {
     label: "Nilam Passport",
