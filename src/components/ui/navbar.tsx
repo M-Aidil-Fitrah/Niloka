@@ -33,8 +33,8 @@ const navItems: NavItem[] = [
 
 export function SiteNavbar() {
   return (
-    <header className="site-nav page-shell fixed inset-x-0 top-4 z-50">
-      <div className="site-nav-surface grid min-h-16 grid-cols-[auto_1fr_auto] items-center gap-5 rounded-full border border-transparent bg-transparent px-6 text-white-soft sm:px-7">
+    <header className="site-nav page-shell fixed inset-x-0 top-6 z-50">
+      <div className="site-nav-surface grid min-h-16 grid-cols-[auto_1fr_auto] items-center gap-5 rounded-full border border-transparent bg-transparent px-6 py-3 text-white-soft sm:px-7">
         <a aria-label="NILOKA home" className="flex items-center" href="#top">
           <Image
             alt="NILOKA"

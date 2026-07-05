@@ -183,6 +183,20 @@ export function LandingMotion({ children }: LandingMotionProps) {
         });
       });
 
+      gsap.utils.toArray<HTMLElement>(".review-card").forEach((element, index) => {
+        gsap.from(element, {
+          autoAlpha: 0,
+          y: 36,
+          duration: 0.8,
+          delay: index * 0.05,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: element,
+            start: "top 90%",
+          },
+        });
+      });
+
       gsap.from(".footer-word-line", {
         scaleX: 0,
         transformOrigin: "left center",
