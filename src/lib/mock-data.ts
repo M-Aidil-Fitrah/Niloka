@@ -738,36 +738,112 @@ export const aromaMatchQuestions: AromaMatchQuestion[] = [
   {
     id: "aroma-purpose",
     step: 1,
-    prompt: "Apa tujuan utama penggunaan produk nilam?",
+    prompt: "Apa tujuan utama penggunaan produk nilam Anda?",
     kind: "single-choice",
     options: [
       {
-        id: "relax",
-        label: "Relaksasi",
+        id: "purpose-relax",
+        label: "Relaksasi & Tidur Nyenyak",
         productFunctions: ["relaxation", "sleep-support"],
       },
       {
-        id: "room",
-        label: "Aroma ruangan",
-        productFunctions: ["home-fragrance", "focus"],
+        id: "purpose-focus",
+        label: "Fokus & Peningkatan Energi",
+        productFunctions: ["focus"],
+      },
+      {
+        id: "purpose-room",
+        label: "Penyegar & Keharuman Ruangan",
+        productFunctions: ["home-fragrance"],
+      },
+      {
+        id: "purpose-skin",
+        label: "Perawatan Kulit & Tubuh",
+        productFunctions: ["skin-care"],
+      },
+      {
+        id: "purpose-gift",
+        label: "Hadiah / Bingkisan Spesial",
+        productFunctions: ["gift"],
+      },
+    ],
+  },
+  {
+    id: "aroma-profile",
+    step: 2,
+    prompt: "Profil aroma wewangian apa yang paling Anda sukai?",
+    kind: "multi-choice",
+    options: [
+      {
+        id: "aroma-woody",
+        label: "Woody (Kayu-kayuan hangat, menenangkan & bersahaja)",
+        productFunctions: [],
+      },
+      {
+        id: "aroma-citrus",
+        label: "Citrus (Segar jeruk, membangkitkan semangat & ceria)",
+        productFunctions: [],
+      },
+      {
+        id: "aroma-herbal",
+        label: "Herbal & Rempah (Dedaunan alami, segar & berenergi)",
+        productFunctions: [],
+      },
+      {
+        id: "aroma-floral",
+        label: "Floral & Sweet (Manis bunga, elegan & romantis)",
+        productFunctions: [],
       },
     ],
   },
   {
     id: "aroma-form",
-    step: 2,
-    prompt: "Bentuk produk yang kamu sukai?",
+    step: 3,
+    prompt: "Bentuk produk nilam apa yang paling praktis bagi Anda?",
     kind: "single-choice",
     options: [
       {
-        id: "roll-on",
-        label: "Roll-on",
-        productFunctions: ["relaxation"],
+        id: "form-oil",
+        label: "Essential Oil Murni (Konsentrat tinggi untuk diffuser/campuran)",
+        productFunctions: [],
       },
       {
-        id: "diffuser",
-        label: "Diffuser",
-        productFunctions: ["home-fragrance"],
+        id: "form-rollon",
+        label: "Roll-on Aromaterapi (Praktis dioles di kulit kapan saja)",
+        productFunctions: [],
+      },
+      {
+        id: "form-soap",
+        label: "Sabun Artisan & Losion (Untuk mandi dan kelembaban kulit)",
+        productFunctions: [],
+      },
+      {
+        id: "form-diffuser",
+        label: "Reed Diffuser & Lilin (Penyebar wangi ruangan otomatis)",
+        productFunctions: [],
+      },
+    ],
+  },
+  {
+    id: "aroma-budget",
+    step: 4,
+    prompt: "Berapa anggaran (budget) yang Anda rencanakan?",
+    kind: "budget-range",
+    options: [
+      {
+        id: "budget-low",
+        label: "Di bawah Rp 75.000 (Ekonomis)",
+        productFunctions: [],
+      },
+      {
+        id: "budget-medium",
+        label: "Rp 75.000 - Rp 150.000 (Standar)",
+        productFunctions: [],
+      },
+      {
+        id: "budget-high",
+        label: "Di atas Rp 150.000 (Premium/Gift Set)",
+        productFunctions: [],
       },
     ],
   },
