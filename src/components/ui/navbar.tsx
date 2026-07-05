@@ -24,7 +24,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "Nilam Passport",
-    href: "/#passport",
+    href: "/passport",
   },
   {
     label: "Ampas Nilam",
