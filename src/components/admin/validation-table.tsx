@@ -1,0 +1,144 @@
+"use client";
+
+import { useState } from "react";
+import { Eye, ShieldAlert, BadgeCheck, XOctagon, RefreshCw } from "lucide-react";
+import type { AdminValidationItem, Seller } from "@/lib/contracts";
+
+type ValidationTableProps = {
+  items: AdminValidationItem[];
+  sellers: Seller[];
+  onReviewClick: (item: AdminValidationItem) => void;
+};
+
+export function ValidationTable({ items, sellers, onReviewClick }: ValidationTableProps) {
+  const [filter, setFilter] = useState<"all" | "seller" | "product" | "nilam-passport">("all");
+
+  const filteredItems = items.filter((item) => {
+    if (filter === "all") return true;
+    return item.target === filter;
+  });
+
+  const getSellerName = (sellerId: string) => {
+    return sellers.find((s) => s.id === sellerId)?.displayName || "Mitra Penyuling";
+  };
+
+  const getTargetBadge = (target: "seller" | "product" | "nilam-passport") => {
+    switch (target) {
+      case "seller":
+        return <span className="bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase">Seller</span>;
+      case "product":
+        return <span className="bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase">Produk</span>;
+      case "nilam-passport":
+        return <span className="bg-emerald-50 text-emerald-800 border border-emerald-250 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase">Passport</span>;
+    }
+  };
+
+  const getStatusBadge = (status: "queued" | "approved" | "rejected") => {
+    switch (status) {
+      case "queued":
+        return (
+          <span className="text-[9px] font-extrabold text-blue-800 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full uppercase flex items-center gap-1 w-fit animate-pulse">
+            <RefreshCw className="h-2.5 w-2.5" />
+            Dalam Antrean
+          </span>
+        );
+      case "approved":
+        return (
+          <span className="text-[9px] font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-250 px-2 py-0.5 rounded-full uppercase flex items-center gap-1 w-fit">
+            <BadgeCheck className="h-2.5 w-2.5" />
+            Disetujui
+          </span>
+        );
+      case "rejected":
+        return (
+          <span className="text-[9px] font-extrabold text-red-800 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full uppercase flex items-center gap-1 w-fit">
+            <XOctagon className="h-2.5 w-2.5" />
+            Ditolak
+          </span>
+        );
+    }
+  };
+
+  return (
+    <div className="rounded-[28px] border border-line bg-white-soft overflow-hidden space-y-6">
+      {/* Table Filter Tabs */}
+      <div className="p-6 border-b border-line bg-cream-50/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h4 className="font-extrabold text-brand-950 text-sm">Antrean Moderasi Platform</h4>
+          <p className="text-xs text-ink-600 mt-1">Review detail keaslian berkas seller, kecocokan produk, dan penelusuran Nilam Passport</p>
+        </div>
+
+        {/* Tab Controls */}
+        <div className="flex bg-cream-100/70 border border-line/50 p-1 rounded-xl shrink-0">
+          {(["all", "seller", "product", "nilam-passport"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setFilter(tab)}
+              className={`text-[11px] font-extrabold px-3 py-1.5 rounded-lg uppercase tracking-wider transition-all cursor-pointer ${
+                filter === tab
+                  ? "bg-brand-900 text-white-soft shadow-xs"
+                  : "text-ink-650 hover:text-brand-950"
+              }`}
+            >
+              {tab === "all" ? "Semua" : tab.replace("-", " ")}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr className="border-b border-line/60 bg-cream-50/10 text-ink-700 font-bold uppercase tracking-wider">
+              <th className="p-4 sm:p-5 font-bold">Jenis Sasaran</th>
+              <th className="p-4 sm:p-5 font-bold">Diajukan Oleh</th>
+              <th className="p-4 sm:p-5 font-bold">Tanggal Kirim</th>
+              <th className="p-4 sm:p-5 font-bold">Status Verifikasi</th>
+              <th className="p-4 sm:p-5 font-bold">Catatan Pengaju</th>
+              <th className="p-4 sm:p-5 font-bold text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-line/35 font-medium text-brand-950">
+            {filteredItems.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="p-8 text-center text-ink-600 font-bold">
+                  Tidak ada pengajuan verifikasi dalam antrean ini.
+                </td>
+              </tr>
+            ) : (
+              filteredItems.map((item) => (
+                <tr key={item.id} className="hover:bg-cream-50/20 transition-colors">
+                  <td className="p-4 sm:p-5">
+                    {getTargetBadge(item.target)}
+                  </td>
+                  <td className="p-4 sm:p-5 font-extrabold">
+                    {getSellerName(item.submittedBy)}
+                  </td>
+                  <td className="p-4 sm:p-5 text-ink-600">
+                    {item.submittedAt}
+                  </td>
+                  <td className="p-4 sm:p-5">
+                    {getStatusBadge(item.status)}
+                  </td>
+                  <td className="p-4 sm:p-5 text-ink-650 max-w-xs truncate">
+                    {item.notes}
+                  </td>
+                  <td className="p-4 sm:p-5 text-right">
+                    <button
+                      onClick={() => onReviewClick(item)}
+                      className="py-1.5 px-4 bg-cream-100 hover:bg-cream-250 border border-line text-brand-950 font-bold rounded-xl text-[11px] transition-colors inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                      Review
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
