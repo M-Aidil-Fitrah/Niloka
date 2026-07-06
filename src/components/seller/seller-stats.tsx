@@ -1,4 +1,5 @@
-import { TrendingUp, Star, ShieldCheck, Recycle, ArrowUpRight, Clock } from "lucide-react";
+import { TrendingUp, Star, ShieldCheck, Recycle, Clock } from "lucide-react";
+import { DashboardStatsCard } from "@/components/dashboard/dashboard-layout";
 
 type SellerStatsProps = {
   sellerProductsCount: number;
@@ -30,63 +31,40 @@ export function SellerStats({
       {/* Metrics Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Metric 1 - Total Pendapatan */}
-        <div className="relative overflow-hidden rounded-2xl border border-line/60 bg-white-soft p-5 space-y-3 hover:shadow-sm transition-all group">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] font-bold text-ink-600 uppercase tracking-wider">Total Pendapatan</span>
-            <div className="p-1.5 bg-brand-100 text-brand-900 rounded-lg border border-brand-200/50">
-              <TrendingUp className="h-4 w-4" />
-            </div>
-          </div>
-          <div>
-            <span className="text-2xl font-black text-brand-950 block">{`Rp 12.450.000`}</span>
-            <span className="text-[9px] text-brand-800 font-bold flex items-center gap-0.5 mt-1">
-              <ArrowUpRight className="h-3 w-3" />
-              +14.2% minggu ini
-            </span>
-          </div>
-        </div>
+        <DashboardStatsCard
+          title="Total Pendapatan"
+          value="Rp 12.450.000"
+          icon={TrendingUp}
+          trend={{ type: "up", label: "+14.2% minggu ini" }}
+          theme="brand"
+        />
 
         {/* Metric 2 - Rating Reputasi */}
-        <div className="relative overflow-hidden rounded-2xl border border-line/60 bg-white-soft p-5 space-y-3 hover:shadow-sm transition-all group">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] font-bold text-ink-600 uppercase tracking-wider">Rating Reputasi</span>
-            <div className="p-1.5 bg-gold-100/50 text-gold-600 rounded-lg border border-gold-500/20">
-              <Star className="h-4 w-4 fill-gold-600" />
-            </div>
-          </div>
-          <div>
-            <span className="text-2xl font-black text-brand-950 block">4.9 / 5.0</span>
-            <span className="text-[9px] text-ink-600 mt-1 block">Dari 128 review pembeli</span>
-          </div>
-        </div>
+        <DashboardStatsCard
+          title="Rating Reputasi"
+          value="4.9 / 5.0"
+          icon={Star}
+          trend={{ type: "up", label: "128 Ulasan" }}
+          theme="gold"
+        />
 
         {/* Metric 3 - Validasi Paspor */}
-        <div className="relative overflow-hidden rounded-2xl border border-line/60 bg-white-soft p-5 space-y-3 hover:shadow-sm transition-all group">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] font-bold text-ink-600 uppercase tracking-wider">Validasi Paspor</span>
-            <div className="p-1.5 bg-brand-100/60 text-brand-900 rounded-lg border border-brand-200/40">
-              <ShieldCheck className="h-4 w-4" />
-            </div>
-          </div>
-          <div>
-            <span className="text-2xl font-black text-brand-950 block">{passportDraftsCount} Valid</span>
-            <span className="text-[9px] text-brand-800 font-bold mt-1 block">Aktif Autentikasi</span>
-          </div>
-        </div>
+        <DashboardStatsCard
+          title="Validasi Paspor"
+          value={`${passportDraftsCount} Valid`}
+          icon={ShieldCheck}
+          trend={{ type: "up", label: "Aktif Autentikasi" }}
+          theme="brand"
+        />
 
         {/* Metric 4 - Ampas B2B Terjual */}
-        <div className="relative overflow-hidden rounded-2xl border border-line/60 bg-white-soft p-5 space-y-3 hover:shadow-sm transition-all group">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] font-bold text-ink-600 uppercase tracking-wider">Ampas B2B Terjual</span>
-            <div className="p-1.5 bg-cream-100 text-ink-700 rounded-lg border border-line/50">
-              <Recycle className="h-4 w-4" />
-            </div>
-          </div>
-          <div>
-            <span className="text-2xl font-black text-brand-950 block">{sellerAmpasCount * 500 || 850} Kg</span>
-            <span className="text-[9px] text-ink-700 font-bold mt-1 block">Pemanfaatan Sirkular</span>
-          </div>
-        </div>
+        <DashboardStatsCard
+          title="Ampas B2B Terjual"
+          value={`${sellerAmpasCount * 500 || 850} Kg`}
+          icon={Recycle}
+          trend={{ type: "up", label: "Pemanfaatan Sirkular" }}
+          theme="cream"
+        />
       </div>
 
       {/* Grid of Chart & Recent Activities */}

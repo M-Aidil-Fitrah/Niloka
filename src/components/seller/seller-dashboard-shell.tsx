@@ -1,25 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { SellerStats } from "./seller-stats";
 import { ProductManagement } from "./product-management";
 import { AmpasManagement } from "./ampas-management";
 import { PassportManagement } from "./passport-management";
+import { PromoManagement } from "./promo-management";
 import {
   LayoutDashboard,
   ShoppingBag,
   Recycle,
   ShieldCheck,
-  Bell,
-  MessageSquare,
-  Settings,
+  Ticket,
   ArrowUpRight,
-  Download,
-  LogOut
+  Download
 } from "lucide-react";
 import type { Product, AmpasListing, Promo } from "@/lib/contracts";
+import {
+  DashboardShell,
+  DashboardSidebar,
+  DashboardTopbar,
+  type SidebarNavItem
+} from "@/components/dashboard/dashboard-layout";
 
 type SellerDashboardShellProps = {
   products: Product[];
@@ -40,7 +42,7 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
   const sellerId = "seller-aceh-aroma";
 
   // Active Menu Tab
-  const [activeTab, setActiveTab] = useState<"overview" | "products" | "ampas" | "passport">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "products" | "ampas" | "passport" | "promos">("overview");
 
   // Local state for listings to simulate operations
   const [sellerProducts, setSellerProducts] = useState<Product[]>([]);
@@ -49,52 +51,44 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
   // Passport Drafts state
   const [passportDrafts, setPassportDrafts] = useState<PassportDraft[]>([
     {
-      productId: "product-essential-oil-aceh",
-      patchouliAlcohol: "34.2%",
+      productId: "prod-essential-oil-1",
+      patchouliAlcohol: "32%",
       origin: "Tapaktuan, Aceh Selatan",
-      aromaProfile: "Woody, Earthy, Rich Balsamic",
-      safetyNotes: "Jauhkan dari jangkauan anak-anak. Jangan dioleskan langsung ke kulit tanpa minyak pembawa.",
+      aromaProfile: "Woody, Earthy, Sweet Balsamic",
+      safetyNotes: "Hindari kontak langsung dengan mata. Jauhkan dari jangkauan anak-anak.",
       status: "verified",
     },
     {
-      productId: "product-roll-on-relief",
-      patchouliAlcohol: "30.5%",
-      origin: "Kluet Utara, Aceh Selatan",
-      aromaProfile: "Menthol-wood, Herbaceous, Calming",
-      safetyNotes: "Hanya untuk penggunaan luar. Hindari area mata dan selaput lendir.",
-      status: "verified",
-    },
-    {
-      productId: "product-sabun-nilam-artisan",
-      patchouliAlcohol: "N/A (Turunan)",
-      origin: "Tapaktuan, Aceh Selatan",
-      aromaProfile: "Warm woody, Creamy coconut, Clean",
-      safetyNotes: "Bilas hingga bersih jika terkena mata. Hentikan pemakaian jika terjadi iritasi.",
+      productId: "prod-roll-on-2",
+      patchouliAlcohol: "30%",
+      origin: "Lhonga, Aceh Besar",
+      aromaProfile: "Fresh Herbaceous, Woody-warm",
+      safetyNotes: "Hanya untuk pemakaian luar. Hentikan jika terjadi iritasi kulit.",
       status: "draft",
     },
   ]);
 
-  // Seed local states on mount
+  // Load seller's items on mount
   useEffect(() => {
-    const filtered = products.filter((p) => p.sellerId === sellerId);
-    const filteredAmpas = ampasListings.filter((a) => a.sellerId === sellerId);
-    setSellerProducts(filtered);
-    setSellerAmpas(filteredAmpas);
+    setSellerProducts(products.filter((p) => p.sellerId === sellerId));
+    setSellerAmpas(ampasListings.filter((a) => a.sellerId === sellerId));
   }, [products, ampasListings]);
 
-  // Add mock product handler
+  // Add Product handler
   const handleAddProduct = (prod: { name: string; price: number; stock: number; category: string }) => {
     const newProd: Product = {
-      id: `product-mock-${Date.now()}`,
-      slug: prod.name.toLowerCase().replace(/\s+/g, "-"),
-      name: prod.name,
-      price: { amount: prod.price, currency: "IDR" },
-      stock: prod.stock,
-      categoryId: prod.category,
+      id: `prod-local-${Date.now()}`,
+      slug: `prod-${prod.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now()}`,
       sellerId: sellerId,
-      passportId: "",
+      categoryId: prod.category,
+      passportId: `passport-local-${Date.now()}`,
+      name: prod.name,
+      shortDescription: "Minyak atsiri berkualitas premium yang diproduksi secara higienis.",
       form: "essential-oil",
       functions: ["relaxation"],
+      tags: ["new-arrival"],
+      price: { amount: prod.price, currency: "IDR" },
+      stock: prod.stock,
       status: "published",
       image: {
         src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108",
@@ -102,28 +96,28 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
       },
       gallery: [],
       featuredRank: 0,
-      tags: ["new-arrival"],
-      shortDescription: `Produk nilam baru beraroma alami khas Aceh Selatan.`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
     setSellerProducts((prev) => [newProd, ...prev]);
 
-    // Also add empty passport draft for it
-    const newDraft: PassportDraft = {
-      productId: newProd.id,
-      patchouliAlcohol: "N/A (Turunan)",
-      origin: "Aceh Selatan",
-      aromaProfile: "Warm Woody",
-      safetyNotes: "Gunakan secukupnya.",
-      status: "draft",
-    };
-    setPassportDrafts((prev) => [...prev, newDraft]);
+    // Automatically create a passport draft for this product
+    setPassportDrafts((prev) => [
+      {
+        productId: newProd.id,
+        patchouliAlcohol: "30%",
+        origin: "Aceh",
+        aromaProfile: "Woody, Earthy",
+        safetyNotes: "Simpan di tempat sejuk.",
+        status: "draft",
+      },
+      ...prev,
+    ]);
   };
 
-  // Add mock ampas handler
-  const handleAddAmpas = (amp: { quantityKg: number; pricePerKg: number; condition: "dry" | "wet" }) => {
+  // Add Ampas handler
+  const handleAddAmpas = (amp: { condition: any; quantityKg: number; pricePerKg: number }) => {
     const newAmp: AmpasListing = {
       id: `ampas-mock-${Date.now()}`,
       slug: `ampas-tapaktuan-${amp.condition}-${Date.now()}`,
@@ -168,117 +162,39 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
     );
   };
 
+  // Map Sidebar Nav Items to shared components format
+  const sidebarNav: SidebarNavItem[] = [
+    { id: "overview", label: "Ringkasan Toko", icon: LayoutDashboard },
+    { id: "products", label: "Produk B2C", icon: ShoppingBag, count: sellerProducts.length },
+    { id: "ampas", label: "Ampas B2B", icon: Recycle, count: sellerAmpas.length },
+    { id: "passport", label: "Nilam Passport", icon: ShieldCheck },
+    { id: "promos", label: "Promo Toko", icon: Ticket },
+  ];
+
   return (
-    <div className="h-screen w-full overflow-hidden flex bg-cream-50 text-ink-900 grid lg:grid-cols-[250px_1fr] w-full font-sans max-w-[1920px] mx-auto">
-      
-      {/* 1. LEFT SIDEBAR - Fixed height, scrollable menu if overflow */}
-      <aside className="w-[250px] h-full bg-white-soft border-r border-line/60 p-6 flex flex-col justify-between shrink-0 overflow-y-auto">
-        <div className="space-y-8">
-          {/* Logo / Brand Name */}
-          <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-lg bg-brand-950 flex items-center justify-center text-white-soft font-black text-xs">
-              N
-            </div>
-            <span className="font-extrabold text-sm tracking-wider text-brand-950">NILOKA Seller</span>
-          </div>
+    <DashboardShell>
+      {/* 1. LEFT SIDEBAR */}
+      <DashboardSidebar
+        brandName="NILOKA Seller"
+        logoChar="N"
+        profileName="Aceh Aroma House"
+        profileRole="UMKM Partner / Seller"
+        profileImage="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d"
+        navigation={sidebarNav}
+        activeTab={activeTab}
+        onTabChange={(id) => setActiveTab(id)}
+      />
 
-          {/* User profile card */}
-          <div className="bg-cream-50/50 border border-line/40 rounded-2xl p-4 flex flex-col items-center text-center">
-            <div className="relative h-14 w-14 rounded-full overflow-hidden border-2 border-brand-950/20 bg-cream-100">
-              <Image
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d"
-                alt="Aceh Aroma House"
-                fill
-                className="object-cover"
-                sizes="56px"
-              />
-            </div>
-            <span className="font-extrabold text-brand-950 mt-3 text-xs block">Aceh Aroma House</span>
-            <span className="text-[10px] text-ink-600 block mt-0.5">UMKM Partner / Seller</span>
-          </div>
-
-          {/* Nav menu links */}
-          <nav className="space-y-1">
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "overview" ? "bg-brand-950 text-white-soft shadow-sm" : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-              }`}
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              Ringkasan Toko
-            </button>
-            <button
-              onClick={() => setActiveTab("products")}
-              className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "products" ? "bg-brand-950 text-white-soft shadow-sm" : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-              }`}
-            >
-              <ShoppingBag className="h-4 w-4" />
-              Produk B2C ({sellerProducts.length})
-            </button>
-            <button
-              onClick={() => setActiveTab("ampas")}
-              className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "ampas" ? "bg-brand-950 text-white-soft shadow-sm" : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-              }`}
-            >
-              <Recycle className="h-4 w-4" />
-              Ampas B2B ({sellerAmpas.length})
-            </button>
-            <button
-              onClick={() => setActiveTab("passport")}
-              className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "passport" ? "bg-brand-950 text-white-soft shadow-sm" : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-              }`}
-            >
-              <ShieldCheck className="h-4 w-4" />
-              Nilam Passport
-            </button>
-          </nav>
-        </div>
-
-        {/* Bottom Menu Items */}
-        <div className="space-y-3 pt-6 border-t border-line/40">
-          <div className="flex items-center justify-between px-3 text-[10px] font-bold text-ink-600">
-            <span>Sistem Status</span>
-            <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
-          </div>
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-red-700 hover:bg-red-50 hover:text-red-800 transition-all cursor-pointer"
-          >
-            <LogOut className="h-4 w-4" />
-            Kembali ke Pasar
-          </Link>
-        </div>
-      </aside>
-
-      {/* 2. MAIN SCROLLABLE AREA + RIGHT SIDEBAR flex/grid container */}
+      {/* 2. MAIN VIEW AREA */}
       <div className="flex-1 h-full flex overflow-hidden">
         
-        {/* MIDDLE PRIMARY CONTENT COLUMN - Scrollable */}
+        {/* MIDDLE PRIMARY CONTENT COLUMN */}
         <main className="flex-1 h-full overflow-y-auto p-6 sm:p-8 space-y-6">
-          {/* Topbar */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-brand-950 font-serif-accent italic">Aceh Aroma House</h2>
-              <p className="text-xs text-ink-600 mt-0.5">Kelola produk retail atsiri, monitoring sensorik, dan draf paspor Anda.</p>
-            </div>
-            
-            {/* Action Bar (Search & Icons) */}
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <button className="h-9 w-9 rounded-full bg-white-soft border border-line/60 flex items-center justify-center text-ink-600 hover:text-brand-950 hover:bg-cream-100/50 transition-colors shadow-sm cursor-pointer relative">
-                <Bell className="h-4 w-4" />
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-amber-500 animate-ping" />
-              </button>
-              <button className="h-9 w-9 rounded-full bg-white-soft border border-line/60 flex items-center justify-center text-ink-600 hover:text-brand-950 hover:bg-cream-100/50 transition-colors shadow-sm cursor-pointer">
-                <MessageSquare className="h-4 w-4" />
-              </button>
-              <button className="h-9 w-9 rounded-full bg-white-soft border border-line/60 flex items-center justify-center text-ink-600 hover:text-brand-950 hover:bg-cream-100/50 transition-colors shadow-sm cursor-pointer">
-                <Settings className="h-4 w-4" />
-              </button>
-            </div>
+            <DashboardTopbar
+              title="Aceh Aroma House 👋"
+              subtitle="Kelola produk retail atsiri, monitoring sensorik, dan draf paspor Anda."
+            />
           </div>
 
           {/* Banner Card */}
@@ -309,7 +225,7 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
               <div className="flex gap-2">
                 <button className="h-9 px-4 rounded-xl bg-white-soft text-brand-950 hover:bg-cream-100 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow">
                   <ArrowUpRight className="h-3.5 w-3.5" />
-                  Lihat Toko
+                  Lihat Invoice
                 </button>
                 <button className="h-9 px-4 rounded-xl bg-brand-900 border border-brand-800 hover:bg-brand-800 text-white-soft text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer">
                   <Download className="h-3.5 w-3.5" />
@@ -351,10 +267,17 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
                 onSavePassportDraft={handleSavePassportDraft}
               />
             )}
+
+            {activeTab === "promos" && (
+              <PromoManagement
+                sellerProducts={sellerProducts}
+                initialPromos={promos}
+              />
+            )}
           </div>
         </main>
 
-        {/* 3. RIGHT SIDEBAR PANEL - Fixed height, scrollable internally */}
+        {/* 3. RIGHT SIDEBAR PANEL */}
         <aside className="w-80 h-full bg-white-soft border-l border-line/60 p-6 sm:p-8 space-y-6 shrink-0 overflow-y-auto hidden xl:block">
           {/* Recent Orders / Inquiries list */}
           <div className="space-y-4">
@@ -366,7 +289,7 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
             <div className="space-y-3">
               {[
                 { name: "Fitra Rahmad", detail: "Roll On Relief (Qty 1)", price: "Rp 75.000", date: "08 Sep, 2026", color: "text-brand-900 bg-brand-100" },
-                { name: "CV Pupuk Atsiri", detail: "Inquiry: Ampas Kering (500kg)", price: "Negosiasi", date: "08 Sep, 2026", color: "text-sky-700 bg-sky-100" },
+                { name: "CV Pupuk Atsiri", detail: "Inquiry: Ampas Kering (500kg)", price: "Negosiasi", date: "08 Sep, 2026", color: "text-brand-900 bg-brand-100/50 border border-brand-200" },
                 { name: "Andi Saputra", detail: "Essential Oil Aceh (Qty 2)", price: "Rp 390.000", date: "07 Sep, 2026", color: "text-brand-900 bg-brand-100" },
                 { name: "Siti Rahma", detail: "Sabun Nilam Artisan (Qty 5)", price: "Rp 175.000", date: "06 Sep, 2026", color: "text-brand-900 bg-brand-100" },
               ].map((act, idx) => (
@@ -386,6 +309,6 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
         </aside>
 
       </div>
-    </div>
+    </DashboardShell>
   );
 }

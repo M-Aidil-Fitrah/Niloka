@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import type { AdminValidationItem, AdminValidationStatus, Seller } from "@/lib/contracts";
 import { AdminStats } from "./admin-stats";
 import { ValidationTable } from "./validation-table";
@@ -13,13 +11,15 @@ import {
   ShoppingBag,
   ShieldCheck,
   Search,
-  Bell,
-  MessageSquare,
-  Settings,
   ArrowUpRight,
-  Download,
-  LogOut
+  Download
 } from "lucide-react";
+import {
+  DashboardShell,
+  DashboardSidebar,
+  DashboardTopbar,
+  type SidebarNavItem
+} from "@/components/dashboard/dashboard-layout";
 
 type AdminShellProps = {
   validationItems: AdminValidationItem[];
@@ -93,126 +93,50 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
     setModerationNote("");
   };
 
+  // Navigation Items mapped to shared format
+  const sidebarNav: SidebarNavItem[] = [
+    { id: "all", label: "Overview (Semua)", icon: LayoutDashboard },
+    { id: "seller", label: "Validasi Seller", icon: Users },
+    { id: "product", label: "Validasi Produk", icon: ShoppingBag },
+    { id: "nilam-passport", label: "Nilam Passport", icon: ShieldCheck },
+  ];
+
   return (
-    <div className="h-screen w-full overflow-hidden flex bg-cream-50 text-ink-900 font-sans max-w-[1920px] mx-auto">
-      
-      {/* 1. LEFT SIDEBAR - Fixed height, scrollable menu if overflow */}
-      <aside className="w-[250px] h-full bg-white-soft border-r border-line/60 p-6 flex flex-col justify-between shrink-0 overflow-y-auto">
-        <div className="space-y-8">
-          {/* Logo / Brand Name */}
-          <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-lg bg-brand-950 flex items-center justify-center text-white-soft font-black text-xs">
-              N
-            </div>
-            <span className="font-extrabold text-sm tracking-wider text-brand-950">NILOKA Admin</span>
-          </div>
+    <DashboardShell>
+      {/* 1. LEFT SIDEBAR COMPONENT */}
+      <DashboardSidebar
+        brandName="NILOKA Admin"
+        logoChar="N"
+        profileName="Darrell Steward"
+        profileRole="UIUX Lead / Admin"
+        profileImage="https://images.unsplash.com/photo-1534528741775-53994a69daeb"
+        navigation={sidebarNav}
+        activeTab={activeTab}
+        onTabChange={(id) => setActiveTab(id)}
+      />
 
-          {/* User profile card */}
-          <div className="bg-cream-50/50 border border-line/40 rounded-2xl p-4 flex flex-col items-center text-center">
-            <div className="relative h-14 w-14 rounded-full overflow-hidden border-2 border-brand-950/20 bg-cream-100">
-              <Image
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb"
-                alt="Darrell Steward"
-                fill
-                className="object-cover"
-                sizes="56px"
-              />
-            </div>
-            <span className="font-extrabold text-brand-950 mt-3 text-xs block">Darrell Steward</span>
-            <span className="text-[10px] text-ink-600 block mt-0.5">UIUX Lead / Admin</span>
-          </div>
-
-          {/* Nav menu links */}
-          <nav className="space-y-1">
-            <button
-              onClick={() => setActiveTab("all")}
-              className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "all" ? "bg-brand-950 text-white-soft shadow-sm" : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-              }`}
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              Overview (Semua)
-            </button>
-            <button
-              onClick={() => setActiveTab("seller")}
-              className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "seller" ? "bg-brand-950 text-white-soft shadow-sm" : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-              }`}
-            >
-              <Users className="h-4 w-4" />
-              Validasi Seller
-            </button>
-            <button
-              onClick={() => setActiveTab("product")}
-              className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "product" ? "bg-brand-950 text-white-soft shadow-sm" : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-              }`}
-            >
-              <ShoppingBag className="h-4 w-4" />
-              Validasi Produk
-            </button>
-            <button
-              onClick={() => setActiveTab("nilam-passport")}
-              className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "nilam-passport" ? "bg-brand-950 text-white-soft shadow-sm" : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-              }`}
-            >
-              <ShieldCheck className="h-4 w-4" />
-              Nilam Passport
-            </button>
-          </nav>
-        </div>
-
-        {/* Bottom Menu Items */}
-        <div className="space-y-3 pt-6 border-t border-line/40">
-          <div className="flex items-center justify-between px-3 text-[10px] font-bold text-ink-600">
-            <span>Sistem Status</span>
-            <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
-          </div>
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-red-750 hover:bg-red-50 hover:text-red-800 transition-all cursor-pointer"
-          >
-            <LogOut className="h-4 w-4" />
-            Kembali ke Pasar
-          </Link>
-        </div>
-      </aside>
-
-      {/* 2. MAIN SCROLLABLE AREA + RIGHT SIDEBAR flex/grid container */}
+      {/* 2. MAIN VIEW AREA */}
       <div className="flex-1 h-full flex overflow-hidden">
         
-        {/* MIDDLE PRIMARY CONTENT COLUMN - Scrollable */}
+        {/* MIDDLE PRIMARY CONTENT COLUMN */}
         <main className="flex-1 h-full overflow-y-auto p-6 sm:p-8 space-y-6">
           {/* Topbar */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-brand-950 font-serif-accent italic">Hello Darrell Steward 👋</h2>
-              <p className="text-xs text-ink-600 mt-0.5">Kelola pengajuan antrean validasi hari ini.</p>
-            </div>
+            <DashboardTopbar
+              title="Hello Darrell Steward 👋"
+              subtitle="Kelola pengajuan antrean validasi hari ini."
+            />
             
-            {/* Action Bar (Search & Icons) */}
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <div className="relative flex-1 sm:w-60">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-ink-600/50" />
-                <input
-                  type="text"
-                  placeholder="Cari pengajuan..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-9 rounded-full bg-white-soft border border-line/60 pl-9 pr-4 text-xs font-semibold text-brand-950 focus:border-brand-900 outline-none transition-all shadow-sm"
-                />
-              </div>
-              <button className="h-9 w-9 rounded-full bg-white-soft border border-line/60 flex items-center justify-center text-ink-600 hover:text-brand-950 hover:bg-cream-100/50 transition-colors shadow-sm cursor-pointer relative">
-                <Bell className="h-4 w-4" />
-                {queuedCount > 0 && <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-amber-500 animate-ping" />}
-              </button>
-              <button className="h-9 w-9 rounded-full bg-white-soft border border-line/60 flex items-center justify-center text-ink-600 hover:text-brand-950 hover:bg-cream-100/50 transition-colors shadow-sm cursor-pointer">
-                <MessageSquare className="h-4 w-4" />
-              </button>
-              <button className="h-9 w-9 rounded-full bg-white-soft border border-line/60 flex items-center justify-center text-ink-600 hover:text-brand-950 hover:bg-cream-100/50 transition-colors shadow-sm cursor-pointer">
-                <Settings className="h-4 w-4" />
-              </button>
+            {/* Search Input bar */}
+            <div className="relative w-full sm:w-60 shrink-0">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-ink-600/50" />
+              <input
+                type="text"
+                placeholder="Cari pengajuan..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-9 rounded-xl bg-white-soft border border-line/60 pl-9 pr-4 text-xs font-semibold text-brand-950 focus:border-brand-900 outline-none transition-all shadow-sm"
+              />
             </div>
           </div>
 
@@ -291,7 +215,7 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
           </div>
         </main>
 
-        {/* 3. RIGHT SIDEBAR PANEL - Fixed height, scrollable internally */}
+        {/* 3. RIGHT SIDEBAR PANEL */}
         <aside className="w-80 h-full bg-white-soft border-l border-line/60 p-6 sm:p-8 space-y-6 shrink-0 overflow-y-auto hidden xl:block">
           {/* Recent Activity list */}
           <div className="space-y-4">
@@ -339,6 +263,6 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
           onModerate={handleModerate}
         />
       )}
-    </div>
+    </DashboardShell>
   );
 }

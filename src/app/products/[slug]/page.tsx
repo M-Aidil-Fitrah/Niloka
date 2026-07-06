@@ -7,6 +7,7 @@ import {
   getSellerById,
   getReviewsForProduct,
   getPublishedProducts,
+  getPromosForSeller,
 } from "@/lib/mock-queries";
 import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductInfo } from "@/components/catalog/product-info";
@@ -52,6 +53,7 @@ export default async function ProductDetailPage({ params }: Props) {
   const passport = getPassportByProductId(product.id);
   const seller = getSellerById(product.sellerId);
   const reviews = getReviewsForProduct(product.id);
+  const promos = getPromosForSeller(product.sellerId);
 
   if (!seller) {
     notFound();
@@ -79,7 +81,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
         {/* Right column: Main Info */}
         <div className="lg:col-span-6">
-          <ProductInfo product={product} seller={seller} />
+          <ProductInfo product={product} seller={seller} promos={promos} />
         </div>
       </div>
 
