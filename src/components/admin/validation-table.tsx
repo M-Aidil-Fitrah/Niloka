@@ -12,11 +12,22 @@ type ValidationTableProps = {
 
 export function ValidationTable({ items, sellers, onReviewClick }: ValidationTableProps) {
   const [filter, setFilter] = useState<"all" | "seller" | "product" | "nilam-passport">("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const handleFilterChange = (newFilter: "all" | "seller" | "product" | "nilam-passport") => {
+    setFilter(newFilter);
+    setCurrentPage(1); // Reset page on filter change
+  };
 
   const filteredItems = items.filter((item) => {
     if (filter === "all") return true;
     return item.target === filter;
   });
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
 
   const getSellerName = (sellerId: string) => {
     return sellers.find((s) => s.id === sellerId)?.displayName || "Mitra Penyuling";
@@ -73,7 +84,7 @@ export function ValidationTable({ items, sellers, onReviewClick }: ValidationTab
           {(["all", "seller", "product", "nilam-passport"] as const).map((tab) => (
             <button
               key={tab}
-              onClick={() => setFilter(tab)}
+              onClick={() => handleFilterChange(tab)}
               className={`text-[11px] font-extrabold px-3 py-1.5 rounded-lg uppercase tracking-wider transition-all cursor-pointer ${
                 filter === tab
                   ? "bg-brand-900 text-white-soft shadow-xs"
@@ -100,14 +111,14 @@ export function ValidationTable({ items, sellers, onReviewClick }: ValidationTab
             </tr>
           </thead>
           <tbody className="divide-y divide-line/35 font-medium text-brand-950">
-            {filteredItems.length === 0 ? (
+            {paginatedItems.length === 0 ? (
               <tr>
                 <td colSpan={6} className="p-8 text-center text-ink-600 font-bold">
                   Tidak ada pengajuan verifikasi dalam antrean ini.
                 </td>
               </tr>
             ) : (
-              filteredItems.map((item) => (
+              paginatedItems.map((item) => (
                 <tr key={item.id} className="hover:bg-cream-50/20 transition-colors">
                   <td className="p-4 sm:p-5">
                     {getTargetBadge(item.target)}
@@ -139,6 +150,44 @@ export function ValidationTable({ items, sellers, onReviewClick }: ValidationTab
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-6 pt-2 border-t border-line/40">
+          <span className="text-xs font-semibold text-ink-600">
+            Menampilkan <strong className="text-brand-950">{startIndex + 1}</strong> - <strong className="text-brand-950">{Math.min(startIndex + itemsPerPage, filteredItems.length)}</strong> dari <strong className="text-brand-950">{filteredItems.length}</strong> pengajuan
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="py-1.5 px-4 bg-white-soft border border-line rounded-xl text-xs font-bold text-brand-950 hover:bg-cream-100 disabled:opacity-50 disabled:hover:bg-white-soft transition-all cursor-pointer"
+            >
+              Sebelumnya
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`w-8 h-8 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  currentPage === page
+                    ? "bg-brand-900 text-white-soft shadow-xs"
+                    : "bg-white-soft border border-line text-ink-700 hover:bg-cream-100"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="py-1.5 px-4 bg-white-soft border border-line rounded-xl text-xs font-bold text-brand-950 hover:bg-cream-100 disabled:opacity-50 disabled:hover:bg-white-soft transition-all cursor-pointer"
+            >
+              Berikutnya
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

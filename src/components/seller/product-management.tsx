@@ -23,6 +23,12 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+
   const handleOpenAdd = () => {
     setActiveProduct({
       id: `prod-${Date.now()}`,
@@ -49,7 +55,13 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
 
   const handleDelete = (id: string) => {
     if (confirm("Apakah Anda yakin ingin menghapus produk ini dari katalog?")) {
-      setProducts(products.filter((p) => p.id !== id));
+      const filtered = products.filter((p) => p.id !== id);
+      setProducts(filtered);
+      // Adjust current page if current page becomes empty
+      const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+      }
     }
   };
 
@@ -104,6 +116,7 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
       setProducts(products.map((p) => (p.id === updated.id ? updated : p)));
     } else {
       setProducts([updated, ...products]);
+      setCurrentPage(1); // Go back to first page to see the new product
     }
     setIsEditing(false);
     setActiveProduct(null);
@@ -128,7 +141,7 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
 
       {/* 2. Grid List */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
+        {paginatedProducts.map((product) => (
           <div
             key={product.id}
             className="rounded-[28px] border border-line bg-white-soft overflow-hidden hover:shadow-md transition-all flex flex-col justify-between"
@@ -209,6 +222,44 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
           </div>
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-line/40">
+          <span className="text-xs font-semibold text-ink-600">
+            Menampilkan <strong className="text-brand-950">{startIndex + 1}</strong> - <strong className="text-brand-950">{Math.min(startIndex + itemsPerPage, products.length)}</strong> dari <strong className="text-brand-950">{products.length}</strong> produk
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="py-1.5 px-4 bg-white-soft border border-line rounded-xl text-xs font-bold text-brand-950 hover:bg-cream-100 disabled:opacity-50 disabled:hover:bg-white-soft transition-all cursor-pointer"
+            >
+              Sebelumnya
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`w-8 h-8 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  currentPage === page
+                    ? "bg-brand-900 text-white-soft shadow-xs"
+                    : "bg-white-soft border border-line text-ink-700 hover:bg-cream-100"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="py-1.5 px-4 bg-white-soft border border-line rounded-xl text-xs font-bold text-brand-950 hover:bg-cream-100 disabled:opacity-50 disabled:hover:bg-white-soft transition-all cursor-pointer"
+            >
+              Berikutnya
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 3. Slide Drawer Modal for Edit/Add */}
       {isEditing && activeProduct && (

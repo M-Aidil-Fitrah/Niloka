@@ -47,47 +47,12 @@ export function AdminStats({ queueCount, sellerCount, productCount }: AdminStats
         />
       </div>
 
-      {/* 2. Audit Trail & Log */}
-      <div className="rounded-[28px] border border-line bg-white-soft p-6 sm:p-8 space-y-5">
-        <div className="pb-4 border-b border-line/45">
-          <h3 className="text-base font-extrabold text-brand-950">Log Audit Sistem</h3>
-          <p className="text-xs text-ink-600 mt-1">Aktivitas verifikasi dan moderasi batch panen terakhir</p>
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex gap-4 items-start text-xs pb-3 border-b border-line/35">
-            <div className="p-2 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl shrink-0">
-              <CheckCircle2 className="h-4 w-4" />
-            </div>
-            <div className="space-y-0.5">
-              <p className="font-extrabold text-brand-950">Menerbitkan Kode Batch NLK-LHG-981</p>
-              <p className="text-ink-600 text-[11px]">Validasi Nilam Passport &quot;Essential Oil Nilam Super&quot; oleh Admin UPTD</p>
-              <span className="text-[10px] font-bold text-ink-505 block pt-1">6 Juli 2026, 14:32</span>
-            </div>
-          </div>
-
-          <div className="flex gap-4 items-start text-xs pb-3 border-b border-line/35">
-            <div className="p-2 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl shrink-0">
-              <CheckCircle2 className="h-4 w-4" />
-            </div>
-            <div className="space-y-0.5">
-              <p className="font-extrabold text-brand-950">Verifikasi Mitra Baru &quot;Mulia Atsiri Aceh&quot;</p>
-              <p className="text-ink-600 text-[11px]">Pemeriksaan dokumen izin usaha mikro disetujui</p>
-              <span className="text-[10px] font-bold text-ink-505 block pt-1">5 Juli 2026, 09:15</span>
-            </div>
-          </div>
-
-          <div className="flex gap-4 items-start text-xs">
-            <div className="p-2 bg-red-50 text-red-800 border border-red-200 rounded-xl shrink-0">
-              <XCircle className="h-4 w-4" />
-            </div>
-            <div className="space-y-0.5">
-              <p className="font-extrabold text-brand-950">Penolakan Listing B2B Ampas Sulingan</p>
-              <p className="text-ink-600 text-[11px]">Penyuling Acehara terindikasi mengklaim khasiat medis berlebih di deskripsi</p>
-              <span className="text-[10px] font-bold text-ink-505 block pt-1">4 Juli 2026, 11:20</span>
-            </div>
-          </div>
-        </div>
+      {/* 2. Admin Quick Instructions Card */}
+      <div className="rounded-[28px] border border-line bg-white-soft p-6 sm:p-8">
+        <h3 className="text-base font-extrabold text-brand-950">Selamat Datang di Portal Validator</h3>
+        <p className="text-xs text-ink-600 mt-1 leading-relaxed">
+          Sebagai administrator/validator resmi, Anda bertugas meninjau pengajuan kemitraan dari UMKM penyuling nilam lokal, menyaring copywriting deskripsi produk agar bebas dari klaim medis berlebih, serta memvalidasi dokumen penelusuran Nilam Passport. Gunakan menu **Antrean Moderasi** di sebelah kiri untuk mulai bekerja.
+        </p>
       </div>
     </div>
   );

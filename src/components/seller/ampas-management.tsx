@@ -14,6 +14,11 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
   const [listings, setListings] = useState<AmpasListing[]>(initialListings);
   const [isEditing, setIsEditing] = useState(false);
   const [activeListing, setActiveListing] = useState<Partial<AmpasListing> | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil(listings.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedListings = listings.slice(startIndex, startIndex + itemsPerPage);
 
   const usageTagOptions: { value: AmpasUsageTag; label: string }[] = [
     { value: "compost", label: "Kompos Organik" },
@@ -49,7 +54,12 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
 
   const handleDelete = (id: string) => {
     if (confirm("Apakah Anda yakin ingin menghapus listing B2B ampas nilam ini?")) {
-      setListings(listings.filter((l) => l.id !== id));
+      const filtered = listings.filter((l) => l.id !== id);
+      setListings(filtered);
+      const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+      }
     }
   };
 
@@ -80,6 +90,7 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
       setListings(listings.map((l) => (l.id === updated.id ? updated : l)));
     } else {
       setListings([updated, ...listings]);
+      setCurrentPage(1); // Reset to page 1 to see new listing
     }
     setIsEditing(false);
     setActiveListing(null);
@@ -115,7 +126,7 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
 
       {/* 3. Listings Grid */}
       <div className="grid gap-6 md:grid-cols-2">
-        {listings.map((listing) => (
+        {paginatedListings.map((listing) => (
           <div
             key={listing.id}
             className="rounded-[28px] border border-line bg-white-soft overflow-hidden hover:shadow-md transition-all flex flex-col sm:flex-row"
@@ -140,24 +151,17 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
                       ? "bg-amber-50 text-amber-800 border-amber-250"
                       : "bg-blue-50 text-blue-800 border-blue-200"
                   }`}>
-                    Ampas {listing.condition === "dry" ? "Kering" : "Basah"}
+                    {listing.condition === "dry" ? "Kering" : "Basah"}
                   </span>
-                  <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded uppercase ${
-                    listing.status === "active" ? "text-emerald-800 bg-emerald-50" : "text-ink-600 bg-cream-100"
-                  }`}>
-                    {listing.status === "active" ? "Aktif" : "Draf"}
+                  <span className="text-[11px] font-bold text-ink-600 flex items-center gap-1">
+                    <Scale className="h-3 w-3" />
+                    {listing.quantityKg} Kg
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1 text-xs text-brand-950 font-bold">
-                    <Scale className="h-4 w-4 text-ink-600" />
-                    <span>{listing.quantityKg} Kg</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-brand-950 font-bold">
-                    <Compass className="h-4 w-4 text-ink-600" />
-                    <span>{listing.location.city}</span>
-                  </div>
+                <div className="flex items-center gap-1 text-[11px] font-bold text-ink-700">
+                  <Compass className="h-3.5 w-3.5 text-ink-500" />
+                  <span>{listing.location.city}, {listing.location.province}</span>
                 </div>
 
                 <p className="text-xs text-ink-650 line-clamp-2 leading-relaxed">
@@ -204,6 +208,44 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
           </div>
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-line/40">
+          <span className="text-xs font-semibold text-ink-600">
+            Menampilkan <strong className="text-brand-950">{startIndex + 1}</strong> - <strong className="text-brand-950">{Math.min(startIndex + itemsPerPage, listings.length)}</strong> dari <strong className="text-brand-950">{listings.length}</strong> listing
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="py-1.5 px-4 bg-white-soft border border-line rounded-xl text-xs font-bold text-brand-950 hover:bg-cream-100 disabled:opacity-50 disabled:hover:bg-white-soft transition-all cursor-pointer"
+            >
+              Sebelumnya
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`w-8 h-8 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  currentPage === page
+                    ? "bg-brand-900 text-white-soft shadow-xs"
+                    : "bg-white-soft border border-line text-ink-700 hover:bg-cream-100"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="py-1.5 px-4 bg-white-soft border border-line rounded-xl text-xs font-bold text-brand-950 hover:bg-cream-100 disabled:opacity-50 disabled:hover:bg-white-soft transition-all cursor-pointer"
+            >
+              Berikutnya
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 4. Drawer modal */}
       {isEditing && activeListing && (
