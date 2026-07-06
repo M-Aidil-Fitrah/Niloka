@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { PassportSearchFilter } from "./passport-search-filter";
 import { PassportRegistryList } from "./passport-registry-list";
-import { ShieldCheck, Search, Award, Info, FileText } from "lucide-react";
+import { ShieldCheck, Award, Info, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Product, NilamPassport, ProductForm } from "@/lib/contracts";

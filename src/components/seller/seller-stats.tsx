@@ -19,7 +19,7 @@ export function SellerStats({
         <div>
           <h3 className="text-base font-extrabold text-brand-950">Statistik Penjualan</h3>
           <p className="text-xs text-ink-600 mt-0.5">
-            Ringkasan penjualan, analitik transaksi, dan data sensorik rantai pasok.
+            Ringkasan penjualan ({sellerProductsCount} produk terdaftar), analitik transaksi, dan data sensorik rantai pasok.
           </p>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-white-soft border border-line/60 rounded-full text-[10px] font-bold text-ink-700 shadow-sm">

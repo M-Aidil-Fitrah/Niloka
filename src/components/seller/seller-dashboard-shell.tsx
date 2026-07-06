@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { SellerStats } from "./seller-stats";
 import { ProductManagement } from "./product-management";
 import { AmpasManagement } from "./ampas-management";
@@ -43,10 +43,15 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
 
   // Active Menu Tab
   const [activeTab, setActiveTab] = useState<"overview" | "products" | "ampas" | "passport" | "promos">("overview");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Local state for listings to simulate operations
-  const [sellerProducts, setSellerProducts] = useState<Product[]>([]);
-  const [sellerAmpas, setSellerAmpas] = useState<AmpasListing[]>([]);
+  const [sellerProducts, setSellerProducts] = useState<Product[]>(() =>
+    products.filter((p) => p.sellerId === "seller-aceh-aroma")
+  );
+  const [sellerAmpas, setSellerAmpas] = useState<AmpasListing[]>(() =>
+    ampasListings.filter((a) => a.sellerId === "seller-aceh-aroma")
+  );
 
   // Passport Drafts state
   const [passportDrafts, setPassportDrafts] = useState<PassportDraft[]>([
@@ -68,11 +73,7 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
     },
   ]);
 
-  // Load seller's items on mount
-  useEffect(() => {
-    setSellerProducts(products.filter((p) => p.sellerId === sellerId));
-    setSellerAmpas(ampasListings.filter((a) => a.sellerId === sellerId));
-  }, [products, ampasListings]);
+
 
   // Add Product handler
   const handleAddProduct = (prod: { name: string; price: number; stock: number; category: string }) => {
@@ -117,7 +118,7 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
   };
 
   // Add Ampas handler
-  const handleAddAmpas = (amp: { condition: any; quantityKg: number; pricePerKg: number }) => {
+  const handleAddAmpas = (amp: { condition: "dry" | "wet"; quantityKg: number; pricePerKg: number }) => {
     const newAmp: AmpasListing = {
       id: `ampas-mock-${Date.now()}`,
       slug: `ampas-tapaktuan-${amp.condition}-${Date.now()}`,
@@ -182,7 +183,9 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
         profileImage="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d"
         navigation={sidebarNav}
         activeTab={activeTab}
-        onTabChange={(id) => setActiveTab(id)}
+        onTabChange={(id) => setActiveTab(id as "overview" | "products" | "ampas" | "passport" | "promos")}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
 
       {/* 2. MAIN VIEW AREA */}
@@ -194,6 +197,7 @@ export function SellerDashboardShell({ products, ampasListings, promos = [] }: S
             <DashboardTopbar
               title="Aceh Aroma House 👋"
               subtitle="Kelola produk retail atsiri, monitoring sensorik, dan draf paspor Anda."
+              onMenuClick={() => setIsSidebarOpen(true)}
             />
           </div>
 

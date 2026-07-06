@@ -47,7 +47,7 @@ export function SiteFooter() {
               Join our newsletter to follow NILOKA product drops, seller
               onboarding, and circular economy updates.
             </p>
-            <form className="mt-6 flex max-w-xl flex-col gap-3 rounded-full bg-white-soft p-2 sm:flex-row">
+            <form className="mt-6 flex max-w-xl flex-col gap-3 rounded-3xl bg-white-soft p-2 sm:flex-row sm:rounded-full">
               <label className="sr-only" htmlFor="newsletter-email">
                 Email newsletter
               </label>

@@ -9,7 +9,7 @@ type AdminStatsProps = {
   rejectedCount: number;
 };
 
-export function AdminStats({ items, queuedCount, approvedCount, rejectedCount }: AdminStatsProps) {
+export function AdminStats({ items, queuedCount, approvedCount, rejectedCount: _rejectedCount }: AdminStatsProps) {
   return (
     <div className="grid gap-5 sm:grid-cols-3">
       {/* Total Queue Card */}

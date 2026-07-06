@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { CartIcon, SearchIcon, UserIcon } from "@/components/ui/icons";
 import nilokaLogo from "@/public/assets/logo/logo.png";
@@ -43,6 +45,7 @@ const navItems: NavItem[] = [
 
 export function SiteNavbar() {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   // We use light theme navbar on any page that is NOT the landing page
   const isLight = pathname !== "/";
   const { totalCount } = useCart();
@@ -121,8 +124,53 @@ export function SiteNavbar() {
           <IconButton label="Buka akun" theme={isLight ? "light" : "dark"}>
             <UserIcon />
           </IconButton>
+          
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={cn(
+              "lg:hidden flex items-center justify-center h-10 w-10 rounded-full border transition-all cursor-pointer",
+              isLight 
+                ? "border-line/45 bg-cream-100/70 text-brand-950 hover:bg-cream-200" 
+                : "border-white-soft/20 bg-white-soft/10 text-white-soft hover:bg-white-soft/20"
+            )}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
+
+      {isMobileMenuOpen && (
+        <div className="mt-2.5 lg:hidden rounded-3xl border border-line/60 bg-white-soft/95 backdrop-blur-md p-4 sm:p-5 shadow-lg space-y-4 animate-in slide-in-from-top-4 duration-200">
+          <nav className="flex flex-col gap-2.5 text-sm font-bold text-brand-950">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={cn(
+                  "px-4 py-2.5 rounded-xl hover:bg-cream-100/50 transition-all duration-200",
+                  pathname === item.href && "bg-cream-100 text-brand-900"
+                )}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          
+          {/* Mobile search bar */}
+          <div className="pt-3 border-t border-line/45 md:hidden">
+            <label className="flex h-10 w-full items-center gap-2 rounded-full bg-cream-100/70 border border-line/30 px-4 text-xs font-semibold text-brand-950">
+              <SearchIcon className="text-brand-700" />
+              <input
+                className="w-full bg-transparent text-xs font-semibold outline-none placeholder:text-ink-600/70"
+                placeholder="Cari produk..."
+                type="search"
+              />
+            </label>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

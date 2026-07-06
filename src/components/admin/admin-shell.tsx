@@ -43,6 +43,7 @@ const statusConfig: Record<AdminValidationStatus, { label: string; classes: stri
 export function AdminShell({ validationItems, sellers }: AdminShellProps) {
   const [items, setItems] = useState<AdminValidationItem[]>(validationItems);
   const [activeTab, setActiveTab] = useState<TabKey>("all");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<AdminValidationItem | null>(null);
   const [moderationNote, setModerationNote] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -112,7 +113,9 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
         profileImage="https://images.unsplash.com/photo-1534528741775-53994a69daeb"
         navigation={sidebarNav}
         activeTab={activeTab}
-        onTabChange={(id) => setActiveTab(id)}
+        onTabChange={(id) => setActiveTab(id as TabKey)}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
 
       {/* 2. MAIN VIEW AREA */}
@@ -125,6 +128,7 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
             <DashboardTopbar
               title="Hello Darrell Steward 👋"
               subtitle="Kelola pengajuan antrean validasi hari ini."
+              onMenuClick={() => setIsSidebarOpen(true)}
             />
             
             {/* Search Input bar */}

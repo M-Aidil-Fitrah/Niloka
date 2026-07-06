@@ -1,7 +1,7 @@
 import { LandingMotion } from "@/components/landing/landing-motion";
 import { SiteFooter } from "@/components/ui/footer";
 import { SiteNavbar } from "@/components/ui/navbar";
-import { ArrowRightIcon } from "@/components/ui/icons";
+import { BackToTop } from "@/components/ui/back-to-top";
 import {
   bestSellerProducts,
   categoryTiles,
@@ -56,14 +56,7 @@ export default function Home() {
 
         <SiteFooter />
 
-        {/* Back to top button */}
-        <a
-          aria-label="Kembali ke atas"
-          className="back-to-top pointer-events-none fixed bottom-5 right-5 z-40 flex size-11 items-center justify-center rounded-full border border-white-soft/30 bg-brand-950/80 text-white-soft opacity-0 shadow-lg backdrop-blur transition-colors hover:bg-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
-          href="#top"
-        >
-          <ArrowRightIcon className="-rotate-90" />
-        </a>
+        <BackToTop />
       </main>
     </LandingMotion>
   );

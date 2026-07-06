@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Edit, Plus, Info, X, Clock, HelpCircle } from "lucide-react";
+import { ShieldCheck, Edit, X } from "lucide-react";
 import type { Product } from "@/lib/contracts";
 
 type PassportDraft = {

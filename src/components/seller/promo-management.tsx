@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, Plus, Ticket, Trash2, Tag, Copy, Check } from "lucide-react";
+import { CalendarDays, Plus, Ticket, Trash2, Tag } from "lucide-react";
 import type { Product, Promo, PromoStatus, PromoType } from "@/lib/contracts";
 import { Button } from "@/components/ui/button";
 import { formatRupiah } from "@/lib/formatters";

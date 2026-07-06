@@ -22,11 +22,6 @@ export function LandingMotion({ children }: LandingMotionProps) {
       window.scrollTo(0, 0);
 
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        gsap.set(".back-to-top", {
-          autoAlpha: 1,
-          pointerEvents: "auto",
-        });
-
         return () => {
           window.history.scrollRestoration = previousScrollRestoration;
         };
@@ -129,18 +124,7 @@ export function LandingMotion({ children }: LandingMotionProps) {
         },
       });
 
-      gsap.to(".back-to-top", {
-        autoAlpha: 1,
-        pointerEvents: "auto",
-        y: 0,
-        duration: 0.25,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".landing-hero",
-          start: "bottom 85%",
-          toggleActions: "play none none reverse",
-        },
-      });
+
 
       gsap.utils.toArray<HTMLElement>(".category-card").forEach((element, index) => {
         gsap.from(element, {
