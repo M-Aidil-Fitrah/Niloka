@@ -98,7 +98,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
         {/* Reviews */}
         <div>
-          <ProductReviews reviews={reviews} />
+          <ProductReviews reviews={reviews} productId={product.id} sellerId={product.sellerId} />
         </div>
       </div>
     </div>
