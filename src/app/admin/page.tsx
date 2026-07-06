@@ -21,15 +21,6 @@ export default function AdminPage() {
   const validationItems = getAdminValidationItems();
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-1">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-red-400">Internal Moderation</span>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white font-serif-accent italic">
-          Panel Administrasi
-        </h1>
-      </div>
-
-      <AdminShell validationItems={validationItems} sellers={sellers} />
-    </div>
+    <AdminShell validationItems={validationItems} sellers={sellers} />
   );
 }

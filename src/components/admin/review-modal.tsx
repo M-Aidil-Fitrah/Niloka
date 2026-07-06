@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import type { AdminValidationItem, AdminValidationStatus } from "@/lib/contracts";
-import { X, Check, AlertCircle } from "lucide-react";
+import { X, Check, Shield } from "lucide-react";
 
 type ReviewModalProps = {
   item: AdminValidationItem;
@@ -17,7 +17,6 @@ type ReviewModalProps = {
 export function ReviewModal({
   item,
   targetLabels,
-  statusConfig,
   resolveSellerName,
   formatDate,
   moderationNote,
@@ -26,12 +25,12 @@ export function ReviewModal({
   onModerate,
 }: ReviewModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-3xl border border-white/15 bg-brand-950 p-6 shadow-2xl relative text-white animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-950/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+      <div className="w-full max-w-lg rounded-[28px] border border-line bg-white p-6 shadow-2xl relative text-ink-900 animate-in zoom-in-95 duration-200">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute right-5 top-5 p-1 rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-colors"
+          className="absolute right-5 top-5 p-1 rounded-full hover:bg-cream-100 text-ink-600 hover:text-brand-950 transition-colors cursor-pointer"
           aria-label="Tutup modal"
         >
           <X className="h-5 w-5" />
@@ -39,45 +38,50 @@ export function ReviewModal({
 
         <div className="space-y-5">
           {/* Header */}
-          <div>
-            <span className="text-[9px] font-extrabold text-red-400 uppercase tracking-wider block">
-              Review Moderasi
-            </span>
-            <h4 className="text-base font-extrabold text-white mt-1 font-serif-accent italic">
-              {targetLabels[item.target]}
-            </h4>
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-brand-950/10 text-brand-950 rounded-lg">
+              <Shield className="h-4.5 w-4.5" />
+            </div>
+            <div>
+              <span className="text-[9px] font-extrabold text-gold-600 uppercase tracking-wider block">
+                Review Moderasi
+              </span>
+              <h4 className="text-base font-extrabold text-brand-950 mt-0.5">
+                {targetLabels[item.target]}
+              </h4>
+            </div>
           </div>
 
           {/* Detail Grid */}
-          <div className="grid grid-cols-2 gap-4 text-xs border border-white/10 rounded-2xl p-4 bg-white/5">
+          <div className="grid grid-cols-2 gap-4 text-xs border border-line bg-cream-50/50 rounded-2xl p-4">
             <div>
-              <span className="text-white/40 block text-[10px] font-bold uppercase tracking-wider">Target ID</span>
-              <span className="font-mono font-bold text-white/90 mt-0.5 block text-[11px]">{item.targetId}</span>
+              <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-wider">Target ID</span>
+              <span className="font-mono font-bold text-brand-950 mt-0.5 block text-[11px]">{item.targetId}</span>
             </div>
             <div>
-              <span className="text-white/40 block text-[10px] font-bold uppercase tracking-wider">Diajukan Oleh</span>
-              <span className="font-bold text-white/90 mt-0.5 block">{resolveSellerName(item.submittedBy)}</span>
+              <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-wider">Diajukan Oleh</span>
+              <span className="font-bold text-brand-950 mt-0.5 block">{resolveSellerName(item.submittedBy)}</span>
             </div>
             <div>
-              <span className="text-white/40 block text-[10px] font-bold uppercase tracking-wider">Tanggal Pengajuan</span>
-              <span className="font-semibold text-white/80 mt-0.5 block">{formatDate(item.submittedAt)}</span>
+              <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-wider">Tanggal Pengajuan</span>
+              <span className="font-bold text-brand-950 mt-0.5 block">{formatDate(item.submittedAt)}</span>
             </div>
             <div>
-              <span className="text-white/40 block text-[10px] font-bold uppercase tracking-wider">Status Saat Ini</span>
-              <span className={`inline-block text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-full border mt-1 ${statusConfig[item.status].classes}`}>
-                {statusConfig[item.status].label}
+              <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-wider">Status</span>
+              <span className="inline-block text-[9px] font-extrabold uppercase px-2 py-0.5 bg-amber-100 text-amber-800 border border-amber-200 rounded-full mt-1.5">
+                Menunggu Review
               </span>
             </div>
           </div>
 
           {/* Moderation Note Input */}
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-white/50 block">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
               Catatan Moderasi
             </label>
             <textarea
               rows={3}
-              className="w-full rounded-xl border border-white/10 bg-white/5 p-3 text-xs font-semibold text-white placeholder:text-white/30 focus:border-red-500/50 outline-none resize-none"
+              className="w-full rounded-xl border border-line bg-cream-50 px-3 py-2 text-xs font-semibold text-brand-950 placeholder:text-ink-600/50 focus:border-brand-700 outline-none resize-none"
               placeholder="Tambahkan catatan alasan keputusan moderasi..."
               value={moderationNote}
               onChange={(e) => onNoteChange(e.target.value)}
@@ -88,20 +92,20 @@ export function ReviewModal({
           <div className="flex gap-3 justify-end pt-2">
             <button
               onClick={onClose}
-              className="h-10 px-4 rounded-xl border border-white/15 hover:bg-white/5 text-white/70 text-xs font-bold transition-all"
+              className="h-10 px-4 rounded-xl border border-line hover:bg-cream-50 text-brand-950 text-xs font-bold transition-all cursor-pointer"
             >
               Batal
             </button>
             <Button
               onClick={() => onModerate(item.id, "rejected")}
-              className="h-10 px-5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold flex items-center gap-1.5 transition-transform active:scale-95"
+              className="h-10 px-5 rounded-xl bg-red-700 hover:bg-red-600 text-white-soft text-xs font-bold flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer"
             >
               <X className="h-4 w-4" />
               Tolak
             </Button>
             <Button
               onClick={() => onModerate(item.id, "approved")}
-              className="h-10 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 transition-transform active:scale-95"
+              className="h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer"
             >
               <Check className="h-4 w-4" />
               Setujui
