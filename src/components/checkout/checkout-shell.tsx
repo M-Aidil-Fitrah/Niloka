@@ -1,16 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
-import { ShieldCheckIcon } from "@/components/ui/icons";
+import { CartItemsList } from "./cart-items-list";
+import { ShippingForm } from "./shipping-form";
+import { OrderSummaryCard } from "./order-summary-card";
+import { PaymentSnapModal } from "./payment-snap-modal";
+import { ShieldCheck, ShoppingCart, Calendar, MapPin, Receipt, Trash2, ArrowRight, Printer, RefreshCw } from "lucide-react";
 import type { Product, AmpasListing, CartItem } from "@/lib/contracts";
 
 type CheckoutShellProps = {
   products: Product[];
   ampasListings: AmpasListing[];
+};
+
+type OrderHistoryItem = {
+  orderId: string;
+  date: string;
+  items: {
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    kind: string;
+  }[];
+  shippingAddress: {
+    receiverName: string;
+    phone: string;
+    address: string;
+    city: string;
+    province: string;
+  };
+  courier: string;
+  paymentMethod: string;
+  subtotal: number;
+  platformFee: number;
+  shippingFee: number;
+  discount: number;
+  grandTotal: number;
 };
 
 export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
@@ -41,6 +70,22 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
     label: string;
   } | null>(null);
   const [promoError, setPromoError] = useState("");
+
+  // Order History State
+  const [ordersHistory, setOrdersHistory] = useState<OrderHistoryItem[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Load Order History from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("niloka_orders");
+      if (stored) {
+        setOrdersHistory(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.error("Failed to load order history", e);
+    }
+  }, [isSuccess]);
 
   // Persistent Snapshots for Invoice Display (after cart is cleared)
   const [invoiceItems, setInvoiceItems] = useState<
@@ -162,7 +207,8 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
       setIsPaying(false);
       setIsSnapOpen(false);
       setIsSuccess(true);
-      setGeneratedOrderId(`NLK-TX-${Math.floor(100000 + Math.random() * 900000)}`);
+      const newOrderId = `NLK-TX-${Math.floor(100000 + Math.random() * 900000)}`;
+      setGeneratedOrderId(newOrderId);
       
       // Snapshot states for receipt display
       setInvoiceSubtotal(subtotal);
@@ -171,6 +217,39 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
       setInvoiceDiscount(discountAmount);
       setInvoiceGrandTotal(grandTotal);
       setInvoiceItems(resolvedItems);
+
+      // Save order to history
+      try {
+        const stored = localStorage.getItem("niloka_orders");
+        const list = stored ? JSON.parse(stored) : [];
+        const newOrder: OrderHistoryItem = {
+          orderId: newOrderId,
+          date: new Date().toISOString(),
+          items: resolvedItems.map((item) => ({
+            name: item.name,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice.amount,
+            kind: item.kind,
+          })),
+          shippingAddress: {
+            receiverName,
+            phone,
+            address,
+            city,
+            province,
+          },
+          courier: courierNames[courier],
+          paymentMethod,
+          subtotal,
+          platformFee,
+          shippingFee,
+          discount: discountAmount,
+          grandTotal,
+        };
+        localStorage.setItem("niloka_orders", JSON.stringify([newOrder, ...list]));
+      } catch (e) {
+        console.error("Failed to persist order to local storage", e);
+      }
 
       clearCart();
     }, 1500);
@@ -185,27 +264,108 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
     }, 1200);
   };
 
+  const clearOrderHistory = () => {
+    if (confirm("Hapus semua riwayat transaksi Niloka dari perangkat ini?")) {
+      localStorage.removeItem("niloka_orders");
+      setOrdersHistory([]);
+    }
+  };
+
   // 1. EMPTY CART STATE
   if (items.length === 0 && !isSuccess) {
     return (
-      <div className="rounded-[32px] border border-line bg-white-soft py-20 text-center max-w-xl mx-auto shadow-sm">
-        <span className="text-4xl">🛒</span>
-        <h3 className="mt-5 text-xl font-bold text-brand-950">Keranjang Anda Kosong</h3>
-        <p className="mt-2 text-sm text-ink-600 px-6">
-          Anda belum menambahkan produk nilam atau listing ampas B2B ke dalam keranjang.
-        </p>
-        <div className="mt-6 flex justify-center gap-3">
-          <Link href="/products">
-            <Button className="h-11 px-6 rounded-2xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold">
-              Lihat Produk B2C
-            </Button>
-          </Link>
-          <Link href="/ampas">
-            <Button variant="secondary" className="h-11 px-6 rounded-2xl border-line text-xs font-bold">
-              Bursa Ampas B2B
-            </Button>
-          </Link>
+      <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in duration-500">
+        <div className="rounded-[32px] border border-line bg-white-soft py-16 text-center shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-cream-100 text-brand-900">
+            <ShoppingCart className="h-6 w-6" />
+          </div>
+          <h3 className="mt-5 text-xl font-bold text-brand-950">Keranjang Anda Kosong</h3>
+          <p className="mt-2 text-xs text-ink-600 px-6 max-w-md mx-auto leading-relaxed">
+            Anda belum menambahkan produk nilam atsiri B2C atau listing ampas B2B ke dalam keranjang belanja.
+          </p>
+          <div className="mt-6 flex justify-center gap-3 flex-wrap">
+            <Link href="/products">
+              <Button className="h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all">
+                Beli Produk B2C
+              </Button>
+            </Link>
+            <Link href="/ampas">
+              <Button variant="secondary" className="h-10 px-5 rounded-xl border-line text-xs font-bold hover:bg-cream-50 transition-all">
+                Bursa Ampas B2B
+              </Button>
+            </Link>
+            {ordersHistory.length > 0 && (
+              <button
+                onClick={() => setShowHistory(!showHistory)}
+                className="h-10 px-5 rounded-xl border border-brand-900/20 text-brand-900 text-xs font-bold hover:bg-brand-50 transition-all cursor-pointer"
+              >
+                {showHistory ? "Sembunyikan Riwayat" : `Riwayat Transaksi (${ordersHistory.length})`}
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Local Orders History List */}
+        {showHistory && ordersHistory.length > 0 && (
+          <div className="rounded-[32px] border border-line bg-white-soft p-6 space-y-6 shadow-sm animate-in slide-in-from-bottom duration-300">
+            <div className="flex justify-between items-center border-b border-line/60 pb-3">
+              <div className="flex items-center gap-2">
+                <Receipt className="h-5 w-5 text-brand-900" />
+                <h4 className="text-base font-extrabold text-brand-950">Riwayat Transaksi Lokal</h4>
+              </div>
+              <button
+                onClick={clearOrderHistory}
+                className="text-xs font-bold text-red-650 hover:text-red-500 flex items-center gap-1 cursor-pointer"
+              >
+                <Trash2 className="h-4 w-4" />
+                Hapus Semua
+              </button>
+            </div>
+
+            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
+              {ordersHistory.map((order) => (
+                <div key={order.orderId} className="rounded-2xl border border-line/60 bg-white p-4 space-y-3 text-xs hover:border-brand-900/30 transition-colors">
+                  <div className="flex justify-between items-start flex-wrap gap-2">
+                    <div>
+                      <span className="font-mono font-bold text-brand-950 text-sm block">{order.orderId}</span>
+                      <span className="text-[10px] text-ink-600 flex items-center gap-1 mt-0.5">
+                        <Calendar className="h-3 w-3" />
+                        {new Date(order.date).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                    <span className="inline-block bg-emerald-100 text-emerald-800 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full">
+                      Paid / Lunas
+                    </span>
+                  </div>
+
+                  <div className="border-t border-line/40 pt-2 space-y-1">
+                    {order.items.map((item, idx) => (
+                      <div key={idx} className="flex justify-between text-ink-700">
+                        <span>
+                          {item.name} <span className="text-[10px] text-ink-600">x{item.quantity}</span>
+                        </span>
+                        <span className="font-semibold text-brand-950">
+                          Rp {(item.unitPrice * item.quantity).toLocaleString("id-ID")}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t border-line/45 pt-2 flex justify-between items-center font-bold text-brand-950">
+                    <span>Total Pembayaran:</span>
+                    <span>Rp {order.grandTotal.toLocaleString("id-ID")}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -219,7 +379,7 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
           {/* Header Success Check */}
           <div className="text-center print:hidden">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-800">
-              ✓
+              <ShieldCheck className="h-7 w-7" />
             </div>
             <h3 className="mt-4 text-2xl font-bold text-brand-950 font-serif-accent italic">Transaksi Berhasil!</h3>
             <p className="mt-1 text-xs text-ink-600">
@@ -330,14 +490,16 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
           <div className="flex gap-3 justify-end pt-4 border-t border-line/60 print:hidden">
             <button
               onClick={() => window.print()}
-              className="h-11 px-5 rounded-2xl border border-line bg-cream-50 hover:bg-cream-100 text-brand-950 text-xs font-bold transition-all"
+              className="h-11 px-5 rounded-2xl border border-line bg-cream-50 hover:bg-cream-100 text-brand-950 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
             >
+              <Printer className="h-4 w-4" />
               Cetak Invoice
             </button>
             <Button
               onClick={() => setIsSuccess(false)}
-              className="h-11 px-6 rounded-2xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold"
+              className="h-11 px-6 rounded-2xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold flex items-center gap-1.5 cursor-pointer"
             >
+              <RefreshCw className="h-4 w-4" />
               Belanja Lagi
             </Button>
           </div>
@@ -353,399 +515,65 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
       <div className="space-y-6">
         
         {/* Cart Item List */}
-        <div className="rounded-[32px] border border-line bg-white-soft p-5 sm:p-6 shadow-sm space-y-4">
-          <h3 className="text-base font-extrabold text-brand-950 border-b border-line/60 pb-3">
-            Keranjang Belanja
-          </h3>
-
-          <div className="divide-y divide-line/60">
-            {resolvedItems.map((item) => (
-              <div key={item.id} className="py-4 flex gap-4 items-start first:pt-0 last:pb-0">
-                {/* Thumbnail */}
-                <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-line/40 bg-cream-100 shrink-0">
-                  <Image
-                    src={item.imageSrc}
-                    alt={item.imageAlt}
-                    className="object-cover"
-                    fill
-                    sizes="64px"
-                  />
-                </div>
-
-                {/* Details */}
-                <div className="flex-1 min-w-0">
-                  <span className="text-[9px] font-bold text-gold-600 bg-gold-100/30 px-2 py-0.5 rounded-md uppercase tracking-wider">
-                    {item.kind === "product" ? "B2C Produk" : "B2B Ampas"}
-                  </span>
-                  <h4 className="text-sm font-bold text-brand-950 mt-1 truncate">{item.name}</h4>
-                  <p className="text-xs font-extrabold text-brand-900 mt-1">
-                    Rp {item.unitPrice.amount.toLocaleString("id-ID")}
-                  </p>
-                </div>
-
-                {/* Quantity Controls */}
-                <div className="flex items-center border border-line rounded-lg overflow-hidden h-8 bg-cream-50">
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    className="px-2.5 hover:bg-cream-100 text-xs font-bold text-brand-950"
-                  >
-                    -
-                  </button>
-                  <span className="px-3 text-xs font-bold text-brand-950 min-w-6 text-center">
-                    {item.quantity}
-                  </span>
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="px-2.5 hover:bg-cream-100 text-xs font-bold text-brand-950"
-                  >
-                    +
-                  </button>
-                </div>
-
-                {/* Remove Button */}
-                <button
-                  onClick={() => removeItem(item.id)}
-                  aria-label="Hapus item"
-                  className="p-2 text-ink-600 hover:text-red-600 transition-colors shrink-0"
-                >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
+        <CartItemsList
+          resolvedItems={resolvedItems}
+          updateQuantity={updateQuantity}
+          removeItem={removeItem}
+        />
 
         {/* Shipping Form */}
-        <div className="rounded-[32px] border border-line bg-white-soft p-5 sm:p-6 shadow-sm space-y-5">
-          <h3 className="text-base font-extrabold text-brand-950 border-b border-line/60 pb-3">
-            Informasi Pengiriman
-          </h3>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
-                Nama Penerima *
-              </label>
-              <input
-                type="text"
-                required
-                className="w-full h-10 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 focus:border-brand-700 outline-none"
-                placeholder="Nama Lengkap"
-                value={receiverName}
-                onChange={(e) => setReceiverName(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
-                Nomor Telepon *
-              </label>
-              <input
-                type="tel"
-                required
-                className="w-full h-10 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 focus:border-brand-700 outline-none"
-                placeholder="Contoh: 0812..."
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-1 sm:col-span-2">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
-                Alamat Lengkap *
-              </label>
-              <textarea
-                required
-                rows={3}
-                className="w-full rounded-xl border border-line bg-cream-50 p-3 text-xs font-semibold text-brand-950 focus:border-brand-700 outline-none resize-none"
-                placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan/kecamatan"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
-                Kota / Kabupaten *
-              </label>
-              <input
-                type="text"
-                required
-                className="w-full h-10 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 focus:border-brand-700 outline-none"
-                placeholder="Kota/Kabupaten"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
-                Provinsi *
-              </label>
-              <input
-                type="text"
-                required
-                className="w-full h-10 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 focus:border-brand-700 outline-none"
-                placeholder="Provinsi"
-                value={province}
-                onChange={(e) => setProvince(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Courier & Payment Method Selectors */}
-        <div className="rounded-[32px] border border-line bg-white-soft p-5 sm:p-6 shadow-sm space-y-5">
-          <h3 className="text-base font-extrabold text-brand-950 border-b border-line/60 pb-3">
-            Opsi Pengiriman & Pembayaran
-          </h3>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
-                Pilih Jasa Kurir
-              </label>
-              <select
-                value={courier}
-                onChange={(e) => setCourier(e.target.value)}
-                className="w-full h-10 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 focus:border-brand-700 outline-none"
-              >
-                <option value="jne">JNE Regular (Rp 15.000)</option>
-                <option value="jnt">J&T Express (Rp 18.000)</option>
-                <option value="sicepat">SiCepat Halu (Rp 12.000)</option>
-                <option value="gosend">GoSend Instant (Rp 25.000)</option>
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
-                Metode Pembayaran
-              </label>
-              <select
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-full h-10 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 focus:border-brand-700 outline-none"
-              >
-                <option value="qris">QRIS (Gopay / OVO / Dana)</option>
-                <option value="va">Virtual Account (Mandiri / BCA / BNI)</option>
-                <option value="cc">Kartu Kredit / Debit</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
+        <ShippingForm
+          receiverName={receiverName}
+          setReceiverName={setReceiverName}
+          phone={phone}
+          setPhone={setPhone}
+          address={address}
+          setAddress={setAddress}
+          city={city}
+          setCity={setCity}
+          province={province}
+          setProvince={setProvince}
+          courier={courier}
+          setCourier={setCourier}
+          paymentMethod={paymentMethod}
+          setPaymentMethod={setPaymentMethod}
+        />
       </div>
 
       {/* RIGHT COLUMN: Sticky Summary checkout card */}
       <aside className="space-y-6 lg:sticky lg:top-28">
-        <div className="rounded-[32px] border border-line bg-white-soft p-5 sm:p-6 shadow-sm space-y-5">
-          <h3 className="text-base font-extrabold text-brand-950">Ringkasan Pesanan</h3>
-
-          <div className="space-y-2.5 text-xs pt-1 border-b border-line/60 pb-3">
-            <div className="flex justify-between items-center text-ink-600">
-              <span>Subtotal Produk:</span>
-              <span className="font-semibold text-brand-950">
-                Rp {subtotal.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-ink-600">
-              <span>Biaya Platform:</span>
-              <span className="font-semibold text-brand-950">
-                Rp {platformFee.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-ink-600">
-              <span>Ongkos Kirim:</span>
-              <span className="font-semibold text-brand-950">
-                Rp {shippingFee.toLocaleString("id-ID")}
-              </span>
-            </div>
-            {discountAmount > 0 && (
-              <div className="flex justify-between items-center text-emerald-700 font-bold">
-                <span>Diskon Promo:</span>
-                <span>
-                  -Rp {discountAmount.toLocaleString("id-ID")}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Coupon Entry Block */}
-          <div className="space-y-2 text-xs">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">Voucher Toko / Kode Promo</span>
-            
-            {appliedPromo ? (
-              <div className="flex justify-between items-center bg-emerald-50 border border-emerald-200 rounded-xl p-2.5">
-                <div>
-                  <span className="text-[10px] font-bold text-emerald-800 block">{appliedPromo.label}</span>
-                  <span className="text-[9px] font-extrabold text-emerald-600 uppercase font-mono">{appliedPromo.code}</span>
-                </div>
-                <button
-                  onClick={handleRemovePromo}
-                  type="button"
-                  className="text-xs font-bold text-red-600 hover:text-red-500 px-2 py-1 transition-colors"
-                >
-                  Hapus
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    className="flex-1 h-9 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 uppercase outline-none focus:border-brand-700"
-                    placeholder="Contoh: ATSIRI10"
-                    value={promoCodeInput}
-                    onChange={(e) => setPromoCodeInput(e.target.value)}
-                  />
-                  <button
-                    onClick={handleApplyPromo}
-                    type="button"
-                    className="h-9 px-4 rounded-xl bg-brand-900 hover:bg-brand-850 text-white-soft text-xs font-bold"
-                  >
-                    Pakai
-                  </button>
-                </div>
-                
-                {promoError && (
-                  <p className="text-[10px] font-bold text-red-600">{promoError}</p>
-                )}
-
-                {/* Suggestions List */}
-                <div className="bg-cream-50/50 border border-line/60 rounded-xl p-2.5 space-y-1.5">
-                  <span className="text-[9px] font-bold text-ink-600 uppercase tracking-wider block">Kupon Tersedia:</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      { code: "ATSIRI10", desc: "Potongan 10%" },
-                      { code: "COOP15K", desc: "Potongan Rp15rb" },
-                      { code: "NILAMFREE", desc: "Gratis Ongkir" },
-                    ].map((k) => (
-                      <button
-                        key={k.code}
-                        onClick={() => {
-                          setPromoCodeInput(k.code);
-                          setPromoError("");
-                        }}
-                        type="button"
-                        className="text-[9px] font-bold bg-white hover:bg-cream-100 border border-line/80 px-2 py-1 rounded-lg text-brand-950 font-mono"
-                      >
-                        {k.code} ({k.desc})
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <hr className="border-line/60" />
-
-          <div className="flex justify-between items-center">
-            <span className="font-bold text-brand-950">Total Pembayaran:</span>
-            <span className="text-base font-extrabold text-brand-950">
-              Rp {grandTotal.toLocaleString("id-ID")}
-            </span>
-          </div>
-
-          <Button
-            disabled={!isFormValid}
-            onClick={handlePayClick}
-            className={`w-full h-11 rounded-2xl text-white-soft text-xs font-bold mt-4 shadow-sm ${
-              isFormValid
-                ? "bg-brand-950 hover:bg-brand-900 cursor-pointer"
-                : "bg-ink-600/30 cursor-not-allowed text-ink-600/50"
-            }`}
-          >
-            {isFormValid ? "Bayar Sekarang (Midtrans)" : "Lengkapi Alamat Pengiriman"}
-          </Button>
-
-          {!isFormValid && (
-            <p className="text-[10px] text-ink-600 text-center mt-2 leading-relaxed">
-              * Silakan isi semua bidang wajib bertanda bintang (*) untuk melanjutkan ke gerbang pembayaran.
-            </p>
-          )}
-        </div>
+        <OrderSummaryCard
+          subtotal={subtotal}
+          platformFee={platformFee}
+          shippingFee={shippingFee}
+          discountAmount={discountAmount}
+          grandTotal={grandTotal}
+          isFormValid={!!isFormValid}
+          promoCodeInput={promoCodeInput}
+          onPromoCodeInputChange={setPromoCodeInput}
+          appliedPromo={appliedPromo}
+          onApplyPromo={handleApplyPromo}
+          onRemovePromo={handleRemovePromo}
+          promoError={promoError}
+          onPayClick={handlePayClick}
+          onPromoSelect={(code) => {
+            setPromoCodeInput(code);
+            setPromoError("");
+          }}
+        />
       </aside>
 
       {/* MIDTRANS SNAP POPUP SIMULATOR OVERLAY */}
       {isSnapOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-950/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-sm rounded-2xl border border-line bg-white shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 text-ink-900">
-            {/* Header: Midtrans look-alike */}
-            <div className="bg-sky-700 text-white-soft p-4 flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-sm tracking-wide">NILOKA Payment Gate</span>
-                <span className="bg-sky-600 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">Mock Snap</span>
-              </div>
-              <button
-                onClick={() => setIsSnapOpen(false)}
-                className="text-white-soft/80 hover:text-white-soft text-lg font-bold"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="p-5 space-y-5 bg-white">
-              {/* Transaction details block */}
-              <div className="flex justify-between items-center text-xs">
-                <div>
-                  <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-wider">Total Tagihan</span>
-                  <span className="text-sm font-extrabold text-brand-950">
-                    Rp {grandTotal.toLocaleString("id-ID")}
-                  </span>
-                </div>
-                <div className="text-right">
-                  <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-wider">Metode Pilihan</span>
-                  <span className="font-bold text-sky-700 uppercase">{paymentMethod}</span>
-                </div>
-              </div>
-
-              <hr className="border-line/60" />
-
-              {/* Status and instruction */}
-              <div className="text-center space-y-1">
-                <p className="text-xs font-semibold text-ink-900">Simulasi Gerbang Pembayaran Midtrans Snap</p>
-                <p className="text-[10px] text-ink-600 leading-normal px-2">
-                  Gunakan tombol simulasi di bawah untuk menguji respon sukses atau gagal transaksi.
-                </p>
-              </div>
-
-              {/* Error statement if failed */}
-              {payError && (
-                <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-center text-[11px] font-semibold text-red-700 animate-shake">
-                  {payError}
-                </div>
-              )}
-
-              {/* Simulator Action Buttons */}
-              <div className="space-y-2 pt-2">
-                <Button
-                  onClick={handleSimulateSuccess}
-                  disabled={isPaying}
-                  className="w-full h-10 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white-soft text-xs font-bold"
-                >
-                  {isPaying ? "Memproses..." : "Simulasikan Bayar Sukses"}
-                </Button>
-                <Button
-                  onClick={handleSimulateFailure}
-                  disabled={isPaying}
-                  variant="secondary"
-                  className="w-full h-10 rounded-xl border-red-200 hover:bg-red-50 text-red-600 text-xs font-bold"
-                >
-                  {isPaying ? "Memproses..." : "Simulasikan Bayar Gagal"}
-                </Button>
-              </div>
-            </div>
-
-            {/* Footer secure shield */}
-            <div className="bg-cream-50 p-3.5 text-center text-[10px] text-ink-600 flex items-center justify-center gap-1.5 border-t border-line/45">
-              <ShieldCheckIcon className="h-4 w-4 text-emerald-600" />
-              <span>Metode enkripsi TLS aman & bersertifikasi</span>
-            </div>
-          </div>
-        </div>
+        <PaymentSnapModal
+          grandTotal={grandTotal}
+          paymentMethod={paymentMethod}
+          isPaying={isPaying}
+          payError={payError}
+          onClose={() => setIsSnapOpen(false)}
+          onSimulateSuccess={handleSimulateSuccess}
+          onSimulateFailure={handleSimulateFailure}
+        />
       )}
     </div>
   );

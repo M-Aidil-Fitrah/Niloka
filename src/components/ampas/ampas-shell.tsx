@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { AmpasCard } from "./ampas-card";
-import { SearchIcon, ShieldCheckIcon } from "@/components/ui/icons";
+import { AmpasCalculator } from "./ampas-calculator";
+import { AmpasFilters } from "./ampas-filters";
+import { Search, ShieldAlert, X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AmpasListing, AmpasUsageTag } from "@/lib/contracts";
 
@@ -76,111 +78,34 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[300px_1fr] items-start">
+    <div className="grid gap-8 lg:grid-cols-[300px_1fr] items-start animate-in fade-in duration-500">
       {/* LEFT SIDEBAR: filters + calculator */}
       <aside className="space-y-6">
         {/* B2B Calculator Card */}
-        <div className="rounded-[32px] border border-line bg-white-soft p-5 shadow-sm space-y-5">
-          <div>
-            <h4 className="text-sm font-extrabold text-brand-950">Kalkulator Grosir (B2B)</h4>
-            <p className="text-[10px] text-ink-600 leading-relaxed mt-1">
-              Hitung perkiraan biaya dan kirim formulir kesepakatan logistik langsung ke penyuling.
-            </p>
-          </div>
+        <AmpasCalculator
+          listings={listings}
+          calcListingId={calcListingId}
+          onListingChange={setCalcListingId}
+          calcWeight={calcWeight}
+          onWeightChange={setCalcWeight}
+          selectedListing={selectedCalcListing}
+          estimatedCost={estimatedCost}
+          buildWhatsAppUrl={buildWhatsAppUrl}
+        />
 
-          <div className="space-y-4 pt-1">
-            {/* Listing selector */}
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
-                Pilih Batch Listing
-              </label>
-              <select
-                value={calcListingId}
-                onChange={(e) => setCalcListingId(e.target.value)}
-                className="w-full h-10 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 focus:border-brand-700 outline-none"
-              >
-                {listings.map((l) => {
-                  const title = l.slug
-                    .split("-")
-                    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                    .join(" ");
-                  return (
-                    <option key={l.id} value={l.id}>
-                      {title} ({l.condition === "dry" ? "Kering" : "Basah"})
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-
-            {/* Input weight */}
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
-                Kuantitas Pembelian (Kg)
-              </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  min="50"
-                  step="50"
-                  value={calcWeight}
-                  onChange={(e) => setCalcWeight(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-full h-10 rounded-xl border border-line bg-cream-50 pl-3 pr-10 text-xs font-bold text-brand-950 focus:border-brand-700 outline-none"
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-ink-600">
-                  Kg
-                </span>
-              </div>
-            </div>
-
-            <hr className="border-line/60" />
-
-            {/* Price Output display */}
-            {selectedCalcListing && (
-              <div className="space-y-2 text-xs">
-                <div className="flex justify-between items-center text-ink-600">
-                  <span>Harga per Kg:</span>
-                  <span className="font-semibold text-brand-950">
-                    Rp {selectedCalcListing.pricePerKg.amount.toLocaleString("id-ID")}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-ink-600">
-                  <span>Total Kuantitas:</span>
-                  <span className="font-semibold text-brand-950">
-                    {calcWeight.toLocaleString("id-ID")} Kg
-                  </span>
-                </div>
-                <div className="flex justify-between items-center pt-2 border-t border-line/40">
-                  <span className="font-bold text-brand-950">Estimasi Total:</span>
-                  <span className="text-base font-extrabold text-brand-950">
-                    Rp {estimatedCost.toLocaleString("id-ID")}
-                  </span>
-                </div>
-                <p className="text-[9px] leading-relaxed text-ink-600 bg-cream-50 p-2.5 rounded-xl border border-line/40 mt-1">
-                  * Biaya di atas belum termasuk logistik/truk pengiriman. Ketentuan angkutan disepakati secara langsung antara Anda dan pihak penyuling.
-                </p>
-              </div>
-            )}
-
-            <a
-              href={selectedCalcListing ? buildWhatsAppUrl(selectedCalcListing, calcWeight) : "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block"
-            >
-              <Button className="w-full h-10 rounded-xl bg-brand-950 hover:bg-brand-900 text-white-soft text-xs font-bold shadow-sm">
-                Ajukan Penawaran Grosir
-              </Button>
-            </a>
-          </div>
-        </div>
+        {/* Sidebar Filters */}
+        <AmpasFilters
+          usageFilters={usageFilters}
+          selectedUsage={selectedUsage}
+          onUsageChange={setSelectedUsage}
+        />
       </aside>
 
       {/* RIGHT CONTENT AREA: Disclaimer + Toolbar + Listings */}
       <section className="space-y-6">
         {/* Utilitarian Disclaimer Banner */}
-        <div className="rounded-2xl border border-gold-500/20 bg-gold-500/5 p-4 sm:p-5 flex gap-3.5">
-          <ShieldCheckIcon className="h-5 w-5 text-gold-600 shrink-0 mt-0.5" />
+        <div className="rounded-2xl border border-gold-500/20 bg-gold-500/5 p-4 sm:p-5 flex gap-3.5 items-start">
+          <ShieldAlert className="h-5 w-5 text-gold-600 shrink-0 mt-0.5" />
           <div>
             <h4 className="text-sm font-bold text-brand-950">Ketentuan Potensi Penggunaan Ampas</h4>
             <p className="mt-1 text-xs leading-relaxed text-ink-700">
@@ -194,7 +119,7 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
           {/* Search Location */}
           <div className="relative w-full sm:w-64">
             <label className="flex h-9 w-full items-center gap-2 rounded-xl bg-cream-50 px-3 text-xs text-ink-600 border border-line/40 focus-within:border-brand-700">
-              <SearchIcon className="h-3.5 w-3.5 text-brand-700" />
+              <Search className="h-3.5 w-3.5 text-brand-700" />
               <input
                 type="text"
                 className="w-full bg-transparent text-xs font-semibold outline-none placeholder:text-ink-600/70 text-brand-950"
@@ -212,7 +137,7 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
                 <button
                   key={cond}
                   onClick={() => setSelectedCondition(cond)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold border transition-all duration-200 ${
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold border transition-all duration-200 cursor-pointer ${
                     selectedCondition === cond
                       ? "bg-brand-900 border-brand-900 text-white-soft"
                       : "border-line bg-cream-50 text-brand-950 hover:border-brand-700"
@@ -227,7 +152,7 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
             <div className="flex border border-line rounded-lg overflow-hidden bg-cream-50">
               <button
                 onClick={() => setViewMode("list")}
-                className={`px-3 py-1.5 text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                   viewMode === "list"
                     ? "bg-brand-900 text-white-soft"
                     : "text-brand-950 hover:bg-cream-100"
@@ -237,7 +162,7 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
               </button>
               <button
                 onClick={() => setViewMode("grid")}
-                className={`px-3 py-1.5 text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                   viewMode === "grid"
                     ? "bg-brand-900 text-white-soft"
                     : "text-brand-950 hover:bg-cream-100"
@@ -249,26 +174,9 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
           </div>
         </div>
 
-        {/* Usage Filters horizontal list */}
-        <div className="flex flex-wrap gap-1.5 pt-1">
-          {usageFilters.map((u) => (
-            <button
-              key={u.id}
-              onClick={() => setSelectedUsage(u.id)}
-              className={`rounded-full px-3 py-1 text-[11px] font-semibold border transition-all duration-200 ${
-                selectedUsage === u.id
-                  ? "bg-brand-100 border-brand-300 text-brand-900"
-                  : "border-line/70 bg-white-soft text-ink-700 hover:border-brand-300"
-              }`}
-            >
-              {u.label}
-            </button>
-          ))}
-        </div>
-
         {/* Result grid/list container */}
         {filteredListings.length > 0 ? (
-          <div className={viewMode === "grid" ? "grid gap-4 sm:grid-cols-2" : "space-y-4"}>
+          <div className={viewMode === "grid" ? "grid gap-4 sm:grid-cols-2 animate-in fade-in duration-300" : "space-y-4 animate-in fade-in duration-300"}>
             {filteredListings.map((listing) => (
               <AmpasCard
                 key={listing.id}
@@ -292,27 +200,24 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
           <div className="w-full max-w-lg rounded-[32px] border border-line bg-white-soft p-6 sm:p-8 shadow-2xl space-y-6 relative animate-in zoom-in-95 duration-200">
             <button
               onClick={() => setActiveInquiryListing(null)}
-              className="absolute right-6 top-6 text-xl text-ink-600 hover:text-brand-950 font-bold"
+              className="absolute right-6 top-6 p-1 rounded-full hover:bg-cream-100 text-ink-600 hover:text-brand-950 transition-colors"
+              aria-label="Tutup modal"
             >
-              ×
+              <X className="h-5 w-5" />
             </button>
 
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gold-600 bg-gold-100/30 px-2 py-0.5 rounded-md">
-                Hubungi Penyuling B2B
+              <span className="text-[10px] font-bold text-brand-700 uppercase tracking-wider block">
+                Pertanyaan Grosir B2B
               </span>
-              <h3 className="text-xl font-bold text-brand-950 font-serif-accent italic mt-2">
-                Negosiasi Pembelian Ampas
+              <h3 className="text-xl font-bold text-brand-950 font-serif-accent italic mt-1">
+                Hubungi Penyuling
               </h3>
-              <p className="text-xs text-ink-600 leading-relaxed mt-1">
-                Kirim pesan langsung ke WhatsApp produsen untuk membuat janji pengiriman, sampel ampas, dan negosiasi harga.
-              </p>
             </div>
 
-            {/* Listing summary inside modal */}
-            <div className="rounded-2xl border border-line/60 bg-cream-50 p-4 space-y-2 text-xs">
+            <div className="rounded-2xl border border-line bg-cream-50 p-4 space-y-3 text-xs">
               <div className="flex justify-between">
-                <span className="text-ink-600">Listing:</span>
+                <span className="text-ink-600">Batch:</span>
                 <span className="font-bold text-brand-950">
                   {activeInquiryListing.slug
                     .split("-")
@@ -321,21 +226,15 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-ink-600">Asal Lokasi:</span>
-                <span className="font-bold text-brand-950">
+                <span className="text-ink-600">Kondisi:</span>
+                <span className="font-semibold text-brand-950">
+                  {activeInquiryListing.condition === "dry" ? "Kering" : "Basah"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-ink-600">Lokasi:</span>
+                <span className="font-semibold text-brand-950">
                   {activeInquiryListing.location.district}, {activeInquiryListing.location.city}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-ink-600">Stok Tersedia:</span>
-                <span className="font-bold text-brand-950">
-                  {activeInquiryListing.quantityKg.toLocaleString("id-ID")} Kg
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-ink-600">Harga Per Kg:</span>
-                <span className="font-extrabold text-brand-950">
-                  Rp {activeInquiryListing.pricePerKg.amount.toLocaleString("id-ID")}
                 </span>
               </div>
             </div>

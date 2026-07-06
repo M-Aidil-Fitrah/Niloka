@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
+import { CheckCircle } from "lucide-react";
 import type { Product, Bundle, Seller } from "@/lib/contracts";
 
 type BundleShellProps = {
@@ -128,8 +129,9 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
 
       {/* Success Banner */}
       {successMessage && (
-        <div className="max-w-xl mx-auto bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center text-xs font-bold text-emerald-800 shadow-md animate-in slide-in-from-top-4 duration-300">
-          ✓ {successMessage}
+        <div className="max-w-xl mx-auto bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center text-xs font-bold text-emerald-800 shadow-md animate-in slide-in-from-top-4 duration-300 flex items-center justify-center gap-1.5">
+          <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
+          {successMessage}
         </div>
       )}
 
