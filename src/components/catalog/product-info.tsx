@@ -3,15 +3,16 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Ticket, Copy, Check } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
 import { MapPinIcon, StarIcon } from "@/components/ui/icons";
-import type { Product, Seller } from "@/lib/contracts";
+import type { Product, Seller, Promo } from "@/lib/contracts";
 import { useCart } from "@/context/cart-context";
 
 type ProductInfoProps = {
   product: Product;
   seller: Seller;
+  promos?: Promo[];
 };
 
 const tagLabels: Record<string, string> = {
@@ -22,9 +23,10 @@ const tagLabels: Record<string, string> = {
   "limited-batch": "Limited Batch",
 };
 
-export function ProductInfo({ product, seller }: ProductInfoProps) {
+export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) {
   const { addItem } = useCart();
   const [isAdded, setIsAdded] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const handleAddToCart = () => {
     addItem({
@@ -39,6 +41,13 @@ export function ProductInfo({ product, seller }: ProductInfoProps) {
       setIsAdded(false);
     }, 2000);
   };
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
+
   return (
     <div className="flex flex-col">
       {/* Badges */}
@@ -58,9 +67,21 @@ export function ProductInfo({ product, seller }: ProductInfoProps) {
       </h1>
 
       {/* Price */}
-      <p className="mt-3 text-2xl font-bold text-brand-900">
-        {formatRupiah(product.price.amount)}
-      </p>
+      <div className="mt-3 flex items-baseline gap-3 flex-wrap">
+        <span className="text-3xl font-extrabold text-brand-900">
+          {formatRupiah(product.price.amount)}
+        </span>
+        {product.originalPrice && product.originalPrice.amount > product.price.amount && (
+          <>
+            <span className="text-sm font-semibold text-ink-600/50 line-through">
+              {formatRupiah(product.originalPrice.amount)}
+            </span>
+            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-wider">
+              Hemat {Math.round(((product.originalPrice.amount - product.price.amount) / product.originalPrice.amount) * 100)}%
+            </span>
+          </>
+        )}
+      </div>
 
       <hr className="my-6 border-line" />
 
@@ -107,6 +128,68 @@ export function ProductInfo({ product, seller }: ProductInfoProps) {
           </div>
         </div>
       </div>
+
+      {/* Vouchers section */}
+      {promos.length > 0 && (
+        <div className="mt-6 rounded-2xl border border-line bg-cream-50/50 p-4 sm:p-5 space-y-3">
+          <div className="flex items-center gap-2">
+            <Ticket className="h-4 w-4 text-brand-900" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-brand-950">
+              Voucher Toko Tersedia
+            </h3>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {promos.map((promo) => (
+              <div
+                key={promo.id}
+                className="relative flex items-center justify-between bg-white border-2 border-dashed border-emerald-600/20 rounded-2xl p-3.5 shadow-sm hover:border-emerald-600/40 transition-all duration-200"
+              >
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[10px] font-mono font-extrabold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-wider">
+                      {promo.code}
+                    </span>
+                    {promo.type === "free-shipping" && (
+                      <span className="text-[8.5px] font-bold text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 uppercase">
+                        Free Ongkir
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs font-black text-brand-950 block pt-0.5">
+                    {promo.type === "percentage"
+                      ? `Diskon ${promo.value}%`
+                      : promo.type === "fixed-amount"
+                      ? `Potongan Rp ${promo.value.toLocaleString("id-ID")}`
+                      : "Bebas Ongkos Kirim"}
+                  </span>
+                  <span className="text-[9px] text-ink-600 block leading-tight">
+                    Min. Belanja {formatRupiah(promo.minSubtotal.amount)}
+                  </span>
+                </div>
+                
+                <div className="border-l-2 border-dashed border-line/70 pl-3.5 h-12 flex items-center shrink-0">
+                  <button
+                    onClick={() => handleCopyCode(promo.code)}
+                    className="flex items-center justify-center h-8 px-3 rounded-xl bg-brand-900 hover:bg-brand-800 text-[10px] font-bold text-white-soft transition-all cursor-pointer shadow-sm hover:shadow hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    {copiedCode === promo.code ? (
+                      <span className="flex items-center gap-1 text-[10px] font-bold">
+                        <Check className="h-3 w-3 text-emerald-400" />
+                        Tersalin
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1 text-[10px] font-bold">
+                        <Copy className="h-3 w-3" />
+                        Klaim
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="mt-8 flex flex-col gap-3 sm:flex-row relative">

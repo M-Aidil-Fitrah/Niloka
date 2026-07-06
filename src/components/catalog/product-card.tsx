@@ -48,8 +48,15 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
         {promos.length > 0 && (
-          <div className="absolute bottom-3 left-3 rounded-full bg-brand-950 px-2.5 py-1 text-[10px] font-extrabold text-white-soft shadow-sm">
-            Promo {promos[0].code}
+          <div className="absolute bottom-3 left-3 rounded-full bg-emerald-800 px-2.5 py-1 text-[9px] font-extrabold text-white-soft shadow-sm flex items-center gap-1.5 border border-emerald-700/50">
+            <span className="font-mono tracking-wider">{promos[0].code}</span>
+            <span className="border-l border-white/20 pl-1.5 opacity-90">
+              {promos[0].type === "percentage"
+                ? `Diskon ${promos[0].value}%`
+                : promos[0].type === "fixed-amount"
+                ? `Diskon Rp ${(promos[0].value / 1000)}k`
+                : "Bebas Ongkir"}
+            </span>
           </div>
         )}
       </div>
@@ -61,9 +68,16 @@ export function ProductCard({ product }: ProductCardProps) {
         <p className="mt-1 text-xs text-ink-600 line-clamp-2 leading-relaxed">
           {product.shortDescription}
         </p>
-        <p className="mt-3 text-base font-bold text-brand-900">
-          {formatRupiah(product.price.amount)}
-        </p>
+        <div className="mt-3 flex items-baseline gap-2 flex-wrap">
+          <span className="text-base font-extrabold text-brand-900">
+            {formatRupiah(product.price.amount)}
+          </span>
+          {product.originalPrice && product.originalPrice.amount > product.price.amount && (
+            <span className="text-xs text-ink-600/50 line-through font-semibold">
+              {formatRupiah(product.originalPrice.amount)}
+            </span>
+          )}
+        </div>
       </div>
     </Link>
   );

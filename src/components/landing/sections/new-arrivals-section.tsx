@@ -14,6 +14,7 @@ export function NewArrivalsSection() {
       name: product.name,
       tag: "New arrival",
       price: formatRupiah(product.price.amount),
+      originalPrice: product.originalPrice ? formatRupiah(product.originalPrice.amount) : undefined,
       imageUrl: product.image.src,
       imageAlt: product.image.alt,
     }));
@@ -58,9 +59,16 @@ export function NewArrivalsSection() {
                 {product.name}
               </h3>
               <div className="mt-5 flex items-center justify-between gap-3">
-                <p className="text-sm font-bold text-ink-900">
-                  {product.price}
-                </p>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-sm font-bold text-ink-900">
+                    {product.price}
+                  </span>
+                  {product.originalPrice && (
+                    <span className="text-xs text-ink-600/50 line-through font-semibold">
+                      {product.originalPrice}
+                    </span>
+                  )}
+                </div>
                 <Button size="sm">
                   <CartIcon /> Cart
                 </Button>

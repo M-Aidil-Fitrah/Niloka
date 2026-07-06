@@ -122,6 +122,7 @@ export type Product = {
   functions: ProductFunction[];
   tags: ProductTag[];
   price: Money;
+  originalPrice?: Money;
   stock: number;
   status: ProductStatus;
   image: ImageAsset;

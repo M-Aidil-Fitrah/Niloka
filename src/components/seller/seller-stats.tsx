@@ -1,4 +1,5 @@
-import { TrendingUp, Star, ShieldCheck, Recycle, ArrowUpRight, Clock } from "lucide-react";
+import { TrendingUp, Star, ShieldCheck, Recycle, Clock } from "lucide-react";
+import { DashboardStatsCard } from "@/components/dashboard/dashboard-layout";
 
 type SellerStatsProps = {
   sellerProductsCount: number;
@@ -22,71 +23,48 @@ export function SellerStats({
           </p>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-white-soft border border-line/60 rounded-full text-[10px] font-bold text-ink-700 shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-brand-900 animate-pulse" />
           Koneksi Sinkron
         </div>
       </div>
 
       {/* Metrics Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Metric 1 */}
-        <div className="relative overflow-hidden rounded-2xl border border-line/60 bg-white-soft p-5 space-y-3 hover:shadow-md transition-all group">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] font-bold text-ink-600 uppercase tracking-wider">Total Pendapatan</span>
-            <div className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
-              <TrendingUp className="h-4 w-4" />
-            </div>
-          </div>
-          <div>
-            <span className="text-2xl font-black text-brand-950 block">{`Rp 12.450.000`}</span>
-            <span className="text-[9px] text-emerald-700 font-bold flex items-center gap-0.5 mt-1">
-              <ArrowUpRight className="h-3 w-3" />
-              +14.2% minggu ini
-            </span>
-          </div>
-        </div>
+        {/* Metric 1 - Total Pendapatan */}
+        <DashboardStatsCard
+          title="Total Pendapatan"
+          value="Rp 12.450.000"
+          icon={TrendingUp}
+          trend={{ type: "up", label: "+14.2% minggu ini" }}
+          theme="brand"
+        />
 
-        {/* Metric 2 */}
-        <div className="relative overflow-hidden rounded-2xl border border-line/60 bg-white-soft p-5 space-y-3 hover:shadow-md transition-all group">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] font-bold text-ink-600 uppercase tracking-wider">Rating Reputasi</span>
-            <div className="p-1.5 bg-gold-100/50 text-gold-600 rounded-lg">
-              <Star className="h-4 w-4 fill-gold-600" />
-            </div>
-          </div>
-          <div>
-            <span className="text-2xl font-black text-brand-950 block">4.9 / 5.0</span>
-            <span className="text-[9px] text-ink-600 mt-1 block">Dari 128 review pembeli</span>
-          </div>
-        </div>
+        {/* Metric 2 - Rating Reputasi */}
+        <DashboardStatsCard
+          title="Rating Reputasi"
+          value="4.9 / 5.0"
+          icon={Star}
+          trend={{ type: "up", label: "128 Ulasan" }}
+          theme="gold"
+        />
 
-        {/* Metric 3 */}
-        <div className="relative overflow-hidden rounded-2xl border border-line/60 bg-white-soft p-5 space-y-3 hover:shadow-md transition-all group">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] font-bold text-ink-600 uppercase tracking-wider">Validasi Paspor</span>
-            <div className="p-1.5 bg-purple-50 text-purple-700 rounded-lg">
-              <ShieldCheck className="h-4 w-4" />
-            </div>
-          </div>
-          <div>
-            <span className="text-2xl font-black text-brand-950 block">{passportDraftsCount} Valid</span>
-            <span className="text-[9px] text-purple-700 font-bold mt-1 block">Aktif Autentikasi</span>
-          </div>
-        </div>
+        {/* Metric 3 - Validasi Paspor */}
+        <DashboardStatsCard
+          title="Validasi Paspor"
+          value={`${passportDraftsCount} Valid`}
+          icon={ShieldCheck}
+          trend={{ type: "up", label: "Aktif Autentikasi" }}
+          theme="brand"
+        />
 
-        {/* Metric 4 */}
-        <div className="relative overflow-hidden rounded-2xl border border-line/60 bg-white-soft p-5 space-y-3 hover:shadow-md transition-all group">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] font-bold text-ink-600 uppercase tracking-wider">Ampas B2B Terjual</span>
-            <div className="p-1.5 bg-teal-50 text-teal-700 rounded-lg">
-              <Recycle className="h-4 w-4" />
-            </div>
-          </div>
-          <div>
-            <span className="text-2xl font-black text-brand-950 block">{sellerAmpasCount * 500 || 850} Kg</span>
-            <span className="text-[9px] text-teal-700 font-bold mt-1 block">Pemanfaatan Sirkular</span>
-          </div>
-        </div>
+        {/* Metric 4 - Ampas B2B Terjual */}
+        <DashboardStatsCard
+          title="Ampas B2B Terjual"
+          value={`${sellerAmpasCount * 500 || 850} Kg`}
+          icon={Recycle}
+          trend={{ type: "up", label: "Pemanfaatan Sirkular" }}
+          theme="cream"
+        />
       </div>
 
       {/* Grid of Chart & Recent Activities */}
@@ -134,7 +112,7 @@ export function SellerStats({
                 <span className="text-[11px] font-bold text-brand-950 block line-clamp-1">Roll On Relief (Qty 1)</span>
                 <span className="text-[9px] text-ink-600 block">Fitra Rahmad - Banda Aceh</span>
               </div>
-              <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 border border-emerald-200 rounded-full shrink-0">
+              <span className="text-[9px] font-bold text-brand-900 bg-brand-100 px-2 py-0.5 border border-brand-200 rounded-full shrink-0">
                 Selesai
               </span>
             </div>
@@ -144,7 +122,7 @@ export function SellerStats({
                 <span className="text-[11px] font-bold text-brand-950 block line-clamp-1">Inquiry: Ampas Kering (500kg)</span>
                 <span className="text-[9px] text-ink-600 block">CV Pupuk Atsiri</span>
               </div>
-              <span className="text-[9px] font-bold text-sky-700 bg-sky-100 px-2 py-0.5 border border-sky-200 rounded-full shrink-0">
+              <span className="text-[9px] font-bold text-gold-600 bg-gold-100 px-2 py-0.5 border border-gold-500/20 rounded-full shrink-0">
                 Negosiasi
               </span>
             </div>

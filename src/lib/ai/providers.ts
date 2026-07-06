@@ -29,7 +29,6 @@ type GroqResponse = {
   choices?: GroqChoice[];
 };
 
-const GEMINI_MODEL = "gemini-3.1-flash-lite";
 const AI_TIMEOUT_MS = 12000;
 
 async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
@@ -56,13 +55,14 @@ function getGroqText(data: GroqResponse): string {
 
 async function generateWithGemini(prompt: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
+  const model = process.env.GEMINI_MODEL;
 
-  if (!apiKey) {
-    throw new Error("Gemini API key is not configured.");
+  if (!apiKey || !model) {
+    throw new Error("Gemini provider is not configured.");
   }
 
   const response = await fetchWithTimeout(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
     {
       body: JSON.stringify({
         contents: [

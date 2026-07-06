@@ -539,8 +539,16 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
           promoError={promoError}
           onPayClick={handlePayClick}
           onPromoSelect={(code) => {
-            setPromoCodeInput(code);
             setPromoError("");
+            const result = validatePromoCode(code, items, shippingFee);
+            if (result.status === "valid" && result.promo) {
+              setAppliedPromo(result.promo);
+              setPromoCodeInput("");
+            } else {
+              setAppliedPromo(null);
+              setPromoError(result.message);
+              setPromoCodeInput(code);
+            }
           }}
         />
       </aside>
