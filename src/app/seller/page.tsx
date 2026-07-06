@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 import { getPublishedProducts, getActiveAmpasListings } from "@/lib/mock-queries";
 import { SellerDashboardSkeleton } from "@/components/ui/skeletons";
 
-// Lazy load SellerDashboardShell
 const SellerDashboardShell = dynamic(
   () => import("@/components/seller/seller-dashboard-shell").then((m) => m.SellerDashboardShell),
   {
@@ -18,20 +17,10 @@ export const metadata: Metadata = {
 };
 
 export default function SellerPage() {
-  // Load products and B2B listings to pass down
   const products = getPublishedProducts();
   const ampasListings = getActiveAmpasListings();
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-1">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-brand-700">Mitra Niloka</span>
-        <h1 className="text-2xl sm:text-3xl font-bold text-brand-950 font-serif-accent italic">
-          Dashboard Penjual
-        </h1>
-      </div>
-      
-      <SellerDashboardShell products={products} ampasListings={ampasListings} />
-    </div>
+    <SellerDashboardShell products={products} ampasListings={ampasListings} />
   );
 }

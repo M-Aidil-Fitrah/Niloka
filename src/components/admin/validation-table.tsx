@@ -1,5 +1,5 @@
 import type { AdminValidationItem, AdminValidationStatus, Seller } from "@/lib/contracts";
-import { Eye, ShieldAlert } from "lucide-react";
+import { Eye, ShieldAlert, CheckCircle, Clock, AlertTriangle } from "lucide-react";
 
 type ValidationTableProps = {
   items: AdminValidationItem[];
@@ -20,11 +20,11 @@ export function ValidationTable({
   onReviewClick,
 }: ValidationTableProps) {
   return (
-    <div className="rounded-2xl border border-white/10 overflow-hidden bg-brand-950/20 backdrop-blur-md">
+    <div className="rounded-[28px] border border-line/50 overflow-hidden bg-white-soft shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs min-w-[700px]">
           <thead>
-            <tr className="bg-white/5 border-b border-white/10 text-white/50 font-bold uppercase tracking-wider text-[10px]">
+            <tr className="bg-cream-100/50 border-b border-line/50 text-ink-600 font-bold uppercase tracking-wider text-[10px]">
               <th className="p-4">Tipe & Target</th>
               <th className="p-4">Diajukan Oleh</th>
               <th className="p-4">Tanggal</th>
@@ -33,33 +33,47 @@ export function ValidationTable({
               <th className="p-4 text-center">Aksi</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-line/30">
             {items.map((item) => (
-              <tr key={item.id} className="hover:bg-white/5 transition-colors">
+              <tr key={item.id} className="hover:bg-cream-50/30 transition-colors">
                 <td className="p-4">
-                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-white/40 block">
+                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-ink-600 block">
                     {targetLabels[item.target]}
                   </span>
-                  <span className="font-bold text-white/90 block mt-0.5 font-mono text-[11px]">
+                  <span className="font-extrabold text-brand-950 block mt-0.5 font-mono text-[11px]">
                     {item.targetId}
                   </span>
                 </td>
                 <td className="p-4">
-                  <span className="font-semibold text-white/80 block">
+                  <span className="font-bold text-ink-900 block">
                     {resolveSellerName(item.submittedBy)}
                   </span>
                 </td>
-                <td className="p-4 text-white/60 font-semibold">
+                <td className="p-4 text-ink-700 font-semibold">
                   {formatDate(item.submittedAt)}
                 </td>
                 <td className="p-4 max-w-xs">
-                  <p className="text-white/60 truncate leading-relaxed text-[11px]" title={item.notes}>
-                    {item.notes}
+                  <p className="text-ink-600 truncate leading-relaxed text-[11px]" title={item.notes}>
+                    {item.notes || "Tidak ada catatan."}
                   </p>
                 </td>
                 <td className="p-4">
-                  <span className={`inline-flex items-center gap-1.5 text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-full border ${statusConfig[item.status].classes}`}>
-                    <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                  <span
+                    className={`inline-flex items-center gap-1 text-[9px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border ${
+                      item.status === "approved"
+                        ? "bg-emerald-100 border-emerald-200 text-emerald-800"
+                        : item.status === "rejected"
+                        ? "bg-red-100 border-red-200 text-red-800"
+                        : "bg-amber-100 border-amber-200 text-amber-800"
+                    }`}
+                  >
+                    {item.status === "approved" ? (
+                      <CheckCircle className="h-2.5 w-2.5" />
+                    ) : item.status === "rejected" ? (
+                      <AlertTriangle className="h-2.5 w-2.5" />
+                    ) : (
+                      <Clock className="h-2.5 w-2.5" />
+                    )}
                     {statusConfig[item.status].label}
                   </span>
                 </td>
@@ -67,22 +81,22 @@ export function ValidationTable({
                   {item.status === "queued" ? (
                     <button
                       onClick={() => onReviewClick(item)}
-                      className="inline-flex items-center gap-1.5 text-[10px] font-bold text-red-400 hover:text-red-300 transition-all uppercase tracking-wider border border-red-500/30 rounded-xl px-3 py-2 hover:bg-red-500/10 active:scale-95"
+                      className="inline-flex items-center gap-1.5 text-[10px] font-bold text-brand-900 hover:text-brand-700 transition-all uppercase tracking-wider border border-brand-900/30 rounded-xl px-3 py-1.5 hover:bg-brand-900/5 active:scale-95 cursor-pointer"
                     >
                       <Eye className="h-3.5 w-3.5" />
                       Review
                     </button>
                   ) : (
-                    <span className="text-[10px] text-white/30">—</span>
+                    <span className="text-[10px] text-ink-600 font-bold">—</span>
                   )}
                 </td>
               </tr>
             ))}
             {items.length === 0 && (
               <tr>
-                <td colSpan={6} className="p-12 text-center text-white/30">
+                <td colSpan={6} className="p-12 text-center text-ink-600">
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <ShieldAlert className="h-8 w-8 text-white/20" />
+                    <ShieldAlert className="h-8 w-8 text-ink-600/40" />
                     <p className="text-xs font-semibold">Tidak ada item validasi untuk filter ini.</p>
                   </div>
                 </td>
