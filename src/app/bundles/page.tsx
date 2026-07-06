@@ -19,9 +19,5 @@ export default async function BundlesPage() {
   const bundles = getBundles();
   const sellers = getSellers();
 
-  return (
-    <div className="pt-28 pb-16">
-      <BundleShell products={products} bundles={bundles} sellers={sellers} />
-    </div>
-  );
+  return <BundleShell products={products} bundles={bundles} sellers={sellers} />;
 }
