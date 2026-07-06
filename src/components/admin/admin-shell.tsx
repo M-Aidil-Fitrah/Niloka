@@ -18,11 +18,7 @@ import {
   Settings,
   ArrowUpRight,
   Download,
-  Plus,
-  RefreshCw,
-  LogOut,
-  Server,
-  Activity
+  LogOut
 } from "lucide-react";
 
 type AdminShellProps = {
@@ -39,9 +35,9 @@ const targetLabels: Record<string, string> = {
 };
 
 const statusConfig: Record<AdminValidationStatus, { label: string; classes: string }> = {
-  queued: { label: "Menunggu", classes: "bg-amber-500/20 text-amber-600 border-amber-500/30" },
-  approved: { label: "Disetujui", classes: "bg-emerald-500/20 text-emerald-600 border-emerald-500/30" },
-  rejected: { label: "Ditolak", classes: "bg-red-500/20 text-red-600 border-red-500/30" },
+  queued: { label: "Menunggu", classes: "bg-gold-100 border-gold-500/20 text-gold-600" },
+  approved: { label: "Disetujui", classes: "bg-brand-100 border-brand-200 text-brand-900" },
+  rejected: { label: "Ditolak", classes: "bg-red-50 border-red-200 text-red-800" },
 };
 
 export function AdminShell({ validationItems, sellers }: AdminShellProps) {
@@ -98,9 +94,10 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
   };
 
   return (
-    <div className="min-h-screen bg-cream-50 text-ink-900 grid lg:grid-cols-[250px_1fr] w-full font-sans max-w-[1920px] mx-auto">
-      {/* 1. LEFT SIDEBAR */}
-      <aside className="bg-white-soft border-r border-line/60 p-6 flex flex-col justify-between shrink-0 min-h-screen">
+    <div className="h-screen w-full overflow-hidden flex bg-cream-50 text-ink-900 font-sans max-w-[1920px] mx-auto">
+      
+      {/* 1. LEFT SIDEBAR - Fixed height, scrollable menu if overflow */}
+      <aside className="w-[250px] h-full bg-white-soft border-r border-line/60 p-6 flex flex-col justify-between shrink-0 overflow-y-auto">
         <div className="space-y-8">
           {/* Logo / Brand Name */}
           <div className="flex items-center gap-2">
@@ -110,7 +107,7 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
             <span className="font-extrabold text-sm tracking-wider text-brand-950">NILOKA Admin</span>
           </div>
 
-          {/* User profile card (Darrell Steward style) */}
+          {/* User profile card */}
           <div className="bg-cream-50/50 border border-line/40 rounded-2xl p-4 flex flex-col items-center text-center">
             <div className="relative h-14 w-14 rounded-full overflow-hidden border-2 border-brand-950/20 bg-cream-100">
               <Image
@@ -174,7 +171,7 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
           </div>
           <Link
             href="/"
-            className="flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-red-700 hover:bg-red-50 hover:text-red-800 transition-all cursor-pointer"
+            className="flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-red-750 hover:bg-red-50 hover:text-red-800 transition-all cursor-pointer"
           >
             <LogOut className="h-4 w-4" />
             Kembali ke Pasar
@@ -182,16 +179,16 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
         </div>
       </aside>
 
-      {/* 2. MIDDLE CONTENT AREA & RIGHT SIDEBAR PANEL */}
-      <div className="flex flex-col lg:flex-row flex-1 min-w-0">
+      {/* 2. MAIN SCROLLABLE AREA + RIGHT SIDEBAR flex/grid container */}
+      <div className="flex-1 h-full flex overflow-hidden">
         
-        {/* MIDDLE PRIMARY CONTENT COLUMN */}
-        <main className="flex-1 p-6 sm:p-8 space-y-6 overflow-y-auto">
+        {/* MIDDLE PRIMARY CONTENT COLUMN - Scrollable */}
+        <main className="flex-1 h-full overflow-y-auto p-6 sm:p-8 space-y-6">
           {/* Topbar */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h2 className="text-xl font-bold text-brand-950 font-serif-accent italic">Hello Darrell Steward 👋</h2>
-              <p className="text-xs text-ink-600 mt-0.5">Selamat datang kembali. Kelola pengajuan antrean validasi hari ini.</p>
+              <p className="text-xs text-ink-600 mt-0.5">Kelola pengajuan antrean validasi hari ini.</p>
             </div>
             
             {/* Action Bar (Search & Icons) */}
@@ -219,7 +216,7 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
             </div>
           </div>
 
-          {/* Banner Card ("My Card" widget style) */}
+          {/* Banner Card */}
           <div className="relative overflow-hidden rounded-[28px] bg-brand-950 text-white-soft p-6 shadow-xl flex flex-col justify-between min-h-[160px]">
             <div className="absolute right-0 top-0 opacity-10 translate-x-12 -translate-y-12">
               <svg width="400" height="400" viewBox="0 0 100 100" fill="currentColor">
@@ -257,7 +254,7 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
             </div>
           </div>
 
-          {/* Stats Records Grid ("Financial Record" style) */}
+          {/* Stats Records Grid */}
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-ink-600">Catatan Aktivitas Moderasi</h3>
@@ -294,52 +291,9 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
           </div>
         </main>
 
-        {/* RIGHT SIDEBAR PANEL */}
-        <aside className="w-full lg:w-80 bg-white-soft border-l border-line/60 p-6 sm:p-8 space-y-8 shrink-0">
-          
-          {/* Verifier Node Info Card (Replaces Credit Card) */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-extrabold uppercase tracking-wider text-ink-600">Otoritas Validasi Node</h4>
-            
-            {/* Verifier Node Card */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-950 via-brand-900 to-brand-850 text-white-soft p-5 shadow-lg flex flex-col justify-between h-44">
-              <div className="flex justify-between items-start">
-                <div>
-                  <span className="text-[8px] font-bold text-brand-200 uppercase tracking-widest block">Passport Verification Node</span>
-                  <span className="text-sm font-serif-accent italic font-bold mt-0.5 block">Verification Authority</span>
-                </div>
-                <div className="h-6 w-9 rounded bg-gold-500/20 border border-gold-500/30 flex items-center justify-center text-[9px] font-black text-gold-100">
-                  NODE-A
-                </div>
-              </div>
-
-              {/* Node Details */}
-              <div className="space-y-4">
-                <div className="flex gap-2">
-                  <div className="p-1 bg-white-soft/10 text-white rounded">
-                    <Server className="h-3.5 w-3.5" />
-                  </div>
-                  <div>
-                    <span className="text-[8px] text-brand-200 block uppercase tracking-wider">Node Address</span>
-                    <span className="text-[10px] font-mono text-white block">0x72832323...4d2a</span>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-end">
-                  <div>
-                    <span className="text-[8px] font-bold text-brand-200 block uppercase tracking-wider">Signature Level</span>
-                    <span className="text-xs font-bold tracking-wider font-mono text-white block mt-0.5">Tier 3 (Master)</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Activity className="h-3 w-3 text-emerald-400" />
-                    <span className="text-[10px] font-bold text-emerald-400 block">Online</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Transactions / Recent Activity list */}
+        {/* 3. RIGHT SIDEBAR PANEL - Fixed height, scrollable internally */}
+        <aside className="w-80 h-full bg-white-soft border-l border-line/60 p-6 sm:p-8 space-y-6 shrink-0 overflow-y-auto hidden xl:block">
+          {/* Recent Activity list */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h4 className="text-xs font-extrabold uppercase tracking-wider text-ink-600">Log Aktivitas Terbaru</h4>
@@ -348,11 +302,11 @@ export function AdminShell({ validationItems, sellers }: AdminShellProps) {
 
             <div className="space-y-3">
               {[
-                { name: "Jane Cooper", detail: "Menyetujui Seller Baru", price: "+1 Seller", date: "08 Sep, 2026", color: "text-emerald-700 bg-emerald-100" },
-                { name: "Leslie Alexander", detail: "Menolak Produk Baru", price: "-1 Produk", date: "08 Sep, 2026", color: "text-red-700 bg-red-100" },
-                { name: "Darrell Steward", detail: "Memproses Nilam Passport", price: "+1 Passport", date: "08 Sep, 2026", color: "text-emerald-700 bg-emerald-100" },
-                { name: "Robert Fox", detail: "Menyetujui Batch Ampas B2B", price: "+1 Ampas", date: "08 Sep, 2026", color: "text-emerald-700 bg-emerald-100" },
-                { name: "Jacob Jones", detail: "Menyetujui Registrasi", price: "+1 Seller", date: "07 Sep, 2026", color: "text-emerald-700 bg-emerald-100" },
+                { name: "Jane Cooper", detail: "Menyetujui Seller Baru", price: "+1 Seller", date: "08 Sep, 2026", color: "text-brand-900 bg-brand-100" },
+                { name: "Leslie Alexander", detail: "Menolak Produk Baru", price: "-1 Produk", date: "08 Sep, 2026", color: "text-red-800 bg-red-100" },
+                { name: "Darrell Steward", detail: "Memproses Nilam Passport", price: "+1 Passport", date: "08 Sep, 2026", color: "text-brand-900 bg-brand-100" },
+                { name: "Robert Fox", detail: "Menyetujui Batch Ampas B2B", price: "+1 Ampas", date: "08 Sep, 2026", color: "text-brand-900 bg-brand-100" },
+                { name: "Jacob Jones", detail: "Menyetujui Registrasi", price: "+1 Seller", date: "07 Sep, 2026", color: "text-brand-900 bg-brand-100" },
               ].map((act, idx) => (
                 <div key={idx} className="flex justify-between items-center gap-3 p-3 bg-cream-50/40 hover:bg-cream-50/70 border border-line/30 rounded-2xl transition-all">
                   <div className="space-y-0.5">

@@ -6,7 +6,7 @@ type SellerLayoutProps = {
 
 export default function SellerLayout({ children }: SellerLayoutProps) {
   return (
-    <div className="min-h-screen bg-cream-50 text-ink-900 font-sans flex flex-col antialiased">
+    <div className="h-screen w-full overflow-hidden bg-cream-50 text-ink-900 font-sans flex flex-col antialiased">
       {children}
     </div>
   );

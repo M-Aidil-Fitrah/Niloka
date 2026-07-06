@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SellerStats } from "./seller-stats";
 import { ProductManagement } from "./product-management";
 import { AmpasManagement } from "./ampas-management";
 import { PassportManagement } from "./passport-management";
-import { PromoManagement } from "./promo-management";
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -18,16 +17,14 @@ import {
   Settings,
   ArrowUpRight,
   Download,
-  LogOut,
-  MapPin,
-  TicketPercent,
+  LogOut
 } from "lucide-react";
 import type { Product, AmpasListing, Promo } from "@/lib/contracts";
 
 type SellerDashboardShellProps = {
   products: Product[];
   ampasListings: AmpasListing[];
-  promos: Promo[];
+  promos?: Promo[];
 };
 
 type PassportDraft = {
@@ -39,19 +36,15 @@ type PassportDraft = {
   status: "draft" | "submitted" | "verified";
 };
 
-export function SellerDashboardShell({ products, ampasListings, promos }: SellerDashboardShellProps) {
+export function SellerDashboardShell({ products, ampasListings, promos = [] }: SellerDashboardShellProps) {
   const sellerId = "seller-aceh-aroma";
 
   // Active Menu Tab
-  const [activeTab, setActiveTab] = useState<"overview" | "products" | "ampas" | "passport" | "promos">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "products" | "ampas" | "passport">("overview");
 
   // Local state for listings to simulate operations
-  const [sellerProducts, setSellerProducts] = useState<Product[]>(() =>
-    products.filter((product) => product.sellerId === sellerId)
-  );
-  const [sellerAmpas, setSellerAmpas] = useState<AmpasListing[]>(() =>
-    ampasListings.filter((listing) => listing.sellerId === sellerId)
-  );
+  const [sellerProducts, setSellerProducts] = useState<Product[]>([]);
+  const [sellerAmpas, setSellerAmpas] = useState<AmpasListing[]>([]);
 
   // Passport Drafts state
   const [passportDrafts, setPassportDrafts] = useState<PassportDraft[]>([
@@ -80,6 +73,14 @@ export function SellerDashboardShell({ products, ampasListings, promos }: Seller
       status: "draft",
     },
   ]);
+
+  // Seed local states on mount
+  useEffect(() => {
+    const filtered = products.filter((p) => p.sellerId === sellerId);
+    const filteredAmpas = ampasListings.filter((a) => a.sellerId === sellerId);
+    setSellerProducts(filtered);
+    setSellerAmpas(filteredAmpas);
+  }, [products, ampasListings]);
 
   // Add mock product handler
   const handleAddProduct = (prod: { name: string; price: number; stock: number; category: string }) => {
@@ -168,10 +169,10 @@ export function SellerDashboardShell({ products, ampasListings, promos }: Seller
   };
 
   return (
-    <div className="min-h-screen bg-cream-50 text-ink-900 grid lg:grid-cols-[250px_1fr] w-full font-sans max-w-[1920px] mx-auto">
+    <div className="h-screen w-full overflow-hidden flex bg-cream-50 text-ink-900 grid lg:grid-cols-[250px_1fr] w-full font-sans max-w-[1920px] mx-auto">
       
-      {/* 1. LEFT SIDEBAR */}
-      <aside className="bg-white-soft border-r border-line/60 p-6 flex flex-col justify-between shrink-0 min-h-screen">
+      {/* 1. LEFT SIDEBAR - Fixed height, scrollable menu if overflow */}
+      <aside className="w-[250px] h-full bg-white-soft border-r border-line/60 p-6 flex flex-col justify-between shrink-0 overflow-y-auto">
         <div className="space-y-8">
           {/* Logo / Brand Name */}
           <div className="flex items-center gap-2">
@@ -181,7 +182,7 @@ export function SellerDashboardShell({ products, ampasListings, promos }: Seller
             <span className="font-extrabold text-sm tracking-wider text-brand-950">NILOKA Seller</span>
           </div>
 
-          {/* User profile card (Darrell Steward style) */}
+          {/* User profile card */}
           <div className="bg-cream-50/50 border border-line/40 rounded-2xl p-4 flex flex-col items-center text-center">
             <div className="relative h-14 w-14 rounded-full overflow-hidden border-2 border-brand-950/20 bg-cream-100">
               <Image
@@ -234,15 +235,6 @@ export function SellerDashboardShell({ products, ampasListings, promos }: Seller
               <ShieldCheck className="h-4 w-4" />
               Nilam Passport
             </button>
-            <button
-              onClick={() => setActiveTab("promos")}
-              className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "promos" ? "bg-brand-950 text-white-soft shadow-sm" : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-              }`}
-            >
-              <TicketPercent className="h-4 w-4" />
-              Promo Toko
-            </button>
           </nav>
         </div>
 
@@ -262,11 +254,11 @@ export function SellerDashboardShell({ products, ampasListings, promos }: Seller
         </div>
       </aside>
 
-      {/* 2. MIDDLE CONTENT AREA & RIGHT SIDEBAR PANEL */}
-      <div className="flex flex-col lg:flex-row flex-1 min-w-0">
+      {/* 2. MAIN SCROLLABLE AREA + RIGHT SIDEBAR flex/grid container */}
+      <div className="flex-1 h-full flex overflow-hidden">
         
-        {/* MIDDLE PRIMARY CONTENT COLUMN */}
-        <main className="flex-1 p-6 sm:p-8 space-y-6 overflow-y-auto">
+        {/* MIDDLE PRIMARY CONTENT COLUMN - Scrollable */}
+        <main className="flex-1 h-full overflow-y-auto p-6 sm:p-8 space-y-6">
           {/* Topbar */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -289,7 +281,7 @@ export function SellerDashboardShell({ products, ampasListings, promos }: Seller
             </div>
           </div>
 
-          {/* Banner Card ("My Card" widget style) */}
+          {/* Banner Card */}
           <div className="relative overflow-hidden rounded-[28px] bg-brand-950 text-white-soft p-6 shadow-xl flex flex-col justify-between min-h-[160px]">
             <div className="absolute right-0 top-0 opacity-10 translate-x-12 -translate-y-12">
               <svg width="400" height="400" viewBox="0 0 100 100" fill="currentColor">
@@ -359,61 +351,11 @@ export function SellerDashboardShell({ products, ampasListings, promos }: Seller
                 onSavePassportDraft={handleSavePassportDraft}
               />
             )}
-
-            {activeTab === "promos" && (
-              <PromoManagement
-                sellerProducts={sellerProducts}
-                initialPromos={promos}
-              />
-            )}
           </div>
         </main>
 
-        {/* RIGHT SIDEBAR PANEL */}
-        <aside className="w-full lg:w-80 bg-white-soft border-l border-line/60 p-6 sm:p-8 space-y-8 shrink-0">
-          
-          {/* Partnership Profile (Replaces Credit Card) */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-extrabold uppercase tracking-wider text-ink-600">Profil Kemitraan Atsiri</h4>
-            
-            {/* Partnership Card */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-950 via-brand-900 to-brand-850 text-white-soft p-5 shadow-lg flex flex-col justify-between h-44">
-              <div className="flex justify-between items-start">
-                <div>
-                  <span className="text-[8px] font-bold text-brand-200 uppercase tracking-widest block">Distillation Partner</span>
-                  <span className="text-sm font-serif-accent italic font-bold mt-0.5 block">Aceh Aroma House</span>
-                </div>
-                <div className="h-6 w-9 rounded bg-gold-500/20 border border-gold-500/30 flex items-center justify-center text-[9px] font-black text-gold-100">
-                  PLATINUM
-                </div>
-              </div>
-
-              {/* Partner Details */}
-              <div className="space-y-4">
-                <div className="flex gap-2">
-                  <div className="p-1 bg-white-soft/10 text-white rounded">
-                    <MapPin className="h-3.5 w-3.5" />
-                  </div>
-                  <div>
-                    <span className="text-[8px] text-brand-200 block uppercase tracking-wider">Lokasi Suling</span>
-                    <span className="text-[10px] font-bold text-white block">Kec. Tapaktuan, Aceh Selatan</span>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-end">
-                  <div>
-                    <span className="text-[8px] font-bold text-brand-200 block uppercase tracking-wider">Kapasitas Tangki</span>
-                    <span className="text-xs font-bold tracking-wider font-mono text-white block mt-0.5">500 Kg / Batch</span>
-                  </div>
-                  <div>
-                    <span className="text-[8px] font-bold text-brand-200 block uppercase tracking-wider">Sertifikat</span>
-                    <span className="text-[10px] font-bold text-emerald-400 block mt-0.5">Verified</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+        {/* 3. RIGHT SIDEBAR PANEL - Fixed height, scrollable internally */}
+        <aside className="w-80 h-full bg-white-soft border-l border-line/60 p-6 sm:p-8 space-y-6 shrink-0 overflow-y-auto hidden xl:block">
           {/* Recent Orders / Inquiries list */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -423,10 +365,10 @@ export function SellerDashboardShell({ products, ampasListings, promos }: Seller
 
             <div className="space-y-3">
               {[
-                { name: "Fitra Rahmad", detail: "Roll On Relief (Qty 1)", price: "Rp 75.000", date: "08 Sep, 2026", color: "text-emerald-700 bg-emerald-100" },
+                { name: "Fitra Rahmad", detail: "Roll On Relief (Qty 1)", price: "Rp 75.000", date: "08 Sep, 2026", color: "text-brand-900 bg-brand-100" },
                 { name: "CV Pupuk Atsiri", detail: "Inquiry: Ampas Kering (500kg)", price: "Negosiasi", date: "08 Sep, 2026", color: "text-sky-700 bg-sky-100" },
-                { name: "Andi Saputra", detail: "Essential Oil Aceh (Qty 2)", price: "Rp 390.000", date: "07 Sep, 2026", color: "text-emerald-700 bg-emerald-100" },
-                { name: "Siti Rahma", detail: "Sabun Nilam Artisan (Qty 5)", price: "Rp 175.000", date: "06 Sep, 2026", color: "text-emerald-700 bg-emerald-100" },
+                { name: "Andi Saputra", detail: "Essential Oil Aceh (Qty 2)", price: "Rp 390.000", date: "07 Sep, 2026", color: "text-brand-900 bg-brand-100" },
+                { name: "Siti Rahma", detail: "Sabun Nilam Artisan (Qty 5)", price: "Rp 175.000", date: "06 Sep, 2026", color: "text-brand-900 bg-brand-100" },
               ].map((act, idx) => (
                 <div key={idx} className="flex justify-between items-center gap-3 p-3 bg-cream-50/40 hover:bg-cream-50/70 border border-line/30 rounded-2xl transition-all">
                   <div className="space-y-0.5">

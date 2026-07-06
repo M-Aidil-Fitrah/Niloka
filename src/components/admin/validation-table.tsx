@@ -59,13 +59,7 @@ export function ValidationTable({
                 </td>
                 <td className="p-4">
                   <span
-                    className={`inline-flex items-center gap-1 text-[9px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border ${
-                      item.status === "approved"
-                        ? "bg-emerald-100 border-emerald-200 text-emerald-800"
-                        : item.status === "rejected"
-                        ? "bg-red-100 border-red-200 text-red-800"
-                        : "bg-amber-100 border-amber-200 text-amber-800"
-                    }`}
+                    className={`inline-flex items-center gap-1 text-[9px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border ${statusConfig[item.status].classes}`}
                   >
                     {item.status === "approved" ? (
                       <CheckCircle className="h-2.5 w-2.5" />
