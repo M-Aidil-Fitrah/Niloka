@@ -298,3 +298,36 @@ export function AdminShellSkeleton() {
     </div>
   );
 }
+
+export function BundleSkeleton() {
+  return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12 animate-in fade-in duration-300">
+      {/* Header */}
+      <div className="text-center max-w-3xl mx-auto space-y-4">
+        <div className="mx-auto h-5 w-32 rounded-full bg-cream-100/80 animate-pulse" />
+        <div className="mx-auto h-9 w-64 rounded-xl bg-cream-100/80 animate-pulse" />
+        <div className="mx-auto h-4 w-full rounded bg-cream-100/60 animate-pulse" />
+      </div>
+
+      {/* Recommended Bundles Cards */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="rounded-3xl border border-line bg-white-soft p-5 space-y-4">
+            <div className="flex justify-between items-start">
+              <div className="space-y-2 flex-1">
+                <div className="h-3.5 w-20 rounded bg-cream-100/80 animate-pulse" />
+                <div className="h-5 w-3/4 rounded bg-cream-100/80 animate-pulse" />
+              </div>
+              <div className="h-7 w-16 rounded bg-cream-100/80 animate-pulse" />
+            </div>
+            <div className="h-14 w-full rounded-xl bg-cream-100/40 animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-10 w-full rounded-xl bg-cream-100/40 animate-pulse" />
+              <div className="h-10 w-full rounded-xl bg-cream-100/40 animate-pulse" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

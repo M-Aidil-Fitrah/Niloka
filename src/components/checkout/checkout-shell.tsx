@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
 import { ShieldCheckIcon } from "@/components/ui/icons";
-import type { Product, AmpasListing } from "@/lib/contracts";
+import type { Product, AmpasListing, CartItem } from "@/lib/contracts";
 
 type CheckoutShellProps = {
   products: Product[];
@@ -31,6 +31,26 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
   const [payError, setPayError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [generatedOrderId, setGeneratedOrderId] = useState("");
+
+  // Promo Coupon State
+  const [promoCodeInput, setPromoCodeInput] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<{
+    code: string;
+    type: "percentage" | "fixed-amount" | "free-shipping";
+    value: number;
+    label: string;
+  } | null>(null);
+  const [promoError, setPromoError] = useState("");
+
+  // Persistent Snapshots for Invoice Display (after cart is cleared)
+  const [invoiceItems, setInvoiceItems] = useState<
+    (CartItem & { name: string; imageSrc: string; imageAlt: string })[]
+  >([]);
+  const [invoiceSubtotal, setInvoiceSubtotal] = useState(0);
+  const [invoiceShippingFee, setInvoiceShippingFee] = useState(0);
+  const [invoicePlatformFee, setInvoicePlatformFee] = useState(0);
+  const [invoiceDiscount, setInvoiceDiscount] = useState(0);
+  const [invoiceGrandTotal, setInvoiceGrandTotal] = useState(0);
 
   // Courier Rates mapping
   const courierRates: Record<string, number> = {
@@ -77,7 +97,20 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
   const subtotal = resolvedItems.reduce((acc, item) => acc + item.unitPrice.amount * item.quantity, 0);
   const platformFee = subtotal > 0 ? 2000 : 0;
   const shippingFee = subtotal > 0 ? courierRates[courier] : 0;
-  const grandTotal = subtotal + platformFee + shippingFee;
+
+  // Coupon calculations
+  let discountAmount = 0;
+  if (appliedPromo) {
+    if (appliedPromo.type === "percentage") {
+      discountAmount = Math.round(subtotal * (appliedPromo.value / 100));
+    } else if (appliedPromo.type === "fixed-amount") {
+      discountAmount = Math.min(appliedPromo.value, subtotal);
+    } else if (appliedPromo.type === "free-shipping") {
+      discountAmount = shippingFee;
+    }
+  }
+
+  const grandTotal = Math.max(0, subtotal + platformFee + shippingFee - discountAmount);
 
   // Validation
   const isFormValid = receiverName && phone && address && city && province;
@@ -85,6 +118,41 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
   const handlePayClick = () => {
     if (!isFormValid) return;
     setIsSnapOpen(true);
+  };
+
+  const handleApplyPromo = () => {
+    setPromoError("");
+    const code = promoCodeInput.trim().toUpperCase();
+    if (code === "ATSIRI10") {
+      setAppliedPromo({
+        code,
+        type: "percentage",
+        value: 10,
+        label: "Diskon 10% Atsiri",
+      });
+    } else if (code === "COOP15K") {
+      setAppliedPromo({
+        code,
+        type: "fixed-amount",
+        value: 15000,
+        label: "Potongan Koperasi Rp 15.000",
+      });
+    } else if (code === "NILAMFREE") {
+      setAppliedPromo({
+        code,
+        type: "free-shipping",
+        value: 0,
+        label: "Gratis Ongkos Kirim",
+      });
+    } else if (code) {
+      setPromoError("Kode kupon tidak valid.");
+    }
+    setPromoCodeInput("");
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setPromoError("");
   };
 
   const handleSimulateSuccess = () => {
@@ -95,7 +163,15 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
       setIsSnapOpen(false);
       setIsSuccess(true);
       setGeneratedOrderId(`NLK-TX-${Math.floor(100000 + Math.random() * 900000)}`);
-      // Keep items in a local state for the invoice before clearing cart
+      
+      // Snapshot states for receipt display
+      setInvoiceSubtotal(subtotal);
+      setInvoiceShippingFee(shippingFee);
+      setInvoicePlatformFee(platformFee);
+      setInvoiceDiscount(discountAmount);
+      setInvoiceGrandTotal(grandTotal);
+      setInvoiceItems(resolvedItems);
+
       clearCart();
     }, 1500);
   };
@@ -167,8 +243,26 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
             </div>
           </div>
 
+          {/* Purchased Items List */}
+          <div className="space-y-3">
+            <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-widest">Rincian Barang</span>
+            <div className="divide-y divide-line/60 border border-line rounded-2xl overflow-hidden bg-white px-4">
+              {invoiceItems.map((item) => (
+                <div key={item.id} className="py-3 flex justify-between items-center text-xs">
+                  <div>
+                    <span className="font-bold text-brand-950">{item.name}</span>
+                    <span className="text-[10px] text-ink-600 block">Qty: {item.quantity} x Rp {item.unitPrice.amount.toLocaleString("id-ID")}</span>
+                  </div>
+                  <span className="font-bold text-brand-950">
+                    Rp {(item.unitPrice.amount * item.quantity).toLocaleString("id-ID")}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Buyer Details */}
-          <div className="grid gap-4 sm:grid-cols-2 text-xs">
+          <div className="grid gap-4 sm:grid-cols-2 text-xs pt-2">
             <div>
               <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-widest">Penerima</span>
               <span className="font-bold text-brand-950 block mt-0.5">{receiverName}</span>
@@ -201,25 +295,33 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
             <div className="flex justify-between items-center text-ink-600">
               <span>Subtotal Pembelian:</span>
               <span className="font-bold text-brand-950">
-                Rp {subtotal.toLocaleString("id-ID")}
+                Rp {invoiceSubtotal.toLocaleString("id-ID")}
               </span>
             </div>
             <div className="flex justify-between items-center text-ink-600">
               <span>Biaya Platform:</span>
               <span className="font-semibold text-brand-950">
-                Rp {platformFee.toLocaleString("id-ID")}
+                Rp {invoicePlatformFee.toLocaleString("id-ID")}
               </span>
             </div>
             <div className="flex justify-between items-center text-ink-600">
               <span>Biaya Pengiriman:</span>
               <span className="font-semibold text-brand-950">
-                Rp {shippingFee.toLocaleString("id-ID")}
+                Rp {invoiceShippingFee.toLocaleString("id-ID")}
               </span>
             </div>
+            {invoiceDiscount > 0 && (
+              <div className="flex justify-between items-center text-emerald-700 font-bold">
+                <span>Diskon Promo:</span>
+                <span>
+                  -Rp {invoiceDiscount.toLocaleString("id-ID")}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between items-center pt-3 border-t border-line/60">
               <span className="font-bold text-brand-950 text-sm">Grand Total:</span>
               <span className="text-lg font-extrabold text-brand-950">
-                Rp {grandTotal.toLocaleString("id-ID")}
+                Rp {invoiceGrandTotal.toLocaleString("id-ID")}
               </span>
             </div>
           </div>
@@ -437,11 +539,11 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
       </div>
 
       {/* RIGHT COLUMN: Sticky Summary checkout card */}
-      <aside className="space-y-6 sticky top-28">
-        <div className="rounded-[32px] border border-line bg-white-soft p-5 sm:p-6 shadow-sm space-y-4">
+      <aside className="space-y-6 lg:sticky lg:top-28">
+        <div className="rounded-[32px] border border-line bg-white-soft p-5 sm:p-6 shadow-sm space-y-5">
           <h3 className="text-base font-extrabold text-brand-950">Ringkasan Pesanan</h3>
 
-          <div className="space-y-2.5 text-xs pt-1">
+          <div className="space-y-2.5 text-xs pt-1 border-b border-line/60 pb-3">
             <div className="flex justify-between items-center text-ink-600">
               <span>Subtotal Produk:</span>
               <span className="font-semibold text-brand-950">
@@ -460,13 +562,91 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
                 Rp {shippingFee.toLocaleString("id-ID")}
               </span>
             </div>
-            <hr className="border-line/60" />
-            <div className="flex justify-between items-center pt-2">
-              <span className="font-bold text-brand-950">Total Pembayaran:</span>
-              <span className="text-base font-extrabold text-brand-950">
-                Rp {grandTotal.toLocaleString("id-ID")}
-              </span>
-            </div>
+            {discountAmount > 0 && (
+              <div className="flex justify-between items-center text-emerald-700 font-bold">
+                <span>Diskon Promo:</span>
+                <span>
+                  -Rp {discountAmount.toLocaleString("id-ID")}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Coupon Entry Block */}
+          <div className="space-y-2 text-xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">Voucher Toko / Kode Promo</span>
+            
+            {appliedPromo ? (
+              <div className="flex justify-between items-center bg-emerald-50 border border-emerald-200 rounded-xl p-2.5">
+                <div>
+                  <span className="text-[10px] font-bold text-emerald-800 block">{appliedPromo.label}</span>
+                  <span className="text-[9px] font-extrabold text-emerald-600 uppercase font-mono">{appliedPromo.code}</span>
+                </div>
+                <button
+                  onClick={handleRemovePromo}
+                  type="button"
+                  className="text-xs font-bold text-red-600 hover:text-red-500 px-2 py-1 transition-colors"
+                >
+                  Hapus
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    className="flex-1 h-9 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 uppercase outline-none focus:border-brand-700"
+                    placeholder="Contoh: ATSIRI10"
+                    value={promoCodeInput}
+                    onChange={(e) => setPromoCodeInput(e.target.value)}
+                  />
+                  <button
+                    onClick={handleApplyPromo}
+                    type="button"
+                    className="h-9 px-4 rounded-xl bg-brand-900 hover:bg-brand-850 text-white-soft text-xs font-bold"
+                  >
+                    Pakai
+                  </button>
+                </div>
+                
+                {promoError && (
+                  <p className="text-[10px] font-bold text-red-600">{promoError}</p>
+                )}
+
+                {/* Suggestions List */}
+                <div className="bg-cream-50/50 border border-line/60 rounded-xl p-2.5 space-y-1.5">
+                  <span className="text-[9px] font-bold text-ink-600 uppercase tracking-wider block">Kupon Tersedia:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { code: "ATSIRI10", desc: "Potongan 10%" },
+                      { code: "COOP15K", desc: "Potongan Rp15rb" },
+                      { code: "NILAMFREE", desc: "Gratis Ongkir" },
+                    ].map((k) => (
+                      <button
+                        key={k.code}
+                        onClick={() => {
+                          setPromoCodeInput(k.code);
+                          setPromoError("");
+                        }}
+                        type="button"
+                        className="text-[9px] font-bold bg-white hover:bg-cream-100 border border-line/80 px-2 py-1 rounded-lg text-brand-950 font-mono"
+                      >
+                        {k.code} ({k.desc})
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <hr className="border-line/60" />
+
+          <div className="flex justify-between items-center">
+            <span className="font-bold text-brand-950">Total Pembayaran:</span>
+            <span className="text-base font-extrabold text-brand-950">
+              Rp {grandTotal.toLocaleString("id-ID")}
+            </span>
           </div>
 
           <Button

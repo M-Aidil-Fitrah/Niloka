@@ -20,6 +20,10 @@ const navItems: NavItem[] = [
     href: "/products",
   },
   {
+    label: "Bundles",
+    href: "/bundles",
+  },
+  {
     label: "AromaMatch AI",
     href: "/aromamatch",
   },
