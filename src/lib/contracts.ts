@@ -77,6 +77,7 @@ export type ReviewTag =
   | "repeat-order";
 
 export type PromoType = "percentage" | "fixed-amount" | "free-shipping";
+export type PromoStatus = "active" | "scheduled" | "expired" | "disabled";
 export type BundleType = "single-seller" | "cross-seller";
 
 export type CartItemKind = "product" | "ampas-listing";
@@ -176,11 +177,35 @@ export type Promo = {
   id: PromoId;
   sellerId: SellerId;
   title: string;
+  code: string;
+  status: PromoStatus;
   type: PromoType;
   value: number;
   startsAt: string;
   endsAt: string;
+  minSubtotal: Money;
+  usageLimit: number;
+  usedCount: number;
   productIds: ProductId[];
+};
+
+export type PromoValidationStatus =
+  | "valid"
+  | "empty"
+  | "not-found"
+  | "scheduled"
+  | "expired"
+  | "disabled"
+  | "usage-limit-reached"
+  | "minimum-subtotal-not-met"
+  | "no-eligible-items";
+
+export type PromoValidationResult = {
+  status: PromoValidationStatus;
+  promo: Promo | null;
+  discountAmount: number;
+  eligibleSubtotal: number;
+  message: string;
 };
 
 export type Bundle = {
@@ -242,4 +267,65 @@ export type AdminValidationItem = {
   submittedBy: SellerId;
   submittedAt: string;
   notes: string;
+};
+
+export type AiProvider = "gemini" | "groq" | "mock";
+
+export type ChatRole = "user" | "assistant";
+
+export type ChatMessage = {
+  id: string;
+  role: ChatRole;
+  content: string;
+};
+
+export type ChatProductSuggestion = {
+  productId: ProductId;
+  name: string;
+  price: Money;
+  href: string;
+  reason: string;
+};
+
+export type ChatRequest = {
+  messages: ChatMessage[];
+};
+
+export type ChatResponse = {
+  answerMarkdown: string;
+  providerUsed: AiProvider;
+  suggestions: ChatProductSuggestion[];
+  refused: boolean;
+};
+
+export type ProductDescriptionTone = "premium" | "educational" | "concise";
+
+export type ProductDescriptionRequest = {
+  productName: string;
+  form: ProductForm;
+  origin: string;
+  aromaProfile: string;
+  functions: ProductFunction[];
+  safetyNotes: string;
+  targetAudience: string;
+  tone: ProductDescriptionTone;
+};
+
+export type PassportDraftSuggestion = {
+  origin: string;
+  aromaProfile: string[];
+  functions: ProductFunction[];
+  usage: string;
+  safetyNotes: string;
+};
+
+export type ProductDescriptionResponse = {
+  providerUsed: AiProvider;
+  shortDescription: string;
+  fullDescriptionMarkdown: string;
+  suggestedTags: ProductTag[];
+  suggestedFunctions: ProductFunction[];
+  passportDraftSuggestion: PassportDraftSuggestion;
+  safetyNotice: string;
+  missingFields: string[];
 };

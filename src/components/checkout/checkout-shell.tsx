@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
@@ -9,8 +8,9 @@ import { CartItemsList } from "./cart-items-list";
 import { ShippingForm } from "./shipping-form";
 import { OrderSummaryCard } from "./order-summary-card";
 import { PaymentSnapModal } from "./payment-snap-modal";
-import { ShieldCheck, ShoppingCart, Calendar, MapPin, Receipt, Trash2, ArrowRight, Printer, RefreshCw } from "lucide-react";
-import type { Product, AmpasListing, CartItem } from "@/lib/contracts";
+import { ShieldCheck, ShoppingCart, Calendar, Receipt, Trash2, Printer, RefreshCw } from "lucide-react";
+import type { Product, AmpasListing, CartItem, Promo } from "@/lib/contracts";
+import { getPublicPromoSuggestions, validatePromoCode } from "@/lib/mock-queries";
 
 type CheckoutShellProps = {
   products: Product[];
@@ -63,29 +63,22 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
 
   // Promo Coupon State
   const [promoCodeInput, setPromoCodeInput] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState<{
-    code: string;
-    type: "percentage" | "fixed-amount" | "free-shipping";
-    value: number;
-    label: string;
-  } | null>(null);
+  const [appliedPromo, setAppliedPromo] = useState<Promo | null>(null);
   const [promoError, setPromoError] = useState("");
+  const availablePromos = getPublicPromoSuggestions();
 
   // Order History State
   const [ordersHistory, setOrdersHistory] = useState<OrderHistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
 
-  // Load Order History from localStorage
-  useEffect(() => {
+  const loadOrderHistory = () => {
     try {
       const stored = localStorage.getItem("niloka_orders");
-      if (stored) {
-        setOrdersHistory(JSON.parse(stored));
-      }
+      setOrdersHistory(stored ? JSON.parse(stored) : []);
     } catch (e) {
       console.error("Failed to load order history", e);
     }
-  }, [isSuccess]);
+  };
 
   // Persistent Snapshots for Invoice Display (after cart is cleared)
   const [invoiceItems, setInvoiceItems] = useState<
@@ -143,17 +136,11 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
   const platformFee = subtotal > 0 ? 2000 : 0;
   const shippingFee = subtotal > 0 ? courierRates[courier] : 0;
 
-  // Coupon calculations
-  let discountAmount = 0;
-  if (appliedPromo) {
-    if (appliedPromo.type === "percentage") {
-      discountAmount = Math.round(subtotal * (appliedPromo.value / 100));
-    } else if (appliedPromo.type === "fixed-amount") {
-      discountAmount = Math.min(appliedPromo.value, subtotal);
-    } else if (appliedPromo.type === "free-shipping") {
-      discountAmount = shippingFee;
-    }
-  }
+  const appliedPromoResult = appliedPromo
+    ? validatePromoCode(appliedPromo.code, items, shippingFee)
+    : null;
+  const discountAmount =
+    appliedPromoResult?.status === "valid" ? appliedPromoResult.discountAmount : 0;
 
   const grandTotal = Math.max(0, subtotal + platformFee + shippingFee - discountAmount);
 
@@ -167,31 +154,15 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
 
   const handleApplyPromo = () => {
     setPromoError("");
-    const code = promoCodeInput.trim().toUpperCase();
-    if (code === "ATSIRI10") {
-      setAppliedPromo({
-        code,
-        type: "percentage",
-        value: 10,
-        label: "Diskon 10% Atsiri",
-      });
-    } else if (code === "COOP15K") {
-      setAppliedPromo({
-        code,
-        type: "fixed-amount",
-        value: 15000,
-        label: "Potongan Koperasi Rp 15.000",
-      });
-    } else if (code === "NILAMFREE") {
-      setAppliedPromo({
-        code,
-        type: "free-shipping",
-        value: 0,
-        label: "Gratis Ongkos Kirim",
-      });
-    } else if (code) {
-      setPromoError("Kode kupon tidak valid.");
+    const result = validatePromoCode(promoCodeInput, items, shippingFee);
+
+    if (result.status === "valid" && result.promo) {
+      setAppliedPromo(result.promo);
+    } else {
+      setAppliedPromo(null);
+      setPromoError(result.message);
     }
+
     setPromoCodeInput("");
   };
 
@@ -246,7 +217,9 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
           discount: discountAmount,
           grandTotal,
         };
-        localStorage.setItem("niloka_orders", JSON.stringify([newOrder, ...list]));
+        const nextOrdersHistory = [newOrder, ...list];
+        localStorage.setItem("niloka_orders", JSON.stringify(nextOrdersHistory));
+        setOrdersHistory(nextOrdersHistory);
       } catch (e) {
         console.error("Failed to persist order to local storage", e);
       }
@@ -269,6 +242,14 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
       localStorage.removeItem("niloka_orders");
       setOrdersHistory([]);
     }
+  };
+
+  const handleToggleHistory = () => {
+    if (!showHistory && ordersHistory.length === 0) {
+      loadOrderHistory();
+    }
+
+    setShowHistory((current) => !current);
   };
 
   // 1. EMPTY CART STATE
@@ -296,7 +277,7 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
             </Link>
             {ordersHistory.length > 0 && (
               <button
-                onClick={() => setShowHistory(!showHistory)}
+                onClick={handleToggleHistory}
                 className="h-10 px-5 rounded-xl border border-brand-900/20 text-brand-900 text-xs font-bold hover:bg-brand-50 transition-all cursor-pointer"
               >
                 {showHistory ? "Sembunyikan Riwayat" : `Riwayat Transaksi (${ordersHistory.length})`}
@@ -552,6 +533,7 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
           promoCodeInput={promoCodeInput}
           onPromoCodeInputChange={setPromoCodeInput}
           appliedPromo={appliedPromo}
+          availablePromos={availablePromos}
           onApplyPromo={handleApplyPromo}
           onRemovePromo={handleRemovePromo}
           promoError={promoError}
