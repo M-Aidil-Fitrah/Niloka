@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { StarIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
 import type { Review, ReviewTag } from "@/lib/contracts";
 
 type ProductReviewsProps = {
@@ -233,8 +234,8 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
                     >
                       <Image src={preset.src} alt={preset.label} fill className="object-cover" sizes="56px" />
                       {isSelected && (
-                        <div className="absolute inset-0 bg-brand-950/40 flex items-center justify-center">
-                          <span className="text-white-soft font-bold text-xs">✓</span>
+                        <div className="absolute inset-0 bg-brand-950/45 flex items-center justify-center text-white-soft animate-in zoom-in duration-200">
+                          <Check className="h-4 w-4" />
                         </div>
                       )}
                     </button>

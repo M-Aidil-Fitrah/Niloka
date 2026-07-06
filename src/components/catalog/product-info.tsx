@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CheckCircle } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
 import { MapPinIcon, StarIcon } from "@/components/ui/icons";
 import type { Product, Seller } from "@/lib/contracts";
@@ -116,7 +117,14 @@ export function ProductInfo({ product, seller }: ProductInfoProps) {
           size="md"
           onClick={handleAddToCart}
         >
-          {isAdded ? "✓ Berhasil Ditambahkan!" : "Masukkan Keranjang"}
+          {isAdded ? (
+            <span className="flex items-center justify-center gap-1.5">
+              <CheckCircle className="h-4 w-4" />
+              Berhasil Ditambahkan!
+            </span>
+          ) : (
+            "Masukkan Keranjang"
+          )}
         </Button>
         <a
           href={`https://wa.me/6281234567890?text=Halo%20${encodeURIComponent(
