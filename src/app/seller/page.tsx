@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getPublishedProducts, getActiveAmpasListings } from "@/lib/mock-queries";
+import {
+  getActiveAmpasListings,
+  getPromosForSeller,
+  getPublishedProducts,
+} from "@/lib/mock-queries";
 import { SellerDashboardSkeleton } from "@/components/ui/skeletons";
 
 const SellerDashboardShell = dynamic(
@@ -19,8 +23,13 @@ export const metadata: Metadata = {
 export default function SellerPage() {
   const products = getPublishedProducts();
   const ampasListings = getActiveAmpasListings();
+  const promos = getPromosForSeller("seller-aceh-aroma");
 
   return (
-    <SellerDashboardShell products={products} ampasListings={ampasListings} />
+    <SellerDashboardShell
+      products={products}
+      ampasListings={ampasListings}
+      promos={promos}
+    />
   );
 }

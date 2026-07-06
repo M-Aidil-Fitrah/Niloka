@@ -1,35 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SellerStats } from "./seller-stats";
 import { ProductManagement } from "./product-management";
 import { AmpasManagement } from "./ampas-management";
 import { PassportManagement } from "./passport-management";
+import { PromoManagement } from "./promo-management";
 import {
   LayoutDashboard,
   ShoppingBag,
   Recycle,
   ShieldCheck,
-  ChevronRight,
-  Search,
   Bell,
   MessageSquare,
   Settings,
   ArrowUpRight,
   Download,
-  Plus,
-  RefreshCw,
   LogOut,
   MapPin,
-  Beaker
+  TicketPercent,
 } from "lucide-react";
-import type { Product, AmpasListing } from "@/lib/contracts";
+import type { Product, AmpasListing, Promo } from "@/lib/contracts";
 
 type SellerDashboardShellProps = {
   products: Product[];
   ampasListings: AmpasListing[];
+  promos: Promo[];
 };
 
 type PassportDraft = {
@@ -41,15 +39,19 @@ type PassportDraft = {
   status: "draft" | "submitted" | "verified";
 };
 
-export function SellerDashboardShell({ products, ampasListings }: SellerDashboardShellProps) {
+export function SellerDashboardShell({ products, ampasListings, promos }: SellerDashboardShellProps) {
   const sellerId = "seller-aceh-aroma";
 
   // Active Menu Tab
-  const [activeTab, setActiveTab] = useState<"overview" | "products" | "ampas" | "passport">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "products" | "ampas" | "passport" | "promos">("overview");
 
   // Local state for listings to simulate operations
-  const [sellerProducts, setSellerProducts] = useState<Product[]>([]);
-  const [sellerAmpas, setSellerAmpas] = useState<AmpasListing[]>([]);
+  const [sellerProducts, setSellerProducts] = useState<Product[]>(() =>
+    products.filter((product) => product.sellerId === sellerId)
+  );
+  const [sellerAmpas, setSellerAmpas] = useState<AmpasListing[]>(() =>
+    ampasListings.filter((listing) => listing.sellerId === sellerId)
+  );
 
   // Passport Drafts state
   const [passportDrafts, setPassportDrafts] = useState<PassportDraft[]>([
@@ -78,14 +80,6 @@ export function SellerDashboardShell({ products, ampasListings }: SellerDashboar
       status: "draft",
     },
   ]);
-
-  // Seed local states on mount
-  useEffect(() => {
-    const filtered = products.filter((p) => p.sellerId === sellerId);
-    const filteredAmpas = ampasListings.filter((a) => a.sellerId === sellerId);
-    setSellerProducts(filtered);
-    setSellerAmpas(filteredAmpas);
-  }, [products, ampasListings]);
 
   // Add mock product handler
   const handleAddProduct = (prod: { name: string; price: number; stock: number; category: string }) => {
@@ -240,6 +234,15 @@ export function SellerDashboardShell({ products, ampasListings }: SellerDashboar
               <ShieldCheck className="h-4 w-4" />
               Nilam Passport
             </button>
+            <button
+              onClick={() => setActiveTab("promos")}
+              className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === "promos" ? "bg-brand-950 text-white-soft shadow-sm" : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
+              }`}
+            >
+              <TicketPercent className="h-4 w-4" />
+              Promo Toko
+            </button>
           </nav>
         </div>
 
@@ -354,6 +357,13 @@ export function SellerDashboardShell({ products, ampasListings }: SellerDashboar
                 passportDrafts={passportDrafts}
                 sellerProducts={sellerProducts}
                 onSavePassportDraft={handleSavePassportDraft}
+              />
+            )}
+
+            {activeTab === "promos" && (
+              <PromoManagement
+                sellerProducts={sellerProducts}
+                initialPromos={promos}
               />
             )}
           </div>

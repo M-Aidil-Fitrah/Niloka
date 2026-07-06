@@ -1,9 +1,22 @@
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { formatRupiah } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import { Plus, X, Sparkles, Copy, Check, Info } from "lucide-react";
-import type { Product } from "@/lib/contracts";
+import type {
+  Product,
+  ProductDescriptionRequest,
+  ProductDescriptionResponse,
+  ProductDescriptionTone,
+} from "@/lib/contracts";
+
+const MarkdownMessage = dynamic(
+  () => import("@/components/chatbot/markdown-message").then((module) => module.MarkdownMessage),
+  {
+    ssr: false,
+  },
+);
 
 type PassportDraft = {
   productId: string;
@@ -32,43 +45,73 @@ export function ProductManagement({
   const [aiOrigin, setAiOrigin] = useState("Kecamatan Meukek, Aceh Selatan");
   const [aiAroma, setAiAroma] = useState("Woody, manis balsamic lembut, dan tahan lama");
   const [aiForm, setAiForm] = useState("Minyak Atsiri Nilam Murni (Essential Oil)");
+  const [aiTargetAudience, setAiTargetAudience] = useState("Pecinta aromaterapi natural dan pembeli produk wellness premium");
+  const [aiTone, setAiTone] = useState<ProductDescriptionTone>("premium");
   const [isAiGenerating, setIsAiGenerating] = useState(false);
   const [displayedAiOutput, setDisplayedAiOutput] = useState("");
   const [aiOutputText, setAiOutputText] = useState("");
+  const [aiDraft, setAiDraft] = useState<ProductDescriptionResponse | null>(null);
+  const [aiError, setAiError] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setIsAiGenerating(true);
     setDisplayedAiOutput("");
     setAiOutputText("");
+    setAiDraft(null);
+    setAiError("");
     setCopied(false);
 
-    const templates = [
-      `Minyak Nilam Murni premium asal ${aiOrigin}. Diproduksi dengan metode penyulingan uap tradisional berkualitas tinggi, menghasilkan aroma ${aiAroma} yang pekat dan berkarakter. Memiliki kadar Patchouli Alcohol (PA) tinggi mencapai ${aiPaLevel}, menjadikannya zat pengikat wewangian (fixative) yang sangat baik untuk parfum Anda. Produk ini telah lolos uji transparansi Nilam Passport, menjamin keaslian 100% tanpa campuran minyak sintetis.`,
-      `Nikmati esensi relaksasi dari ${aiForm} khas ${aiOrigin}. Diformulasikan dengan minyak atsiri nilam Aceh berkualitas terbaik (kadar PA ${aiPaLevel}), menghasilkan profil aroma ${aiAroma} yang memikat dan menenangkan sistem saraf. Sangat cocok sebagai aromaterapi ruangan, minyak pijat, maupun pengikat parfum alami. Diproses secara berkelanjutan dengan prinsip sirkular ekonomi terpadu.`,
-    ];
+    const payload: ProductDescriptionRequest = {
+      productName: aiForm,
+      form: "essential-oil",
+      origin: aiOrigin,
+      aromaProfile: aiAroma,
+      functions: ["relaxation", "home-fragrance"],
+      safetyNotes: `Kadar PA dicatat seller ${aiPaLevel}. Gunakan sesuai petunjuk dan hindari klaim medis.`,
+      targetAudience: aiTargetAudience,
+      tone: aiTone,
+    };
 
-    const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
-    setAiOutputText(randomTemplate);
+    try {
+      const response = await fetch("/api/ai/product-description", {
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+      const data: ProductDescriptionResponse = await response.json();
 
-    setTimeout(() => {
+      if (data.missingFields.length > 0) {
+        setAiError(`Lengkapi data berikut: ${data.missingFields.join(", ")}.`);
+        return;
+      }
+
+      setAiDraft(data);
+      setAiOutputText(data.fullDescriptionMarkdown);
+      setDisplayedAiOutput(data.fullDescriptionMarkdown);
+    } catch {
+      setAiError("AI writer sedang tidak tersedia. Coba lagi sebentar.");
+    } finally {
       setIsAiGenerating(false);
-      let currentIdx = 0;
-      const interval = setInterval(() => {
-        if (currentIdx < randomTemplate.length) {
-          setDisplayedAiOutput((prev) => prev + randomTemplate.charAt(currentIdx));
-          currentIdx++;
-        } else {
-          clearInterval(interval);
-        }
-      }, 6);
-    }, 1000);
+    }
   };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(aiOutputText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleApplyAiDraft = () => {
+    if (!aiDraft) {
+      return;
+    }
+
+    setName(aiForm);
+    setIsModalOpen(true);
+    setCopied(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -200,6 +243,35 @@ export function ProductManagement({
                 onChange={(e) => setAiAroma(e.target.value)}
               />
             </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">Target Audience</label>
+              <input
+                type="text"
+                className="w-full h-10 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 outline-none focus:border-brand-700"
+                value={aiTargetAudience}
+                onChange={(e) => setAiTargetAudience(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">Tone Deskripsi</label>
+              <select
+                className="w-full h-10 rounded-xl border border-line bg-cream-50 px-3 text-xs font-semibold text-brand-950 outline-none focus:border-brand-700"
+                value={aiTone}
+                onChange={(e) =>
+                  setAiTone(
+                    e.target.value === "educational"
+                      ? "educational"
+                      : e.target.value === "concise"
+                        ? "concise"
+                        : "premium",
+                  )
+                }
+              >
+                <option value="premium">Premium</option>
+                <option value="educational">Educational</option>
+                <option value="concise">Concise</option>
+              </select>
+            </div>
 
             <Button
               type="button"
@@ -223,10 +295,19 @@ export function ProductManagement({
                   <div className="h-3 w-4/5 rounded bg-cream-100" />
                 </div>
               ) : displayedAiOutput ? (
-                <p className="text-xs text-brand-950 leading-relaxed font-semibold">
-                  {displayedAiOutput}
-                  <span className="inline-block w-1.5 h-3 bg-brand-900 ml-0.5 animate-pulse" />
-                </p>
+                <div className="max-h-[260px] overflow-y-auto rounded-xl bg-white-soft/70 p-3 text-xs text-brand-950">
+                  <MarkdownMessage content={displayedAiOutput} />
+                  {aiDraft && (
+                    <div className="mt-3 rounded-lg border border-line bg-cream-50 p-2">
+                      <p className="font-bold text-brand-950">Short description</p>
+                      <p className="mt-1 text-ink-700">{aiDraft.shortDescription}</p>
+                    </div>
+                  )}
+                </div>
+              ) : aiError ? (
+                <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold leading-relaxed text-red-700">
+                  {aiError}
+                </div>
               ) : (
                 <div className="flex flex-col items-center justify-center pt-8 text-center text-ink-600 gap-2">
                   <Info className="h-5 w-5" />
@@ -236,13 +317,21 @@ export function ProductManagement({
             </div>
 
             {displayedAiOutput && !isAiGenerating && (
-              <button
-                onClick={handleCopy}
-                className="self-end mt-4 text-[10px] font-bold text-brand-900 hover:text-brand-850 transition-all uppercase tracking-wider flex items-center gap-1.5 bg-white-soft border border-line px-3 py-1.5 rounded-lg cursor-pointer shadow-sm"
-              >
-                {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-                {copied ? "Tersalin" : "Salin Deskripsi"}
-              </button>
+              <div className="mt-4 flex flex-wrap justify-end gap-2">
+                <button
+                  onClick={handleApplyAiDraft}
+                  className="text-[10px] font-bold text-brand-900 hover:text-brand-850 transition-all uppercase tracking-wider flex items-center gap-1.5 bg-white-soft border border-line px-3 py-1.5 rounded-lg cursor-pointer shadow-sm"
+                >
+                  Apply to Product
+                </button>
+                <button
+                  onClick={handleCopy}
+                  className="text-[10px] font-bold text-brand-900 hover:text-brand-850 transition-all uppercase tracking-wider flex items-center gap-1.5 bg-white-soft border border-line px-3 py-1.5 rounded-lg cursor-pointer shadow-sm"
+                >
+                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied ? "Tersalin" : "Salin Deskripsi"}
+                </button>
+              </div>
             )}
           </div>
         </div>

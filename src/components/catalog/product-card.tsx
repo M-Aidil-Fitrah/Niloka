@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { formatRupiah } from "@/lib/formatters";
+import { getActivePromosForProduct } from "@/lib/mock-queries";
 import type { Product } from "@/lib/contracts";
 
 type ProductCardProps = {
@@ -17,6 +18,8 @@ const tagLabels: Record<string, string> = {
 };
 
 export function ProductCard({ product }: ProductCardProps) {
+  const promos = getActivePromosForProduct(product.id);
+
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -42,6 +45,11 @@ export function ProductCard({ product }: ProductCardProps) {
                 {tagLabels[tag] ?? tag}
               </Badge>
             ))}
+          </div>
+        )}
+        {promos.length > 0 && (
+          <div className="absolute bottom-3 left-3 rounded-full bg-brand-950 px-2.5 py-1 text-[10px] font-extrabold text-white-soft shadow-sm">
+            Promo {promos[0].code}
           </div>
         )}
       </div>

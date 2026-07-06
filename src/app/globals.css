@@ -66,6 +66,44 @@ a {
   text-decoration: none;
 }
 
+.niloka-markdown p {
+  margin-block: 0.4rem;
+}
+
+.niloka-markdown strong {
+  color: inherit;
+  font-weight: 800;
+}
+
+.niloka-markdown ul,
+.niloka-markdown ol {
+  margin-block: 0.5rem;
+  padding-left: 1.1rem;
+}
+
+.niloka-markdown li {
+  margin-block: 0.2rem;
+}
+
+.niloka-markdown table {
+  margin-block: 0.5rem;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.niloka-markdown th,
+.niloka-markdown td {
+  border: 1px solid var(--line);
+  padding: 0.45rem;
+  text-align: left;
+}
+
+.niloka-markdown th {
+  background: var(--cream-100);
+  color: var(--brand-950);
+}
+
 button,
 input {
   font: inherit;

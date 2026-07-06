@@ -21,6 +21,7 @@ export const metadata: Metadata = {
 };
 
 import { CartProvider } from "@/context/cart-context";
+import { FloatingChatbot } from "@/components/chatbot/floating-chatbot";
 
 export default function RootLayout({
   children,
@@ -33,7 +34,10 @@ export default function RootLayout({
       className={`${plusJakartaSans.variable} ${cormorant.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-cream-50 text-ink-900" suppressHydrationWarning>
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          {children}
+          <FloatingChatbot />
+        </CartProvider>
       </body>
     </html>
   );

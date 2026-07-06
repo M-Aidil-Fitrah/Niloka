@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Ticket, Trash2, HelpCircle, Lock } from "lucide-react";
+import type { Promo } from "@/lib/contracts";
 
 type OrderSummaryCardProps = {
   subtotal: number;
@@ -11,12 +11,8 @@ type OrderSummaryCardProps = {
   isFormValid: boolean;
   promoCodeInput: string;
   onPromoCodeInputChange: (val: string) => void;
-  appliedPromo: {
-    code: string;
-    type: "percentage" | "fixed-amount" | "free-shipping";
-    value: number;
-    label: string;
-  } | null;
+  appliedPromo: Promo | null;
+  availablePromos: Promo[];
   onApplyPromo: () => void;
   onRemovePromo: () => void;
   promoError: string;
@@ -34,6 +30,7 @@ export function OrderSummaryCard({
   promoCodeInput,
   onPromoCodeInputChange,
   appliedPromo,
+  availablePromos,
   onApplyPromo,
   onRemovePromo,
   promoError,
@@ -83,7 +80,7 @@ export function OrderSummaryCard({
         {appliedPromo ? (
           <div className="flex justify-between items-center bg-emerald-50 border border-emerald-200 rounded-xl p-2.5">
             <div>
-              <span className="text-[10px] font-bold text-emerald-800 block">{appliedPromo.label}</span>
+              <span className="text-[10px] font-bold text-emerald-800 block">{appliedPromo.title}</span>
               <span className="text-[9px] font-extrabold text-emerald-600 uppercase font-mono">{appliedPromo.code}</span>
             </div>
             <button
@@ -122,18 +119,14 @@ export function OrderSummaryCard({
             <div className="bg-cream-50/50 border border-line/60 rounded-xl p-2.5 space-y-1.5">
               <span className="text-[9px] font-bold text-ink-600 uppercase tracking-wider block">Kupon Tersedia:</span>
               <div className="flex flex-wrap gap-1.5">
-                {[
-                  { code: "ATSIRI10", desc: "Potongan 10%" },
-                  { code: "COOP15K", desc: "Potongan Rp15rb" },
-                  { code: "NILAMFREE", desc: "Gratis Ongkir" },
-                ].map((k) => (
+                {availablePromos.map((promo) => (
                   <button
-                    key={k.code}
-                    onClick={() => onPromoSelect(k.code)}
+                    key={promo.id}
+                    onClick={() => onPromoSelect(promo.code)}
                     type="button"
                     className="text-[9px] font-bold bg-white hover:bg-cream-100 border border-line/85 px-2 py-1 rounded-lg text-brand-950 font-mono cursor-pointer"
                   >
-                    {k.code}
+                    {promo.code}
                   </button>
                 ))}
               </div>
