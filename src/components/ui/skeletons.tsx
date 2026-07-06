@@ -223,3 +223,42 @@ export function CheckoutSkeleton() {
     </div>
   );
 }
+
+export function SellerDashboardSkeleton() {
+  return (
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Title Header Skeleton */}
+      <div className="space-y-2">
+        <div className="h-4 w-28 rounded bg-cream-100/80 animate-pulse" />
+        <div className="h-8 w-64 rounded bg-cream-100/80 animate-pulse" />
+      </div>
+
+      {/* Tabs Row Skeleton */}
+      <div className="flex gap-2 border-b border-line pb-px">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-8 w-24 rounded-t-lg bg-cream-100/50 animate-pulse" />
+        ))}
+      </div>
+
+      {/* Grid of 4 Cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="rounded-2xl border border-line bg-white-soft p-5 space-y-2">
+            <div className="h-3 w-1/2 rounded bg-cream-100/50 animate-pulse" />
+            <div className="h-6 w-3/4 rounded bg-cream-100/80 animate-pulse" />
+          </div>
+        ))}
+      </div>
+
+      {/* Large Content Block Skeleton */}
+      <div className="rounded-3xl border border-line bg-white-soft p-6 space-y-4">
+        <div className="h-5 w-1/4 rounded bg-cream-100/80 animate-pulse" />
+        <div className="space-y-3">
+          <div className="h-12 w-full rounded-xl bg-cream-100/40 animate-pulse" />
+          <div className="h-12 w-full rounded-xl bg-cream-100/40 animate-pulse" />
+          <div className="h-12 w-full rounded-xl bg-cream-100/40 animate-pulse" />
+        </div>
+      </div>
+    </div>
+  );
+}

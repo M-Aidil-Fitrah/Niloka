@@ -33,7 +33,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "Seller",
-    href: "/#seller",
+    href: "/seller",
   },
 ];
 
