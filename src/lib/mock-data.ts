@@ -120,6 +120,7 @@ export const products: Product[] = [
     functions: ["relaxation", "sleep-support"],
     tags: ["best-seller", "nilam-passport"],
     price: idr(89000),
+    originalPrice: idr(109000),
     stock: 42,
     status: "published",
     image: {
@@ -148,6 +149,7 @@ export const products: Product[] = [
     functions: ["relaxation", "home-fragrance"],
     tags: ["nilam-passport", "limited-batch"],
     price: idr(145000),
+    originalPrice: idr(175000),
     stock: 26,
     status: "published",
     image: {
@@ -176,6 +178,7 @@ export const products: Product[] = [
     functions: ["skin-care", "gift"],
     tags: ["new-arrival"],
     price: idr(42000),
+    originalPrice: idr(55000),
     stock: 64,
     status: "published",
     image: {
@@ -204,6 +207,7 @@ export const products: Product[] = [
     functions: ["home-fragrance", "focus"],
     tags: ["aroma-calm"],
     price: idr(128000),
+    originalPrice: idr(149000),
     stock: 31,
     status: "published",
     image: {
@@ -232,6 +236,7 @@ export const products: Product[] = [
     functions: ["skin-care", "relaxation"],
     tags: ["new-arrival", "nilam-passport"],
     price: idr(175000),
+    originalPrice: idr(199000),
     stock: 18,
     status: "published",
     image: {
@@ -260,6 +265,7 @@ export const products: Product[] = [
     functions: ["relaxation", "sleep-support"],
     tags: ["new-arrival"],
     price: idr(95000),
+    originalPrice: idr(115000),
     stock: 22,
     status: "published",
     image: {
@@ -288,6 +294,7 @@ export const products: Product[] = [
     functions: ["gift", "relaxation"],
     tags: ["best-seller", "nilam-passport"],
     price: idr(210000),
+    originalPrice: idr(250000),
     stock: 15,
     status: "published",
     image: {
@@ -316,6 +323,7 @@ export const products: Product[] = [
     functions: ["focus", "relaxation"],
     tags: ["new-arrival"],
     price: idr(79000),
+    originalPrice: idr(99000),
     stock: 35,
     status: "published",
     image: {
@@ -344,6 +352,7 @@ export const products: Product[] = [
     functions: ["skin-care", "gift"],
     tags: ["best-seller"],
     price: idr(120000),
+    originalPrice: idr(140000),
     stock: 28,
     status: "published",
     image: {
@@ -372,6 +381,7 @@ export const products: Product[] = [
     functions: ["skin-care"],
     tags: ["nilam-passport"],
     price: idr(68000),
+    originalPrice: idr(85000),
     stock: 50,
     status: "published",
     image: {
@@ -400,6 +410,7 @@ export const products: Product[] = [
     functions: ["home-fragrance", "relaxation"],
     tags: ["new-arrival", "aroma-calm"],
     price: idr(155000),
+    originalPrice: idr(185000),
     stock: 12,
     status: "published",
     image: {

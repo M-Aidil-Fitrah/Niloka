@@ -116,19 +116,39 @@ export function OrderSummaryCard({
             )}
 
             {/* Suggestions List */}
-            <div className="bg-cream-50/50 border border-line/60 rounded-xl p-2.5 space-y-1.5">
-              <span className="text-[9px] font-bold text-ink-600 uppercase tracking-wider block">Kupon Tersedia:</span>
-              <div className="flex flex-wrap gap-1.5">
-                {availablePromos.map((promo) => (
-                  <button
-                    key={promo.id}
-                    onClick={() => onPromoSelect(promo.code)}
-                    type="button"
-                    className="text-[9px] font-bold bg-white hover:bg-cream-100 border border-line/85 px-2 py-1 rounded-lg text-brand-950 font-mono cursor-pointer"
-                  >
-                    {promo.code}
-                  </button>
-                ))}
+            <div className="bg-cream-50/30 border border-line/50 rounded-xl p-3 space-y-2">
+              <span className="text-[9px] font-bold text-ink-600 uppercase tracking-wider block">Pilih Kupon Toko:</span>
+              <div className="space-y-1.5">
+                {availablePromos.map((promo) => {
+                  let benefit = "";
+                  if (promo.type === "percentage") {
+                    benefit = `${promo.value}% OFF`;
+                  } else if (promo.type === "fixed-amount") {
+                    benefit = `-Rp ${(promo.value / 1000)}k`;
+                  } else if (promo.type === "free-shipping") {
+                    benefit = "Free Ongkir";
+                  }
+                  return (
+                    <button
+                      key={promo.id}
+                      onClick={() => onPromoSelect(promo.code)}
+                      type="button"
+                      className="w-full text-left bg-white hover:bg-emerald-50/30 border border-line/80 hover:border-emerald-600/30 p-2 rounded-lg flex items-center justify-between text-brand-950 transition-colors cursor-pointer group"
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[10px] font-extrabold font-mono uppercase tracking-wider group-hover:text-emerald-800">
+                          {promo.code}
+                        </span>
+                        <span className="text-[8.5px] text-ink-600 leading-tight">
+                          Min. Belanja Rp {promo.minSubtotal.amount.toLocaleString("id-ID")}
+                        </span>
+                      </div>
+                      <span className="text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-100 px-1.5 py-0.5 rounded shrink-0">
+                        {benefit}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

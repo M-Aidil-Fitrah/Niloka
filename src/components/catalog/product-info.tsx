@@ -67,9 +67,21 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
       </h1>
 
       {/* Price */}
-      <p className="mt-3 text-2xl font-bold text-brand-900">
-        {formatRupiah(product.price.amount)}
-      </p>
+      <div className="mt-3 flex items-baseline gap-3 flex-wrap">
+        <span className="text-3xl font-extrabold text-brand-900">
+          {formatRupiah(product.price.amount)}
+        </span>
+        {product.originalPrice && product.originalPrice.amount > product.price.amount && (
+          <>
+            <span className="text-sm font-semibold text-ink-600/50 line-through">
+              {formatRupiah(product.originalPrice.amount)}
+            </span>
+            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-wider">
+              Hemat {Math.round(((product.originalPrice.amount - product.price.amount) / product.originalPrice.amount) * 100)}%
+            </span>
+          </>
+        )}
+      </div>
 
       <hr className="my-6 border-line" />
 
@@ -126,43 +138,53 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
               Voucher Toko Tersedia
             </h3>
           </div>
-          <div className="grid gap-2.5 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {promos.map((promo) => (
               <div
                 key={promo.id}
-                className="flex items-center justify-between bg-white-soft border border-line/60 rounded-xl p-3 shadow-sm"
+                className="relative flex items-center justify-between bg-white border-2 border-dashed border-emerald-600/20 rounded-2xl p-3.5 shadow-sm hover:border-emerald-600/40 transition-all duration-200"
               >
-                <div className="space-y-0.5">
-                  <span className="text-[10px] font-mono font-extrabold text-brand-900 bg-brand-100/50 px-2 py-0.5 rounded uppercase tracking-wider">
-                    {promo.code}
-                  </span>
-                  <span className="text-[10px] text-ink-700 block pt-1 font-bold">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[10px] font-mono font-extrabold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-wider">
+                      {promo.code}
+                    </span>
+                    {promo.type === "free-shipping" && (
+                      <span className="text-[8.5px] font-bold text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 uppercase">
+                        Free Ongkir
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs font-black text-brand-950 block pt-0.5">
                     {promo.type === "percentage"
                       ? `Diskon ${promo.value}%`
                       : promo.type === "fixed-amount"
-                      ? `Potongan ${formatRupiah(promo.value)}`
-                      : "Gratis Ongkir"}
+                      ? `Potongan Rp ${promo.value.toLocaleString("id-ID")}`
+                      : "Bebas Ongkos Kirim"}
                   </span>
-                  <span className="text-[8.5px] text-ink-600 block leading-tight">
+                  <span className="text-[9px] text-ink-600 block leading-tight">
                     Min. Belanja {formatRupiah(promo.minSubtotal.amount)}
                   </span>
                 </div>
-                <button
-                  onClick={() => handleCopyCode(promo.code)}
-                  className="flex items-center justify-center h-8 px-2.5 rounded-lg border border-line text-xs font-bold text-ink-700 hover:bg-cream-50 hover:text-brand-950 transition-all cursor-pointer shrink-0"
-                >
-                  {copiedCode === promo.code ? (
-                    <span className="flex items-center gap-1 text-[10px] text-brand-900 font-bold">
-                      <Check className="h-3 w-3" />
-                      Tersalin
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-[10px] font-bold">
-                      <Copy className="h-3 w-3" />
-                      Salin
-                    </span>
-                  )}
-                </button>
+                
+                <div className="border-l-2 border-dashed border-line/70 pl-3.5 h-12 flex items-center shrink-0">
+                  <button
+                    onClick={() => handleCopyCode(promo.code)}
+                    className="flex items-center justify-center h-8 px-3 rounded-xl bg-brand-900 hover:bg-brand-800 text-[10px] font-bold text-white-soft transition-all cursor-pointer shadow-sm hover:shadow hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    {copiedCode === promo.code ? (
+                      <span className="flex items-center gap-1 text-[10px] font-bold">
+                        <Check className="h-3 w-3 text-emerald-400" />
+                        Tersalin
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1 text-[10px] font-bold">
+                        <Copy className="h-3 w-3" />
+                        Klaim
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
