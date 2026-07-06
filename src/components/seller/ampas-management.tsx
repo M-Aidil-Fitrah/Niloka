@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Image from "next/image";
 import { formatRupiah } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import { Plus, X, Recycle, Leaf, Trash2 } from "lucide-react";

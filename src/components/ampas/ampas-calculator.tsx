@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import type { AmpasListing } from "@/lib/contracts";
 import { Button } from "@/components/ui/button";
 import { Calculator, Send } from "lucide-react";

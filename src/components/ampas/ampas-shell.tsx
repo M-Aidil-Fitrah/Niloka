@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AmpasCard } from "./ampas-card";
 import { AmpasCalculator } from "./ampas-calculator";
 import { AmpasFilters } from "./ampas-filters";
-import { Search, ShieldAlert, X, Send } from "lucide-react";
+import { Search, ShieldAlert, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AmpasListing, AmpasUsageTag } from "@/lib/contracts";
 
