@@ -262,3 +262,39 @@ export function SellerDashboardSkeleton() {
     </div>
   );
 }
+
+export function AdminShellSkeleton() {
+  return (
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Title */}
+      <div className="space-y-2">
+        <div className="h-4 w-32 rounded bg-white/10 animate-pulse" />
+        <div className="h-8 w-72 rounded bg-white/10 animate-pulse" />
+      </div>
+
+      {/* Stats Row */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-2">
+            <div className="h-3 w-1/2 rounded bg-white/10 animate-pulse" />
+            <div className="h-7 w-3/4 rounded bg-white/10 animate-pulse" />
+          </div>
+        ))}
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2 border-b border-white/10 pb-px">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-9 w-28 rounded-t-lg bg-white/5 animate-pulse" />
+        ))}
+      </div>
+
+      {/* Table rows */}
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="h-14 w-full rounded-xl bg-white/5 animate-pulse" />
+        ))}
+      </div>
+    </div>
+  );
+}

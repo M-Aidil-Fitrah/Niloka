@@ -84,8 +84,12 @@ export function SellerDashboardShell({ products, ampasListings }: SellerDashboar
 
   // Seed local states on mount
   useEffect(() => {
-    setSellerProducts(products.filter((p) => p.sellerId === sellerId));
-    setSellerAmpas(ampasListings.filter((a) => a.sellerId === sellerId));
+    const filtered = products.filter((p) => p.sellerId === sellerId);
+    const filteredAmpas = ampasListings.filter((a) => a.sellerId === sellerId);
+    setTimeout(() => {
+      setSellerProducts(filtered);
+      setSellerAmpas(filteredAmpas);
+    }, 0);
   }, [products, ampasListings]);
 
   // AI Description Generator typing simulation
