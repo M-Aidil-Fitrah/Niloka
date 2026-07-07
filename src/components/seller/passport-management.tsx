@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { ShieldAlert, Compass, Sparkles, CheckCircle2, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Compass } from "lucide-react";
 import type { NilamPassport, Product, ProductFunction } from "@/lib/contracts";
+import { showToast } from "../dashboard/dashboard-layout";
+import { PassportTable } from "./passport/passport-table";
+import { PassportDrawer } from "./passport/passport-drawer";
 
 type PassportManagementProps = {
   products: Product[];
 };
 
 export function PassportManagement({ products }: PassportManagementProps) {
-  // Let's create mock passports associated with products
   const [passports, setPassports] = useState<NilamPassport[]>([
     {
       id: "pass-001",
@@ -23,6 +25,9 @@ export function PassportManagement({ products }: PassportManagementProps) {
       validationStatus: "validated",
       validatedBy: "UPTD Atsiri Aceh",
       validatedAt: "2026-06-15",
+      batchCode: "B-LH-2601",
+      farmerGroup: "Kelompok Tani Nilam Jaya Lhoong",
+      gpsCoordinates: "5.2144° N, 95.3129° E",
     },
     {
       id: "pass-002",
@@ -36,13 +41,23 @@ export function PassportManagement({ products }: PassportManagementProps) {
       validationStatus: "pending-review",
       validatedBy: "",
       validatedAt: "",
+      batchCode: "B-GL-2604",
+      farmerGroup: "Koperasi Atsiri Gayo Highland",
+      gpsCoordinates: "3.9873° N, 97.3912° E",
     },
   ]);
 
   const [activePassport, setActivePassport] = useState<NilamPassport | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Lists of options
+  useEffect(() => {
+    const handleCloseDrawers = () => {
+      setIsEditing(false);
+    };
+    window.addEventListener("close-all-drawers", handleCloseDrawers);
+    return () => window.removeEventListener("close-all-drawers", handleCloseDrawers);
+  }, []);
+
   const aromaOptions = ["Woody", "Earthy", "Balsamic", "Sweet", "Minty", "Spicy", "Camphorous", "Herbaceous"];
   const functionOptions: { value: ProductFunction; label: string }[] = [
     { value: "relaxation", label: "Relaksasi & Ketenangan" },
@@ -53,7 +68,12 @@ export function PassportManagement({ products }: PassportManagementProps) {
   ];
 
   const handleOpenEdit = (passport: NilamPassport) => {
-    setActivePassport({ ...passport });
+    setActivePassport({
+      batchCode: "B-LH-2601",
+      farmerGroup: "Kelompok Tani Nilam Jaya Lhoong",
+      gpsCoordinates: "5.2144° N, 95.3129° E",
+      ...passport,
+    });
     setIsEditing(true);
   };
 
@@ -82,10 +102,7 @@ export function PassportManagement({ products }: PassportManagementProps) {
     setPassports(passports.map((p) => (p.id === activePassport.id ? activePassport : p)));
     setIsEditing(false);
     setActivePassport(null);
-  };
-
-  const getProductName = (productId: string) => {
-    return products.find((p) => p.id === productId)?.name || "Produk Nilam Premium";
+    showToast("Nilam Passport berhasil diperbarui!", "success");
   };
 
   return (
@@ -103,206 +120,24 @@ export function PassportManagement({ products }: PassportManagementProps) {
         </div>
       </div>
 
-      {/* 2. Passport Table */}
-      <div className="rounded-[28px] border border-line bg-white-soft overflow-hidden">
-        <div className="p-6 border-b border-line bg-cream-50/30">
-          <h4 className="font-extrabold text-brand-950 text-sm">Daftar Passport Produk Anda</h4>
-          <p className="text-xs text-ink-600 mt-1">Pantau status validasi dan isi detail transparansi panen</p>
-        </div>
+      <PassportTable
+        passports={passports}
+        products={products}
+        onOpenEdit={handleOpenEdit}
+      />
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-line/60 bg-cream-50/20 text-ink-700 font-bold uppercase tracking-wider">
-                <th className="p-4 sm:p-5 font-bold">Produk Terkait</th>
-                <th className="p-4 sm:p-5 font-bold">Asal Bahan Baku</th>
-                <th className="p-4 sm:p-5 font-bold">Profil Utama</th>
-                <th className="p-4 sm:p-5 font-bold">Status Validasi</th>
-                <th className="p-4 sm:p-5 font-bold text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line/35 font-medium text-brand-950">
-              {passports.map((passport) => (
-                <tr key={passport.id} className="hover:bg-cream-50/30 transition-colors">
-                  <td className="p-4 sm:p-5 font-extrabold">
-                    {getProductName(passport.productId)}
-                  </td>
-                  <td className="p-4 sm:p-5 font-medium text-ink-650">
-                    {passport.origin}
-                  </td>
-                  <td className="p-4 sm:p-5">
-                    <div className="flex flex-wrap gap-1">
-                      {passport.aromaProfile.map((a) => (
-                        <span key={a} className="bg-cream-100 border border-line/55 px-2 py-0.5 rounded text-[10px] font-bold text-ink-700">
-                          {a}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="p-4 sm:p-5">
-                    {passport.validationStatus === "validated" ? (
-                      <span className="text-[9px] font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-250 px-2 py-0.5 rounded-full uppercase flex items-center gap-1.5 w-fit">
-                        <CheckCircle2 className="h-3 w-3" />
-                        Tervalidasi
-                      </span>
-                    ) : (
-                      <span className="text-[9px] font-extrabold text-blue-800 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full uppercase flex items-center gap-1.5 w-fit animate-pulse">
-                        <RefreshCw className="h-3 w-3" />
-                        Menunggu Admin
-                      </span>
-                    )}
-                  </td>
-                  <td className="p-4 sm:p-5 text-right">
-                    <button
-                      onClick={() => handleOpenEdit(passport)}
-                      className="py-1.5 px-4 bg-cream-100 hover:bg-cream-250 border border-line text-brand-950 font-bold rounded-xl text-[11px] transition-colors cursor-pointer"
-                    >
-                      Lengkapi
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* 3. Detail/Edit Drawer */}
-      {isEditing && activePassport && (
-        <div className="fixed inset-0 z-50 flex justify-end">
-          <div
-            className="fixed inset-0 bg-brand-950/45 backdrop-blur-xs transition-opacity"
-            onClick={() => setIsEditing(false)}
-          />
-
-          <div className="relative w-full max-w-xl bg-white-soft h-full shadow-2xl flex flex-col justify-between z-10 overflow-y-auto animate-in slide-in-from-right duration-350">
-            {/* Header */}
-            <div className="p-6 border-b border-line flex justify-between items-center bg-cream-50/50">
-              <div>
-                <h4 className="font-extrabold text-brand-950 text-base">
-                  Rantai Transparansi (Nilam Passport)
-                </h4>
-                <p className="text-xs text-ink-600 mt-0.5">
-                  Lengkapi deklarasi kejujuran untuk produk: <strong className="text-brand-950 font-bold">{getProductName(activePassport.productId)}</strong>
-                </p>
-              </div>
-              <button
-                onClick={() => setIsEditing(false)}
-                className="text-xs font-bold text-ink-600 hover:text-brand-950 bg-cream-100 border border-line px-3 py-1.5 rounded-lg cursor-pointer"
-              >
-                Batal
-              </button>
-            </div>
-
-            {/* Form */}
-            <div className="p-6 flex-1 space-y-6">
-              {/* Origin */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-ink-700">Asal Panen / Distrik Penyulingan</label>
-                <input
-                  type="text"
-                  className="w-full text-xs font-semibold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
-                  value={activePassport.origin}
-                  onChange={(e) => setActivePassport({ ...activePassport, origin: e.target.value })}
-                  placeholder="Contoh: Desa Lhong, Kabupaten Aceh Besar"
-                />
-              </div>
-
-              {/* Aroma Selector */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-ink-700 block">Karakter Aroma Utama</label>
-                <div className="flex flex-wrap gap-2">
-                  {aromaOptions.map((aroma) => {
-                    const isSelected = activePassport.aromaProfile?.includes(aroma);
-                    return (
-                      <button
-                        key={aroma}
-                        type="button"
-                        onClick={() => handleToggleAroma(aroma)}
-                        className={`text-xs font-bold px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                          isSelected
-                            ? "bg-brand-900 text-white-soft border-brand-950"
-                            : "bg-cream-50 border-line text-ink-700 hover:bg-cream-100"
-                        }`}
-                      >
-                        {aroma}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Function Selector */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-ink-700 block">Fungsi Terkait</label>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {functionOptions.map((opt) => {
-                    const isSelected = activePassport.functions?.includes(opt.value);
-                    return (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => handleToggleFunction(opt.value)}
-                        className={`flex items-center justify-between p-3 rounded-xl border text-xs font-bold text-left transition-all cursor-pointer ${
-                          isSelected
-                            ? "bg-brand-100/50 border-brand-900/40 text-brand-950"
-                            : "bg-white-soft border-line text-ink-650 hover:bg-cream-100/30"
-                        }`}
-                      >
-                        <span>{opt.label}</span>
-                        {isSelected && <CheckCircle2 className="h-4 w-4 text-brand-900" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Usage Instruction */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-ink-700">Cara Penggunaan Aman</label>
-                <textarea
-                  rows={3}
-                  className="w-full text-xs font-medium border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950 leading-relaxed"
-                  value={activePassport.usage}
-                  onChange={(e) => setActivePassport({ ...activePassport, usage: e.target.value })}
-                  placeholder="Instruksi takaran penggunaan atau saran pengenceran..."
-                />
-              </div>
-
-              {/* Safety Notes */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-ink-750 flex items-center gap-1">
-                  <ShieldAlert className="h-4 w-4 text-red-600 shrink-0" />
-                  Catatan Keamanan & Kontraindikasi
-                </label>
-                <textarea
-                  rows={3}
-                  className="w-full text-xs font-medium border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950 leading-relaxed"
-                  value={activePassport.safetyNotes}
-                  onChange={(e) => setActivePassport({ ...activePassport, safetyNotes: e.target.value })}
-                  placeholder="Informasi kerentanan alergi kulit, saran tidak ditelan, atau anak-anak..."
-                />
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="p-6 border-t border-line flex justify-end gap-3 bg-cream-50/50">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="py-2.5 px-6 border border-line text-ink-700 font-bold rounded-xl text-xs hover:bg-cream-100 transition-colors cursor-pointer"
-              >
-                Batal
-              </button>
-              <button
-                onClick={handleSave}
-                className="py-2.5 px-6 bg-brand-900 hover:bg-brand-850 text-white-soft font-bold rounded-xl text-xs shadow-sm transition-colors cursor-pointer"
-              >
-                Simpan & Ajukan Review
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PassportDrawer
+        isOpen={isEditing}
+        onClose={() => setIsEditing(false)}
+        activePassport={activePassport}
+        setActivePassport={setActivePassport}
+        onSave={handleSave}
+        products={products}
+        onToggleAroma={handleToggleAroma}
+        onToggleFunction={handleToggleFunction}
+        aromaOptions={aromaOptions}
+        functionOptions={functionOptions}
+      />
     </div>
   );
 }

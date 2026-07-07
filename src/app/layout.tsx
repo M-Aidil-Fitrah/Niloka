@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const plusJakartaSans = {
   variable: "--font-sans",
-  subsets: ["latin"],
-});
+};
 
-const cormorant = Cormorant_Garamond({
+const cormorant = {
   variable: "--font-serif-accent",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  style: ["normal", "italic"],
-});
+};
 
 export const metadata: Metadata = {
   title: "NILOKA",
@@ -33,6 +28,14 @@ export default function RootLayout({
       lang="id"
       className={`${plusJakartaSans.variable} ${cormorant.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="min-h-full bg-cream-50 text-ink-900" suppressHydrationWarning>
         <CartProvider>
           {children}

@@ -1,12 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Grid, List } from "lucide-react";
 import type { Product, ProductCategory, Seller, ProductForm, ProductFunction } from "@/lib/contracts";
 import { CatalogSidebar } from "@/components/catalog/catalog-sidebar";
 import { ProductCard } from "@/components/catalog/product-card";
 import { Pagination } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ChevronDownIcon, FilterIcon } from "@/components/ui/icons";
+import { formatRupiah } from "@/lib/formatters";
+import { getActivePromosForProduct } from "@/lib/mock-queries";
+import { cn } from "@/lib/styles";
 
 type SortOption = "featured" | "price-asc" | "price-desc" | "newest";
 
@@ -26,6 +33,7 @@ const sortLabels: Record<SortOption, string> = {
 };
 
 export function CatalogShell({ products, categories, sellers }: CatalogShellProps) {
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedForms, setSelectedForms] = useState<ProductForm[]>([]);
   const [selectedFunctions, setSelectedFunctions] = useState<ProductFunction[]>([]);
@@ -167,43 +175,148 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
             </p>
           </div>
 
-          <div className="relative">
-            <button
-              className="inline-flex items-center gap-2 rounded-full border border-line bg-white-soft px-4 py-2 text-sm font-semibold text-brand-900 transition-all duration-200 hover:border-brand-700"
-              onClick={() => setShowSort(!showSort)}
-            >
-              {sortLabels[sort]}
-              <ChevronDownIcon />
-            </button>
-            {showSort && (
-              <div className="absolute right-0 top-full z-20 mt-2 min-w-[180px] overflow-hidden rounded-2xl border border-line bg-white-soft py-1 shadow-xl">
-                {(Object.entries(sortLabels) as [SortOption, string][]).map(([key, label]) => (
-                  <button
-                    key={key}
-                    className={`block w-full px-4 py-2.5 text-left text-sm font-medium transition-colors ${
-                      sort === key ? "bg-brand-100 text-brand-900" : "text-ink-700 hover:bg-cream-100"
-                    }`}
-                    onClick={() => {
-                      setSort(key);
-                      setShowSort(false);
-                      setCurrentPage(1);
-                    }}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            )}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Grid / List toggle */}
+            <div className="flex border border-line rounded-full overflow-hidden bg-white-soft p-0.5 shrink-0">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={cn(
+                  "p-1.5 rounded-full transition-colors cursor-pointer",
+                  viewMode === "grid"
+                    ? "bg-brand-900 text-white-soft"
+                    : "text-ink-600 hover:bg-cream-50"
+                )}
+                title="Tampilan Grid"
+              >
+                <Grid className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={cn(
+                  "p-1.5 rounded-full transition-colors cursor-pointer",
+                  viewMode === "list"
+                    ? "bg-brand-900 text-white-soft"
+                    : "text-ink-600 hover:bg-cream-50"
+                )}
+                title="Tampilan List"
+              >
+                <List className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="relative">
+              <button
+                className="inline-flex items-center gap-2 rounded-full border border-line bg-white-soft px-4 py-2 text-sm font-semibold text-brand-900 transition-all duration-200 hover:border-brand-700"
+                onClick={() => setShowSort(!showSort)}
+              >
+                {sortLabels[sort]}
+                <ChevronDownIcon />
+              </button>
+              {showSort && (
+                <div className="absolute right-0 top-full z-20 mt-2 min-w-[180px] overflow-hidden rounded-2xl border border-line bg-white-soft py-1 shadow-xl">
+                  {(Object.entries(sortLabels) as [SortOption, string][]).map(([key, label]) => (
+                    <button
+                      key={key}
+                      className={`block w-full px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+                        sort === key ? "bg-brand-100 text-brand-900" : "text-ink-700 hover:bg-cream-100"
+                      }`}
+                      onClick={() => {
+                        setSort(key);
+                        setShowSort(false);
+                        setCurrentPage(1);
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Product grid */}
+        {/* Product grid / list */}
         {paginatedProducts.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
-            {paginatedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          viewMode === "grid" ? (
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+              {paginatedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4 animate-in fade-in duration-300">
+              {paginatedProducts.map((product) => {
+                const promos = getActivePromosForProduct(product.id);
+                return (
+                  <Link
+                    key={product.id}
+                    href={`/products/${product.slug}`}
+                    className="group flex flex-col sm:flex-row gap-4.5 rounded-[24px] border border-line bg-white-soft p-4 hover:border-brand-700/40 hover:ring-2 hover:ring-gold-500/20 hover:shadow-md transition-all duration-200"
+                  >
+                    {/* Image side */}
+                    <div className="relative aspect-[4/5] sm:aspect-square w-full sm:w-28 h-48 sm:h-auto rounded-[18px] overflow-hidden bg-cream-50 shrink-0">
+                      <Image
+                        src={product.image.src}
+                        alt={product.image.alt}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 640px) 100vw, 112px"
+                      />
+                      {product.tags.length > 0 && (
+                        <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1">
+                          {product.tags.map((tag) => (
+                            <Badge
+                              key={tag}
+                              tone={tag === "best-seller" ? "gold" : "brand"}
+                              className="text-[9px] min-h-4.5 px-1.5 shadow-sm"
+                            >
+                              {tag === "best-seller" ? "Best Seller" : tag === "new-arrival" ? "Baru" : tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content side */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[9.5px] font-bold text-ink-650 bg-cream-100/70 border border-line/45 px-2 py-0.5 rounded uppercase">
+                            {product.form.replace("-", " ")}
+                          </span>
+                        </div>
+                        <h4 className="font-extrabold text-brand-950 text-sm leading-snug truncate">
+                          {product.name}
+                        </h4>
+                        <p className="text-xs text-ink-600 line-clamp-2 leading-relaxed">
+                          {product.shortDescription}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-3 mt-3 flex-wrap">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-base font-extrabold text-brand-900">
+                            {formatRupiah(product.price.amount)}
+                          </span>
+                          {product.originalPrice && product.originalPrice.amount > product.price.amount && (
+                            <span className="text-xs text-ink-600/50 line-through font-semibold">
+                              {formatRupiah(product.originalPrice.amount)}
+                            </span>
+                          )}
+                        </div>
+
+                        {promos.length > 0 && (
+                          <span className="rounded-full bg-emerald-800 px-2 py-0.5 text-[9px] font-extrabold text-white-soft shadow-sm border border-emerald-700/50">
+                            {promos[0].code}: {promos[0].type === "percentage" ? `${promos[0].value}%` : "Diskon"}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )
         ) : (
           <div className="flex flex-col items-center justify-center rounded-[28px] border border-line bg-white-soft py-20 text-center">
             <p className="text-lg font-semibold text-brand-950">Tidak ada produk ditemukan</p>

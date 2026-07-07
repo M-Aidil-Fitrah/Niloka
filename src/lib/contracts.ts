@@ -144,6 +144,9 @@ export type NilamPassport = {
   validationStatus: PassportValidationStatus;
   validatedBy: string;
   validatedAt: string;
+  batchCode?: string;
+  farmerGroup?: string;
+  gpsCoordinates?: string;
 };
 
 export type AmpasListing = {
@@ -161,6 +164,8 @@ export type AmpasListing = {
   disclaimer: string;
   createdAt: string;
   updatedAt: string;
+  distillationDate?: string;
+  shippingOption?: "self-pickup" | "cargo" | "both";
 };
 
 export type Review = {

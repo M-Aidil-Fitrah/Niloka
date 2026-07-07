@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bell, MessageSquare, Settings, Menu, X, ChevronDown, LogOut, ShieldCheck, User } from "lucide-react";
 import { cn } from "@/lib/styles";
+import nilokaLogo from "@/public/assets/logo/logo.png";
 
 // ==========================================
 // 1. DASHBOARD SHELL
@@ -13,10 +14,67 @@ type DashboardShellProps = {
   children: ReactNode;
 };
 
+// Helper to show modern visual feedback
+export function showToast(message: string, type: "success" | "error" | "warning" = "success") {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("show-niloka-toast", { detail: { message, type } }));
+  }
+}
+
 export function DashboardShell({ children }: DashboardShellProps) {
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
+
+  useEffect(() => {
+    const handleToast = (e: Event) => {
+      const customEvent = e as CustomEvent<{ message: string; type: "success" | "error" | "warning" }>;
+      setToast(customEvent.detail);
+    };
+
+    window.addEventListener("show-niloka-toast", handleToast);
+    return () => window.removeEventListener("show-niloka-toast", handleToast);
+  }, []);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  // Global Escape key event handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        window.dispatchEvent(new CustomEvent("close-all-drawers"));
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
-    <div className="h-screen w-full overflow-hidden flex bg-cream-50 text-ink-900 font-sans antialiased max-w-[1920px] mx-auto">
+    <div className="h-dvh w-full overflow-hidden flex bg-cream-50 text-ink-900 font-sans antialiased max-w-[1920px] mx-auto relative">
       {children}
+
+      {/* Floating Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-[9999] animate-in slide-in-from-bottom-5 duration-300">
+          <div className={cn(
+            "flex items-center gap-3 px-4.5 py-3.5 rounded-2xl border shadow-lg text-xs font-extrabold min-w-[280px]",
+            toast.type === "success" && "bg-emerald-50 border-emerald-250 text-emerald-800",
+            toast.type === "error" && "bg-red-50 border-red-200 text-red-800",
+            toast.type === "warning" && "bg-amber-50 border-amber-250 text-amber-800"
+          )}>
+            <div className="flex-1">{toast.message}</div>
+            <button
+              onClick={() => setToast(null)}
+              className="text-ink-500 hover:text-ink-800 p-0.5 rounded cursor-pointer"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -62,19 +120,27 @@ export function DashboardSidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[240px] h-full bg-white-soft border-r border-line/60 p-5 flex flex-col justify-between shrink-0 overflow-y-auto transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:shadow-none",
+          "fixed inset-y-0 left-0 z-50 w-[240px] h-full bg-white-soft border-r border-line/60 p-5 flex flex-col shrink-0 overflow-y-auto transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:shadow-none",
           isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="space-y-6">
           {/* Logo / Brand Name and Close Trigger */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-lg bg-brand-900 flex items-center justify-center text-white-soft font-black text-sm shadow-sm">
-                {logoChar}
+          <div className="flex items-center justify-between border-b border-line/40 pb-5">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <Image
+                  src={nilokaLogo}
+                  alt="NILOKA Logo"
+                  className="h-8.5 w-auto object-contain"
+                  priority
+                />
+                <span className="text-[9px] font-black px-1.5 py-0.5 bg-brand-900 text-white-soft rounded-md uppercase tracking-wider">
+                  {brandName.toLowerCase().includes("seller") ? "Seller" : "Admin"}
+                </span>
               </div>
-              <span className="font-black text-[12px] sm:text-xs tracking-wider text-brand-950 uppercase">
-                {brandName}
+              <span className="text-[9px] text-ink-500 font-extrabold tracking-wide uppercase pl-0.5">
+                {brandName.toLowerCase().includes("seller") ? "Mitra Penjual" : "Validator"}
               </span>
             </div>
             {onClose && (
@@ -88,47 +154,72 @@ export function DashboardSidebar({
             )}
           </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-1 pt-4">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    onTabChange(item.id);
-                    if (onClose) onClose(); // Auto close on mobile
-                  }}
-                  className={cn(
-                    "flex items-center justify-between w-full text-left px-3.5 py-2.5 rounded-xl text-[12.5px] font-semibold transition-all duration-200 cursor-pointer hover:translate-x-0.5",
-                    isActive
-                      ? "bg-brand-900 text-white-soft shadow-md font-bold"
-                      : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-                  )}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white-soft" : "text-ink-500")} />
-                    <span>{item.label}</span>
-                  </div>
-                  {item.count !== undefined && item.count > 0 && (
-                    <span className={cn(
-                      "text-[9px] font-extrabold px-1.5 py-0.5 rounded-md",
-                      isActive ? "bg-white-soft/20 text-white-soft" : "bg-cream-100 text-ink-700 border border-line/50"
-                    )}>
-                      {item.count}
-                    </span>
-                  )}
-                </button>
+          {/* Navigation Links Grouped */}
+          <nav className="space-y-5">
+            {(() => {
+              const isSeller = brandName.toLowerCase().includes("seller");
+              
+              // Filter logic for grouping
+              const menuUtama = navigation.filter(item => 
+                item.id === "overview" || item.id === "products" || item.id === "ampas" || item.id === "passport" || item.id === "moderation"
               );
-            })}
-          </nav>
-        </div>
+              const manajemen = navigation.filter(item => 
+                item.id === "promos" || item.id === "logs"
+              );
 
-        {/* Footer info: system status badge compact */}
-        <div className="pt-4 border-t border-line/40 flex items-center justify-between text-[9px] font-bold text-ink-500">
-          <span>NILOKA HUB v1.0</span>
-          <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              const renderGroup = (title: string, items: typeof navigation) => {
+                if (items.length === 0) return null;
+                return (
+                  <div className="space-y-1.5">
+                    <span className="text-[9px] font-black text-ink-500/70 tracking-widest uppercase block px-3 mb-1.5">
+                      {title}
+                    </span>
+                    <div className="space-y-1">
+                      {items.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = activeTab === item.id;
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => {
+                              onTabChange(item.id);
+                              if (onClose) onClose(); // Auto close on mobile
+                            }}
+                            className={cn(
+                              "flex items-center justify-between w-full text-left px-3 py-2.5 rounded-xl text-[11px] font-bold tracking-tight transition-all duration-200 cursor-pointer min-w-0",
+                              isActive
+                                ? "bg-brand-900 text-white-soft"
+                                : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
+                            )}
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white-soft" : "text-ink-500")} />
+                              <span className="whitespace-nowrap">{item.label}</span>
+                            </div>
+                            {item.count !== undefined && item.count > 0 && (
+                              <span className={cn(
+                                "text-[9px] font-extrabold px-1.5 py-0.5 rounded-md shrink-0 ml-1.5",
+                                isActive ? "bg-white-soft/20 text-white-soft" : "bg-cream-100 text-ink-700 border border-line/50"
+                              )}>
+                                {item.count}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              };
+
+              return (
+                <div className="space-y-5">
+                  {renderGroup("Menu Utama", menuUtama)}
+                  {renderGroup(isSeller ? "Manajemen" : "Audit", manajemen)}
+                </div>
+              );
+            })()}
+          </nav>
         </div>
       </aside>
     </>
@@ -174,26 +265,36 @@ export function DashboardTopbar({
   }, []);
 
   return (
-    <header className="border-b border-line/60 bg-white-soft px-4.5 py-4 sm:px-6 flex justify-between items-center shrink-0 w-full rounded-[20px] lg:rounded-none border lg:border-b shadow-sm lg:shadow-none">
-      <div className="flex items-center gap-3.5">
+    <header className="bg-white-soft px-3 py-2.5 sm:px-6 flex justify-between items-center shrink-0 w-auto mx-3 mt-3 rounded-2xl border border-line/60 shadow-xs lg:mx-0 lg:mt-0 lg:rounded-none lg:border-x-0 lg:border-t-0 lg:border-b lg:shadow-none lg:py-4">
+      <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
         {onMenuClick && (
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 text-ink-600 hover:text-brand-950 hover:bg-cream-50 border border-line/50 rounded-xl transition-all cursor-pointer shadow-xs"
+            className="lg:hidden p-1.5 sm:p-2 text-ink-600 hover:text-brand-950 hover:bg-cream-50 border border-line/50 rounded-xl transition-all cursor-pointer shadow-xs shrink-0"
             type="button"
             aria-label="Buka menu"
           >
             <Menu className="h-4 w-4" />
           </button>
         )}
-        <div>
-          <h2 className="text-sm sm:text-base font-black text-brand-950 tracking-tight leading-tight">{title}</h2>
-          <p className="text-[10px] sm:text-xs text-ink-600 mt-1">{subtitle}</p>
+        <div className="min-w-0">
+          <h2 className="text-xs sm:text-base font-black text-brand-950 tracking-tight leading-tight truncate">{title}</h2>
+          <p className="text-[10px] sm:text-xs text-ink-600 mt-0.5 truncate hidden sm:block">{subtitle}</p>
         </div>
       </div>
 
       {/* Utility Toolbar & Profile Dropdown */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2.5 sm:gap-4">
+        {/* Mobile Brand Watermark */}
+        <div className="lg:hidden shrink-0 mr-1 sm:mr-2">
+          <Image
+            src={nilokaLogo}
+            alt="NILOKA Logo"
+            className="h-4.5 sm:h-5 w-auto object-contain"
+            priority
+          />
+        </div>
+
         {/* Quick Toolbar */}
         <div className="hidden sm:flex items-center gap-2 border-r border-line/60 pr-4">
           <button
@@ -299,19 +400,19 @@ export function DashboardStatsCard({
 }: DashboardStatsCardProps) {
   const themeClasses = {
     brand: {
-      card: "bg-brand-100/30 border-brand-200/50",
+      card: "bg-[#FFFDF7] border-brand-200/50",
       iconBg: "bg-brand-100 text-brand-900 border-brand-200/50",
       sparklineColor: "text-brand-700",
       trendBg: "bg-brand-100/80 border-brand-200/40 text-brand-900",
     },
     gold: {
-      card: "bg-gold-100/20 border-gold-500/20",
+      card: "bg-[#FFFDF7] border-gold-500/20",
       iconBg: "bg-gold-100 text-gold-600 border-gold-500/20",
       sparklineColor: "text-gold-500",
       trendBg: "bg-gold-100 border-gold-500/10 text-gold-600",
     },
     cream: {
-      card: "bg-white-soft border-line/60",
+      card: "bg-[#FFFDF7] border-line/60",
       iconBg: "bg-cream-100 text-brand-950 border-line/50",
       sparklineColor: "text-brand-850",
       trendBg: "bg-cream-50 border-line/60 text-ink-700",
