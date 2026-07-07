@@ -132,7 +132,7 @@ export function DashboardSidebar({
                 <Image
                   src={nilokaLogo}
                   alt="NILOKA Logo"
-                  className="h-5.5 w-auto object-contain"
+                  className="h-8.5 w-auto object-contain"
                   priority
                 />
                 <span className="text-[9px] font-black px-1.5 py-0.5 bg-brand-900 text-white-soft rounded-md uppercase tracking-wider">
@@ -171,7 +171,7 @@ export function DashboardSidebar({
                 if (items.length === 0) return null;
                 return (
                   <div className="space-y-1.5">
-                    <span className="text-[9.5px] font-black text-ink-500/70 tracking-widest uppercase block px-3.5 mb-2">
+                    <span className="text-[9px] font-black text-ink-500/70 tracking-widest uppercase block px-3 mb-1.5">
                       {title}
                     </span>
                     <div className="space-y-1">
@@ -186,19 +186,19 @@ export function DashboardSidebar({
                               if (onClose) onClose(); // Auto close on mobile
                             }}
                             className={cn(
-                              "flex items-center justify-between w-full text-left px-3.5 py-2.5 rounded-xl text-[12px] font-bold transition-all duration-200 cursor-pointer min-w-0",
+                              "flex items-center justify-between w-full text-left px-3 py-2.5 rounded-xl text-[11px] font-bold tracking-tight transition-all duration-200 cursor-pointer min-w-0",
                               isActive
                                 ? "bg-brand-900 text-white-soft"
                                 : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
                             )}
                           >
-                            <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="flex items-center gap-2 min-w-0">
                               <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white-soft" : "text-ink-500")} />
-                              <span className="truncate whitespace-nowrap">{item.label}</span>
+                              <span className="whitespace-nowrap">{item.label}</span>
                             </div>
                             {item.count !== undefined && item.count > 0 && (
                               <span className={cn(
-                                "text-[9px] font-extrabold px-1.5 py-0.5 rounded-md",
+                                "text-[9px] font-extrabold px-1.5 py-0.5 rounded-md shrink-0 ml-1.5",
                                 isActive ? "bg-white-soft/20 text-white-soft" : "bg-cream-100 text-ink-700 border border-line/50"
                               )}>
                                 {item.count}
