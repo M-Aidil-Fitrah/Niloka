@@ -243,7 +243,7 @@ export default function LoginPage() {
 
         {/* Bottom Trust/Info Footer (Always visible) */}
         <div className="w-full text-center text-[10px] text-ink-600/50 font-semibold z-20">
-          © {new Date().getFullYear()} NILOKA. Semua Data Terproteksi Aman.
+          © {new Date().getFullYear()} NILOKA.
         </div>
       </div>
     </div>
