@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LayoutDashboard, ShoppingBag, Leaf, ShieldCheck, Tag, FileText } from "lucide-react";
 import { DashboardShell, DashboardSidebar, DashboardTopbar } from "../dashboard/dashboard-layout";
 import { SellerStats } from "./seller-stats";
@@ -23,6 +23,9 @@ export function SellerDashboardShell({
 }: SellerDashboardShellProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  useEffect(() => {
+    localStorage.setItem("niloka_current_user", "seller-aceh-aroma");
+  }, []);
 
   // Sidebar navigation configuration
   const navigation = [
@@ -123,20 +126,22 @@ export function SellerDashboardShell({
       {/* 2. Right Pane: Topbar & Scrollable Content */}
       <div className="flex-1 h-full flex flex-col overflow-hidden">
         <DashboardTopbar
-          title={navigation.find((item) => item.id === activeTab)?.label || "Dashboard"}
+          title={
+            navigation.find((item) => item.id === activeTab)?.label ||
+            "Dashboard"
+          }
           subtitle={getSubTitle()}
           profileName="Aceh Aroma Co."
           profileRole="Penyuling Mitra"
           profileImage="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
           onMenuClick={() => setIsSidebarOpen(true)}
+          chatHref="/chat?mode=seller"
           backToUrl="/"
           backToLabel="Kembali ke Pasar"
         />
-        
+
         <main className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6">
-          <div className="max-w-6xl mx-auto pb-12">
-            {renderContent()}
-          </div>
+          <div className="max-w-6xl mx-auto pb-12">{renderContent()}</div>
         </main>
       </div>
     </DashboardShell>

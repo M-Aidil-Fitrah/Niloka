@@ -10,6 +10,7 @@ import { CartIcon, SearchIcon, UserIcon } from "@/components/ui/icons";
 import nilokaLogo from "@/public/assets/logo/logo.png";
 import { cn } from "@/lib/styles";
 import { useCart } from "@/context/cart-context";
+import { ChatService } from "@/lib/services/chat-service";
 
 type NavItem = {
   label: string;
@@ -53,28 +54,12 @@ export function SiteNavbar() {
   const { totalCount } = useCart();
 
   useEffect(() => {
-    try {
-      const checkUnread = () => {
-        const stored = localStorage.getItem("niloka_chats");
-        if (stored) {
-          const threads = JSON.parse(stored);
-          const hasUnread = threads.some((t: any) => t.unread);
-          setHasUnreadChats(hasUnread);
-        }
-      };
-      
-      checkUnread();
-      // Check every 5 seconds or on page transitions / focus
-      const interval = setInterval(checkUnread, 5000);
-      window.addEventListener("focus", checkUnread);
-      return () => {
-        clearInterval(interval);
-        window.removeEventListener("focus", checkUnread);
-      };
-    } catch (e) {
-      console.error(e);
-    }
-  }, [pathname]);
+    const unsubscribe = ChatService.subscribe((threads) => {
+      const hasUnread = threads.some((t) => t.unread || t.unreadCount > 0);
+      setHasUnreadChats(hasUnread);
+    });
+    return unsubscribe;
+  }, []);
 
   return (
     <header className="site-nav page-shell fixed inset-x-0 top-6 z-50">
