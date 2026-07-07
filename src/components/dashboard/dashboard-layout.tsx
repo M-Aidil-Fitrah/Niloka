@@ -129,15 +129,15 @@ export function DashboardSidebar({
                               if (onClose) onClose(); // Auto close on mobile
                             }}
                             className={cn(
-                              "flex items-center justify-between w-full text-left px-3.5 py-2.5 rounded-xl text-[12px] font-bold transition-all duration-200 cursor-pointer",
+                              "flex items-center justify-between w-full text-left px-3.5 py-2.5 rounded-xl text-[12px] font-bold transition-all duration-200 cursor-pointer min-w-0",
                               isActive
                                 ? "bg-brand-900 text-white-soft"
                                 : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
                             )}
                           >
-                            <div className="flex items-center gap-2.5">
+                            <div className="flex items-center gap-2.5 min-w-0">
                               <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white-soft" : "text-ink-500")} />
-                              <span>{item.label}</span>
+                              <span className="truncate whitespace-nowrap">{item.label}</span>
                             </div>
                             {item.count !== undefined && item.count > 0 && (
                               <span className={cn(
@@ -333,19 +333,19 @@ export function DashboardStatsCard({
 }: DashboardStatsCardProps) {
   const themeClasses = {
     brand: {
-      card: "bg-brand-100/30 border-brand-200/50",
+      card: "bg-[#FFFDF7] border-brand-200/50",
       iconBg: "bg-brand-100 text-brand-900 border-brand-200/50",
       sparklineColor: "text-brand-700",
       trendBg: "bg-brand-100/80 border-brand-200/40 text-brand-900",
     },
     gold: {
-      card: "bg-gold-100/20 border-gold-500/20",
+      card: "bg-[#FFFDF7] border-gold-500/20",
       iconBg: "bg-gold-100 text-gold-600 border-gold-500/20",
       sparklineColor: "text-gold-500",
       trendBg: "bg-gold-100 border-gold-500/10 text-gold-600",
     },
     cream: {
-      card: "bg-white-soft border-line/60",
+      card: "bg-[#FFFDF7] border-line/60",
       iconBg: "bg-cream-100 text-brand-950 border-line/50",
       sparklineColor: "text-brand-850",
       trendBg: "bg-cream-50 border-line/60 text-ink-700",
