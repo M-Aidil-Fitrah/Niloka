@@ -201,11 +201,8 @@ export function SiteNavbar() {
                       
                       {user.role !== "seller" && user.role !== "admin" && (
                         <Link
-                          href="#"
-                          onClick={() => {
-                            setIsUserMenuOpen(false);
-                            alert("Halaman pendaftaran seller sedang dikembangkan.");
-                          }}
+                          href="/apply-seller"
+                          onClick={() => setIsUserMenuOpen(false)}
                           className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-cream-100/50 transition-all"
                         >
                           <Briefcase className="h-4 w-4 text-brand-700" />
