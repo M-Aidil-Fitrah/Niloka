@@ -172,7 +172,7 @@ export function AromaMatchShell({ questions, products, passports }: AromaMatchSh
           <div className="absolute inset-0 rounded-full bg-brand-900/10 animate-ping" />
           <Sparkles className="h-8 w-8 text-brand-900 animate-pulse" />
         </div>
-        <h3 className="mt-8 text-xl font-bold text-brand-950">AromaMatch AI sedang meracik</h3>
+        <h3 className="mt-8 text-xl font-bold text-brand-950">AromaMatch sedang meracik</h3>
         <p className="mt-2 text-xs text-ink-600 max-w-sm px-6 leading-relaxed">
           Menganalisis preferensi aroma, tujuan relaksasi, format produk, dan menyelaraskan dengan Nilam Passport terverifikasi...
         </p>

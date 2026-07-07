@@ -14,8 +14,8 @@ const AromaMatchShell = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "AromaMatch AI - NILOKA",
-  description: "Temukan produk minyak nilam dan aromaterapi yang paling cocok dengan kebutuhan, preferensi wewangian, dan anggaran Anda melalui panduan pintar AromaMatch AI.",
+  title: "AromaMatch - NILOKA",
+  description: "Temukan produk minyak nilam dan aromaterapi yang paling cocok dengan kebutuhan, preferensi wewangian, dan anggaran Anda melalui panduan pintar AromaMatch.",
 };
 
 export default function AromaMatchPage() {
@@ -26,7 +26,7 @@ export default function AromaMatchPage() {
   return (
     <SectionShell
       eyebrow="Rekomendasi Pintar"
-      title="AromaMatch AI"
+      title="AromaMatch"
       description="Jawab beberapa pertanyaan singkat untuk menemukan racikan aroma nilam Aceh yang paling sesuai dengan preferensi Anda."
     >
       <div className="mt-8">

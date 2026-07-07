@@ -38,7 +38,7 @@ export function AmpasDrawer({
         <div className="p-6 border-b border-line flex justify-between items-center bg-cream-50/50">
           <div>
             <h4 className="font-extrabold text-brand-950 text-base">
-              {listings.some((l) => l.id === activeListing.id) ? "Edit Listing Ampas" : "Tambah Listing Ampas B2B"}
+              {listings.some((l) => l.id === activeListing.id) ? "Edit Listing Ampas" : "Tambah Listing Ampas"}
             </h4>
             <p className="text-xs text-ink-600 mt-0.5 font-semibold">Lengkapi spesifikasi residu nilam untuk pencarian industri</p>
           </div>
@@ -67,7 +67,7 @@ export function AmpasDrawer({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-ink-700">Kuantitas Total (Kg)</label>
+              <label className="text-xs font-bold text-ink-700">Kuantitas Total / Stok (Kg)</label>
               <input
                 type="number"
                 className="w-full text-xs font-semibold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
@@ -112,6 +112,72 @@ export function AmpasDrawer({
             </div>
           </div>
 
+          {/* Wholesale Pricing Option */}
+          <div className="space-y-4 rounded-2xl border border-line bg-cream-50/30 p-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <label className="text-xs font-bold text-brand-950">Aktifkan Harga Grosir</label>
+                <p className="text-[10px] text-ink-600 font-medium">Berikan potongan harga untuk pembelian jumlah besar</p>
+              </div>
+              <input
+                type="checkbox"
+                checked={activeListing.wholesaleEnabled || false}
+                onChange={(e) => setActiveListing({ ...activeListing, wholesaleEnabled: e.target.checked })}
+                className="h-4.5 w-9 rounded-full appearance-none bg-ink-600/20 checked:bg-brand-900 transition-colors relative cursor-pointer before:content-[''] before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-white-soft before:top-0.5 before:left-0.5 checked:before:translate-x-4 before:transition-transform"
+              />
+            </div>
+
+            {activeListing.wholesaleEnabled && (
+              <div className="grid gap-4 sm:grid-cols-2 pt-2 border-t border-line/45 animate-in fade-in duration-200">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-ink-700">Minimal Pembelian (kg)</label>
+                  <input
+                    type="number"
+                    className="w-full text-xs font-semibold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
+                    value={activeListing.wholesaleMinQtyKg || ""}
+                    onChange={(e) => setActiveListing({ ...activeListing, wholesaleMinQtyKg: Number(e.target.value) })}
+                    placeholder="Contoh: 25"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-ink-700">Harga Grosir per kg (Rp)</label>
+                  <input
+                    type="number"
+                    className="w-full text-xs font-semibold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
+                    value={activeListing.wholesalePricePerKg?.amount || ""}
+                    onChange={(e) => setActiveListing({
+                      ...activeListing,
+                      wholesalePricePerKg: { amount: Number(e.target.value), currency: "IDR" }
+                    })}
+                    placeholder="Contoh: 1500"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Simple Preview Section */}
+            {activeListing.wholesaleEnabled && activeListing.wholesaleMinQtyKg && activeListing.wholesalePricePerKg?.amount ? (
+              <div className="mt-3 p-3 bg-white-soft rounded-xl border border-line/60 space-y-2 text-xs">
+                <span className="text-[10px] font-bold text-brand-900 block uppercase tracking-wider">Preview Tampilan Pembeli</span>
+                <div className="grid grid-cols-3 gap-2 text-center text-ink-700 font-semibold border-t border-line/40 pt-2">
+                  <div>
+                    <span className="text-[9px] text-ink-500 block">Harga Normal</span>
+                    <span className="text-[11px] font-bold text-brand-950">Rp {(activeListing.pricePerKg?.amount || 0).toLocaleString("id-ID")}/kg</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-ink-500 block">Harga Grosir</span>
+                    <span className="text-[11px] font-bold text-brand-950">Rp {activeListing.wholesalePricePerKg.amount.toLocaleString("id-ID")}/kg</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-ink-500 block">Minimal Pembelian</span>
+                    <span className="text-[11px] font-bold text-brand-950">{activeListing.wholesaleMinQtyKg} kg</span>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-ink-700">Tanggal Selesai Distilasi</label>
@@ -124,14 +190,14 @@ export function AmpasDrawer({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-ink-700">Opsi Pengiriman B2B</label>
+              <label className="text-xs font-bold text-ink-700">Opsi Pengiriman</label>
               <select
                 className="w-full text-xs font-bold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
                 value={activeListing.shippingOption || "both"}
                 onChange={(e) => setActiveListing({ ...activeListing, shippingOption: e.target.value as any })}
               >
                 <option value="self-pickup">Ambil Mandiri (Self-Pickup)</option>
-                <option value="cargo">Kargo Logistik B2B</option>
+                <option value="cargo">Kargo Logistik</option>
                 <option value="both">Kargo & Ambil Mandiri</option>
               </select>
             </div>
@@ -187,7 +253,7 @@ export function AmpasDrawer({
                   onChange={() => setActiveListing({ ...activeListing, status: "active" })}
                   className="accent-brand-900"
                 />
-                Aktif / Terlihat di Katalog B2B
+                Aktif / Terlihat di Katalog
               </label>
               <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-ink-850">
                 <input

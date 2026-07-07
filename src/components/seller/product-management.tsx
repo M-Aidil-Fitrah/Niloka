@@ -16,11 +16,26 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
   const [isEditing, setIsEditing] = useState(false);
   const [activeProduct, setActiveProduct] = useState<Partial<Product> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentSellerId, setCurrentSellerId] = useState("seller-aceh-aroma");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("niloka_products");
+      if (stored) {
+        setProducts(JSON.parse(stored));
+      }
+      const user = localStorage.getItem("niloka_current_user");
+      if (user && user !== "buyer") {
+        setCurrentSellerId(user);
+      }
+    }
+  }, []);
   
   const itemsPerPage = 6;
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const sellerProducts = products.filter((p) => p.sellerId === currentSellerId);
+  const totalPages = Math.ceil(sellerProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedProducts = sellerProducts.slice(startIndex, startIndex + itemsPerPage);
 
   useEffect(() => {
     const handleCloseDrawers = () => {
@@ -34,6 +49,7 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
     setActiveProduct({
       id: `prod-${Date.now()}`,
       slug: "",
+      sellerId: currentSellerId,
       name: "",
       shortDescription: "",
       price: { amount: 0, currency: "IDR" },
@@ -57,7 +73,11 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
   const handleDelete = (id: string) => {
     const filtered = products.filter((p) => p.id !== id);
     setProducts(filtered);
-    const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("niloka_products", JSON.stringify(filtered));
+    }
+    const filteredSellerProds = filtered.filter((p) => p.sellerId === currentSellerId);
+    const newTotalPages = Math.ceil(filteredSellerProds.length / itemsPerPage);
     if (currentPage > newTotalPages && newTotalPages > 0) {
       setCurrentPage(newTotalPages);
     }
@@ -71,11 +91,20 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
     }
 
     const updated = activeProduct as Product;
+    if (!updated.slug) {
+      updated.slug = updated.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    }
+
+    let updatedProducts: Product[] = [];
     if (products.some((p) => p.id === updated.id)) {
-      setProducts(products.map((p) => (p.id === updated.id ? updated : p)));
+      updatedProducts = products.map((p) => (p.id === updated.id ? updated : p));
     } else {
-      setProducts([updated, ...products]);
+      updatedProducts = [updated, ...products];
       setCurrentPage(1);
+    }
+    setProducts(updatedProducts);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("niloka_products", JSON.stringify(updatedProducts));
     }
     setIsEditing(false);
     setActiveProduct(null);

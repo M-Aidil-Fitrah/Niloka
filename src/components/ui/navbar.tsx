@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, MessageSquare } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { CartIcon, SearchIcon, UserIcon } from "@/components/ui/icons";
 import nilokaLogo from "@/public/assets/logo/logo.png";
@@ -26,7 +26,7 @@ const navItems: NavItem[] = [
     href: "/bundles",
   },
   {
-    label: "AromaMatch AI",
+    label: "AromaMatch",
     href: "/aromamatch",
   },
   {
@@ -46,9 +46,35 @@ const navItems: NavItem[] = [
 export function SiteNavbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hasUnreadChats, setHasUnreadChats] = useState(false);
+
   // We use light theme navbar on any page that is NOT the landing page
   const isLight = pathname !== "/";
   const { totalCount } = useCart();
+
+  useEffect(() => {
+    try {
+      const checkUnread = () => {
+        const stored = localStorage.getItem("niloka_chats");
+        if (stored) {
+          const threads = JSON.parse(stored);
+          const hasUnread = threads.some((t: any) => t.unread);
+          setHasUnreadChats(hasUnread);
+        }
+      };
+      
+      checkUnread();
+      // Check every 5 seconds or on page transitions / focus
+      const interval = setInterval(checkUnread, 5000);
+      window.addEventListener("focus", checkUnread);
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener("focus", checkUnread);
+      };
+    } catch (e) {
+      console.error(e);
+    }
+  }, [pathname]);
 
   return (
     <header className="site-nav page-shell fixed inset-x-0 top-6 z-50">
@@ -111,6 +137,14 @@ export function SiteNavbar() {
               type="search"
             />
           </label>
+          <Link href="/chat" className="relative block">
+            <IconButton label="Buka chat" theme={isLight ? "light" : "dark"}>
+              <MessageSquare className="h-[18px] w-[18px]" />
+            </IconButton>
+            {hasUnreadChats && (
+              <span className="absolute top-0 right-0 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-brand-900 border border-white-soft animate-pulse" />
+            )}
+          </Link>
           <Link href="/checkout" className="relative block">
             <IconButton label="Buka keranjang" theme={isLight ? "light" : "dark"}>
               <CartIcon />

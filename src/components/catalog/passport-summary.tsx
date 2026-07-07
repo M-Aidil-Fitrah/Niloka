@@ -98,7 +98,7 @@ export function PassportSummary({ passport }: PassportSummaryProps) {
           <p className="mt-1 text-xs leading-relaxed text-ink-700">{passport.safetyNotes}</p>
         </div>
         <p className="mt-4 text-[10px] leading-relaxed text-ink-600">
-          * Nilam Passport merupakan inisiatif transparansi rantai pasok NILOKA yang memuat data asal bahan dan profil produk sebagaimana diisi oleh produsen dan dikurasi tim kurator internal. Dokumen ini bertujuan untuk transparansi konsumen dan bukan merupakan sertifikasi resmi dari lembaga pemerintah.
+          * Nilam Passport merupakan fitur transparansi produk pada platform NILOKA. Informasi produk diisi oleh penjual saat membuat atau melengkapi data produk, dan ditinjau oleh administrator sebelum dipublikasikan guna membantu konsumen memahami asal-usul serta karakteristik produk.
         </p>
       </div>
     </div>

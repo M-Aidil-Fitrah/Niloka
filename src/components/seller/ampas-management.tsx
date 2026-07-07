@@ -16,11 +16,29 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
   const [isEditing, setIsEditing] = useState(false);
   const [activeListing, setActiveListing] = useState<Partial<AmpasListing> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentSellerId, setCurrentSellerId] = useState("seller-aceh-aroma");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("niloka_ampas_listings");
+      if (stored) {
+        setListings(JSON.parse(stored));
+      }
+      const user = localStorage.getItem("niloka_current_user");
+      if (user && user !== "buyer") {
+        setCurrentSellerId(user);
+      }
+    }
+  }, []);
   
   const itemsPerPage = 4;
-  const totalPages = Math.ceil(listings.length / itemsPerPage);
+  const sellerListings = listings;
+  const totalPages = Math.ceil(sellerListings.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedListings = listings.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedListings = sellerListings.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   const usageTagOptions: { value: AmpasUsageTag; label: string }[] = [
     { value: "compost", label: "Kompos Organik" },
@@ -43,7 +61,7 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
     setActiveListing({
       id: `ampas-${Date.now()}`,
       slug: "",
-      sellerId: "seller-aceh-aroma",
+      sellerId: currentSellerId,
       condition: "dry",
       quantityKg: 100,
       pricePerKg: { amount: 5000, currency: "IDR" },
@@ -71,7 +89,11 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
   const handleDelete = (id: string) => {
     const filtered = listings.filter((l) => l.id !== id);
     setListings(filtered);
-    const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("niloka_ampas_listings", JSON.stringify(filtered));
+    }
+    const filteredSellerListings = filtered.filter((l) => l.sellerId === currentSellerId);
+    const newTotalPages = Math.ceil(filteredSellerListings.length / itemsPerPage);
     if (currentPage > newTotalPages && newTotalPages > 0) {
       setCurrentPage(newTotalPages);
     }
@@ -100,12 +122,41 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
       return;
     }
 
+    if (activeListing.wholesaleEnabled) {
+      const minQty = activeListing.wholesaleMinQtyKg;
+      const wholesalePrice = activeListing.wholesalePricePerKg?.amount;
+      const normalPrice = activeListing.pricePerKg.amount;
+      const stock = activeListing.quantityKg;
+
+      if (minQty === undefined || minQty === null || minQty <= 1) {
+        showToast("Minimal pembelian grosir harus lebih dari 1 kg.", "warning");
+        return;
+      }
+      if (wholesalePrice === undefined || wholesalePrice === null || wholesalePrice >= normalPrice) {
+        showToast("Harga grosir harus lebih rendah dari harga normal.", "warning");
+        return;
+      }
+      if (minQty > stock) {
+        showToast("Minimal pembelian grosir tidak boleh melebihi stok yang tersedia.", "warning");
+        return;
+      }
+    }
+
     const updated = activeListing as AmpasListing;
+    if (!updated.slug) {
+      updated.slug = `ampas-nilam-${updated.id.replace("ampas-", "")}`;
+    }
+
+    let updatedListings: AmpasListing[] = [];
     if (listings.some((l) => l.id === updated.id)) {
-      setListings(listings.map((l) => (l.id === updated.id ? updated : l)));
+      updatedListings = listings.map((l) => (l.id === updated.id ? updated : l));
     } else {
-      setListings([updated, ...listings]);
+      updatedListings = [updated, ...listings];
       setCurrentPage(1);
+    }
+    setListings(updatedListings);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("niloka_ampas_listings", JSON.stringify(updatedListings));
     }
     setIsEditing(false);
     setActiveListing(null);
@@ -118,9 +169,9 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
       <div className="rounded-2xl border border-amber-250 bg-amber-50/50 p-5 flex items-start gap-3 text-xs">
         <AlertTriangle className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
         <div className="space-y-1">
-          <strong className="font-extrabold text-amber-950">Catatan Regulasi B2B Residue (Ampas Nilam)</strong>
+          <strong className="font-extrabold text-amber-950">Catatan Regulasi Residue (Ampas Nilam)</strong>
           <p className="text-amber-900/90 leading-relaxed font-medium">
-            Residu/ampas nilam dikategorikan sebagai bahan daur ulang (circular economy). Penjual wajib menyertakan deskripsi proses penyulingan secara jujur. Platform tidak memverifikasi kandungan kimia residue secara langsung; pembeli disarankan melakukan uji laboratorium mandiri jika diperlukan.
+            Residu atau ampas nilam dikategorikan sebagai bahan daur ulang dalam ekonomi sirkular. Penjual wajib menyertakan deskripsi proses penyulingan, profil fisik, dan sediaan volume secara akurat demi kelancaran transaksi.
           </p>
         </div>
       </div>
@@ -128,7 +179,7 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
       {/* 2. Header Toolbar */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-line/45 pb-6">
         <div>
-          <h3 className="text-base font-extrabold text-brand-950">Kelola Ampas Nilam (B2B)</h3>
+          <h3 className="text-base font-extrabold text-brand-950">Kelola Ampas Nilam</h3>
           <p className="text-xs text-ink-600 mt-1 font-semibold">Publikasikan limbah sulingan nilam untuk industri pupuk, kompos, atau energi briket</p>
         </div>
         <button

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Ticket, Copy, Check } from "lucide-react";
@@ -28,13 +29,49 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
   const [isAdded, setIsAdded] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
+  const [localProduct, setLocalProduct] = useState<Product>(product);
+  const [localSeller, setLocalSeller] = useState<Seller>(seller);
+  const [localPromos, setLocalPromos] = useState<Promo[]>(promos);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedProds = localStorage.getItem("niloka_products");
+      if (storedProds) {
+        const parsed = JSON.parse(storedProds) as Product[];
+        const found = parsed.find((p) => p.id === product.id);
+        if (found) {
+          setLocalProduct(found);
+        }
+      }
+      const storedSellers = localStorage.getItem("niloka_sellers");
+      if (storedSellers) {
+        const parsedS = JSON.parse(storedSellers) as Seller[];
+        const foundS = parsedS.find((s) => s.id === seller.id);
+        if (foundS) {
+          setLocalSeller(foundS);
+        }
+      }
+      const storedPromos = localStorage.getItem("niloka_promos");
+      if (storedPromos) {
+        const parsedP = JSON.parse(storedPromos) as Promo[];
+        const filtered = parsedP.filter(
+          (promo) =>
+            promo.status === "active" &&
+            promo.sellerId === product.sellerId &&
+            (promo.productIds.length === 0 || promo.productIds.includes(product.id))
+        );
+        setLocalPromos(filtered);
+      }
+    }
+  }, [product.id, seller.id, product.sellerId]);
+
   const handleAddToCart = () => {
     addItem({
       kind: "product",
-      productId: product.id,
+      productId: localProduct.id,
       ampasListingId: null,
       quantity: 1,
-      unitPrice: product.price,
+      unitPrice: localProduct.price,
     });
     setIsAdded(true);
     setTimeout(() => {
@@ -51,9 +88,9 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
   return (
     <div className="flex flex-col">
       {/* Badges */}
-      {product.tags.length > 0 && (
+      {localProduct.tags.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {product.tags.map((tag) => (
+          {localProduct.tags.map((tag) => (
             <Badge key={tag} tone={tag === "best-seller" ? "gold" : "brand"}>
               {tagLabels[tag] ?? tag}
             </Badge>
@@ -63,21 +100,21 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
 
       {/* Title */}
       <h1 className="mt-4 text-3xl font-bold leading-tight text-brand-950 sm:text-4xl">
-        {product.name}
+        {localProduct.name}
       </h1>
 
       {/* Price */}
       <div className="mt-3 flex items-baseline gap-3 flex-wrap">
         <span className="text-3xl font-extrabold text-brand-900">
-          {formatRupiah(product.price.amount)}
+          {formatRupiah(localProduct.price.amount)}
         </span>
-        {product.originalPrice && product.originalPrice.amount > product.price.amount && (
+        {localProduct.originalPrice && localProduct.originalPrice.amount > localProduct.price.amount && (
           <>
             <span className="text-sm font-semibold text-ink-600/50 line-through">
-              {formatRupiah(product.originalPrice.amount)}
+              {formatRupiah(localProduct.originalPrice.amount)}
             </span>
             <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-wider">
-              Hemat {Math.round(((product.originalPrice.amount - product.price.amount) / product.originalPrice.amount) * 100)}%
+              Hemat {Math.round(((localProduct.originalPrice.amount - localProduct.price.amount) / localProduct.originalPrice.amount) * 100)}%
             </span>
           </>
         )}
@@ -91,7 +128,7 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
           Deskripsi Produk
         </h2>
         <p className="text-base leading-relaxed text-ink-800">
-          {product.shortDescription}
+          {localProduct.shortDescription}
         </p>
         <p className="text-sm leading-relaxed text-ink-600">
           Setiap tetes minyak atsiri dan produk turunan nilam kami melalui proses seleksi ketat untuk menjamin keaslian wewangian khas nilam Aceh yang kaya, tahan lama, dan menenangkan. Cocok sebagai bagian dari ritual kebersihan, perawatan diri, maupun sebagai pengharum ruangan.
@@ -106,31 +143,31 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
           <div>
             <h3 className="text-sm font-semibold text-brand-950">Penjual</h3>
             <p className="mt-1 text-base font-bold text-brand-900">
-              {seller.displayName}
+              {localSeller.displayName}
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-600">
               <span className="flex items-center gap-1">
                 <MapPinIcon className="h-3.5 w-3.5 text-brand-700" />
-                {seller.location.city}, {seller.location.province}
+                {localSeller.location.city}, {localSeller.location.province}
               </span>
-              <span className="capitalize">Tipe: {seller.type}</span>
+              <span className="capitalize">Tipe: {localSeller.type}</span>
             </div>
           </div>
 
           <div className="flex flex-col items-end shrink-0">
             <span className="flex items-center gap-1 text-sm font-bold text-brand-950">
               <StarIcon className="h-4 w-4 text-gold-500" />
-              {seller.ratingAverage.toFixed(1)}
+              {localSeller.ratingAverage.toFixed(1)}
             </span>
             <span className="mt-1 text-[11px] text-ink-600">
-              {seller.totalReviews} Ulasan
+              {localSeller.totalReviews} Ulasan
             </span>
           </div>
         </div>
       </div>
 
       {/* Vouchers section */}
-      {promos.length > 0 && (
+      {localPromos.length > 0 && (
         <div className="mt-6 rounded-2xl border border-line bg-cream-50/50 p-4 sm:p-5 space-y-3">
           <div className="flex items-center gap-2">
             <Ticket className="h-4 w-4 text-brand-900" />
@@ -139,7 +176,7 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
             </h3>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            {promos.map((promo) => (
+            {localPromos.map((promo) => (
               <div
                 key={promo.id}
                 className="relative flex items-center justify-between bg-white border-2 border-dashed border-emerald-600/20 rounded-2xl p-3.5 shadow-sm hover:border-emerald-600/40 transition-all duration-200"
@@ -209,20 +246,14 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
             "Masukkan Keranjang"
           )}
         </Button>
-        <a
-          href={`https://wa.me/6281234567890?text=Halo%20${encodeURIComponent(
-            seller.displayName
-          )},%20saya%20tertarik%20dengan%20produk%20${encodeURIComponent(
-            product.name
-          )}.`}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          href={`/chat?sellerId=${localProduct.sellerId}&productId=${localProduct.id}`}
           className="flex-1"
         >
           <Button variant="secondary" className="w-full" size="md">
             Hubungi Penjual
           </Button>
-        </a>
+        </Link>
       </div>
     </div>
   );

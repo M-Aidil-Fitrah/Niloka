@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       (item) => `| **${item.name}** | ${item.reason} | Lihat detail produk untuk Nilam Passport dan harga terbaru. |`,
     ),
     "",
-    "Nilam Passport adalah sistem transparansi produk, bukan sertifikasi resmi.",
+    "Nilam Passport membantu memahami asal-usul dan karakteristik produk nilam.",
   ].join("\n");
   const result = await generateAiText(prompt, mockText);
 

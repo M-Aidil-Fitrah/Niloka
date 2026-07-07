@@ -33,7 +33,7 @@ const recentTransactions: Transaction[] = [
   },
   {
     id: "TRX-0980",
-    productName: "Ampas Nilam Kering B2B",
+    productName: "Ampas Nilam Kering",
     buyerName: "Pupuk Organik Makmur",
     amount: 2500000,
     date: "4 Juli 2026",

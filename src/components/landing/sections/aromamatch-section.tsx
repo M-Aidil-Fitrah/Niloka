@@ -5,7 +5,7 @@ export function AromaMatchSection() {
   return (
     <section className="page-shell py-8" id="aromamatch">
       <div className="reveal-block rounded-[32px] bg-brand-950 px-6 py-12 text-center text-white-soft sm:px-10 lg:px-16">
-        <p className="eyebrow text-gold-500">AromaMatch AI</p>
+        <p className="eyebrow text-gold-500">AromaMatch</p>
         <h2 className="mx-auto mt-3 max-w-4xl text-4xl font-bold leading-tight sm:text-6xl">
           Dari kebutuhan pengguna ke rekomendasi produk nilam yang relevan.
         </h2>

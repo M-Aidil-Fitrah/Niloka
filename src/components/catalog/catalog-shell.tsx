@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Grid, List } from "lucide-react";
@@ -33,6 +33,22 @@ const sortLabels: Record<SortOption, string> = {
 };
 
 export function CatalogShell({ products, categories, sellers }: CatalogShellProps) {
+  const [localProducts, setLocalProducts] = useState<Product[]>(products);
+  const [localSellers, setLocalSellers] = useState<Seller[]>(sellers);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedProds = localStorage.getItem("niloka_products");
+      if (storedProds) {
+        setLocalProducts(JSON.parse(storedProds));
+      }
+      const storedSellers = localStorage.getItem("niloka_sellers");
+      if (storedSellers) {
+        setLocalSellers(JSON.parse(storedSellers));
+      }
+    }
+  }, []);
+
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedForms, setSelectedForms] = useState<ProductForm[]>([]);
@@ -51,7 +67,11 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
     setCurrentPage(1);
   }
 
-  const filtered = products.filter((product) => {
+  const filtered = localProducts.filter((product) => {
+    // Only display published products
+    if (product.status !== "published") {
+      return false;
+    }
     if (selectedCategories.length > 0 && !selectedCategories.includes(product.categoryId)) {
       return false;
     }
@@ -100,7 +120,7 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
       <aside className="hidden w-64 shrink-0 lg:block">
         <CatalogSidebar
           categories={categories}
-          sellers={sellers}
+          sellers={localSellers}
           selectedCategories={selectedCategories}
           onCategoriesChange={(v: string[]) => { setSelectedCategories(v); setCurrentPage(1); }}
           selectedForms={selectedForms}
@@ -137,7 +157,7 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
             </div>
             <CatalogSidebar
               categories={categories}
-              sellers={sellers}
+              sellers={localSellers}
               selectedCategories={selectedCategories}
               onCategoriesChange={(v: string[]) => { setSelectedCategories(v); setCurrentPage(1); }}
               selectedForms={selectedForms}

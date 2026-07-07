@@ -166,6 +166,9 @@ export type AmpasListing = {
   updatedAt: string;
   distillationDate?: string;
   shippingOption?: "self-pickup" | "cargo" | "both";
+  wholesaleEnabled?: boolean;
+  wholesaleMinQtyKg?: number;
+  wholesalePricePerKg?: Money;
 };
 
 export type Review = {

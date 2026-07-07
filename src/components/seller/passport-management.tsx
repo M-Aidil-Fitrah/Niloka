@@ -12,43 +12,27 @@ type PassportManagementProps = {
 };
 
 export function PassportManagement({ products }: PassportManagementProps) {
-  const [passports, setPassports] = useState<NilamPassport[]>([
-    {
-      id: "pass-001",
-      productId: products[0]?.id || "prod-1",
-      origin: "Kecamatan Lhoong, Aceh Besar",
-      productKind: "essential-oil",
-      aromaProfile: ["Woody", "Earthy", "Balsamic"],
-      functions: ["relaxation", "sleep-support"],
-      usage: "Teteskan 3-5 tetes pada diffuser berisi air 100ml, atau encerkan dengan carrier oil sebelum kontak kulit.",
-      safetyNotes: "Hindari kontak langsung dengan mata. Tidak untuk dikonsumsi oral.",
-      validationStatus: "validated",
-      validatedBy: "UPTD Atsiri Aceh",
-      validatedAt: "2026-06-15",
-      batchCode: "B-LH-2601",
-      farmerGroup: "Kelompok Tani Nilam Jaya Lhoong",
-      gpsCoordinates: "5.2144° N, 95.3129° E",
-    },
-    {
-      id: "pass-002",
-      productId: products[1]?.id || "prod-2",
-      origin: "Kecamatan Blangkejeren, Gayo Lues",
-      productKind: "roll-on",
-      aromaProfile: ["Minty", "Fresh", "Earthy"],
-      functions: ["focus"],
-      usage: "Oleskan secukupnya pada area pelipis, pergelangan tangan, atau belakang leher.",
-      safetyNotes: "Hanya untuk pemakaian luar. Hentikan jika terjadi kemerahan/iritasi.",
-      validationStatus: "pending-review",
-      validatedBy: "",
-      validatedAt: "",
-      batchCode: "B-GL-2604",
-      farmerGroup: "Koperasi Atsiri Gayo Highland",
-      gpsCoordinates: "3.9873° N, 97.3912° E",
-    },
-  ]);
-
+  const [passports, setPassports] = useState<NilamPassport[]>([]);
   const [activePassport, setActivePassport] = useState<NilamPassport | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [currentSellerId, setCurrentSellerId] = useState("seller-aceh-aroma");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("niloka_passports");
+      if (stored) {
+        setPassports(JSON.parse(stored));
+      }
+      const user = localStorage.getItem("niloka_current_user");
+      if (user && user !== "buyer") {
+        setCurrentSellerId(user);
+      }
+    }
+  }, []);
+
+  // Filter products by seller and then filter passports matching those products
+  const sellerProductIds = products.filter((p) => p.sellerId === currentSellerId).map((p) => p.id);
+  const sellerPassports = passports.filter((pass) => sellerProductIds.includes(pass.productId));
 
   useEffect(() => {
     const handleCloseDrawers = () => {
@@ -99,7 +83,11 @@ export function PassportManagement({ products }: PassportManagementProps) {
 
   const handleSave = () => {
     if (!activePassport) return;
-    setPassports(passports.map((p) => (p.id === activePassport.id ? activePassport : p)));
+    const updated = passports.map((p) => (p.id === activePassport.id ? activePassport : p));
+    setPassports(updated);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("niloka_passports", JSON.stringify(updated));
+    }
     setIsEditing(false);
     setActivePassport(null);
     showToast("Nilam Passport berhasil diperbarui!", "success");
@@ -115,13 +103,13 @@ export function PassportManagement({ products }: PassportManagementProps) {
         <div className="space-y-1">
           <h4 className="font-extrabold text-brand-950 text-sm">Apa itu Nilam Passport?</h4>
           <p className="text-xs text-ink-600 leading-relaxed font-medium">
-            Nilam Passport adalah sistem deklarasi transparansi rantai pasok nilam NILOKA. Penjual mendeklarasikan asal-usul panen, profil aroma, cara pemakaian, serta instruksi keselamatan. Data ini akan divalidasi oleh administrator (atau UPTD dinas terkait) sebelum diterbitkan secara publik sebagai jaminan transparansi.
+            Nilam Passport merupakan fitur transparansi produk pada platform NILOKA. Penjual mengisi informasi transparansi produk saat membuat atau melengkapi produk, yang kemudian ditinjau oleh administrator sebelum dipublikasikan kepada konsumen guna meningkatkan transparansi dan kepercayaan.
           </p>
         </div>
       </div>
 
       <PassportTable
-        passports={passports}
+        passports={sellerPassports}
         products={products}
         onOpenEdit={handleOpenEdit}
       />

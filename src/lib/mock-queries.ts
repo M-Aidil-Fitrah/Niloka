@@ -102,6 +102,10 @@ export function getAmpasListingById(
   return ampasListings.find((listing) => listing.id === ampasListingId) ?? null;
 }
 
+export function getAmpasListingBySlug(slug: string): AmpasListing | null {
+  return ampasListings.find((listing) => listing.slug === slug && listing.status === "active") ?? null;
+}
+
 export function getReviewsForProduct(productId: ProductId): Review[] {
   return reviews.filter((review) => review.productId === productId);
 }
