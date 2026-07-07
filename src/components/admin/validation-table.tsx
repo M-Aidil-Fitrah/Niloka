@@ -98,7 +98,56 @@ export function ValidationTable({ items, sellers, onReviewClick }: ValidationTab
       </div>
 
       {/* Main Table */}
-      <div className="overflow-x-auto">
+      {/* Mobile Card View */}
+      <div className="block md:hidden p-4 space-y-4">
+        {paginatedItems.length === 0 ? (
+          <div className="text-center p-6 text-xs text-ink-600 font-bold">
+            Tidak ada pengajuan verifikasi dalam antrean ini.
+          </div>
+        ) : (
+          paginatedItems.map((item) => (
+            <div
+              key={item.id}
+              className="rounded-2xl border border-line/60 bg-white-soft p-4.5 space-y-3 shadow-xs"
+            >
+              <div className="flex justify-between items-center gap-2">
+                {getTargetBadge(item.target)}
+                {getStatusBadge(item.status)}
+              </div>
+
+              <div className="space-y-1.5 text-xs pt-2.5 border-t border-line/30">
+                <div className="flex justify-between items-center">
+                  <span className="text-ink-500 font-semibold">Diajukan Oleh</span>
+                  <strong className="text-brand-950 font-extrabold">{getSellerName(item.submittedBy)}</strong>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-ink-500 font-semibold">Tanggal Kirim</span>
+                  <span className="text-ink-700 font-bold">{item.submittedAt}</span>
+                </div>
+                {item.notes && (
+                  <div className="pt-1.5">
+                    <span className="text-ink-500 font-semibold block mb-0.5">Catatan Pengaju:</span>
+                    <p className="text-ink-750 bg-cream-50/40 border border-line/45 rounded-lg p-2 text-[11px] leading-relaxed">
+                      {item.notes}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <button
+                onClick={() => onReviewClick(item)}
+                className="w-full mt-2 py-2 bg-cream-100 hover:bg-cream-250 border border-line text-brand-950 font-bold rounded-xl text-[11px] transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                Review Pengajuan
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
             <tr className="border-b border-line/60 bg-cream-50/10 text-ink-700 font-bold uppercase tracking-wider">

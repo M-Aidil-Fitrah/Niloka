@@ -265,21 +265,21 @@ export function DashboardTopbar({
   }, []);
 
   return (
-    <header className="border-b border-line/60 bg-white-soft px-4.5 py-4 sm:px-6 flex justify-between items-center shrink-0 w-full rounded-[20px] lg:rounded-none border lg:border-b shadow-sm lg:shadow-none">
-      <div className="flex items-center gap-3.5">
+    <header className="bg-white-soft px-3 py-2.5 sm:px-6 flex justify-between items-center shrink-0 w-auto mx-3 mt-3 rounded-2xl border border-line/60 shadow-xs lg:mx-0 lg:mt-0 lg:rounded-none lg:border-x-0 lg:border-t-0 lg:border-b lg:shadow-none lg:py-4">
+      <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
         {onMenuClick && (
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 text-ink-600 hover:text-brand-950 hover:bg-cream-50 border border-line/50 rounded-xl transition-all cursor-pointer shadow-xs"
+            className="lg:hidden p-1.5 sm:p-2 text-ink-600 hover:text-brand-950 hover:bg-cream-50 border border-line/50 rounded-xl transition-all cursor-pointer shadow-xs shrink-0"
             type="button"
             aria-label="Buka menu"
           >
             <Menu className="h-4 w-4" />
           </button>
         )}
-        <div>
-          <h2 className="text-sm sm:text-base font-black text-brand-950 tracking-tight leading-tight">{title}</h2>
-          <p className="text-[10px] sm:text-xs text-ink-600 mt-1">{subtitle}</p>
+        <div className="min-w-0">
+          <h2 className="text-xs sm:text-base font-black text-brand-950 tracking-tight leading-tight truncate">{title}</h2>
+          <p className="text-[10px] sm:text-xs text-ink-600 mt-0.5 truncate hidden sm:block">{subtitle}</p>
         </div>
       </div>
 
