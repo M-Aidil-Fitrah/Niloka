@@ -56,46 +56,82 @@ export default function ApplySellerPage() {
   }, [user]);
 
   // Validators
-  const validateStep1 = () => {
-    const newErrors: Record<string, string> = {};
-    if (!name.trim()) newErrors.name = "Nama lengkap wajib diisi";
-    if (!phone.trim()) {
-      newErrors.phone = "Nomor telepon/WhatsApp wajib diisi";
-    } else if (!/^\d{10,14}$/.test(phone.replace(/[\s-+]/g, ""))) {
-      newErrors.phone = "Format nomor tidak valid (10-14 digit)";
-    }
-    if (!nik.trim()) {
-      newErrors.nik = "NIK KTP wajib diisi";
-    } else if (!/^\d{16}$/.test(nik)) {
-      newErrors.nik = "NIK harus terdiri dari 16 digit angka";
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateName = (val: string) => {
+    if (!val) return "";
+    return val.trim().length >= 3 ? "" : "Nama lengkap minimal 3 karakter";
   };
 
-  const validateStep2 = () => {
-    const newErrors: Record<string, string> = {};
-    if (!shopName.trim()) newErrors.shopName = "Nama toko wajib diisi";
-    if (!description.trim()) newErrors.description = "Deskripsi usaha wajib diisi";
-    if (!city.trim()) newErrors.city = "Kota / Kabupaten wajib diisi";
-    if (!district.trim()) newErrors.district = "Kecamatan wajib diisi";
-    if (!detailAddress.trim()) newErrors.detailAddress = "Alamat lengkap wajib diisi";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validatePhone = (val: string) => {
+    if (!val) return "";
+    const cleanPhone = val.replace(/[\s-+]/g, "");
+    return /^\d{10,14}$/.test(cleanPhone) ? "" : "Format nomor tidak valid (10-14 digit)";
   };
 
-  const validateStep3 = () => {
-    const newErrors: Record<string, string> = {};
-    if (!ktpFileName) newErrors.ktp = "Foto KTP wajib diunggah";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateNik = (val: string) => {
+    if (!val) return "";
+    return /^\d{16}$/.test(val) ? "" : "NIK harus terdiri dari 16 digit angka";
   };
+
+  const validateShopName = (val: string) => {
+    if (!val) return "";
+    return val.trim().length >= 3 ? "" : "Nama toko minimal 3 karakter";
+  };
+
+  const validateDescription = (val: string) => {
+    if (!val) return "";
+    return val.trim().length >= 10 ? "" : "Deskripsi usaha minimal 10 karakter";
+  };
+
+  // Run validations in real-time as values change
+  useEffect(() => {
+    if (currentStep === 1) {
+      setErrors({
+        name: name ? validateName(name) : "",
+        phone: phone ? validatePhone(phone) : "",
+        nik: nik ? validateNik(nik) : "",
+      });
+    }
+  }, [name, phone, nik, currentStep]);
+
+  useEffect(() => {
+    if (currentStep === 2) {
+      setErrors({
+        shopName: shopName ? validateShopName(shopName) : "",
+        description: description ? validateDescription(description) : "",
+        city: city ? (city.trim() ? "" : "Kota/Kabupaten wajib diisi") : "",
+        district: district ? (district.trim() ? "" : "Kecamatan wajib diisi") : "",
+        detailAddress: detailAddress ? (detailAddress.trim() ? "" : "Alamat lengkap wajib diisi") : "",
+      });
+    }
+  }, [shopName, description, city, district, detailAddress, currentStep]);
+
+  useEffect(() => {
+    if (currentStep === 3) {
+      setErrors({
+        ktp: ktpFileName ? "" : "Foto KTP wajib diunggah",
+      });
+    }
+  }, [ktpFileName, currentStep]);
+
+  // Step validation state for locking button
+  const isStep1Invalid = 
+    !name || !phone || !nik || 
+    !!validateName(name) || !!validatePhone(phone) || !!validateNik(nik);
+
+  const isStep2Invalid = 
+    !shopName || !description || !city || !district || !detailAddress ||
+    !!validateShopName(shopName) || !!validateDescription(description);
+
+  const isStep3Invalid = !ktpFileName;
+
+  const isCurrentStepInvalid = 
+    (currentStep === 1 && isStep1Invalid) ||
+    (currentStep === 2 && isStep2Invalid) ||
+    (currentStep === 3 && isStep3Invalid);
 
   // Navigations
   const handleNext = () => {
-    if (currentStep === 1 && !validateStep1()) return;
-    if (currentStep === 2 && !validateStep2()) return;
-    if (currentStep === 3 && !validateStep3()) return;
+    if (isCurrentStepInvalid) return;
     setCurrentStep((prev) => prev + 1);
   };
 
@@ -305,7 +341,8 @@ export default function ApplySellerPage() {
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="flex items-center gap-1 py-2 px-5 border border-transparent rounded-full text-xs font-bold text-white bg-brand-950 hover:bg-brand-900 transition-all cursor-pointer ml-auto"
+                      disabled={isCurrentStepInvalid}
+                      className="flex items-center gap-1 py-2 px-5 border border-transparent rounded-full text-xs font-bold text-white bg-brand-950 hover:bg-brand-900 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer ml-auto"
                     >
                       Lanjut
                       <ChevronRight className="h-3.5 w-3.5" />
