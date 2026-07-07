@@ -20,7 +20,7 @@ export function CartItemsList({ resolvedItems, updateQuantity, removeItem }: Car
 
       <div className="divide-y divide-line/60">
         {resolvedItems.map((item) => (
-          <div key={item.id} className="py-4 flex gap-4 items-center first:pt-0 last:pb-0">
+          <div key={item.id} className="py-4 flex gap-3 sm:gap-4 items-start sm:items-center first:pt-0 last:pb-0">
             {/* Thumbnail */}
             <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-line/40 bg-cream-100 shrink-0">
               <Image
@@ -32,44 +32,50 @@ export function CartItemsList({ resolvedItems, updateQuantity, removeItem }: Car
               />
             </div>
 
-            {/* Details */}
-            <div className="flex-1 min-w-0">
-              <span className="text-[9px] font-extrabold text-gold-600 bg-gold-100/30 px-2 py-0.5 rounded-md uppercase tracking-wider">
-                {item.kind === "product" ? "B2C Produk" : "B2B Ampas"}
-              </span>
-              <h4 className="text-sm font-bold text-brand-950 mt-1 truncate">{item.name}</h4>
-              <p className="text-xs font-extrabold text-brand-990 mt-1">
-                Rp {item.unitPrice.amount.toLocaleString("id-ID")}
-              </p>
-            </div>
+            {/* Details + Controls Container */}
+            <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              {/* Details */}
+              <div className="min-w-0">
+                <span className="text-[9px] font-extrabold text-gold-600 bg-gold-100/30 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                  {item.kind === "product" ? "B2C Produk" : "B2B Ampas"}
+                </span>
+                <h4 className="text-sm font-bold text-brand-950 mt-1 truncate">{item.name}</h4>
+                <p className="text-xs font-extrabold text-brand-950 mt-1">
+                  Rp {item.unitPrice.amount.toLocaleString("id-ID")}
+                </p>
+              </div>
 
-            {/* Quantity Controls */}
-            <div className="flex items-center border border-line rounded-lg overflow-hidden h-8 bg-cream-50 shrink-0">
-              <button
-                onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                className="px-2 hover:bg-cream-100 text-xs font-bold text-brand-950 h-full flex items-center justify-center cursor-pointer"
-              >
-                <Minus className="h-3 w-3" />
-              </button>
-              <span className="px-3 text-xs font-bold text-brand-950 min-w-6 text-center">
-                {item.quantity}
-              </span>
-              <button
-                onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                className="px-2 hover:bg-cream-100 text-xs font-bold text-brand-950 h-full flex items-center justify-center cursor-pointer"
-              >
-                <Plus className="h-3 w-3" />
-              </button>
-            </div>
+              {/* Controls (Qty + Remove) */}
+              <div className="flex items-center gap-2 self-end sm:self-auto">
+                {/* Quantity Controls */}
+                <div className="flex items-center border border-line rounded-lg overflow-hidden h-8 bg-cream-50">
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    className="px-2.5 hover:bg-cream-100 text-xs font-bold text-brand-950 h-full flex items-center justify-center cursor-pointer"
+                  >
+                    <Minus className="h-3 w-3" />
+                  </button>
+                  <span className="px-2 text-xs font-bold text-brand-950 min-w-6 text-center">
+                    {item.quantity}
+                  </span>
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    className="px-2.5 hover:bg-cream-100 text-xs font-bold text-brand-950 h-full flex items-center justify-center cursor-pointer"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </button>
+                </div>
 
-            {/* Remove Button */}
-            <button
-              onClick={() => removeItem(item.id)}
-              aria-label="Hapus item"
-              className="p-2 text-ink-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all shrink-0 cursor-pointer"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+                {/* Remove Button */}
+                <button
+                  onClick={() => removeItem(item.id)}
+                  aria-label="Hapus item"
+                  className="p-2 text-ink-600 hover:text-red-650 hover:bg-red-50 rounded-lg transition-all cursor-pointer"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
           </div>
         ))}
       </div>

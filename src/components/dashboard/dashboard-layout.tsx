@@ -53,7 +53,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
   }, []);
 
   return (
-    <div className="h-screen w-full overflow-hidden flex bg-cream-50 text-ink-900 font-sans antialiased max-w-[1920px] mx-auto relative">
+    <div className="h-dvh w-full overflow-hidden flex bg-cream-50 text-ink-900 font-sans antialiased max-w-[1920px] mx-auto relative">
       {children}
 
       {/* Floating Toast Notification */}
@@ -284,7 +284,17 @@ export function DashboardTopbar({
       </div>
 
       {/* Utility Toolbar & Profile Dropdown */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2.5 sm:gap-4">
+        {/* Mobile Brand Watermark */}
+        <div className="lg:hidden shrink-0 mr-1 sm:mr-2">
+          <Image
+            src={nilokaLogo}
+            alt="NILOKA Logo"
+            className="h-4.5 sm:h-5 w-auto object-contain"
+            priority
+          />
+        </div>
+
         {/* Quick Toolbar */}
         <div className="hidden sm:flex items-center gap-2 border-r border-line/60 pr-4">
           <button
