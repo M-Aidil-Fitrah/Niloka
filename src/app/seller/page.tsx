@@ -1,5 +1,9 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { useAuth } from "@/context/auth-context";
 import {
   getActiveAmpasListings,
   getPromosForSeller,
@@ -11,19 +15,39 @@ const SellerDashboardShell = dynamic(
   () => import("@/components/seller/seller-dashboard-shell").then((m) => m.SellerDashboardShell),
   {
     loading: () => <SellerDashboardSkeleton />,
-    ssr: true,
+    ssr: false,
   }
 );
 
-export const metadata: Metadata = {
-  title: "Seller Portal - NILOKA",
-  description: "Kelola katalog produk, listing ampas B2B, pantau transparansi Nilam Passport, dan buat deskripsi produk dengan bantuan AI.",
-};
-
 export default function SellerPage() {
-  const products = getPublishedProducts();
-  const ampasListings = getActiveAmpasListings();
-  const promos = getPromosForSeller("seller-aceh-aroma");
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!user) {
+        router.replace("/auth/login?role=seller");
+      } else if (user.role !== "seller") {
+        router.replace("/");
+      } else {
+        setIsAuthorized(true);
+      }
+    }
+  }, [user, isLoading, router]);
+
+  if (isLoading || !isAuthorized || !user) {
+    return <SellerDashboardSkeleton />;
+  }
+
+  // Filter products, promos, and ampas listings dynamically for the logged-in seller
+  const sellerId = user.sellerId || "seller-aceh-aroma";
+  const allProducts = getPublishedProducts();
+  const allAmpasListings = getActiveAmpasListings();
+
+  const products = allProducts.filter((p) => p.sellerId === sellerId);
+  const ampasListings = allAmpasListings.filter((a) => a.sellerId === sellerId);
+  const promos = getPromosForSeller(sellerId);
 
   return (
     <SellerDashboardShell

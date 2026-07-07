@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, MessageSquare } from "lucide-react";
+import { Menu, X, MessageSquare, LogOut, User as LucideUser, Briefcase, Shield } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { CartIcon, SearchIcon, UserIcon } from "@/components/ui/icons";
 import nilokaLogo from "@/public/assets/logo/logo.png";
 import { cn } from "@/lib/styles";
 import { useCart } from "@/context/cart-context";
+import { useAuth } from "@/context/auth-context";
 
 type NavItem = {
   label: string;
@@ -37,16 +38,14 @@ const navItems: NavItem[] = [
     label: "Ampas Nilam",
     href: "/ampas",
   },
-  {
-    label: "Seller",
-    href: "/seller",
-  },
 ];
 
 export function SiteNavbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [hasUnreadChats, setHasUnreadChats] = useState(false);
+  const { user, logout } = useAuth();
 
   // We use light theme navbar on any page that is NOT the landing page
   const isLight = pathname !== "/";
@@ -155,9 +154,101 @@ export function SiteNavbar() {
               </span>
             )}
           </Link>
-          <IconButton label="Buka akun" theme={isLight ? "light" : "dark"}>
-            <UserIcon />
-          </IconButton>
+          <div className="relative">
+            <IconButton 
+              label="Buka akun" 
+              theme={isLight ? "light" : "dark"}
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+            >
+              <UserIcon />
+            </IconButton>
+
+            {/* Dropdown Menu */}
+            {isUserMenuOpen && (
+              <div 
+                className="absolute right-0 mt-3 w-64 rounded-3xl border border-line bg-white text-brand-950 p-4 shadow-xl animate-in slide-in-from-top-2 duration-200 z-50"
+              >
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="border-b border-line/40 pb-3">
+                      <p className="text-xs font-extrabold text-gold-700 uppercase tracking-wider">
+                        {user.role === "admin" ? "Administrator" : user.role === "seller" ? "Penjual (Seller)" : "Pembeli"}
+                      </p>
+                      <p className="text-sm font-bold truncate mt-0.5">{user.name}</p>
+                      <p className="text-[10px] text-ink-600 truncate mt-0.5">{user.email}</p>
+                    </div>
+                    <div className="flex flex-col gap-1.5 text-xs font-bold">
+                      {user.role === "seller" && (
+                        <Link
+                          href="/seller"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-cream-100/50 transition-all"
+                        >
+                          <Briefcase className="h-4 w-4 text-brand-700" />
+                          Dashboard Seller
+                        </Link>
+                      )}
+                      {user.role === "admin" && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-cream-100/50 transition-all"
+                        >
+                          <Shield className="h-4 w-4 text-brand-700" />
+                          Panel Admin
+                        </Link>
+                      )}
+                      
+                      {user.role !== "seller" && user.role !== "admin" && (
+                        <Link
+                          href="#"
+                          onClick={() => {
+                            setIsUserMenuOpen(false);
+                            alert("Halaman pendaftaran seller sedang dikembangkan.");
+                          }}
+                          className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-cream-100/50 transition-all"
+                        >
+                          <Briefcase className="h-4 w-4 text-brand-700" />
+                          Ajukan Seller
+                        </Link>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          logout();
+                        }}
+                        className="flex items-center gap-2 p-2.5 rounded-xl text-red-600 hover:bg-red-50 transition-all text-left w-full cursor-pointer"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Keluar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-xs font-bold text-ink-600">Silakan masuk ke akun Anda untuk bertransaksi.</p>
+                    <div className="flex flex-col gap-2">
+                      <Link
+                        href="/auth/login"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-full shadow-sm text-xs font-bold !text-white bg-brand-950 hover:bg-brand-900 transition-all"
+                      >
+                        Masuk (Login)
+                      </Link>
+                      <Link
+                        href="/auth/register"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="w-full flex justify-center py-2.5 px-4 border border-line rounded-full text-xs font-bold text-brand-950 bg-cream-50 hover:bg-cream-100 transition-all"
+                      >
+                        Daftar (Register)
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
           
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

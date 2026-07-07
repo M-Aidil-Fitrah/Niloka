@@ -9,6 +9,7 @@ import { AmpasManagement } from "./ampas-management";
 import { PassportManagement } from "./passport-management";
 import { PromoManagement } from "./promo-management";
 import type { Product, AmpasListing, Promo } from "@/lib/contracts";
+import { useAuth } from "@/context/auth-context";
 
 type SellerDashboardShellProps = {
   products: Product[];
@@ -23,6 +24,7 @@ export function SellerDashboardShell({
 }: SellerDashboardShellProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user } = useAuth();
 
   // Sidebar navigation configuration
   const navigation = [
@@ -125,8 +127,8 @@ export function SellerDashboardShell({
         <DashboardTopbar
           title={navigation.find((item) => item.id === activeTab)?.label || "Dashboard"}
           subtitle={getSubTitle()}
-          profileName="Aceh Aroma Co."
-          profileRole="Penyuling Mitra"
+          profileName={user?.name || "Aceh Aroma Co."}
+          profileRole={user?.sellerType ? `Mitra ${user.sellerType.toUpperCase()}` : "Penyuling Mitra"}
           profileImage="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
           onMenuClick={() => setIsSidebarOpen(true)}
           backToUrl="/"
