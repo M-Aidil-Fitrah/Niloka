@@ -15,7 +15,7 @@ const MarkdownMessage = dynamic(
   },
 );
 
-const hiddenPrefixes = ["/admin", "/seller", "/checkout"];
+const hiddenPrefixes = ["/admin", "/seller", "/checkout", "/auth"];
 
 const starterQuestions = [
   "Produk nilam apa yang cocok untuk relaksasi?",

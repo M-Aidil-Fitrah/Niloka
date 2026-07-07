@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
-import { ArrowLeft, LogIn, Mail, Lock, Sparkles, ShieldCheck, MapPin } from "lucide-react";
+import { ArrowLeft, LogIn, Mail, Lock, ShieldCheck, MapPin } from "lucide-react";
+import nilokaLogo from "@/public/assets/logo/logo.png";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -15,17 +17,52 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Real-time validation states
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const validateEmail = (val: string) => {
+    if (!val) return "";
+    const isValid = /\S+@\S+\.\S+/.test(val);
+    return isValid ? "" : "Format email tidak valid";
+  };
+
+  const validatePassword = (val: string) => {
+    if (!val) return "";
+    return val.length >= 6 ? "" : "Kata sandi minimal 6 karakter";
+  };
+
+  // Run validations in real-time as user types
+  useEffect(() => {
+    if (email) {
+      setEmailError(validateEmail(email));
+    } else {
+      setEmailError("");
+    }
+  }, [email]);
+
+  useEffect(() => {
+    if (password) {
+      setPasswordError(validatePassword(password));
+    } else {
+      setPasswordError("");
+    }
+  }, [password]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setIsSubmitting(true);
 
-    if (!email) {
-      setError("Alamat email wajib diisi");
-      setIsSubmitting(false);
+    const currentEmailErr = validateEmail(email);
+    const currentPasswordErr = validatePassword(password);
+
+    if (currentEmailErr || currentPasswordErr) {
+      setEmailError(currentEmailErr);
+      setPasswordError(currentPasswordErr);
       return;
     }
 
+    setIsSubmitting(true);
     const user = await login(email);
     setIsSubmitting(false);
 
@@ -38,133 +75,113 @@ export default function LoginPage() {
         router.push("/");
       }
     } else {
-      setError("Email tidak terdaftar. Gunakan tombol Akun Demo di bawah untuk masuk instan.");
+      setError("Email tidak terdaftar.");
     }
   };
 
-  const handleDemoLogin = async (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword("password123");
-    setError("");
-    setIsSubmitting(true);
-
-    const user = await login(demoEmail);
-    setIsSubmitting(false);
-
-    if (user) {
-      if (user.role === "seller") {
-        router.push("/seller");
-      } else if (user.role === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/");
-      }
-    }
-  };
+  const isFormInvalid = !!emailError || !!passwordError || !email || !password;
 
   return (
-    <div className="min-h-screen bg-cream-50 flex overflow-hidden">
+    <div className="h-screen w-screen bg-cream-50 flex overflow-hidden">
       {/* LEFT PANEL: Branding & Visual Hero (Visible on lg screens) */}
-      <div className="hidden lg:flex lg:w-[42%] bg-brand-950 text-white-soft relative p-12 flex-col justify-between overflow-hidden">
-        {/* Abstract organic background overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--brand-700),transparent_60%)] opacity-30" />
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-gold-500/10 blur-3xl" />
+      <div className="hidden lg:flex lg:w-[40%] h-full text-white-soft relative p-10 flex-col justify-between overflow-hidden shrink-0">
+        {/* Full-bleed high-quality Unsplash image representing patchouli/essential oils */}
+        <img
+          src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop"
+          alt="Minyak Atsiri Nilam"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Dark overlay for readability */}
+        <div className="absolute inset-0 bg-brand-950/80 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-transparent to-brand-900/30 opacity-80" />
         
-        {/* Top brand info */}
+        {/* Top brand info with actual Niloka Logo */}
         <div className="z-10 flex items-center gap-2">
-          <span className="h-9 w-9 rounded-full bg-gold-500 flex items-center justify-center font-accent text-brand-950 font-bold text-lg">
-            N
-          </span>
-          <span className="font-extrabold tracking-wider text-sm uppercase text-gold-100">
-            NILOKA
-          </span>
+          <Image
+            src={nilokaLogo}
+            alt="Niloka Logo"
+            width={100}
+            height={32}
+            className="h-8 w-auto object-contain brightness-0 invert"
+          />
         </div>
 
         {/* Hero Copy */}
-        <div className="z-10 my-auto space-y-6 max-w-sm">
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white-soft/10 text-xs font-semibold text-gold-500 border border-white-soft/10">
-            <Sparkles className="h-3 w-3" />
-            Ecosystem Nilam Sirkular
-          </span>
-          <h1 className="text-4xl xl:text-5xl font-extrabold leading-[1.1] font-accent text-white-soft">
-            Minyak Atsiri Terbaik Dari Bumi Aceh
+        <div className="z-10 my-auto space-y-4 max-w-xs">
+          <h1 className="text-3xl xl:text-4xl font-extrabold leading-[1.15] font-accent text-white-soft">
+            Minyak Nilam Aceh Terbaik
           </h1>
-          <p className="text-sm text-ink-600 leading-relaxed font-medium">
-            Temukan produk turunan nilam berkualitas premium yang ditelusuri secara transparan lewat Nilam Passport dari petani lokal.
+          <p className="text-xs text-white-soft/75 leading-relaxed font-medium">
+            Masuk untuk mengakses pasar atsiri terkurasi dengan transparansi penelusuran bahan langsung dari penyuling lokal.
           </p>
-
-          {/* Floating interactive-style card */}
-          <div className="pt-4">
-            <div className="bg-white-soft/5 backdrop-blur-md border border-white-soft/10 rounded-2xl p-4 flex items-center gap-4 shadow-lg">
-              <div className="h-10 w-10 rounded-xl bg-gold-500/25 flex items-center justify-center text-gold-500 font-bold text-xs shrink-0">
-                PA%
-              </div>
-              <div className="text-xs">
-                <p className="font-extrabold text-white-soft">Kadar Pogostone Acetate (PA)</p>
-                <p className="text-[10px] text-gold-500 font-bold mt-0.5">34.2% (Premium Quality Verified)</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Bottom footer inside hero */}
-        <div className="z-10 text-[11px] text-ink-600 font-semibold flex items-center gap-4 justify-between border-t border-white-soft/10 pt-6">
+        <div className="z-10 text-[10px] text-white-soft/60 font-semibold flex items-center gap-4 justify-between border-t border-white-soft/10 pt-4">
           <span className="flex items-center gap-1">
-            <ShieldCheck className="h-3.5 w-3.5 text-gold-500" />
-            Terverifikasi UPTD Atsiri
+            <ShieldCheck className="h-3 w-3 text-gold-500" />
+            Terverifikasi Petani Lokal
           </span>
           <span className="flex items-center gap-1">
-            <MapPin className="h-3.5 w-3.5 text-gold-500" />
+            <MapPin className="h-3 w-3 text-gold-500" />
             Aceh, Indonesia
           </span>
         </div>
       </div>
 
-      {/* RIGHT PANEL: Form Login (Full width on mobile/tablet) */}
-      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
-        {/* Blurry mobile background blobs */}
-        <div className="lg:hidden absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-brand-200/10 blur-3xl pointer-events-none" />
-        <div className="lg:hidden absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-gold-100/20 blur-3xl pointer-events-none" />
-
-        <div className="sm:mx-auto sm:w-full sm:max-w-md z-10">
+      {/* RIGHT PANEL: Form Login (Scrollable internally, minimalist styling) */}
+      <div className="flex-1 h-full overflow-y-auto flex flex-col justify-between p-6 sm:p-8 lg:p-12 relative">
+        {/* Top Header - Logo on Mobile, Back Button */}
+        <div className="w-full flex items-center justify-between lg:justify-end z-20">
+          <div className="lg:hidden">
+            <Image
+              src={nilokaLogo}
+              alt="Niloka Logo"
+              width={90}
+              height={28}
+              className="h-7 w-auto object-contain"
+            />
+          </div>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-brand-800 hover:text-brand-950 transition-colors mb-6 group"
+            className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-brand-800 hover:text-brand-950 transition-colors group"
           >
-            <ArrowLeft className="h-4.5 w-4.5 transition-transform group-hover:-translate-x-1" />
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
             Kembali ke Pasar
           </Link>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-950 font-accent tracking-tight">
-            Masuk Akun
-          </h2>
-          <p className="mt-1 text-sm text-ink-600 font-semibold">
-            Belum terdaftar?{" "}
-            <Link
-              href="/auth/register"
-              className="font-bold text-gold-600 hover:text-gold-500 transition-colors underline"
-            >
-              Mulai mendaftar gratis
-            </Link>
-          </p>
         </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md z-10">
-          <div className="bg-white-soft/75 backdrop-blur-md py-8 px-6 border border-line/45 rounded-3xl sm:px-10 shadow-sm">
+        {/* Center Card */}
+        <div className="my-auto py-6 sm:mx-auto sm:w-full sm:max-w-sm z-10 w-full">
+          <div className="bg-white-soft/90 backdrop-blur-md py-7 px-6 border border-line/35 rounded-3xl sm:px-8 shadow-sm">
+            <h2 className="text-2xl font-extrabold text-brand-950 font-accent tracking-tight mb-1">
+              Masuk Akun
+            </h2>
+            <p className="text-xs text-ink-600 font-semibold mb-6 flex items-center flex-wrap gap-y-1">
+              Belum memiliki akun?{" "}
+              <Link
+                href="/auth/register"
+                className="font-extrabold text-brand-950 hover:text-brand-900 transition-colors inline-flex items-center gap-0.5 ml-1"
+              >
+                Buat Akun Gratis <span className="text-[10px]">↗</span>
+              </Link>
+            </p>
+
             {error && (
-              <div className="mb-6 p-4 rounded-2xl bg-red-50 text-red-700 text-xs font-bold border border-red-100 leading-relaxed">
+              <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-700 text-xs font-bold border border-red-100/80 leading-relaxed">
                 {error}
               </div>
             )}
 
-            <form className="space-y-5" onSubmit={handleLogin}>
+            <form className="space-y-4" onSubmit={handleLogin}>
               {/* Email Input */}
               <div>
-                <label htmlFor="email" className="block text-[11px] font-extrabold text-brand-950 uppercase tracking-wider mb-2">
+                <label htmlFor="email" className="block text-[10px] font-extrabold text-brand-950 uppercase tracking-wider mb-1.5">
                   Alamat Email
                 </label>
                 <div className="relative rounded-full shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Mail className="h-4 w-4 text-ink-600" />
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <Mail className="h-3.5 w-3.5 text-ink-600" />
                   </div>
                   <input
                     id="email"
@@ -172,20 +189,25 @@ export default function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-10 pr-4 py-3 bg-cream-50/50 border border-line/50 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-brand-700 text-sm placeholder:text-ink-600/40 text-brand-950 font-semibold transition-all"
+                    className={`block w-full pl-9 pr-4 py-2.5 bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-brand-900/10 focus:border-brand-900 text-xs placeholder:text-ink-600/35 text-brand-950 font-semibold transition-all ${
+                      emailError ? "border-red-500 focus:ring-red-500/20 focus:border-red-500" : "border-line/45"
+                    }`}
                     placeholder="nama@email.com"
                   />
                 </div>
+                {emailError && (
+                  <p className="text-[10px] text-red-600 font-bold mt-1.5 pl-3.5">{emailError}</p>
+                )}
               </div>
 
               {/* Password Input */}
               <div>
-                <label htmlFor="password" className="block text-[11px] font-extrabold text-brand-950 uppercase tracking-wider mb-2">
+                <label htmlFor="password" className="block text-[10px] font-extrabold text-brand-950 uppercase tracking-wider mb-1.5">
                   Kata Sandi
                 </label>
                 <div className="relative rounded-full shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="h-4 w-4 text-ink-600" />
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <Lock className="h-3.5 w-3.5 text-ink-600" />
                   </div>
                   <input
                     id="password"
@@ -193,60 +215,35 @@ export default function LoginPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-4 py-3 bg-cream-50/50 border border-line/50 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-brand-700 text-sm placeholder:text-ink-600/40 text-brand-950 font-semibold transition-all"
+                    className={`block w-full pl-9 pr-4 py-2.5 bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-brand-900/10 focus:border-brand-900 text-xs placeholder:text-ink-600/35 text-brand-950 font-semibold transition-all ${
+                      passwordError ? "border-red-500 focus:ring-red-500/20 focus:border-red-500" : "border-line/45"
+                    }`}
                     placeholder="••••••••"
                   />
                 </div>
+                {passwordError && (
+                  <p className="text-[10px] text-red-600 font-bold mt-1.5 pl-3.5">{passwordError}</p>
+                )}
               </div>
 
               {/* Submit Button */}
-              <div>
+              <div className="pt-1">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-full shadow-md text-sm font-bold text-white-soft bg-brand-900 hover:bg-brand-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  disabled={isSubmitting || isFormInvalid}
+                  className="w-full flex justify-center items-center gap-1.5 py-2.5 px-4 border border-transparent rounded-full shadow-sm text-xs font-bold text-white-soft bg-brand-900 hover:bg-brand-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer hover:scale-[1.01]"
                 >
-                  <LogIn className="h-4 w-4" />
+                  <LogIn className="h-3.5 w-3.5" />
                   {isSubmitting ? "Memproses..." : "Masuk"}
                 </button>
               </div>
             </form>
-
-            {/* Quick Demo Shortcuts (No Role Switcher) */}
-            <div className="mt-8 pt-6 border-t border-line/45">
-              <p className="text-center text-[10px] font-extrabold text-brand-950 uppercase tracking-wider mb-4">
-                Masuk Instan dengan Akun Demo
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin("buyer@niloka.com")}
-                  className="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-cream-50/60 hover:bg-cream-100 border border-line/35 transition-all text-center group cursor-pointer"
-                >
-                  <span className="text-[10px] font-extrabold text-brand-950">Pembeli</span>
-                  <span className="text-[8px] text-ink-600 mt-0.5 font-medium truncate w-full">buyer@niloka.com</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin("seller@niloka.com")}
-                  className="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-cream-50/60 hover:bg-cream-100 border border-line/35 transition-all text-center group cursor-pointer"
-                >
-                  <span className="text-[10px] font-extrabold text-brand-950">Penjual</span>
-                  <span className="text-[8px] text-ink-600 mt-0.5 font-medium truncate w-full">seller@niloka.com</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin("admin@niloka.com")}
-                  className="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-cream-50/60 hover:bg-cream-100 border border-line/35 transition-all text-center group cursor-pointer"
-                >
-                  <span className="text-[10px] font-extrabold text-brand-950">Admin</span>
-                  <span className="text-[8px] text-ink-600 mt-0.5 font-medium truncate w-full">admin@niloka.com</span>
-                </button>
-              </div>
-            </div>
           </div>
+        </div>
+
+        {/* Bottom Trust/Info Footer (Always visible) */}
+        <div className="w-full text-center text-[10px] text-ink-600/50 font-semibold z-20">
+          © {new Date().getFullYear()} NILOKA. Semua Data Terproteksi Aman.
         </div>
       </div>
     </div>
