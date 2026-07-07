@@ -7,6 +7,7 @@ import { AdminStats } from "./admin-stats";
 import { ValidationTable } from "./validation-table";
 import { ReviewModal } from "./review-modal";
 import type { AdminValidationItem, Seller } from "@/lib/contracts";
+import { useAuth } from "@/context/auth-context";
 
 type AdminShellProps = {
   validationItems: AdminValidationItem[];
@@ -17,6 +18,7 @@ export function AdminShell({ validationItems: initialItems, sellers }: AdminShel
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [validationItems, setValidationItems] = useState<AdminValidationItem[]>(initialItems);
+  const { user } = useAuth();
 
   // Review modal state
   const [selectedItem, setSelectedItem] = useState<AdminValidationItem | null>(null);
@@ -147,8 +149,8 @@ export function AdminShell({ validationItems: initialItems, sellers }: AdminShel
         <DashboardTopbar
           title={navigation.find((item) => item.id === activeTab)?.label || "Dashboard"}
           subtitle={getSubTitle()}
-          profileName="UPTD Atsiri Aceh"
-          profileRole="Validator Resmi"
+          profileName={user?.name || "UPTD Atsiri Aceh"}
+          profileRole={user?.role === "admin" ? "Validator Resmi" : "Admin Staff"}
           profileImage="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
           onMenuClick={() => setIsSidebarOpen(true)}
           backToUrl="/"

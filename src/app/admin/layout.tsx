@@ -1,4 +1,10 @@
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Panel - NILOKA",
+  description: "Panel moderasi internal untuk validasi seller, produk, Nilam Passport, dan review listing ampas nilam.",
+};
 
 type AdminLayoutProps = {
   children: ReactNode;
