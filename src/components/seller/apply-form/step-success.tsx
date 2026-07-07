@@ -40,7 +40,7 @@ export function StepSuccess({ name, shopName }: StepSuccessProps) {
       <div className="pt-4">
         <Link
           href="/"
-          className="inline-flex justify-center items-center py-2.5 px-6 border border-transparent rounded-full shadow-sm text-xs font-bold text-white bg-brand-950 hover:bg-brand-900 transition-all cursor-pointer"
+          className="inline-flex justify-center items-center py-2.5 px-6 border border-transparent rounded-full shadow-sm text-xs font-bold !text-white bg-brand-950 hover:bg-brand-900 transition-all cursor-pointer"
         >
           Kembali ke Pasar
         </Link>

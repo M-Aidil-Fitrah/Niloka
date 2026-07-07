@@ -201,7 +201,7 @@ export default function ApplySellerPage() {
             </p>
             <Link
               href="/auth/login?redirect=/apply-seller"
-              className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-transparent rounded-full shadow-sm text-xs font-bold text-white bg-brand-950 hover:bg-brand-900 transition-all cursor-pointer"
+              className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-transparent rounded-full shadow-sm text-xs font-bold !text-white bg-brand-950 hover:bg-brand-900 transition-all cursor-pointer"
             >
               Masuk Sekarang
             </Link>
