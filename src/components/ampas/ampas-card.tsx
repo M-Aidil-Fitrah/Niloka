@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import type { AmpasListing } from "@/lib/contracts";
 
@@ -54,12 +55,14 @@ export function AmpasCard({ listing, onContact, viewMode }: AmpasCardProps) {
               {conditionBadge}
               <span className="text-[10px] text-ink-600 font-medium">• {locationString}</span>
             </div>
-            <h3 className="text-base font-bold text-brand-950 truncate">
-              {listing.slug
-                .split("-")
-                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(" ")}
-            </h3>
+            <Link href={`/ampas/${listing.slug}`}>
+              <h3 className="text-base font-bold text-brand-950 hover:text-brand-900 transition-colors cursor-pointer truncate">
+                {listing.slug
+                  .split("-")
+                  .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                  .join(" ")}
+              </h3>
+            </Link>
             
             {/* Horizontal Specs */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1">
@@ -68,7 +71,7 @@ export function AmpasCard({ listing, onContact, viewMode }: AmpasCardProps) {
                 <span className="font-bold text-brand-900">{listing.quantityKg.toLocaleString("id-ID")} Kg</span>
               </div>
               <div>
-                <span className="text-ink-600 block text-[9px] font-bold uppercase">Harga B2B</span>
+                <span className="text-ink-600 block text-[9px] font-bold uppercase">Harga per Kg</span>
                 <span className="font-extrabold text-brand-950">{formattedPrice}</span>
               </div>
               <div className="col-span-2">
@@ -100,12 +103,13 @@ export function AmpasCard({ listing, onContact, viewMode }: AmpasCardProps) {
               Rp {(listing.pricePerKg.amount * listing.quantityKg).toLocaleString("id-ID")}
             </span>
           </div>
-          <button
-            onClick={() => onContact(listing)}
-            className="w-full md:w-auto h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200"
-          >
-            Hubungi Penyuling
-          </button>
+          <Link href={`/ampas/${listing.slug}`} className="w-full md:w-auto">
+            <button
+              className="w-full md:w-auto h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200 cursor-pointer text-center"
+            >
+              Lihat Detail
+            </button>
+          </Link>
         </div>
       </div>
     );
@@ -117,14 +121,16 @@ export function AmpasCard({ listing, onContact, viewMode }: AmpasCardProps) {
       <div>
         {/* Card Image & Condition badge overlay */}
         <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-line/50 bg-cream-100 mb-4">
-          <Image
-            src={listing.image.src}
-            alt={listing.image.alt}
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            fill
-            sizes="(min-width: 768px) 30vw, 90vw"
-          />
-          <div className="absolute top-2 left-2">
+          <Link href={`/ampas/${listing.slug}`}>
+            <Image
+              src={listing.image.src}
+              alt={listing.image.alt}
+              className="object-cover transition-transform duration-500 group-hover:scale-105 cursor-pointer"
+              fill
+              sizes="(min-width: 768px) 30vw, 90vw"
+            />
+          </Link>
+          <div className="absolute top-2 left-2 flex flex-col gap-1.5">
             <span className="bg-white-soft/90 backdrop-blur-sm rounded-lg px-2 py-0.5 shadow-sm inline-block">
               {conditionBadge}
             </span>
@@ -136,12 +142,14 @@ export function AmpasCard({ listing, onContact, viewMode }: AmpasCardProps) {
             <span className="text-[10px] text-ink-600 font-bold block uppercase tracking-wider">
               {locationString}
             </span>
-            <h3 className="text-base font-bold text-brand-950 group-hover:text-brand-900 mt-0.5 line-clamp-1">
-              {listing.slug
-                .split("-")
-                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(" ")}
-            </h3>
+            <Link href={`/ampas/${listing.slug}`}>
+              <h3 className="text-base font-bold text-brand-950 group-hover:text-brand-900 mt-0.5 line-clamp-1 cursor-pointer">
+                {listing.slug
+                  .split("-")
+                  .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                  .join(" ")}
+              </h3>
+            </Link>
           </div>
 
           {/* Specifications list */}
@@ -151,7 +159,7 @@ export function AmpasCard({ listing, onContact, viewMode }: AmpasCardProps) {
               <span className="font-bold text-brand-900">{listing.quantityKg.toLocaleString("id-ID")} Kg</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-ink-600 font-medium">Harga Grosir</span>
+              <span className="text-ink-600 font-medium">Harga per Kg</span>
               <span className="font-extrabold text-brand-950">{formattedPrice}</span>
             </div>
             <div className="pt-1.5 border-t border-line/40">
@@ -183,12 +191,13 @@ export function AmpasCard({ listing, onContact, viewMode }: AmpasCardProps) {
       </div>
 
       <div className="mt-5 pt-3 border-t border-line/40">
-        <button
-          onClick={() => onContact(listing)}
-          className="w-full h-10 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200"
-        >
-          Hubungi Penyuling
-        </button>
+        <Link href={`/ampas/${listing.slug}`} className="w-full">
+          <button
+            className="w-full h-10 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200 cursor-pointer text-center"
+          >
+            Lihat Detail
+          </button>
+        </Link>
       </div>
     </article>
   );

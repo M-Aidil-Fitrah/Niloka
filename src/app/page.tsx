@@ -48,7 +48,7 @@ export default function Home() {
         {/* New Arrival Section */}
         <NewArrivalsSection />
 
-        {/* AromaMatch AI */}
+        {/* AromaMatch */}
         <AromaMatchSection />
 
         {/* Trust/Review Strip */}

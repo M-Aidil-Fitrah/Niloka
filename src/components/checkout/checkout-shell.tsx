@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
@@ -45,6 +45,22 @@ type OrderHistoryItem = {
 export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
   const { items, updateQuantity, removeItem, clearCart } = useCart();
 
+  const [localProducts, setLocalProducts] = useState<Product[]>(products);
+  const [localListings, setLocalListings] = useState<AmpasListing[]>(ampasListings);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedProds = localStorage.getItem("niloka_products");
+      if (storedProds) {
+        setLocalProducts(JSON.parse(storedProds));
+      }
+      const storedListings = localStorage.getItem("niloka_ampas_listings");
+      if (storedListings) {
+        setLocalListings(JSON.parse(storedListings));
+      }
+    }
+  }, []);
+
   // Form State
   const [receiverName, setReceiverName] = useState("");
   const [phone, setPhone] = useState("");
@@ -82,7 +98,15 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
 
   // Persistent Snapshots for Invoice Display (after cart is cleared)
   const [invoiceItems, setInvoiceItems] = useState<
-    (CartItem & { name: string; imageSrc: string; imageAlt: string })[]
+    (CartItem & {
+      name: string;
+      imageSrc: string;
+      imageAlt: string;
+      wholesaleEnabled?: boolean;
+      wholesaleMinQtyKg?: number;
+      wholesalePricePerKg?: any;
+      normalPricePerKg?: any;
+    })[]
   >([]);
   const [invoiceSubtotal, setInvoiceSubtotal] = useState(0);
   const [invoiceShippingFee, setInvoiceShippingFee] = useState(0);
@@ -108,15 +132,19 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
   // Helper: resolve item details (name, image, price)
   const resolvedItems = items.map((item) => {
     if (item.kind === "product") {
-      const prod = products.find((p) => p.id === item.productId);
+      const prod = localProducts.find((p) => p.id === item.productId);
       return {
         ...item,
         name: prod?.name || "Produk Nilam",
         imageSrc: prod?.image.src || "https://images.unsplash.com/photo-1540555700478-4be289fbecef",
         imageAlt: prod?.image.alt || "Produk",
+        wholesaleEnabled: false,
+        wholesaleMinQtyKg: 0,
+        wholesalePricePerKg: null,
+        normalPricePerKg: prod?.price || item.unitPrice,
       };
     } else {
-      const ampas = ampasListings.find((a) => a.id === item.ampasListingId);
+      const ampas = localListings.find((a) => a.id === item.ampasListingId);
       return {
         ...item,
         name: ampas
@@ -127,6 +155,10 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
           : "Ampas Nilam B2B",
         imageSrc: ampas?.image.src || "https://images.unsplash.com/photo-1515377905703-c4788e51af15",
         imageAlt: ampas?.image.alt || "Ampas Nilam",
+        wholesaleEnabled: ampas?.wholesaleEnabled || false,
+        wholesaleMinQtyKg: ampas?.wholesaleMinQtyKg || 0,
+        wholesalePricePerKg: ampas?.wholesalePricePerKg || null,
+        normalPricePerKg: ampas?.pricePerKg || item.unitPrice,
       };
     }
   });
@@ -388,17 +420,42 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
           <div className="space-y-3">
             <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-widest">Rincian Barang</span>
             <div className="divide-y divide-line/60 border border-line rounded-2xl overflow-hidden bg-white px-4">
-              {invoiceItems.map((item) => (
-                <div key={item.id} className="py-3 flex justify-between items-center text-xs">
-                  <div>
-                    <span className="font-bold text-brand-950">{item.name}</span>
-                    <span className="text-[10px] text-ink-600 block">Qty: {item.quantity} x Rp {item.unitPrice.amount.toLocaleString("id-ID")}</span>
+              {invoiceItems.map((item) => {
+                const isWholesaleActive = !!(
+                  item.wholesaleEnabled &&
+                  item.wholesaleMinQtyKg &&
+                  item.wholesalePricePerKg &&
+                  item.quantity >= item.wholesaleMinQtyKg
+                );
+                const savings = isWholesaleActive && item.normalPricePerKg
+                  ? (item.normalPricePerKg.amount - item.unitPrice.amount) * item.quantity
+                  : 0;
+
+                return (
+                  <div key={item.id} className="py-3.5 flex flex-col justify-center text-xs gap-1.5">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="font-bold text-brand-950">{item.name}</span>
+                        <span className="text-[10px] text-ink-600 block">
+                          Qty: {item.quantity} x Rp {item.unitPrice.amount.toLocaleString("id-ID")}
+                        </span>
+                      </div>
+                      <span className="font-bold text-brand-950">
+                        Rp {(item.unitPrice.amount * item.quantity).toLocaleString("id-ID")}
+                      </span>
+                    </div>
+                    {isWholesaleActive && (
+                      <div className="rounded-xl border border-emerald-250 bg-emerald-50/50 px-3 py-2 text-[10px] text-emerald-800 flex justify-between items-center font-semibold">
+                        <span className="flex items-center gap-1.5 font-bold">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Harga Grosir Diterapkan
+                        </span>
+                        <span>Hemat Rp {savings.toLocaleString("id-ID")}</span>
+                      </div>
+                    )}
                   </div>
-                  <span className="font-bold text-brand-950">
-                    Rp {(item.unitPrice.amount * item.quantity).toLocaleString("id-ID")}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

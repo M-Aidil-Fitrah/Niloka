@@ -12,12 +12,10 @@ export function PassportSection({ passportItems }: PassportSectionProps) {
       <div>
         <Badge tone="gold">Nilam Passport</Badge>
         <h2 className="mt-5 text-4xl font-bold leading-tight text-brand-950 sm:text-5xl">
-          Transparansi produk tanpa klaim sertifikasi resmi.
+          Transparansi informasi asal-usul dan karakteristik produk.
         </h2>
         <p className="mt-5 text-sm leading-7 text-ink-600">
-          Setiap produk dapat menampilkan asal bahan baku, profil aroma,
-          fungsi, cara pakai, dan catatan keamanan yang divalidasi admin
-          sebelum dipublikasikan.
+          Setiap produk menampilkan asal bahan baku, profil aroma, fungsi, cara pakai, dan catatan keamanan yang ditinjau sebelum dipublikasikan.
         </p>
       </div>
       <div className="mt-7 grid gap-3 text-sm text-ink-700 sm:grid-cols-2">

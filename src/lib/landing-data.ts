@@ -110,7 +110,7 @@ const featuredProductCategory = getFeaturedProductCategory();
 export const categoryTiles: CategoryTile[] = [
   {
     id: "aroma",
-    label: "AromaMatch AI",
+    label: "AromaMatch",
     description: "Temukan produk berdasarkan tujuan, aroma, bentuk, dan budget.",
     imageUrl:
       "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=80",
@@ -204,7 +204,7 @@ export const footerColumns: FooterColumn[] = [
   {
     id: "marketplace",
     title: "Marketplace",
-    links: ["Produk Nilam", "Ampas Nilam", "AromaMatch AI", "Nilam Passport"],
+    links: ["Produk Nilam", "Ampas Nilam", "AromaMatch", "Nilam Passport"],
   },
   {
     id: "seller",

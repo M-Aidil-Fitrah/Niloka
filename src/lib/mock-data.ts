@@ -599,6 +599,9 @@ export const ampasListings: AmpasListing[] = [
       "Tag penggunaan adalah klaim seller; NILOKA tidak memverifikasi kandungan atau kualitas ampas.",
     createdAt: "2026-05-10T09:00:00.000Z",
     updatedAt: "2026-06-22T09:00:00.000Z",
+    wholesaleEnabled: true,
+    wholesaleMinQtyKg: 25,
+    wholesalePricePerKg: idr(1500),
   },
   {
     id: "ampas-panga-wet-compost",
@@ -623,6 +626,7 @@ export const ampasListings: AmpasListing[] = [
       "Tag penggunaan adalah klaim seller; NILOKA tidak memverifikasi kandungan atau kualitas ampas.",
     createdAt: "2026-05-13T09:00:00.000Z",
     updatedAt: "2026-06-22T09:30:00.000Z",
+    wholesaleEnabled: false,
   },
 ];
 

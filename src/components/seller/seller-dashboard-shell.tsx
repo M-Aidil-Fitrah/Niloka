@@ -28,7 +28,7 @@ export function SellerDashboardShell({
   const navigation = [
     { id: "overview", label: "Ringkasan Toko", icon: LayoutDashboard },
     { id: "products", label: "Katalog Produk", icon: ShoppingBag, count: products.length },
-    { id: "ampas", label: "Ampas Nilam B2B", icon: Leaf, count: ampasListings.length },
+    { id: "ampas", label: "Ampas Nilam", icon: Leaf, count: ampasListings.length },
     { id: "passport", label: "Nilam Passport", icon: ShieldCheck },
     { id: "promos", label: "Voucher Promosi", icon: Tag, count: promos.length },
     { id: "logs", label: "Log Aktivitas", icon: FileText },
@@ -66,7 +66,7 @@ export function SellerDashboardShell({
                 { date: "6 Juli 2026, 15:10", action: "Mengubah harga produk 'Roll-on Nilam Relief'", status: "Sukses" },
                 { date: "6 Juli 2026, 12:45", action: "Mengajukan draft 'Nilam Passport' baru untuk verifikasi UPTD", status: "Menunggu Review" },
                 { date: "5 Juli 2026, 17:30", action: "Membuat Voucher Promosi baru 'NILOKASUMMER'", status: "Sukses" },
-                { date: "4 Juli 2026, 09:12", action: "Menambahkan Listing Ampas Nilam B2B Kering 500 Kg", status: "Sukses" },
+                { date: "4 Juli 2026, 09:12", action: "Menambahkan Listing Ampas Nilam Kering 500 Kg", status: "Sukses" },
               ].map((log, idx) => (
                 <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-line/35 last:border-b-0 last:pb-0 text-xs">
                   <div className="space-y-0.5">

@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AmpasCard } from "./ampas-card";
-import { AmpasCalculator } from "./ampas-calculator";
 import { AmpasFilters } from "./ampas-filters";
-import { Search, ShieldAlert, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 import type { AmpasListing, AmpasUsageTag } from "@/lib/contracts";
 
 type AmpasShellProps = {
@@ -23,23 +21,28 @@ const usageFilters = [
 ];
 
 export function AmpasShell({ listings }: AmpasShellProps) {
+  const [localListings, setLocalListings] = useState<AmpasListing[]>(listings);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("niloka_ampas_listings");
+      if (stored) {
+        setLocalListings(JSON.parse(stored));
+      }
+    }
+  }, []);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCondition, setSelectedCondition] = useState<"Semua" | "dry" | "wet">("Semua");
   const [selectedUsage, setSelectedUsage] = useState("Semua");
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
 
-  // Calculator State
-  const [calcListingId, setCalcListingId] = useState<string>(listings[0]?.id || "");
-  const [calcWeight, setCalcWeight] = useState<number>(500);
-
-  // Active Inquiry Modal State
-  const [activeInquiryListing, setActiveInquiryListing] = useState<AmpasListing | null>(null);
-
-  // Selected Listing for Calculator
-  const selectedCalcListing = listings.find((l) => l.id === calcListingId) || listings[0];
-
   // Filtering Logic
-  const filteredListings = listings.filter((l) => {
+  const filteredListings = localListings.filter((l) => {
+    // Only display active listings
+    if (l.status !== "active") {
+      return false;
+    }
     const matchesSearch =
       l.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
       l.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -54,46 +57,10 @@ export function AmpasShell({ listings }: AmpasShellProps) {
     return matchesSearch && matchesCondition && matchesUsage;
   });
 
-  // Calculate estimated total price
-  const estimatedCost = selectedCalcListing
-    ? selectedCalcListing.pricePerKg.amount * calcWeight
-    : 0;
-
-  // Build WhatsApp template text
-  function buildWhatsAppUrl(listing: AmpasListing, qtyKg: number = 0) {
-    const listingName = listing.slug
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
-
-    const text = `Halo, saya tertarik dengan penawaran Ampas Nilam B2B di NILOKA:
-- Produk: ${listingName}
-- Kondisi: ${listing.condition === "dry" ? "Kering" : "Basah"}
-- Lokasi: ${listing.location.district}, ${listing.location.city}
-${qtyKg > 0 ? `- Kuantitas Rencana: ${qtyKg.toLocaleString("id-ID")} Kg\n- Estimasi Nilai: Rp ${(listing.pricePerKg.amount * qtyKg).toLocaleString("id-ID")}` : ""}
-
-Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih lanjut. Terima kasih.`;
-
-    return `https://wa.me/628123456789?text=${encodeURIComponent(text)}`;
-  }
-
   return (
-    <div className="grid gap-8 lg:grid-cols-[300px_1fr] items-start animate-in fade-in duration-500">
-      {/* LEFT SIDEBAR: filters + calculator */}
-      <aside className="space-y-6">
-        {/* B2B Calculator Card */}
-        <AmpasCalculator
-          listings={listings}
-          calcListingId={calcListingId}
-          onListingChange={setCalcListingId}
-          calcWeight={calcWeight}
-          onWeightChange={setCalcWeight}
-          selectedListing={selectedCalcListing}
-          estimatedCost={estimatedCost}
-          buildWhatsAppUrl={buildWhatsAppUrl}
-        />
-
-        {/* Sidebar Filters */}
+    <div className="grid gap-8 lg:grid-cols-[260px_1fr] items-start animate-in fade-in duration-500">
+      {/* LEFT SIDEBAR: filters */}
+      <aside className="space-y-6 lg:sticky lg:top-28">
         <AmpasFilters
           usageFilters={usageFilters}
           selectedUsage={selectedUsage}
@@ -103,17 +70,6 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
 
       {/* RIGHT CONTENT AREA: Disclaimer + Toolbar + Listings */}
       <section className="space-y-6">
-        {/* Utilitarian Disclaimer Banner */}
-        <div className="rounded-2xl border border-gold-500/20 bg-gold-500/5 p-4 sm:p-5 flex gap-3.5 items-start">
-          <ShieldAlert className="h-5 w-5 text-gold-600 shrink-0 mt-0.5" />
-          <div>
-            <h4 className="text-sm font-bold text-brand-950">Ketentuan Potensi Penggunaan Ampas</h4>
-            <p className="mt-1 text-xs leading-relaxed text-ink-700">
-              Daftar potensi penggunaan dan deskripsi penyulingan merupakan <strong>klaim yang diberikan secara mandiri oleh pihak produsen/penyuling</strong>. NILOKA tidak melakukan pengujian kimia laboratorium terhadap ampas nilam ini dan tidak bertanggung jawab atas ketidaksesuaian hasil fermentasi, pembakaran briket, atau pakan ternak.
-            </p>
-          </div>
-        </div>
-
         {/* Filters Toolbar */}
         <div className="flex flex-wrap gap-4 items-center justify-between bg-white-soft border border-line p-4 rounded-[24px]">
           {/* Search Location */}
@@ -181,7 +137,7 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
               <AmpasCard
                 key={listing.id}
                 listing={listing}
-                onContact={(l) => setActiveInquiryListing(l)}
+                onContact={() => {}}
                 viewMode={viewMode}
               />
             ))}
@@ -193,85 +149,7 @@ Mohon informasi mengenai ketersediaan pengiriman dan prosedur logistik B2B lebih
           </div>
         )}
       </section>
-
-      {/* B2B INQUIRY CONTACT MODAL */}
-      {activeInquiryListing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-950/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-lg rounded-[32px] border border-line bg-white-soft p-6 sm:p-8 shadow-2xl space-y-6 relative animate-in zoom-in-95 duration-200">
-            <button
-              onClick={() => setActiveInquiryListing(null)}
-              className="absolute right-6 top-6 p-1 rounded-full hover:bg-cream-100 text-ink-600 hover:text-brand-950 transition-colors"
-              aria-label="Tutup modal"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            <div>
-              <span className="text-[10px] font-bold text-brand-700 uppercase tracking-wider block">
-                Pertanyaan Grosir B2B
-              </span>
-              <h3 className="text-xl font-bold text-brand-950 font-serif-accent italic mt-1">
-                Hubungi Penyuling
-              </h3>
-            </div>
-
-            <div className="rounded-2xl border border-line bg-cream-50 p-4 space-y-3 text-xs">
-              <div className="flex justify-between">
-                <span className="text-ink-600">Batch:</span>
-                <span className="font-bold text-brand-950">
-                  {activeInquiryListing.slug
-                    .split("-")
-                    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                    .join(" ")}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-ink-600">Kondisi:</span>
-                <span className="font-semibold text-brand-950">
-                  {activeInquiryListing.condition === "dry" ? "Kering" : "Basah"}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-ink-600">Lokasi:</span>
-                <span className="font-semibold text-brand-950">
-                  {activeInquiryListing.location.district}, {activeInquiryListing.location.city}
-                </span>
-              </div>
-            </div>
-
-            {/* WhatsApp template text preview */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">
-                Preview Pesan WhatsApp
-              </span>
-              <div className="bg-cream-50/50 border border-line/40 rounded-xl p-3.5 text-[11px] font-mono text-ink-700 leading-relaxed max-h-32 overflow-y-auto whitespace-pre-wrap">
-                {buildWhatsAppUrl(activeInquiryListing).split("text=")[1] ? decodeURIComponent(buildWhatsAppUrl(activeInquiryListing).split("text=")[1]) : ""}
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-3 justify-end pt-2">
-              <Button
-                variant="secondary"
-                onClick={() => setActiveInquiryListing(null)}
-                className="rounded-xl h-10 px-5 text-xs text-brand-950 border-line"
-              >
-                Batal
-              </Button>
-              <a
-                href={buildWhatsAppUrl(activeInquiryListing)}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setActiveInquiryListing(null)}
-              >
-                <Button className="rounded-xl h-10 px-6 text-xs bg-brand-900 hover:bg-brand-800 text-white-soft font-bold">
-                  Buka WhatsApp & Kirim
-                </Button>
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+

@@ -86,7 +86,7 @@ export function PassportShell({ products, passports }: PassportShellProps) {
           <div>
             <h4 className="text-sm font-bold text-brand-950">Inisiatif Transparansi Rantai Pasok</h4>
             <p className="mt-1 text-xs leading-relaxed text-ink-700">
-              Nilam Passport adalah sistem transparansi asal dan kualitas bahan baku yang diisi oleh produsen terverifikasi dan dikurasi oleh tim internal NILOKA. Sistem ini bertujuan memberikan keterbukaan informasi penuh kepada konsumen mengenai perjalanan produk nilam dari penyulingan hingga ke tangan Anda, dan <strong>bukan merupakan sertifikasi resmi dari lembaga pemerintah</strong>.
+              Nilam Passport merupakan fitur transparansi produk pada platform NILOKA. Informasi produk diisi oleh penjual saat membuat atau melengkapi data produk, dan ditinjau oleh administrator sebelum dipublikasikan. Fitur ini bertujuan membantu konsumen memahami asal-usul serta karakteristik produk guna meningkatkan transparansi dan kepercayaan.
             </p>
           </div>
         </div>
@@ -154,7 +154,7 @@ export function PassportShell({ products, passports }: PassportShellProps) {
               Masukkan Kode Transparansi
             </h3>
             <p className="mt-2 text-xs leading-relaxed text-ink-600">
-              Setiap produk bersertifikasi Nilam Passport memiliki kode batch unik pada kemasan fisiknya. Masukkan kode tersebut di bawah untuk memeriksa laporan autentisitas penuh.
+              Setiap produk yang dilengkapi Nilam Passport memiliki kode batch unik pada kemasan fisiknya. Masukkan kode tersebut di bawah untuk mengakses laporan transparansi.
             </p>
 
             <form
@@ -220,7 +220,7 @@ export function PassportShell({ products, passports }: PassportShellProps) {
                       </div>
                       <div>
                         <span className="text-[10px] font-bold uppercase tracking-wider text-gold-600">
-                          Autentisitas Terverifikasi
+                          Laporan Transparansi
                         </span>
                         <h4 className="text-lg font-bold text-brand-950 font-serif-accent italic">
                           Laporan Nilam Passport

@@ -17,11 +17,26 @@ export function PromoManagement({ promos: initialPromos, products = [] }: PromoM
   const [isEditing, setIsEditing] = useState(false);
   const [activePromo, setActivePromo] = useState<Partial<Promo> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentSellerId, setCurrentSellerId] = useState("seller-aceh-aroma");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("niloka_promos");
+      if (stored) {
+        setPromos(JSON.parse(stored));
+      }
+      const user = localStorage.getItem("niloka_current_user");
+      if (user && user !== "buyer") {
+        setCurrentSellerId(user);
+      }
+    }
+  }, []);
   
   const itemsPerPage = 6;
-  const totalPages = Math.ceil(promos.length / itemsPerPage);
+  const sellerPromos = promos.filter((p) => p.sellerId === currentSellerId);
+  const totalPages = Math.ceil(sellerPromos.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedPromos = promos.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedPromos = sellerPromos.slice(startIndex, startIndex + itemsPerPage);
 
   useEffect(() => {
     const handleCloseDrawers = () => {
@@ -34,7 +49,7 @@ export function PromoManagement({ promos: initialPromos, products = [] }: PromoM
   const handleOpenAdd = () => {
     setActivePromo({
       id: `promo-${Date.now()}`,
-      sellerId: "seller-aceh-aroma",
+      sellerId: currentSellerId,
       title: "",
       code: "",
       status: "scheduled",
@@ -62,7 +77,11 @@ export function PromoManagement({ promos: initialPromos, products = [] }: PromoM
   const handleDelete = (id: string) => {
     const filtered = promos.filter((p) => p.id !== id);
     setPromos(filtered);
-    const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("niloka_promos", JSON.stringify(filtered));
+    }
+    const filteredSellerPromos = filtered.filter((p) => p.sellerId === currentSellerId);
+    const newTotalPages = Math.ceil(filteredSellerPromos.length / itemsPerPage);
     if (currentPage > newTotalPages && newTotalPages > 0) {
       setCurrentPage(newTotalPages);
     }
@@ -99,11 +118,16 @@ export function PromoManagement({ promos: initialPromos, products = [] }: PromoM
       status: calculatedStatus,
     } as Promo;
 
+    let updatedPromos: Promo[] = [];
     if (promos.some((p) => p.id === updated.id)) {
-      setPromos(promos.map((p) => (p.id === updated.id ? updated : p)));
+      updatedPromos = promos.map((p) => (p.id === updated.id ? updated : p));
     } else {
-      setPromos([updated, ...promos]);
+      updatedPromos = [updated, ...promos];
       setCurrentPage(1);
+    }
+    setPromos(updatedPromos);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("niloka_promos", JSON.stringify(updatedPromos));
     }
     setIsEditing(false);
     setActivePromo(null);
