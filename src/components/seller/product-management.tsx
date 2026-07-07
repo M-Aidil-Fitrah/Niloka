@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Plus, Edit3, Trash2, Wand2, Sparkles, AlertCircle, Check, Grid, List } from "lucide-react";
 import type { Product, ProductForm, ProductFunction, ProductTag } from "@/lib/contracts";
 import { formatRupiah } from "@/lib/formatters";
+import { showToast } from "@/components/dashboard/dashboard-layout";
 
 type ProductManagementProps = {
   products: Product[];
@@ -29,6 +30,14 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    const handleCloseDrawers = () => {
+      setIsEditing(false);
+    };
+    window.addEventListener("close-all-drawers", handleCloseDrawers);
+    return () => window.removeEventListener("close-all-drawers", handleCloseDrawers);
+  }, []);
 
   const handleOpenAdd = () => {
     setActiveProduct({
@@ -55,20 +64,19 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Apakah Anda yakin ingin menghapus produk ini dari katalog?")) {
-      const filtered = products.filter((p) => p.id !== id);
-      setProducts(filtered);
-      // Adjust current page if current page becomes empty
-      const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
-      if (currentPage > newTotalPages && newTotalPages > 0) {
-        setCurrentPage(newTotalPages);
-      }
+    const filtered = products.filter((p) => p.id !== id);
+    setProducts(filtered);
+    // Adjust current page if current page becomes empty
+    const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
+    if (currentPage > newTotalPages && newTotalPages > 0) {
+      setCurrentPage(newTotalPages);
     }
+    showToast("Produk berhasil dihapus dari katalog.", "success");
   };
 
   const handleGenerateDescription = async () => {
     if (!activeProduct?.name) {
-      alert("Masukkan nama produk terlebih dahulu di form utama sebelum menggunakan AI.");
+      showToast("Masukkan nama produk terlebih dahulu di form utama sebelum menggunakan AI.", "warning");
       return;
     }
 
@@ -97,10 +105,12 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
       if (data.shortDescription) {
         setActiveProduct((prev) => prev ? { ...prev, shortDescription: data.shortDescription } : null);
         setAiFeedback("Deskripsi berhasil digenerate dan dimasukkan ke form!");
+        showToast("AI berhasil menyusun deskripsi produk!", "success");
       }
     } catch (err: unknown) {
       console.error(err);
       setAiFeedback("Gagal membuat deskripsi. Silakan isi form asisten dengan lengkap.");
+      showToast("Gagal membuat deskripsi AI.", "error");
     } finally {
       setIsGenerating(false);
     }
@@ -108,7 +118,7 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
 
   const handleSave = () => {
     if (!activeProduct?.name || !activeProduct?.price?.amount) {
-      alert("Nama produk dan harga wajib diisi.");
+      showToast("Nama produk dan harga wajib diisi.", "warning");
       return;
     }
 
@@ -121,6 +131,7 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
     }
     setIsEditing(false);
     setActiveProduct(null);
+    showToast("Produk berhasil disimpan ke katalog!", "success");
   };
 
   return (
@@ -476,6 +487,72 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
                 </div>
               </div>
 
+              {/* Galeri & Media Produk */}
+              <div className="space-y-4">
+                <h5 className="text-xs font-extrabold text-brand-950 uppercase tracking-wider pb-1 border-b border-line/45">Galeri & Media Produk</h5>
+                
+                <div className="space-y-3">
+                  <label className="text-xs font-bold text-ink-700 block">Cover Utama & Foto Tambahan</label>
+                  <div className="grid grid-cols-4 gap-3">
+                    {/* Cover slot */}
+                    <div className="relative aspect-square border-2 border-dashed border-brand-900/30 rounded-xl overflow-hidden bg-cream-50/50 flex flex-col items-center justify-center p-1">
+                      <Image
+                        src={activeProduct.image?.src || "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=400&auto=format&fit=crop"}
+                        alt="Cover preview"
+                        fill
+                        className="object-cover"
+                      />
+                      <span className="absolute bottom-1 left-1 right-1 bg-brand-900/80 text-[8px] font-extrabold text-white-soft text-center py-0.5 rounded uppercase">
+                        Cover
+                      </span>
+                    </div>
+
+                    {/* Additional Gallery slots (Mocked) */}
+                    {[1, 2, 3].map((num) => {
+                      const hasImage = activeProduct.gallery && activeProduct.gallery[num - 1];
+                      return (
+                        <div
+                          key={num}
+                          onClick={() => {
+                            const currentGallery = [...(activeProduct.gallery || [])];
+                            if (currentGallery[num - 1]) {
+                              currentGallery.splice(num - 1, 1);
+                            } else {
+                              currentGallery.push({
+                                src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=400&auto=format&fit=crop",
+                                alt: `Gallery ${num}`
+                              });
+                            }
+                            setActiveProduct({ ...activeProduct, gallery: currentGallery });
+                            showToast(`Mock: Foto tambahan ${num} diperbarui!`, "success");
+                          }}
+                          className="relative aspect-square border-2 border-dashed border-line hover:border-brand-900/40 rounded-xl overflow-hidden bg-cream-50/20 flex flex-col items-center justify-center p-1 cursor-pointer transition-all"
+                        >
+                          {hasImage ? (
+                            <>
+                              <Image
+                                src={activeProduct.gallery![num - 1].src}
+                                alt={activeProduct.gallery![num - 1].alt}
+                                fill
+                                className="object-cover"
+                              />
+                              <span className="absolute top-1 right-1 bg-red-650 text-white-soft rounded-full w-3.5 h-3.5 flex items-center justify-center text-[7px] font-black hover:bg-red-700">
+                                ×
+                              </span>
+                            </>
+                          ) : (
+                            <div className="text-center p-2 text-[10px] font-bold text-ink-600">
+                              <span className="text-sm block font-normal text-ink-500">+</span>
+                              Foto {num}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
               {/* AI Writer Assistant Widget */}
               <div className="border border-brand-900/15 bg-brand-100/10 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center gap-2 text-brand-950">
@@ -488,7 +565,28 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-ink-600 uppercase">Profil Aroma</label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-bold text-ink-600 uppercase">Profil Aroma</label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const recommendations: Record<string, string> = {
+                            "essential-oil": "Earthy, Camphorous, Balsamic",
+                            "roll-on": "Minty, Fresh, Sweet",
+                            "soap": "Herbaceous, Floral, Earthy",
+                            "diffuser": "Woody, Spicy, Warm",
+                            "perfume": "Rich, Sweet, Musky",
+                            "body-oil": "Warm, Earthy, Relaxing"
+                          };
+                          const form = activeProduct.form || "essential-oil";
+                          setAiAroma(recommendations[form] || "Patchouli, Woody");
+                          showToast("Rekomendasi aroma AI disematkan!", "success");
+                        }}
+                        className="text-[9px] font-bold text-brand-900 hover:text-brand-850 underline cursor-pointer"
+                      >
+                        Rekomendasi AI
+                      </button>
+                    </div>
                     <input
                       type="text"
                       className="w-full text-xs font-medium border border-line rounded-lg px-3 py-1.5 outline-none focus:border-brand-900 bg-white-soft"

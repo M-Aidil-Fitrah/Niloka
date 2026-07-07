@@ -1,8 +1,9 @@
 "use client";
 
-import { TrendingUp, ShoppingBag, Award, Clock, ArrowRight } from "lucide-react";
-import { DashboardStatsCard } from "../dashboard/dashboard-layout";
+import { TrendingUp, ShoppingBag, Award, Clock, ArrowRight, AlertCircle } from "lucide-react";
+import { DashboardStatsCard, showToast } from "../dashboard/dashboard-layout";
 import { formatRupiah } from "@/lib/formatters";
+import type { Product } from "@/lib/contracts";
 
 type Transaction = {
   id: string;
@@ -49,14 +50,31 @@ const recentTransactions: Transaction[] = [
 ];
 
 type SellerStatsProps = {
+  products?: Product[];
   totalSales: number;
   totalProducts: number;
   pendingPassports: number;
 };
 
-export function SellerStats({ totalSales, totalProducts, pendingPassports }: SellerStatsProps) {
+export function SellerStats({ products = [], totalSales, totalProducts, pendingPassports }: SellerStatsProps) {
+  const lowStockProducts = products.filter((p) => p.stock <= 3);
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      {/* Low Stock Alert Banner */}
+      {lowStockProducts.length > 0 && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4.5 flex gap-3 items-start animate-in fade-in duration-300">
+          <AlertCircle className="h-5 w-5 text-amber-800 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <h4 className="font-extrabold text-amber-900 text-xs">Peringatan: Stok Produk Menipis</h4>
+            <p className="text-[11px] text-amber-800 leading-relaxed font-semibold">
+              Produk berikut memiliki stok kurang dari atau sama dengan 3 unit:{" "}
+              {lowStockProducts.map((p) => `${p.name} (${p.stock} pcs)`).join(", ")}. 
+              Segera lakukan restock untuk menjaga kontinuitas penjualan Anda.
+            </p>
+          </div>
+        </div>
+      )}
       {/* 1. Stats Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <DashboardStatsCard
@@ -96,14 +114,22 @@ export function SellerStats({ totalSales, totalProducts, pendingPassports }: Sel
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Sales Performance Summary */}
         <div className="lg:col-span-2 rounded-[28px] border border-line bg-white-soft p-6 sm:p-8 flex flex-col justify-between">
-          <div className="flex justify-between items-center pb-4 border-b border-line/45">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-line/45 w-full">
             <div>
               <h3 className="text-base font-extrabold text-brand-950">Kinerja Toko</h3>
               <p className="text-xs text-ink-600 mt-1">Ikhtisar penjualan harian minyak nilam dan produk turunan</p>
             </div>
-            <span className="text-xs font-bold text-brand-900 bg-brand-100/50 px-3 py-1 rounded-full border border-brand-200/50">
-              Bulan Ini
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => showToast("Laporan penjualan berhasil diekspor ke format CSV!", "success")}
+                className="text-xs font-bold text-brand-900 bg-cream-100 hover:bg-cream-200 border border-line px-3.5 py-1.5 rounded-xl cursor-pointer transition-colors"
+              >
+                Ekspor Laporan
+              </button>
+              <span className="text-xs font-bold text-brand-900 bg-brand-100/50 px-3 py-1 rounded-full border border-brand-200/50">
+                Bulan Ini
+              </span>
+            </div>
           </div>
 
           {/* Simple Vector Mock Chart */}

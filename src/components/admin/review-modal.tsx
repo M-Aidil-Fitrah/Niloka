@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, X, ShieldAlert, Award, FileText, Compass, AlertCircle } from "lucide-react";
 import type { AdminValidationItem, Seller } from "@/lib/contracts";
+import { showToast } from "../dashboard/dashboard-layout";
 
 type ReviewModalProps = {
   item: AdminValidationItem | null;
@@ -14,6 +15,14 @@ type ReviewModalProps = {
 
 export function ReviewModal({ item, sellers, onClose, onApprove, onReject }: ReviewModalProps) {
   const [adminNotes, setAdminNotes] = useState("");
+
+  useEffect(() => {
+    const handleCloseDrawers = () => {
+      onClose();
+    };
+    window.addEventListener("close-all-drawers", handleCloseDrawers);
+    return () => window.removeEventListener("close-all-drawers", handleCloseDrawers);
+  }, [onClose]);
 
   if (!item) return null;
 
@@ -110,6 +119,35 @@ export function ReviewModal({ item, sellers, onClose, onApprove, onReject }: Rev
               </div>
             )}
 
+            {/* Supporting Inspection Documents */}
+            <div className="space-y-2 pt-1">
+              <label className="text-xs font-bold text-ink-700 block">Dokumen Penunjang & Sertifikasi</label>
+              <div className="grid grid-cols-2 gap-3">
+                <a
+                  href="#download-surat-tani"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    showToast("Mengunduh dokumen Izin Usaha Atsiri...", "success");
+                  }}
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-line bg-white-soft text-brand-950 hover:bg-cream-100/50 transition-all text-[11px] font-bold"
+                >
+                  <FileText className="h-4 w-4 text-brand-900 shrink-0" />
+                  <span className="truncate">IzinUsaha_ATSIRI.pdf</span>
+                </a>
+                <a
+                  href="#download-hasil-lab"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    showToast("Mengunduh lembar hasil Uji Lab GCMS...", "success");
+                  }}
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-line bg-white-soft text-brand-950 hover:bg-cream-100/50 transition-all text-[11px] font-bold"
+                >
+                  <FileText className="h-4 w-4 text-brand-900 shrink-0" />
+                  <span className="truncate">HasilLab_GCMS.pdf</span>
+                </a>
+              </div>
+            </div>
+
             <div className="space-y-1.5 pt-2">
               <label className="text-xs font-bold text-ink-700">Catatan/Pesan Pengaju</label>
               <div className="bg-cream-100/30 border border-line/45 p-3.5 rounded-xl text-xs text-ink-650 leading-relaxed font-medium">
@@ -128,20 +166,50 @@ export function ReviewModal({ item, sellers, onClose, onApprove, onReject }: Rev
                 placeholder="Tulis alasan jika menolak, atau catatan kepatuhan jika menyetujui berkas..."
               />
             </div>
+
+            {/* Rejection Presets */}
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[10px] font-extrabold text-ink-600 block uppercase">Alasan Penolakan Cepat:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { label: "Klaim Medis", text: "Terindikasi klaim khasiat medis berlebih di deskripsi. Platform melarang kata-kata pengobatan medis spesifik." },
+                  { label: "Dokumen Kedaluwarsa", text: "Dokumen perizinan usaha atsiri mikro atau bukti sertifikat uji lab yang dilampirkan sudah kedaluwarsa." },
+                  { label: "Format Nama", text: "Nama produk atau format penulisan tidak sesuai standar penamaan katalog platform Niloka." },
+                ].map((preset) => (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => {
+                      setAdminNotes(preset.text);
+                      showToast(`Preset "${preset.label}" terpilih.`, "warning");
+                    }}
+                    className="text-[10px] font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-lg px-2.5 py-1 transition-all cursor-pointer"
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Footer actions */}
         <div className="p-6 border-t border-line flex gap-3 bg-cream-50/50">
           <button
-            onClick={() => onReject(item.id, adminNotes)}
+            onClick={() => {
+              onReject(item.id, adminNotes);
+              showToast("Pengajuan berhasil ditolak.", "warning");
+            }}
             className="flex-1 py-2.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <X className="h-4 w-4" />
             Tolak Berkas
           </button>
           <button
-            onClick={() => onApprove(item.id, adminNotes)}
+            onClick={() => {
+              onApprove(item.id, adminNotes);
+              showToast("Pengajuan berhasil disetujui & divalidasi!", "success");
+            }}
             className="flex-1 py-2.5 bg-brand-900 hover:bg-brand-850 text-white-soft font-bold rounded-xl text-xs shadow-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Check className="h-4 w-4" />

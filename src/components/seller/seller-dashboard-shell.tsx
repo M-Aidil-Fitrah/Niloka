@@ -40,6 +40,7 @@ export function SellerDashboardShell({
       case "overview":
         return (
           <SellerStats
+            products={products}
             totalSales={16350000}
             totalProducts={products.length}
             pendingPassports={1}
@@ -52,7 +53,7 @@ export function SellerDashboardShell({
       case "passport":
         return <PassportManagement products={products} />;
       case "promos":
-        return <PromoManagement promos={promos} />;
+        return <PromoManagement promos={promos} products={products} />;
       case "logs":
         return (
           <div className="rounded-[28px] border border-line bg-white-soft p-6 sm:p-8 space-y-6">

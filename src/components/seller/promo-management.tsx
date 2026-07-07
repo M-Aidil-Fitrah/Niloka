@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Edit3, Trash2, Tag, Percent, Truck, AlertCircle } from "lucide-react";
-import type { Promo, PromoType, PromoStatus } from "@/lib/contracts";
+import type { Promo, PromoType, PromoStatus, Product } from "@/lib/contracts";
 import { formatRupiah } from "@/lib/formatters";
+import { showToast } from "../dashboard/dashboard-layout";
 
 type PromoManagementProps = {
   promos: Promo[];
+  products?: Product[];
 };
 
-export function PromoManagement({ promos: initialPromos }: PromoManagementProps) {
+export function PromoManagement({ promos: initialPromos, products = [] }: PromoManagementProps) {
   const [promos, setPromos] = useState<Promo[]>(initialPromos);
   const [isEditing, setIsEditing] = useState(false);
   const [activePromo, setActivePromo] = useState<Partial<Promo> | null>(null);
@@ -18,6 +20,14 @@ export function PromoManagement({ promos: initialPromos }: PromoManagementProps)
   const totalPages = Math.ceil(promos.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedPromos = promos.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    const handleCloseDrawers = () => {
+      setIsEditing(false);
+    };
+    window.addEventListener("close-all-drawers", handleCloseDrawers);
+    return () => window.removeEventListener("close-all-drawers", handleCloseDrawers);
+  }, []);
 
   const handleOpenAdd = () => {
     setActivePromo({
@@ -28,8 +38,8 @@ export function PromoManagement({ promos: initialPromos }: PromoManagementProps)
       status: "scheduled",
       type: "percentage",
       value: 10,
-      startsAt: "2026-07-06T00:00:00Z",
-      endsAt: "2026-08-06T00:00:00Z",
+      startsAt: new Date().toISOString().slice(0, 16),
+      endsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
       minSubtotal: { amount: 100000, currency: "IDR" },
       usageLimit: 50,
       usedCount: 0,
@@ -39,19 +49,22 @@ export function PromoManagement({ promos: initialPromos }: PromoManagementProps)
   };
 
   const handleOpenEdit = (promo: Promo) => {
-    setActivePromo({ ...promo });
+    setActivePromo({
+      ...promo,
+      startsAt: new Date(promo.startsAt).toISOString().slice(0, 16),
+      endsAt: new Date(promo.endsAt).toISOString().slice(0, 16),
+    });
     setIsEditing(true);
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Apakah Anda yakin ingin menonaktifkan/menghapus promo voucher ini?")) {
-      const filtered = promos.filter((p) => p.id !== id);
-      setPromos(filtered);
-      const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
-      if (currentPage > newTotalPages && newTotalPages > 0) {
-        setCurrentPage(newTotalPages);
-      }
+    const filtered = promos.filter((p) => p.id !== id);
+    setPromos(filtered);
+    const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
+    if (currentPage > newTotalPages && newTotalPages > 0) {
+      setCurrentPage(newTotalPages);
     }
+    showToast("Voucher promo berhasil dinonaktifkan.", "success");
   };
 
   const handleGenerateCode = () => {
@@ -65,11 +78,25 @@ export function PromoManagement({ promos: initialPromos }: PromoManagementProps)
 
   const handleSave = () => {
     if (!activePromo?.title || !activePromo?.code || !activePromo?.value) {
-      alert("Judul promo, kode kupon, dan nilai potongan wajib diisi.");
+      showToast("Judul promo, kode kupon, dan nilai potongan wajib diisi.", "warning");
       return;
     }
 
-    const updated = activePromo as Promo;
+    const now = new Date();
+    const start = new Date(activePromo.startsAt || "");
+    const end = new Date(activePromo.endsAt || "");
+    let calculatedStatus: PromoStatus = "active";
+    if (now < start) {
+      calculatedStatus = "scheduled";
+    } else if (now > end) {
+      calculatedStatus = "expired";
+    }
+
+    const updated = {
+      ...activePromo,
+      status: calculatedStatus,
+    } as Promo;
+
     if (promos.some((p) => p.id === updated.id)) {
       setPromos(promos.map((p) => (p.id === updated.id ? updated : p)));
     } else {
@@ -78,6 +105,7 @@ export function PromoManagement({ promos: initialPromos }: PromoManagementProps)
     }
     setIsEditing(false);
     setActivePromo(null);
+    showToast("Voucher promo berhasil disimpan!", "success");
   };
 
   const getStatusBadge = (status: PromoStatus) => {
@@ -352,6 +380,81 @@ export function PromoManagement({ promos: initialPromos }: PromoManagementProps)
                     placeholder="100"
                   />
                 </div>
+              </div>
+
+              {/* Masa Berlaku Voucher */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-ink-700">Tanggal Mulai Berlaku</label>
+                  <input
+                    type="datetime-local"
+                    className="w-full text-xs font-semibold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
+                    value={activePromo.startsAt || ""}
+                    onChange={(e) => setActivePromo({ ...activePromo, startsAt: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-ink-700">Tanggal Kedaluwarsa</label>
+                  <input
+                    type="datetime-local"
+                    className="w-full text-xs font-semibold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
+                    value={activePromo.endsAt || ""}
+                    onChange={(e) => setActivePromo({ ...activePromo, endsAt: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              {/* Target Cakupan Produk */}
+              <div className="space-y-3">
+                <label className="text-xs font-bold text-ink-700 block">Cakupan Voucher</label>
+                <select
+                  className="w-full text-xs font-bold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
+                  value={activePromo.productIds && activePromo.productIds.length > 0 ? "specific" : "all"}
+                  onChange={(e) => {
+                    if (e.target.value === "all") {
+                      setActivePromo({ ...activePromo, productIds: [] });
+                    } else {
+                      setActivePromo({ ...activePromo, productIds: [products[0]?.id || ""] });
+                    }
+                  }}
+                >
+                  <option value="all">Semua Produk (Seluruh Toko)</option>
+                  <option value="specific">Hanya Produk Tertentu</option>
+                </select>
+
+                {activePromo.productIds && activePromo.productIds.length > 0 && (
+                  <div className="border border-line rounded-xl p-3 bg-cream-50/20 max-h-40 overflow-y-auto space-y-2">
+                    <span className="text-[10px] font-extrabold text-ink-600 block uppercase">Pilih Produk Yang Memenuhi Syarat:</span>
+                    {products.map((prod) => {
+                      const isSelected = activePromo.productIds?.includes(prod.id);
+                      return (
+                        <label key={prod.id} className="flex items-center gap-2 cursor-pointer text-xs font-bold text-ink-800">
+                          <input
+                            type="checkbox"
+                            className="accent-brand-900"
+                            checked={isSelected}
+                            onChange={() => {
+                              const currentIds = [...(activePromo.productIds || [])];
+                              if (isSelected) {
+                                setActivePromo({
+                                  ...activePromo,
+                                  productIds: currentIds.filter((id) => id !== prod.id),
+                                });
+                              } else {
+                                setActivePromo({
+                                  ...activePromo,
+                                  productIds: [...currentIds, prod.id],
+                                });
+                              }
+                            }}
+                          />
+                          <span>{prod.name}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Status Selector */}

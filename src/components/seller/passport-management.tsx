@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { ShieldAlert, Compass, Sparkles, CheckCircle2, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ShieldAlert, Compass, Sparkles, CheckCircle2, RefreshCw, Layers, MapPin, Users } from "lucide-react";
 import type { NilamPassport, Product, ProductFunction } from "@/lib/contracts";
+import { showToast } from "../dashboard/dashboard-layout";
 
 type PassportManagementProps = {
   products: Product[];
@@ -23,6 +24,9 @@ export function PassportManagement({ products }: PassportManagementProps) {
       validationStatus: "validated",
       validatedBy: "UPTD Atsiri Aceh",
       validatedAt: "2026-06-15",
+      batchCode: "B-LH-2601",
+      farmerGroup: "Kelompok Tani Nilam Jaya Lhoong",
+      gpsCoordinates: "5.2144° N, 95.3129° E",
     },
     {
       id: "pass-002",
@@ -36,11 +40,22 @@ export function PassportManagement({ products }: PassportManagementProps) {
       validationStatus: "pending-review",
       validatedBy: "",
       validatedAt: "",
+      batchCode: "B-GL-2604",
+      farmerGroup: "Koperasi Atsiri Gayo Highland",
+      gpsCoordinates: "3.9873° N, 97.3912° E",
     },
   ]);
 
   const [activePassport, setActivePassport] = useState<NilamPassport | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    const handleCloseDrawers = () => {
+      setIsEditing(false);
+    };
+    window.addEventListener("close-all-drawers", handleCloseDrawers);
+    return () => window.removeEventListener("close-all-drawers", handleCloseDrawers);
+  }, []);
 
   // Lists of options
   const aromaOptions = ["Woody", "Earthy", "Balsamic", "Sweet", "Minty", "Spicy", "Camphorous", "Herbaceous"];
@@ -53,7 +68,12 @@ export function PassportManagement({ products }: PassportManagementProps) {
   ];
 
   const handleOpenEdit = (passport: NilamPassport) => {
-    setActivePassport({ ...passport });
+    setActivePassport({
+      batchCode: "B-LH-2601",
+      farmerGroup: "Kelompok Tani Nilam Jaya Lhoong",
+      gpsCoordinates: "5.2144° N, 95.3129° E",
+      ...passport,
+    });
     setIsEditing(true);
   };
 
@@ -82,6 +102,7 @@ export function PassportManagement({ products }: PassportManagementProps) {
     setPassports(passports.map((p) => (p.id === activePassport.id ? activePassport : p)));
     setIsEditing(false);
     setActivePassport(null);
+    showToast("Nilam Passport berhasil diperbarui!", "success");
   };
 
   const getProductName = (productId: string) => {
@@ -125,10 +146,24 @@ export function PassportManagement({ products }: PassportManagementProps) {
               {passports.map((passport) => (
                 <tr key={passport.id} className="hover:bg-cream-50/30 transition-colors">
                   <td className="p-4 sm:p-5 font-extrabold">
-                    {getProductName(passport.productId)}
+                    <div className="text-xs">{getProductName(passport.productId)}</div>
+                    <div className="flex flex-wrap items-center gap-2 mt-1.5 text-[9px] text-ink-600 font-bold">
+                      <span className="bg-brand-100 text-brand-905 px-1.5 py-0.5 rounded">
+                        Batch: {passport.batchCode || "B-LH-2601"}
+                      </span>
+                      <span className="flex items-center gap-0.5 text-ink-650">
+                        <Users className="h-3 w-3 text-brand-900" /> {passport.farmerGroup || "Kelompok Tani"}
+                      </span>
+                    </div>
                   </td>
                   <td className="p-4 sm:p-5 font-medium text-ink-650">
-                    {passport.origin}
+                    <div className="text-xs">{passport.origin}</div>
+                    {passport.gpsCoordinates && (
+                      <div className="text-[9px] font-extrabold text-brand-900 flex items-center gap-0.5 mt-1">
+                        <MapPin className="h-3 w-3 text-brand-900 shrink-0" />
+                        <span>{passport.gpsCoordinates}</span>
+                      </div>
+                    )}
                   </td>
                   <td className="p-4 sm:p-5">
                     <div className="flex flex-wrap gap-1">
@@ -206,6 +241,41 @@ export function PassportManagement({ products }: PassportManagementProps) {
                   onChange={(e) => setActivePassport({ ...activePassport, origin: e.target.value })}
                   placeholder="Contoh: Desa Lhong, Kabupaten Aceh Besar"
                 />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-ink-700">Nomor Batch / Kode Panen</label>
+                  <input
+                    type="text"
+                    className="w-full text-xs font-semibold border border-line rounded-xl px-3.5 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
+                    value={activePassport.batchCode || ""}
+                    onChange={(e) => setActivePassport({ ...activePassport, batchCode: e.target.value })}
+                    placeholder="B-LH-2601"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-ink-700">Kelompok Tani / Mitra</label>
+                  <input
+                    type="text"
+                    className="w-full text-xs font-semibold border border-line rounded-xl px-3.5 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
+                    value={activePassport.farmerGroup || ""}
+                    onChange={(e) => setActivePassport({ ...activePassport, farmerGroup: e.target.value })}
+                    placeholder="Kelompok Tani..."
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-ink-700">GPS Lahan (Koordinat)</label>
+                  <input
+                    type="text"
+                    className="w-full text-xs font-semibold border border-line rounded-xl px-3.5 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
+                    value={activePassport.gpsCoordinates || ""}
+                    onChange={(e) => setActivePassport({ ...activePassport, gpsCoordinates: e.target.value })}
+                    placeholder="5.2144° N, 95.3129° E"
+                  />
+                </div>
               </div>
 
               {/* Aroma Selector */}

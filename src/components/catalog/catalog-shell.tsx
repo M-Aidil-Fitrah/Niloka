@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronDownIcon, FilterIcon } from "@/components/ui/icons";
 import { formatRupiah } from "@/lib/formatters";
 import { getActivePromosForProduct } from "@/lib/mock-queries";
+import { cn } from "@/lib/styles";
 
 type SortOption = "featured" | "price-asc" | "price-desc" | "newest";
 

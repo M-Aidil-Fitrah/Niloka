@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Plus, Edit3, Trash2, AlertTriangle, ShieldCheck, Scale, Compass } from "lucide-react";
+import { Plus, Edit3, Trash2, AlertTriangle, ShieldCheck, Scale, Compass, Calendar, Truck } from "lucide-react";
 import type { AmpasListing, AmpasCondition, AmpasUsageTag, AmpasListingStatus } from "@/lib/contracts";
 import { formatRupiah } from "@/lib/formatters";
+import { showToast } from "../dashboard/dashboard-layout";
 
 type AmpasManagementProps = {
   ampasListings: AmpasListing[];
@@ -29,6 +30,14 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
     { value: "industrial-cellulose", label: "Selulosa Industri" },
   ];
 
+  useEffect(() => {
+    const handleCloseDrawers = () => {
+      setIsEditing(false);
+    };
+    window.addEventListener("close-all-drawers", handleCloseDrawers);
+    return () => window.removeEventListener("close-all-drawers", handleCloseDrawers);
+  }, []);
+
   const handleOpenAdd = () => {
     setActiveListing({
       id: `ampas-${Date.now()}`,
@@ -43,24 +52,29 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
       status: "draft",
       image: { src: "https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?q=80&w=400&auto=format&fit=crop", alt: "Ampas Nilam" },
       disclaimer: "Platform NILOKA tidak memverifikasi kandungan kimia residue.",
+      distillationDate: new Date().toISOString().split("T")[0],
+      shippingOption: "both",
     });
     setIsEditing(true);
   };
 
   const handleOpenEdit = (listing: AmpasListing) => {
-    setActiveListing({ ...listing });
+    setActiveListing({
+      distillationDate: new Date().toISOString().split("T")[0],
+      shippingOption: "both",
+      ...listing,
+    });
     setIsEditing(true);
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Apakah Anda yakin ingin menghapus listing B2B ampas nilam ini?")) {
-      const filtered = listings.filter((l) => l.id !== id);
-      setListings(filtered);
-      const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
-      if (currentPage > newTotalPages && newTotalPages > 0) {
-        setCurrentPage(newTotalPages);
-      }
+    const filtered = listings.filter((l) => l.id !== id);
+    setListings(filtered);
+    const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
+    if (currentPage > newTotalPages && newTotalPages > 0) {
+      setCurrentPage(newTotalPages);
     }
+    showToast("Listing ampas nilam berhasil dihapus.", "success");
   };
 
   const handleToggleTag = (tag: AmpasUsageTag) => {
@@ -81,7 +95,7 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
 
   const handleSave = () => {
     if (!activeListing?.quantityKg || !activeListing?.pricePerKg?.amount) {
-      alert("Kuantitas dan harga per kg wajib diisi.");
+      showToast("Kuantitas dan harga per kg wajib diisi.", "warning");
       return;
     }
 
@@ -94,6 +108,7 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
     }
     setIsEditing(false);
     setActiveListing(null);
+    showToast("Listing ampas nilam berhasil disimpan!", "success");
   };
 
   return (
@@ -164,9 +179,18 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
                   <span>{listing.location.city}, {listing.location.province}</span>
                 </div>
 
-                <p className="text-xs text-ink-650 line-clamp-2 leading-relaxed">
-                  {listing.distillationProcess}
-                </p>
+                <div className="grid grid-cols-2 gap-2 text-[10px] font-bold text-ink-700 py-1.5 border-y border-line/35 my-1">
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5 text-brand-900 shrink-0" />
+                    <span>Distilasi: {listing.distillationDate || "2026-07-01"}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Truck className="h-3.5 w-3.5 text-brand-900 shrink-0" />
+                    <span className="capitalize">
+                      {listing.shippingOption === "self-pickup" ? "Ambil Sendiri" : listing.shippingOption === "cargo" ? "Kargo" : "Kargo & Mandiri"}
+                    </span>
+                  </div>
+                </div>
 
                 {/* Usage Tags */}
                 <div className="flex flex-wrap gap-1.5 pt-1">
@@ -331,6 +355,31 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
                     })}
                     placeholder="Contoh: Takengon"
                   />
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-ink-700">Tanggal Selesai Distilasi</label>
+                  <input
+                    type="date"
+                    className="w-full text-xs font-semibold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
+                    value={activeListing.distillationDate || ""}
+                    onChange={(e) => setActiveListing({ ...activeListing, distillationDate: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-ink-700">Opsi Pengiriman B2B</label>
+                  <select
+                    className="w-full text-xs font-bold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
+                    value={activeListing.shippingOption || "both"}
+                    onChange={(e) => setActiveListing({ ...activeListing, shippingOption: e.target.value as any })}
+                  >
+                    <option value="self-pickup">Ambil Mandiri (Self-Pickup)</option>
+                    <option value="cargo">Kargo Logistik B2B</option>
+                    <option value="both">Kargo & Ambil Mandiri</option>
+                  </select>
                 </div>
               </div>
 
