@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bell, MessageSquare, Settings, Menu, X, ChevronDown, LogOut, ShieldCheck, User } from "lucide-react";
 import { cn } from "@/lib/styles";
+import nilokaLogo from "@/public/assets/logo/logo.png";
 
 // ==========================================
 // 1. DASHBOARD SHELL
@@ -62,19 +63,27 @@ export function DashboardSidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[240px] h-full bg-white-soft border-r border-line/60 p-5 flex flex-col justify-between shrink-0 overflow-y-auto transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:shadow-none",
+          "fixed inset-y-0 left-0 z-50 w-[240px] h-full bg-white-soft border-r border-line/60 p-5 flex flex-col shrink-0 overflow-y-auto transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:shadow-none",
           isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="space-y-6">
           {/* Logo / Brand Name and Close Trigger */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-lg bg-brand-900 flex items-center justify-center text-white-soft font-black text-sm shadow-sm">
-                {logoChar}
+          <div className="flex items-center justify-between border-b border-line/40 pb-5">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <Image
+                  src={nilokaLogo}
+                  alt="NILOKA Logo"
+                  className="h-5.5 w-auto object-contain"
+                  priority
+                />
+                <span className="text-[9px] font-black px-1.5 py-0.5 bg-brand-900 text-white-soft rounded-md uppercase tracking-wider">
+                  {brandName.toLowerCase().includes("seller") ? "Seller" : "Admin"}
+                </span>
               </div>
-              <span className="font-black text-[12px] sm:text-xs tracking-wider text-brand-950 uppercase">
-                {brandName}
+              <span className="text-[9px] text-ink-500 font-extrabold tracking-wide uppercase pl-0.5">
+                {brandName.toLowerCase().includes("seller") ? "Mitra Penjual" : "Validator"}
               </span>
             </div>
             {onClose && (
@@ -88,47 +97,72 @@ export function DashboardSidebar({
             )}
           </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-1 pt-4">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    onTabChange(item.id);
-                    if (onClose) onClose(); // Auto close on mobile
-                  }}
-                  className={cn(
-                    "flex items-center justify-between w-full text-left px-3.5 py-2.5 rounded-xl text-[12.5px] font-semibold transition-all duration-200 cursor-pointer hover:translate-x-0.5",
-                    isActive
-                      ? "bg-brand-900 text-white-soft shadow-md font-bold"
-                      : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
-                  )}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white-soft" : "text-ink-500")} />
-                    <span>{item.label}</span>
-                  </div>
-                  {item.count !== undefined && item.count > 0 && (
-                    <span className={cn(
-                      "text-[9px] font-extrabold px-1.5 py-0.5 rounded-md",
-                      isActive ? "bg-white-soft/20 text-white-soft" : "bg-cream-100 text-ink-700 border border-line/50"
-                    )}>
-                      {item.count}
-                    </span>
-                  )}
-                </button>
+          {/* Navigation Links Grouped */}
+          <nav className="space-y-5">
+            {(() => {
+              const isSeller = brandName.toLowerCase().includes("seller");
+              
+              // Filter logic for grouping
+              const menuUtama = navigation.filter(item => 
+                item.id === "overview" || item.id === "products" || item.id === "ampas" || item.id === "passport" || item.id === "moderation"
               );
-            })}
-          </nav>
-        </div>
+              const manajemen = navigation.filter(item => 
+                item.id === "promos" || item.id === "logs"
+              );
 
-        {/* Footer info: system status badge compact */}
-        <div className="pt-4 border-t border-line/40 flex items-center justify-between text-[9px] font-bold text-ink-500">
-          <span>NILOKA HUB v1.0</span>
-          <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              const renderGroup = (title: string, items: typeof navigation) => {
+                if (items.length === 0) return null;
+                return (
+                  <div className="space-y-1.5">
+                    <span className="text-[9.5px] font-black text-ink-500/70 tracking-widest uppercase block px-3.5 mb-2">
+                      {title}
+                    </span>
+                    <div className="space-y-1">
+                      {items.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = activeTab === item.id;
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => {
+                              onTabChange(item.id);
+                              if (onClose) onClose(); // Auto close on mobile
+                            }}
+                            className={cn(
+                              "flex items-center justify-between w-full text-left px-3.5 py-2.5 rounded-xl text-[12px] font-bold transition-all duration-200 cursor-pointer",
+                              isActive
+                                ? "bg-brand-900 text-white-soft"
+                                : "text-ink-600 hover:bg-cream-100/50 hover:text-brand-950"
+                            )}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white-soft" : "text-ink-500")} />
+                              <span>{item.label}</span>
+                            </div>
+                            {item.count !== undefined && item.count > 0 && (
+                              <span className={cn(
+                                "text-[9px] font-extrabold px-1.5 py-0.5 rounded-md",
+                                isActive ? "bg-white-soft/20 text-white-soft" : "bg-cream-100 text-ink-700 border border-line/50"
+                              )}>
+                                {item.count}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              };
+
+              return (
+                <div className="space-y-5">
+                  {renderGroup("Menu Utama", menuUtama)}
+                  {renderGroup(isSeller ? "Manajemen" : "Audit", manajemen)}
+                </div>
+              );
+            })()}
+          </nav>
         </div>
       </aside>
     </>
