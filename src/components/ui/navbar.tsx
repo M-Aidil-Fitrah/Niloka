@@ -166,17 +166,12 @@ export function SiteNavbar() {
             {/* Dropdown Menu */}
             {isUserMenuOpen && (
               <div 
-                className={cn(
-                  "absolute right-0 mt-3 w-64 rounded-3xl border p-4 shadow-xl backdrop-blur-md animate-in slide-in-from-top-2 duration-200 z-50",
-                  isLight
-                    ? "border-line bg-white-soft text-brand-950"
-                    : "border-white-soft/20 bg-brand-950 text-white-soft"
-                )}
+                className="absolute right-0 mt-3 w-64 rounded-3xl border border-line bg-white text-brand-950 p-4 shadow-xl animate-in slide-in-from-top-2 duration-200 z-50"
               >
                 {user ? (
                   <div className="space-y-3">
                     <div className="border-b border-line/40 pb-3">
-                      <p className="text-xs font-extrabold text-gold-600 uppercase tracking-wider">
+                      <p className="text-xs font-extrabold text-gold-700 uppercase tracking-wider">
                         {user.role === "admin" ? "Administrator" : user.role === "seller" ? "Penjual (Seller)" : "Pembeli"}
                       </p>
                       <p className="text-sm font-bold truncate mt-0.5">{user.name}</p>
@@ -237,7 +232,7 @@ export function SiteNavbar() {
                       <Link
                         href="/auth/login"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-full shadow-sm text-xs font-bold text-white-soft bg-brand-900 hover:bg-brand-950 transition-all"
+                        className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-full shadow-sm text-xs font-bold !text-white bg-brand-950 hover:bg-brand-900 transition-all"
                       >
                         Masuk (Login)
                       </Link>
