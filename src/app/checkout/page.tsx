@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getPublishedProducts, getActiveAmpasListings } from "@/lib/mock-queries";
+import { getPublishedProductsDto, getActiveAmpasListingsDto } from "@/lib/dal/marketplace";
 import { SectionShell } from "@/components/ui/section-shell";
 import { CheckoutSkeleton } from "@/components/ui/skeletons";
 
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
   description: "Kelola keranjang belanja produk nilam dan ajukan pembayaran aman tersertifikasi melalui Midtrans gateway mock.",
 };
 
-export default function CheckoutPage() {
-  const products = getPublishedProducts();
-  const listings = getActiveAmpasListings();
+export default async function CheckoutPage() {
+  const products = await getPublishedProductsDto();
+  const listings = await getActiveAmpasListingsDto();
 
   return (
     <SectionShell
@@ -34,3 +34,4 @@ export default function CheckoutPage() {
     </SectionShell>
   );
 }
+

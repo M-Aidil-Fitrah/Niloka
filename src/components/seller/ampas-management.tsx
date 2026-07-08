@@ -6,32 +6,32 @@ import type { AmpasListing, AmpasUsageTag } from "@/lib/contracts";
 import { showToast } from "../dashboard/dashboard-layout";
 import { AmpasTable } from "./ampas/ampas-table";
 import { AmpasDrawer } from "./ampas/ampas-drawer";
+import { useAuth } from "@/context/auth-context";
+import {
+  saveAmpasListingAction,
+  deleteAmpasListingAction,
+  getSellerAmpasListingsAction,
+} from "@/lib/actions/ampas-actions";
 
 type AmpasManagementProps = {
   ampasListings: AmpasListing[];
 };
 
 export function AmpasManagement({ ampasListings: initialListings }: AmpasManagementProps) {
+  const { user } = useAuth();
+  const [prevInitialListings, setPrevInitialListings] = useState<AmpasListing[]>(initialListings);
   const [listings, setListings] = useState<AmpasListing[]>(initialListings);
+
+  if (initialListings !== prevInitialListings) {
+    setPrevInitialListings(initialListings);
+    setListings(initialListings);
+  }
+
   const [isEditing, setIsEditing] = useState(false);
   const [activeListing, setActiveListing] = useState<Partial<AmpasListing> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentSellerId, setCurrentSellerId] = useState("seller-aceh-aroma");
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("niloka_ampas_listings");
-      const user = localStorage.getItem("niloka_current_user");
-      setTimeout(() => {
-        if (stored) {
-          setListings(JSON.parse(stored));
-        }
-        if (user && user !== "buyer") {
-          setCurrentSellerId(user);
-        }
-      }, 0);
-    }
-  }, []);
+  const currentSellerId = user?.sellerId || "seller-aceh-aroma";
   
   const itemsPerPage = 4;
   const sellerListings = listings;
@@ -88,18 +88,24 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
     setIsEditing(true);
   };
 
-  const handleDelete = (id: string) => {
-    const filtered = listings.filter((l) => l.id !== id);
-    setListings(filtered);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("niloka_ampas_listings", JSON.stringify(filtered));
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await deleteAmpasListingAction(id);
+      if (res.ok) {
+        const data = await getSellerAmpasListingsAction();
+        setListings(data);
+        const newTotalPages = Math.ceil(data.length / itemsPerPage);
+        if (currentPage > newTotalPages && newTotalPages > 0) {
+          setCurrentPage(newTotalPages);
+        }
+        showToast("Listing ampas nilam berhasil dihapus.", "success");
+      } else {
+        showToast(res.message, "error");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast("Terjadi kesalahan saat menghapus listing.", "error");
     }
-    const filteredSellerListings = filtered.filter((l) => l.sellerId === currentSellerId);
-    const newTotalPages = Math.ceil(filteredSellerListings.length / itemsPerPage);
-    if (currentPage > newTotalPages && newTotalPages > 0) {
-      setCurrentPage(newTotalPages);
-    }
-    showToast("Listing ampas nilam berhasil dihapus.", "success");
   };
 
   const handleToggleTag = (tag: AmpasUsageTag) => {
@@ -118,7 +124,7 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!activeListing?.quantityKg || !activeListing?.pricePerKg?.amount) {
       showToast("Kuantitas dan harga per kg wajib diisi.", "warning");
       return;
@@ -144,25 +150,26 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
       }
     }
 
-    const updated = { ...activeListing } as AmpasListing;
-    if (!updated.slug) {
-      updated.slug = `ampas-nilam-${updated.id.replace("ampas-", "")}`;
-    }
+    const payload = {
+      ...activeListing,
+      sellerId: currentSellerId,
+    };
 
-    let updatedListings: AmpasListing[] = [];
-    if (listings.some((l) => l.id === updated.id)) {
-      updatedListings = listings.map((l) => (l.id === updated.id ? updated : l));
-    } else {
-      updatedListings = [updated, ...listings];
-      setCurrentPage(1);
+    try {
+      const res = await saveAmpasListingAction(payload);
+      if (res.ok) {
+        const data = await getSellerAmpasListingsAction();
+        setListings(data);
+        setIsEditing(false);
+        setActiveListing(null);
+        showToast("Listing ampas nilam berhasil disimpan!", "success");
+      } else {
+        showToast(res.message, "error");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast("Terjadi kesalahan saat menyimpan listing.", "error");
     }
-    setListings(updatedListings);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("niloka_ampas_listings", JSON.stringify(updatedListings));
-    }
-    setIsEditing(false);
-    setActiveListing(null);
-    showToast("Listing ampas nilam berhasil disimpan!", "success");
   };
 
   return (

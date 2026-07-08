@@ -45,23 +45,15 @@ type OrderHistoryItem = {
 export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
   const { items, updateQuantity, removeItem, clearCart } = useCart();
 
-  const [localProducts, setLocalProducts] = useState<Product[]>(products);
-  const [localListings, setLocalListings] = useState<AmpasListing[]>(ampasListings);
+  const localProducts = products;
+  const localListings = ampasListings;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedProds = localStorage.getItem("niloka_products");
-      const storedListings = localStorage.getItem("niloka_ampas_listings");
-      setTimeout(() => {
-        if (storedProds) {
-          setLocalProducts(JSON.parse(storedProds));
-        }
-        if (storedListings) {
-          setLocalListings(JSON.parse(storedListings));
-        }
-      }, 0);
+      localStorage.setItem("niloka_products", JSON.stringify(products));
+      localStorage.setItem("niloka_ampas_listings", JSON.stringify(ampasListings));
     }
-  }, []);
+  }, [products, ampasListings]);
 
   // Form State
   const [receiverName, setReceiverName] = useState("");
