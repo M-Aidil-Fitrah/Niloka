@@ -2,8 +2,6 @@ import type {
   AdminValidationItem,
   AmpasListing,
   AmpasListingId,
-  AromaMatchQuestion,
-  AromaMatchRecommendation,
   Bundle,
   CartItem,
   NilamPassport,
@@ -20,8 +18,6 @@ import type {
 import {
   adminValidationItems,
   ampasListings,
-  aromaMatchQuestions,
-  aromaMatchRecommendations,
   bundles,
   nilamPassports,
   products,
@@ -285,14 +281,6 @@ export function validatePromoCode(
 
 export function getBundles(): Bundle[] {
   return bundles;
-}
-
-export function getAromaMatchQuestions(): AromaMatchQuestion[] {
-  return aromaMatchQuestions;
-}
-
-export function getAromaMatchRecommendations(): AromaMatchRecommendation[] {
-  return aromaMatchRecommendations;
 }
 
 export function getAdminValidationItems(): AdminValidationItem[] {

@@ -101,40 +101,6 @@ export function PassportSkeleton() {
   );
 }
 
-export function AromaMatchSkeleton() {
-  return (
-    <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in duration-300">
-      {/* Wizard Card Skeleton */}
-      <div className="rounded-[32px] border border-line bg-white-soft p-6 sm:p-8 space-y-6">
-        {/* Stepper progress */}
-        <div className="flex items-center justify-between">
-          <div className="h-4 w-24 rounded bg-cream-100/80 animate-pulse" />
-          <div className="flex gap-1">
-            <div className="h-2 w-8 rounded-full bg-cream-100/80 animate-pulse" />
-            <div className="h-2 w-8 rounded-full bg-cream-100/80 animate-pulse" />
-            <div className="h-2 w-8 rounded-full bg-cream-100/80 animate-pulse" />
-          </div>
-        </div>
-
-        {/* Prompt */}
-        <div className="h-8 w-3/4 rounded bg-cream-100/80 animate-pulse" />
-
-        {/* Options */}
-        <div className="space-y-3 pt-4">
-          <div className="h-14 w-full rounded-2xl bg-cream-100/50 animate-pulse" />
-          <div className="h-14 w-full rounded-2xl bg-cream-100/50 animate-pulse" />
-          <div className="h-14 w-full rounded-2xl bg-cream-100/50 animate-pulse" />
-        </div>
-
-        {/* Action button */}
-        <div className="flex justify-between items-center pt-6 border-t border-line/60">
-          <div className="h-10 w-24 rounded-2xl bg-cream-100/50 animate-pulse" />
-          <div className="h-10 w-28 rounded-2xl bg-cream-100/50 animate-pulse" />
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export function AmpasSkeleton() {
   return (

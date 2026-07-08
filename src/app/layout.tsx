@@ -12,7 +12,7 @@ const cormorant = {
 export const metadata: Metadata = {
   title: "NILOKA",
   description:
-    "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport, AromaMatch, dan ekosistem sirkular ampas nilam.",
+    "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
 };
 
 import { CartProvider } from "@/context/cart-context";

@@ -19,7 +19,6 @@ import { PassportSection } from "@/components/landing/sections/passport-section"
 import { CircularSection } from "@/components/landing/sections/circular-section";
 import { NewArrivalsSection } from "@/components/landing/sections/new-arrivals-section";
 import { TrustSection } from "@/components/landing/sections/trust-section";
-import { AromaMatchSection } from "@/components/landing/sections/aromamatch-section";
 
 export default function Home() {
   return (
@@ -48,8 +47,6 @@ export default function Home() {
         {/* New Arrival Section */}
         <NewArrivalsSection />
 
-        {/* AromaMatch */}
-        <AromaMatchSection />
 
         {/* Trust/Review Strip */}
         <TrustSection />
