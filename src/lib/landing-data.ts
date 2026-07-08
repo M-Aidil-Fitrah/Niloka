@@ -110,12 +110,12 @@ const featuredProductCategory = getFeaturedProductCategory();
 export const categoryTiles: CategoryTile[] = [
   {
     id: "aroma",
-    label: "AromaMatch",
-    description: "Temukan produk berdasarkan tujuan, aroma, bentuk, dan budget.",
+    label: "Artikel & Berita",
+    description: "Temukan panduan praktis pengolahan limbah nilam dan budidaya tani sirkular.",
     imageUrl:
       "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=80",
     imageAlt: "Produk kosmetik dan aromaterapi di atas meja.",
-    href: "#aromamatch",
+    href: "/artikel",
   },
   {
     id: "passport",
@@ -204,7 +204,7 @@ export const footerColumns: FooterColumn[] = [
   {
     id: "marketplace",
     title: "Marketplace",
-    links: ["Produk Nilam", "Ampas Nilam", "AromaMatch", "Nilam Passport"],
+    links: ["Produk Nilam", "Ampas Nilam", "Berita & Artikel", "Nilam Passport"],
   },
   {
     id: "seller",

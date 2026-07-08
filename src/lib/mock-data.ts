@@ -13,6 +13,7 @@ import type {
   Review,
   Seller,
   Promo,
+  Article,
 } from "@/lib/contracts";
 
 const idr = (amount: number): Money => ({
@@ -1014,3 +1015,358 @@ export const adminValidationItems: AdminValidationItem[] = [
     notes: "Ditolak: klaim 'menyembuhkan penyakit kulit' melanggar regulasi BPOM. Perlu revisi deskripsi.",
   },
 ];
+
+export const articles: Article[] = [
+  {
+    id: "art-1",
+    slug: "meracik-parfum-budget-kecil",
+    title: "Meracik Parfum dengan Budget Yang Kecil, Bisa?",
+    excerpt: "Temukan rahasia meracik parfum berkualitas premium menggunakan minyak nilam murni sebagai pengikat aroma (fixative) dengan modal yang sangat ekonomis.",
+    content: `## Rahasia Meracik Parfum Premium dengan Budget Ekonomis
+
+Minyak nilam (*patchouli oil*) dikenal luas di industri wewangian dunia sebagai **fixative** atau bahan pengikat aroma. Sifatnya yang tidak mudah menguap membuat keharuman parfum bertahan jauh lebih lama. 
+
+Dalam panduan ini, **Muhammad Haikal (Founder Neelam Geutanyo)** membagikan cara meracik parfum berkualitas tinggi dengan budget ekonomis. Anda dapat memulai langkah ini dari rumah sebagai peluang usaha mikro:
+
+### Bahan-Bahan Utama:
+1. **Minyak Nilam Aceh (Niloka Pure Patchouli)**: Bertindak sebagai pengikat aroma (*base note*).
+2. **Fragrance Oil / Essential Oil (Top & Middle Notes)**: Menentukan aroma utama (misalnya jeruk, mawar, atau kayu manis).
+3. **Pelarut Alkohol / Etanol Khusus Parfum**: Untuk melarutkan aroma.
+4. **Fixative Booster (Opsional)**: Untuk memperkuat daya pancar aroma.
+
+### Langkah Meracik:
+* Campurkan minyak nilam dengan fragrance oil pilihan Anda dengan perbandingan tertentu (biasanya 2-5% minyak nilam dari total konsentrat aroma).
+* Tambahkan pelarut alkohol berkualitas secara perlahan sambil terus diaduk.
+* Simpan racikan di tempat sejuk dan gelap selama beberapa hari (proses *aging*) untuk menyatukan molekul aroma secara sempurna.
+
+Tonton video lengkapnya untuk mempelajari takaran detail dan tips pemasaran parfum lokal Anda!`,
+    author: "Muhammad Haikal",
+    authorRole: "Founder Neelam Geutanyo",
+    publishedAt: "2026-05-12T10:00:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=600",
+    category: "olahan",
+    videoUrl: "https://youtu.be/WxyB91h8l-c",
+    videoDuration: "14:25",
+    readTime: "3 min read",
+    tags: ["parfum", "neelam geutanyo", "umkm", "atsiri", "peluang usaha"]
+  },
+  {
+    id: "art-2",
+    slug: "nilam-aceh-smart-choice-daily-needs",
+    title: "NILAM ACEH: Smart Choice for Your Daily Needs",
+    excerpt: "Bagaimana minyak nilam Aceh yang mendunia dapat diintegrasikan ke dalam produk kebutuhan harian seperti sabun, disinfektan, dan kosmetik.",
+    content: `## Mengapa Nilam Aceh Menjadi Pilihan Cerdas Kebutuhan Harian?
+
+Minyak nilam Aceh terkenal di pasar global karena memiliki kadar **Patchouli Alcohol (PA)** yang sangat tinggi (sering kali di atas 30-34%). Kualitas ini menjadikannya salah satu minyak atsiri terbaik di dunia.
+
+### Aplikasi Nilam Aceh dalam Kebutuhan Sehari-hari:
+* **Sabun Mandi Herbal**: Kandungan antiseptik alami pada nilam membantu membunuh kuman sekaligus melembapkan kulit secara mendalam.
+* **Aromaterapi & Diffuser**: Menghirup uap minyak nilam dapat memicu pelepasan hormon serotonin dan dopamin, membantu meredakan stres dan kecemasan.
+* **Pembersih Rumah Tangga**: Campuran air hidrosol (sisa kondensasi penyulingan) dapat diolah menjadi pembersih lantai organik yang wangi dan bebas kuman.
+
+Atsiri Research Center (ARC) Universitas Syiah Kuala terus mengembangkan inovasi produk turunan nilam untuk mendorong hilirisasi produk pertanian lokal Aceh agar memiliki nilai jual yang tinggi dan membuka lapangan pekerjaan baru.`,
+    author: "ARC USK",
+    authorRole: "Atsiri Research Center",
+    publishedAt: "2026-06-01T09:30:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&q=80&w=600",
+    category: "olahan",
+    videoUrl: "https://youtu.be/1qJucuC-d1Q",
+    videoDuration: "08:12",
+    readTime: "4 min read",
+    tags: ["arc usk", "atsiri", "produk harian", "inovasi", "aceh"]
+  },
+  {
+    id: "art-3",
+    slug: "budidaya-nilam-dari-awal-hingga-suling",
+    title: "Panduan Lengkap Budidaya Nilam dari Awal Hingga Penyulingan",
+    excerpt: "Pelajari metode menanam nilam yang benar, pemeliharaan tanaman dari hama, hingga teknik penyulingan minyak atsiri bernilai tinggi.",
+    content: `## Panduan Praktis Pertanian Nilam Modern
+
+Menanam nilam membutuhkan ketelatenan, namun menawarkan keuntungan ekonomi yang menjanjikan. Berikut adalah rangkuman tahapan budidaya nilam dari penyiapan lahan hingga menghasilkan minyak suling yang jernih:
+
+### 1. Pembibitan & Persiapan Lahan
+* Pilih bibit nilam yang unggul dan sehat (bebas dari penyakit layu bakteri).
+* Gemburkan tanah dengan pupuk organik dan buat bedengan dengan drainase yang baik karena tanaman nilam sensitif terhadap genangan air.
+
+### 2. Perawatan & Pemupukan
+* Lakukan penyiraman rutin terutama di musim kemarau.
+* Berikan pemupukan berkala menggunakan pupuk NPK dan pupuk organik ampas nilam untuk merangsang pertumbuhan daun yang lebat.
+
+### 3. Teknik Penyulingan (Distilasi)
+* Panen daun nilam pada umur 6-8 bulan ketika kandungan minyaknya maksimal.
+* Lakukan pelayuan (bukan dijemur di bawah terik matahari langsung) selama beberapa hari sebelum disuling.
+* Gunakan tangki penyulingan stainless steel berkualitas untuk mencegah kontaminasi karat pada minyak atsiri yang dihasilkan.`,
+    author: "Tani Mandiri",
+    authorRole: "Kelompok Tani Atsiri",
+    publishedAt: "2026-04-20T11:15:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=600",
+    category: "budidaya",
+    videoUrl: "https://youtu.be/vpoid8g-4lM",
+    videoDuration: "25:40",
+    readTime: "6 min read",
+    tags: ["budidaya", "penyulingan", "panduan tani", "distilasi"]
+  },
+  {
+    id: "art-4",
+    slug: "pemanfaatan-limbah-suling-menjadi-pupuk",
+    title: "Pemanfaatan Limbah Suling Nilam Menjadi Pupuk Organik Cair",
+    excerpt: "Jangan buang ampas hasil penyulingan nilam! Pelajari cara mengolah limbah padat dan cair nilam menjadi pupuk organik kaya nutrisi.",
+    content: `## Zero Waste Farming: Mengubah Limbah Nilam Menjadi Pupuk Premium
+
+Proses penyulingan minyak nilam menyisakan dua jenis limbah: ampas padat (daun/batang rebus) dan limbah cair (air sisa distilasi). Melalui metode *zero waste*, kedua bahan ini dapat diproses menjadi pupuk berkualitas tinggi untuk menyuburkan kembali kebun nilam Anda.
+
+### Pembuatan Pupuk Organik Cair (POC) dari Limbah Cair:
+1. Tampung air sisa kondensasi penyulingan yang sudah dingin.
+2. Tambahkan bio-aktivator (seperti EM4 Pertanian) dan molase (tetes tebu) sebagai sumber energi mikroba.
+3. Fermentasikan campuran dalam wadah tertutup rapat (aerob/anaerob) selama 7-14 hari.
+4. Saring POC dan encerkan dengan air bersih sebelum disemprotkan ke tanah atau daun nilam.
+
+### Manfaat Pupuk Organik Cair Nilam:
+* Mengembalikan mikroba baik ke dalam tanah.
+* Mengandung senyawa organik sisa yang membantu menangkal jamur patogen tanah.
+* Mengurangi ketergantungan petani pada pupuk kimia sintetis yang mahal.`,
+    author: "Dr. Ir. Rahmat M.Sc",
+    authorRole: "Pakar Pertanian Atsiri",
+    publishedAt: "2026-05-30T08:00:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=600",
+    category: "pupuk",
+    videoUrl: "https://youtu.be/Q5LlJb3WEe8",
+    videoDuration: "18:30",
+    readTime: "5 min read",
+    tags: ["pupuk", "pupuk-cair", "zero-waste", "fermentasi", "limbah-nilam"]
+  },
+  {
+    id: "art-5",
+    slug: "pemberian-pupuk-npk-ditabur-atau-dikocor",
+    title: "Pemberian Pupuk NPK Pada Tanaman Nilam: Ditabur atau Dikocor?",
+    excerpt: "Perbandingan metode pengaplikasian pupuk NPK pada nilam untuk penyerapan nutrisi yang optimal dan pencegahan kerusakan akar.",
+    content: `## Mana yang Lebih Efektif untuk Tanaman Nilam: Ditabur atau Dikocor?
+
+Pupuk NPK sangat penting untuk menunjang pertumbuhan vegetatif tanaman nilam, khususnya pembentukan daun baru yang kaya akan kelenjar minyak atsiri. Namun, cara pemberian pupuk sangat memengaruhi efektivitas penyerapan nutrisi.
+
+### Metode Ditabur (Dry Application):
+* **Cara**: Pupuk ditaburkan secara melingkar di sekeliling tajuk tanaman, lalu ditutup tipis dengan tanah.
+* **Kelebihan**: Praktis, cepat pengerjaannya untuk lahan yang sangat luas.
+* **Kekurangan**: Tergantung pada kelembapan tanah; jika cuaca terlalu kering, pupuk sulit larut dan menguap sia-sia.
+
+### Metode Dikocor (Liquid Application):
+* **Cara**: Pupuk NPK dilarutkan terlebih dahulu di dalam air (misalnya 1-2 sendok makan per 10 liter air) kemudian disiramkan langsung ke pangkal tanaman.
+* **Kelebihan**: Nutrisi langsung larut dan siap diserap oleh akar nilam secara instan. Sangat cocok diterapkan pada musim kemarau.
+* **Kekurangan**: Membutuhkan lebih banyak tenaga kerja dan air bersih.
+
+Simak video untuk melihat panduan perbandingan dosis dan demonstrasi penerapannya secara langsung di lapangan!`,
+    author: "Agro Atsiri Channel",
+    authorRole: "Edukator Tani",
+    publishedAt: "2026-06-15T14:00:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category: "budidaya",
+    videoUrl: "https://youtu.be/Y5sQCAdh26U",
+    videoDuration: "10:45",
+    readTime: "3 min read",
+    tags: ["pupuk-npk", "pemupukan", "nutrisi", "tips-tani"]
+  },
+  {
+    id: "art-6",
+    slug: "kapan-pupuk-pertama-buat-nilam",
+    title: "Kapan Pupuk Pertama Buat Nilam & Jenis Pupuk Terbaik",
+    excerpt: "Menentukan waktu krusial pemupukan pertama tanaman nilam pasca tanam dan rekomendasi jenis pupuk agar bibit tumbuh cepat.",
+    content: `## Menentukan Fase Emas Pemupukan Awal Tanaman Nilam
+
+Banyak petani pemula melakukan kesalahan dengan langsung memberikan pupuk kimia dosis tinggi sesaat setelah bibit nilam dipindahkan ke lahan. Hal ini justru berisiko membuat akar bibit terbakar dan layu.
+
+### Waktu Terbaik Pemupukan Pertama:
+* Lakukan pemupukan pertama setelah tanaman berumur **14-21 hari setelah tanam (HST)**.
+* Pastikan bibit sudah menunjukkan tanda-tanda adaptasi, seperti munculnya kuncup daun baru dan akar mulai mencengkeram tanah dengan kuat.
+
+### Pilihan Pupuk Fase Awal:
+* **Pupuk Organik Padat (Kompos Ampas Nilam)**: Berikan sebagai pupuk dasar di sekitar tanaman untuk memperbaiki struktur mikroba tanah.
+* **Pupuk Nitrogen Tinggi (Urea / NPK)**: Diberikan dengan dosis sangat ringan secara dikocor untuk memicu pertumbuhan tunas dan daun hijau.
+
+Ikuti petunjuk praktis ini agar tanaman nilam Anda tidak stres dan tumbuh seragam di seluruh area kebun.`,
+    author: "Penyuluh Tani Aceh",
+    authorRole: "Dinas Pertanian",
+    publishedAt: "2026-03-10T10:00:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=600",
+    category: "budidaya",
+    videoUrl: "https://youtu.be/chE8XciUqJI",
+    videoDuration: "12:15",
+    readTime: "4 min read",
+    tags: ["pemupukan-awal", "pupuk-organik", "tunas-nilam", "fase-vegetatif"]
+  },
+  {
+    id: "art-7",
+    slug: "rahasia-agar-nilam-subur-lebat",
+    title: "Rahasia Agar Tanaman Nilam Tumbuh Subur dan Daun Lebat",
+    excerpt: "Tips dan trik dari petani berpengalaman untuk mengoptimalkan rimbunnya daun nilam yang menjadi kunci utama tingginya produksi minyak.",
+    content: `## Kunci Sukses Daun Nilam Rimbun & Kaya Kandungan Minyak
+
+Dalam budidaya nilam, target utama kita adalah menghasilkan **biomassa daun yang lebat** karena di sinilah kelenjar minyak atsiri (*glandular trichomes*) terbentuk. Berikut rahasia perawatan agar daun nilam tumbuh subur:
+
+### Trik Praktis Perawatan Daun:
+1. **Pemangkasan Pucuk (Pruning)**: Pangkas pucuk tanaman nilam pada umur 2-3 bulan untuk merangsang percabangan lateral. Semakin banyak cabang, semakin banyak daun yang dihasilkan.
+2. **Pemberian Asam Humat & Asam Amino**: Tambahkan nutrisi organik ini secara berkala untuk mempermudah akar menyerap pupuk utama.
+3. **Pengendalian Hama Ulat Daun**: Gunakan pestisida nabati secara rutin guna mencegah daun berlubang atau rontok akibat serangan hama ulat grayak.
+
+Penerapan tips ini secara konsisten terbukti dapat meningkatkan rendemen minyak sulingan hingga 20-30% lebih tinggi per ton bahan baku.`,
+    author: "Pak Sugeng",
+    authorRole: "Petani Nilam Senior",
+    publishedAt: "2026-06-25T16:30:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?auto=format&fit=crop&q=80&w=600",
+    category: "budidaya",
+    videoUrl: "https://youtu.be/3iRdwMYPr3c",
+    videoDuration: "15:50",
+    readTime: "4 min read",
+    tags: ["daun-lebat", "tips-petani", "pruning", "hama-ulat", "rendemen-tinggi"]
+  },
+  {
+    id: "art-8",
+    slug: "briket-ampas-nilam-energi-alternatif",
+    title: "Mengubah Ampas Nilam Menjadi Briket Energi Alternatif",
+    excerpt: "Teknik memproses sisa limbah padat batang dan daun nilam menjadi briket bahan bakar padat berdaya kalori tinggi untuk kebutuhan industri rumah tangga.",
+    content: `## Biobriket Ampas Nilam: Mengubah Limbah Menjadi Sumber Energi Terbarukan
+
+Penyulingan nilam menyisakan limbah padat berupa ampas daun dan batang dalam jumlah yang sangat melimpah. Jika dibiarkan menumpuk, limbah ini dapat menimbulkan bau kurang sedap. Salah satu solusi tercerdas adalah mengolahnya menjadi **biobriket**.
+
+### Keunggulan Briket Ampas Nilam:
+* **Ramah Lingkungan**: Mengurangi emisi gas rumah kaca dibanding batubara atau kayu bakar konvensional.
+* **Kalori Tinggi**: Mengandung sisa minyak atsiri dan selulosa rapat yang menghasilkan panas stabil dan tahan lama.
+* **Nilai Ekonomis**: Dapat dijual kembali sebagai bahan bakar alternatif untuk industri batu bata, tahu, atau pemanas kandang ayam.
+
+### Cara Pembuatan Sederhana:
+1. **Pengeringan**: Jemur ampas padat nilam sisa suling hingga kadar air di bawah 15%.
+2. **Pengarangan (Karbonisasi)**: Bakar ampas dalam wadah tertutup (drum pirolisis) hingga menjadi arang.
+3. **Penghancuran & Pencampuran**: Giling arang ampas nilam hingga halus, lalu campurkan dengan perekat tepung kanji/tapioka (rasio 10:1).
+4. **Pencetakan & Pengeringan Akhir**: Cetak adonan arang dengan alat cetak manual atau hidrolik, kemudian keringkan briket di bawah sinar matahari hingga mengeras sempurna.
+
+Biobriket ini siap digunakan sebagai bahan bakar bersih dengan aroma khas nilam yang menenangkan.`,
+    author: "Ir. Hendra Saputra",
+    authorRole: "Peneliti Biomassa Energi",
+    publishedAt: "2026-06-29T10:00:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1605980776566-0486c3ac7617?auto=format&fit=crop&q=80&w=600",
+    category: "energi",
+    readTime: "5 min read",
+    tags: ["briket", "biomassa", "energi-terbarukan", "pengarangan", "limbah-padat"]
+  },
+  {
+    id: "art-9",
+    slug: "hidrosol-pestisida-nabati",
+    title: "Cara Mengolah Air Hidrosol Sisa Penyulingan Nilam Menjadi Pestisida Nabati",
+    excerpt: "Air sisa hasil kondensasi penyulingan nilam (air hidrosol) ternyata mengandung senyawa aktif anti-serangga. Pelajari cara membuatnya di sini.",
+    content: `## Memanfaatkan Air Hidrosol Nilam sebagai Pelindung Tanaman Organik
+
+Saat menyuling nilam dengan metode uap-air, diperoleh dua fraksi cair: minyak nilam murni di lapisan atas, dan **air hidrosol (air bunga nilam)** di lapisan bawah. Seringkali air hidrosol ini dibuang begitu saja ke saluran air, padahal menyimpan manfaat luar biasa sebagai pestisida nabati.
+
+### Senyawa Aktif dalam Hidrosol Nilam:
+Meskipun minyak nilam utama telah terpisah, air hidrosol masih mengandung molekul terpenoid dan fenolik terlarut mikro yang bersifat anti-feedant (tidak disukai serangga) dan anti-fungal (mencegah jamur).
+
+### Cara Mengaplikasikannya pada Tanaman:
+1. **Penyaringan**: Saring air hidrosol dari sisa-sisa jelaga atau kotoran fisik penyulingan.
+2. **Pencampuran Booster**: Campurkan 1 liter air hidrosol dengan 5 ml sabun cair pencuci piring organik (berfungsi sebagai *surfactant* atau perekat agar pestisida menempel di permukaan daun).
+3. **Penyemprotan**: Semprotkan cairan langsung ke seluruh bagian daun dan batang tanaman nilam atau sayuran lain pada pagi atau sore hari.
+
+### Hama yang Dapat Dikendalikan:
+* Kutu kebul dan kutu daun (*Aphids*)
+* Ulat daun skala kecil
+* Mencegah infeksi jamur karat daun (*Puccinia*) pada tanaman hias dan sayuran.`,
+    author: "Koperasi Nilam Lestari",
+    authorRole: "Tim Litbang",
+    publishedAt: "2026-07-03T09:00:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=600",
+    category: "olahan",
+    readTime: "4 min read",
+    tags: ["hidrosol", "pestisida-nabati", "organik", "hama-tanaman"]
+  },
+  {
+    id: "art-10",
+    slug: "pupuk-kompos-nilam",
+    title: "Panduan Pembuatan Pupuk Kompos Organik dari Daun dan Batang Nilam",
+    excerpt: "Mengubah ampas nilam yang melimpah menjadi pupuk kompos organik gembur yang kaya unsur hara makro untuk memperbaiki kesuburan tanah perkebunan.",
+    content: `## Menghidupkan Kembali Tanah Kebun dengan Kompos Ampas Nilam
+
+Tanaman nilam mengambil banyak unsur hara dari dalam tanah selama siklus pertumbuhannya. Mengembalikan ampas nilam yang telah didekomposisi (dikomposkan) ke kebun adalah langkah terbaik untuk menjaga kelestarian unsur hara tanah.
+
+### Mengapa Ampas Nilam Baik untuk Kompos?
+Ampas penyulingan nilam memiliki rasio C/N yang ideal setelah melalui pemanasan suhu tinggi saat distilasi. Pemanasan ini secara tidak langsung mensterilkan limbah dari biji gulma dan bakteri jahat pembawa penyakit layu.
+
+### Tahapan Pembuatan Kompos Padat:
+1. **Pengumpulan**: Kumpulkan ampas nilam basah dari bak suling, biarkan suhunya mendingin.
+2. **Pencampuran Bahan**: Campurkan ampas nilam dengan kotoran ternak (sapi/kambing) dengan perbandingan 3:1. Tambahkan sekam padi atau serbuk gergaji untuk memperbaiki aerasi kompos.
+3. **Inokulasi**: Larutkan starter kompos (seperti EM4) ke dalam air gula, lalu siramkan secara merata ke tumpukan bahan hingga kelembapan mencapai sekitar 50-60%.
+4. **Pemeraman**: Tutup tumpukan dengan terpal. Lakukan pembalikan kompos seminggu sekali untuk menyuplai oksigen.
+5. **Pematangan**: Dalam waktu 3-4 minggu, kompos akan matang ditandai dengan warna cokelat kehitaman, tekstur gembur mirip tanah, dan tidak berbau menyengat.
+
+Aplikasikan kompos gembur ini sebanyak 1-2 kg per lubang tanam saat penyiapan lahan nilam baru!`,
+    author: "Bakti Tani Lestari",
+    authorRole: "Yayasan Pemberdayaan Petani",
+    publishedAt: "2026-06-20T11:00:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=600",
+    category: "pupuk",
+    readTime: "5 min read",
+    tags: ["kompos", "pupuk-organik", "mikroba", "kesuburan-tanah"]
+  },
+  {
+    id: "art-11",
+    slug: "media-tanam-jamur-ampas-nilam",
+    title: "Pemanfaatan Ampas Nilam sebagai Media Tanam Jamur Tiram yang Bernilai Ekonomis",
+    excerpt: "Ampas nilam kering ternyata menjadi media pertumbuhan yang sangat disukai jamur tiram. Pelajari cara pembuatan baglog jamur dari ampas nilam.",
+    content: `## Peluang Usaha Baru: Budidaya Jamur Tiram Berbasis Limbah Atsiri
+
+Salah satu pemanfaatan limbah padat nilam yang memiliki nilai ekonomi tinggi secara instan adalah menjadikannya bahan campuran media tanam (baglog) **jamur tiram putih**. Kandungan lignoselulosa yang tinggi dalam ampas batang nilam sangat cocok sebagai nutrisi pertumbuhan miselium jamur.
+
+### Komposisi Formula Baglog Jamur:
+* Ampas nilam kering (telah dihaluskan): 60%
+* Serbuk gergaji kayu sengon/albasia: 20%
+* Dedak halus (bekatul) sebagai nutrisi tambahan: 15%
+* Kapur pertanian (CaCO3) untuk menjaga pH: 3%
+* Gips: 2%
+
+### Cara Pengolahan:
+1. **Pencampuran & Pengomposan Singkat**: Campur semua bahan di atas dengan air hingga basah merata (kadar air 60%), lalu diamkan selama 2-3 hari agar bahan melunak.
+2. **Pengisian Baglog**: Masukkan adonan ke dalam plastik polipropilen (PP), padatkan, lalu pasang cincin plastik pada leher kantong.
+3. **Sterilisasi**: Kukus baglog dalam drum pemanas bersuhu 90-100 derajat Celcius selama 6-8 jam untuk mematikan spora jamur liar.
+4. **Inokulasi**: Setelah dingin, masukkan bibit jamur tiram berkualitas dalam ruangan steril.
+5. **Inkubasi**: Letakkan baglog di kubung jamur yang sejuk dan lembap hingga miselium putih tumbuh merata.
+
+Miselium jamur tumbuh subur pada media ampas nilam karena struktur serat selulosa yang telah melunak akibat proses perebusan penyulingan sebelumnya. Jamur tiram yang dihasilkan pun memiliki ukuran tudung yang tebal dan bobot yang mantap!`,
+    author: "Rian Hidayat",
+    authorRole: "Pengusaha Jamur & Alumni ARC",
+    publishedAt: "2026-07-05T13:00:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&fit=crop&q=80&w=600",
+    category: "olahan",
+    readTime: "5 min read",
+    tags: ["jamur-tiram", "baglog", "peluang-bisnis", "selulosa", "limbah-padat"]
+  },
+  {
+    id: "art-12",
+    slug: "zero-waste-pakan-ternak",
+    title: "Zero Waste Atsiri: Mengintegrasikan Limbah Nilam dengan Pakan Ternak Koperasi",
+    excerpt: "Bagaimana koperasi tani di Aceh menyiasati tingginya biaya pakan ternak sapi dengan memanfaatkan fermentasi silase ampas daun nilam.",
+    content: `## Inovasi Pakan Ternak Murah Berbasis Fermentasi Ampas Nilam
+
+Konsep pertanian sirkular (*circular farming*) menyatukan sub-sektor perkebunan nilam dengan peternakan sapi/kambing dalam satu siklus tanpa limbah. Koperasi tani di Gayo Lues dan Aceh Jaya kini berhasil menghemat biaya pakan hingga 40% melalui integrasi ini.
+
+### Daun Nilam untuk Pakan Ternak:
+Daun nilam sisa penyulingan masih mengandung protein kasar dan serat yang baik untuk pencernaan hewan pemamah biak. Namun, karena aromanya yang menyengat karena sisa minyak atsiri, hewan ternak sering kali enggan memakannya secara langsung.
+
+### Solusinya: Pembuatan Silase Fermentasi
+Melalui proses silase (fermentasi anaerob), sisa senyawa atsiri yang tajam didegradasi menjadi senyawa organik berbau asam manis yang sangat disukai ternak.
+
+### Cara Pembuatan Silase Ampas Nilam:
+1. Angin-anginkan ampas daun nilam agar kadar airnya menurun menjadi sekitar 60%.
+2. Campurkan ampas dengan bahan sumber energi karbohidrat cepat, seperti dedak padi atau konsentrat jagung (5-10% dari total bahan).
+3. Semprotkan larutan probiotik ternak dan tetes tebu secara merata.
+4. Masukkan bahan campuran ke dalam tong plastik silase, padatkan hingga tidak ada rongga udara tersisa, lalu tutup rapat.
+5. Diamkan selama 14-21 hari. Pakan silase siap disajikan dan tahan disimpan hingga berbulan-bulan.
+
+### Siklus Berkelanjutan:
+Kotoran sapi dari peternakan ini nantinya dikumpulkan dan diolah kembali di unit biogas atau dikomposkan untuk memupuk kebun nilam. Siklus tertutup inilah yang mewujudkan pertanian berkelanjutan sesungguhnya!`,
+    author: "Drh. Fahmi Rizal",
+    authorRole: "Pakar Peternakan Sirkular",
+    publishedAt: "2026-07-06T15:00:00.000Z",
+    imageUrl: "https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?auto=format&fit=crop&q=80&w=600",
+    category: "pupuk",
+    readTime: "6 min read",
+    tags: ["pakan-ternak", "silase", "sirkular", "koperasi-tani", "fermentasi"]
+  }
+];
+

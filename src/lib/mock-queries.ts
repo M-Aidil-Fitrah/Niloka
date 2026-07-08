@@ -15,6 +15,7 @@ import type {
   Review,
   Seller,
   SellerId,
+  Article,
 } from "@/lib/contracts";
 import {
   adminValidationItems,
@@ -28,6 +29,7 @@ import {
   promos,
   reviews,
   sellers,
+  articles,
 } from "@/lib/mock-data";
 
 function firstItem<TItem>(items: TItem[], label: string): TItem {
@@ -295,4 +297,47 @@ export function getAromaMatchRecommendations(): AromaMatchRecommendation[] {
 
 export function getAdminValidationItems(): AdminValidationItem[] {
   return adminValidationItems;
+}
+
+export function getArticles(): Article[] {
+  return articles;
+}
+
+export function getArticleBySlug(slug: string): Article | null {
+  return articles.find((article) => article.slug === slug) ?? null;
+}
+
+export function searchArticles(
+  query: string,
+  category: string,
+  type: "all" | "text" | "video"
+): Article[] {
+  return articles.filter((article) => {
+    // 1. Filter by category
+    if (category !== "all" && article.category !== category) {
+      return false;
+    }
+
+    // 2. Filter by type (text vs video)
+    if (type === "text" && article.videoUrl) {
+      return false;
+    }
+    if (type === "video" && !article.videoUrl) {
+      return false;
+    }
+
+    // 3. Filter by search query
+    if (query) {
+      const q = query.toLowerCase().trim();
+      const matchTitle = article.title.toLowerCase().includes(q);
+      const matchExcerpt = article.excerpt.toLowerCase().includes(q);
+      const matchTags = article.tags.some((tag) => tag.toLowerCase().includes(q));
+      const matchContent = article.content.toLowerCase().includes(q);
+      const matchAuthor = article.author.toLowerCase().includes(q);
+
+      return matchTitle || matchExcerpt || matchTags || matchContent || matchAuthor;
+    }
+
+    return true;
+  });
 }

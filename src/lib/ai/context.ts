@@ -45,7 +45,7 @@ export function buildNilokaContext(): string {
 
   return [
     "KONTEKS NILOKA:",
-    "NILOKA adalah marketplace produk nilam Aceh, Nilam Passport, AromaMatch, dan listing B2B ampas nilam.",
+    "NILOKA adalah marketplace produk nilam Aceh, Nilam Passport, Berita & Artikel Edukasi Limbah Nilam (/artikel), dan listing B2B ampas nilam.",
     "Produk:",
     products,
     "Nilam Passport:",
