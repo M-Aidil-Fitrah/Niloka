@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 import { Sparkles, Wand2, Check } from "lucide-react";
-import type { Product, ProductForm } from "@/lib/contracts";
+import type { Product } from "@/lib/contracts";
 import { showToast } from "@/components/dashboard/dashboard-layout";
 
 type AIDescriptionGeneratorProps = {
   activeProduct: Partial<Product>;
-  setActiveProduct: (product: any) => void;
+  setActiveProduct: React.Dispatch<React.SetStateAction<Partial<Product> | null>>;
 };
 
 export function AIDescriptionGenerator({ activeProduct, setActiveProduct }: AIDescriptionGeneratorProps) {
   const [aiAroma, setAiAroma] = useState("");
   const [aiOrigin, setAiOrigin] = useState("Gayo Lues, Aceh");
-  const [aiSafety, setAiSafety] = useState("Hindari kontak langsung dengan mata. Jauhkan dari jangkauan anak-anak.");
+  const aiSafety = "Hindari kontak langsung dengan mata. Jauhkan dari jangkauan anak-anak.";
   const [aiAudience, setAiAudience] = useState("Pencinta aroma terapi alami & relaksasi");
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export function AIDescriptionGenerator({ activeProduct, setActiveProduct }: AIDe
 
       const data = await res.json();
       if (data.shortDescription) {
-        setActiveProduct((prev: any) => prev ? { ...prev, shortDescription: data.shortDescription } : null);
+        setActiveProduct((prev) => prev ? { ...prev, shortDescription: data.shortDescription } : null);
         setAiFeedback("Deskripsi berhasil digenerate!");
         showToast("AI berhasil menyusun deskripsi produk!", "success");
       }

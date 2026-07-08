@@ -1,6 +1,6 @@
 "use client";
 
-import { ClipboardCheck, Users, ShieldAlert, Award, FileText, CheckCircle2, XCircle, TrendingUp, AlertTriangle } from "lucide-react";
+import { ClipboardCheck, Users, ShieldAlert, Award, TrendingUp } from "lucide-react";
 import { DashboardStatsCard } from "../dashboard/dashboard-layout";
 
 type AdminStatsProps = {

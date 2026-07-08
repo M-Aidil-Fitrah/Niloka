@@ -30,8 +30,8 @@ export function HeroSection() {
 
             <p className="hero-copy mt-4 sm:mt-6 max-w-2xl text-sm sm:text-lg font-medium leading-6 sm:leading-7 text-white-soft/82">
               Temukan keharuman mewah minyak atsiri murni, sabun artisan alami, 
-              dan lilin aromaterapi buatan pengrajin lokal Aceh. Temukan wewangian 
-              terbaik untuk Anda melalui rekomendasi pintar AromaMatch.
+              dan lilin aromaterapi buatan pengrajin lokal Aceh secara langsung 
+              dengan transparansi kualitas terlacak.
             </p>
 
             <div className="hero-actions mt-6 sm:mt-8 flex flex-col gap-2.5 sm:flex-row">

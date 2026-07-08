@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
+import { showToast } from "@/lib/toast";
 import { ArrowLeft, LogIn, Mail, Lock, ShieldCheck, MapPin } from "lucide-react";
 import nilokaLogo from "@/public/assets/logo/logo.png";
 import gsap from "gsap";
@@ -16,12 +17,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Real-time validation states
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
   // Refs for GSAP
   const containerRef = useRef<HTMLDivElement>(null);
@@ -125,38 +121,20 @@ export default function LoginPage() {
     return val.length >= 6 ? "" : "Kata sandi minimal 6 karakter";
   };
 
-  // Run validations in real-time as user types
-  useEffect(() => {
-    if (email) {
-      setEmailError(validateEmail(email));
-    } else {
-      setEmailError("");
-    }
-  }, [email]);
-
-  useEffect(() => {
-    if (password) {
-      setPasswordError(validatePassword(password));
-    } else {
-      setPasswordError("");
-    }
-  }, [password]);
+  // Derive validation errors dynamically
+  const emailError = email ? validateEmail(email) : "";
+  const passwordError = password ? validatePassword(password) : "";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
 
-    const currentEmailErr = validateEmail(email);
-    const currentPasswordErr = validatePassword(password);
-
-    if (currentEmailErr || currentPasswordErr) {
-      setEmailError(currentEmailErr);
-      setPasswordError(currentPasswordErr);
+    if (emailError || passwordError) {
+      showToast("Periksa kembali format email dan kata sandi.", "warning");
       return;
     }
 
     setIsSubmitting(true);
-    const user = await login(email);
+    const user = await login(email, password);
     setIsSubmitting(false);
 
     if (user) {
@@ -168,7 +146,7 @@ export default function LoginPage() {
         router.push("/");
       }
     } else {
-      setError("Email tidak terdaftar.");
+      showToast("Email atau kata sandi salah.", "error");
     }
   };
 
@@ -179,10 +157,13 @@ export default function LoginPage() {
       {/* LEFT PANEL: Branding & Visual Hero (Visible on lg screens) */}
       <div className="hidden lg:flex lg:w-[40%] h-full text-white-soft relative p-10 flex-col justify-between overflow-hidden shrink-0">
         {/* Full-bleed high-quality Unsplash image representing patchouli/essential oils */}
-        <img
+        <Image
           ref={heroImgRef}
           src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop"
           alt="Minyak Atsiri Nilam"
+          fill
+          priority
+          sizes="40vw"
           className="absolute inset-[-20px] w-[calc(100%+40px)] h-[calc(100%+40px)] object-cover"
         />
         {/* Dark overlay for readability */}
@@ -269,12 +250,6 @@ export default function LoginPage() {
                 Buat Akun Gratis <span className="text-[10px]">↗</span>
               </Link>
             </p>
-
-            {error && (
-              <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-700 text-xs font-bold border border-red-100/80 leading-relaxed form-element-item">
-                {error}
-              </div>
-            )}
 
             <form className="space-y-4" onSubmit={handleLogin}>
               {/* Email Input */}

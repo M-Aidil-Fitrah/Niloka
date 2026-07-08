@@ -42,8 +42,8 @@
   --color-ink-600: var(--ink-600);
   --color-line: var(--line);
   --color-white-soft: var(--white-soft);
-  --font-sans: var(--font-sans);
-  --font-serif-accent: var(--font-serif-accent);
+  --font-sans: "Plus Jakarta Sans", Arial, Helvetica, sans-serif;
+  --font-serif-accent: "Cormorant Garamond", Georgia, serif;
 }
 
 body {
@@ -64,6 +64,21 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.niloka-toast {
+  animation: niloka-toast-in 220ms ease-out both;
+}
+
+@keyframes niloka-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .niloka-markdown p {

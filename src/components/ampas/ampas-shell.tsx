@@ -26,9 +26,11 @@ export function AmpasShell({ listings }: AmpasShellProps) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("niloka_ampas_listings");
-      if (stored) {
-        setLocalListings(JSON.parse(stored));
-      }
+      setTimeout(() => {
+        if (stored) {
+          setLocalListings(JSON.parse(stored));
+        }
+      }, 0);
     }
   }, []);
 
@@ -137,7 +139,6 @@ export function AmpasShell({ listings }: AmpasShellProps) {
               <AmpasCard
                 key={listing.id}
                 listing={listing}
-                onContact={() => {}}
                 viewMode={viewMode}
               />
             ))}

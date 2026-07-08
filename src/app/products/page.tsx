@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getPublishedProducts, getProductCategories, getSellers } from "@/lib/mock-queries";
+import { getPublishedProducts, getProductCategories } from "@/lib/mock-queries";
 import { SectionShell } from "@/components/ui/section-shell";
 import { CatalogSkeleton } from "@/components/ui/skeletons";
 
@@ -21,7 +21,6 @@ export const metadata: Metadata = {
 export default function ProductsPage() {
   const products = getPublishedProducts();
   const categories = getProductCategories();
-  const sellers = getSellers();
 
   return (
     <SectionShell
@@ -33,7 +32,6 @@ export default function ProductsPage() {
         <CatalogShell
           products={products}
           categories={categories}
-          sellers={sellers}
         />
       </div>
     </SectionShell>

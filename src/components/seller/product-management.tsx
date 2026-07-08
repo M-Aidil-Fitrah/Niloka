@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Product, ProductForm } from "@/lib/contracts";
+import type { Product } from "@/lib/contracts";
 import { showToast } from "@/components/dashboard/dashboard-layout";
 import { ProductTable } from "./product/product-table";
 import { ProductDrawer } from "./product/product-drawer";
@@ -21,13 +21,15 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("niloka_products");
-      if (stored) {
-        setProducts(JSON.parse(stored));
-      }
       const user = localStorage.getItem("niloka_current_user");
-      if (user && user !== "buyer") {
-        setCurrentSellerId(user);
-      }
+      setTimeout(() => {
+        if (stored) {
+          setProducts(JSON.parse(stored));
+        }
+        if (user && user !== "buyer") {
+          setCurrentSellerId(user);
+        }
+      }, 0);
     }
   }, []);
   
@@ -90,7 +92,7 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
       return;
     }
 
-    const updated = activeProduct as Product;
+    const updated = { ...activeProduct } as Product;
     if (!updated.slug) {
       updated.slug = updated.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     }

@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, Play, BookOpen, Clock, Tag, X, FileText, Video } from "lucide-react";
+import { Search, Play, BookOpen, Clock, X, FileText, Video } from "lucide-react";
 import { getArticles } from "@/lib/mock-queries";
 import type { Article, ArticleCategory } from "@/lib/contracts";
 
@@ -19,7 +19,7 @@ const TYPES = [
   { value: "all", label: "Semua Tipe", icon: BookOpen },
   { value: "text", label: "Artikel Teks", icon: FileText },
   { value: "video", label: "Video Panduan", icon: Video },
-];
+] as const;
 
 function getYouTubeId(url: string) {
   if (!url) return null;
@@ -144,7 +144,7 @@ export default function ArtikelPage() {
               return (
                 <button
                   key={t.value}
-                  onClick={() => setSelectedType(t.value as any)}
+                  onClick={() => setSelectedType(t.value)}
                   className={`flex items-center gap-2 rounded-full px-5 py-2 text-xs font-bold transition-all cursor-pointer ${
                     isActive
                       ? "bg-brand-900 text-white-soft shadow-sm"

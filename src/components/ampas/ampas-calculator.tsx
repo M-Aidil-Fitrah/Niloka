@@ -47,9 +47,7 @@ export function AmpasCalculator({
     setTimeout(() => setIsAdded(false), 2000);
   };
 
-  const hasWholesale = selectedListing?.wholesaleEnabled && selectedListing.wholesaleMinQtyKg && selectedListing.wholesalePricePerKg;
-  const isBelowWholesale = hasWholesale && calcWeight < (selectedListing.wholesaleMinQtyKg || 0);
-  const remainingWeightForWholesale = hasWholesale ? (selectedListing.wholesaleMinQtyKg || 0) - calcWeight : 0;
+
 
   return (
     <div className="rounded-[32px] border border-line bg-white-soft p-5 shadow-sm space-y-5">

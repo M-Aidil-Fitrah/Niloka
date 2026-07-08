@@ -1,7 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { createContext, useContext } from "react";
+import {
+  SessionProvider,
+  signIn,
+  signOut,
+  useSession,
+} from "next-auth/react";
+import { registerBuyerAction } from "@/lib/actions/auth-actions";
 
 export type UserRole = "buyer" | "seller" | "admin";
 
@@ -22,137 +28,108 @@ export type AuthUser = {
 type AuthContextType = {
   user: AuthUser | null;
   isLoading: boolean;
-  login: (email: string) => Promise<AuthUser | null>;
-  register: (name: string, email: string) => Promise<boolean>;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<AuthUser | null>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+  ) => Promise<boolean>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const DEFAULT_USERS: AuthUser[] = [
-  {
-    id: "user-buyer-1",
-    name: "Budi Handoko",
-    email: "buyer@niloka.com",
-    role: "buyer",
-  },
-  {
-    id: "user-seller-1",
-    name: "Ahmad Atsiri (Aceh Aroma House)",
-    email: "seller@niloka.com",
-    role: "seller",
-    sellerId: "seller-aceh-aroma",
-    sellerType: "umkm",
-    location: {
-      province: "Aceh",
-      city: "Aceh Selatan",
-      district: "Tapaktuan",
-    },
-  },
-  {
-    id: "user-admin-1",
-    name: "Siti Rahma (Admin)",
-    email: "admin@niloka.com",
-    role: "admin",
-  },
-];
+function AuthBridge({ children }: { children: React.ReactNode }) {
+  const { data: session, status, update } = useSession();
+  const sessionUser = session?.user;
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
+  const user: AuthUser | null =
+    sessionUser?.id && sessionUser.email
+      ? {
+          id: sessionUser.id,
+          name: sessionUser.name ?? "Pengguna NILOKA",
+          email: sessionUser.email,
+          role: sessionUser.role,
+          sellerId: sessionUser.sellerId ?? undefined,
+        }
+      : null;
 
-  // Load user session and local users DB from localStorage on mount
-  useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("niloka_auth_user");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
+  const login = async (
+    email: string,
+    password: string,
+  ): Promise<AuthUser | null> => {
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
 
-      // Initialize mock users database in localStorage if not exists
-      const storedDb = localStorage.getItem("niloka_users_db");
-      if (!storedDb) {
-        localStorage.setItem("niloka_users_db", JSON.stringify(DEFAULT_USERS));
-      }
-    } catch (e) {
-      console.error("Failed to load auth session", e);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const login = async (email: string): Promise<AuthUser | null> => {
-    try {
-      const dbStr = localStorage.getItem("niloka_users_db") || JSON.stringify(DEFAULT_USERS);
-      const db: AuthUser[] = JSON.parse(dbStr);
-
-      // Find user by email (case-insensitive)
-      const foundUser = db.find(
-        (u) => u.email.toLowerCase() === email.toLowerCase()
-      );
-
-      if (foundUser) {
-        setUser(foundUser);
-        localStorage.setItem("niloka_auth_user", JSON.stringify(foundUser));
-        return foundUser;
-      }
-
-      return null;
-    } catch (e) {
-      console.error("Login error", e);
+    if (!result?.ok) {
       return null;
     }
+
+    const nextSession = await update();
+    const nextUser = nextSession?.user;
+
+    if (!nextUser?.id || !nextUser.email) {
+      return null;
+    }
+
+    return {
+      id: nextUser.id,
+      name: nextUser.name ?? "Pengguna NILOKA",
+      email: nextUser.email,
+      role: nextUser.role,
+      sellerId: nextUser.sellerId ?? undefined,
+    };
   };
 
   const register = async (
     name: string,
-    email: string
+    email: string,
+    password: string,
   ): Promise<boolean> => {
-    try {
-      const dbStr = localStorage.getItem("niloka_users_db") || JSON.stringify(DEFAULT_USERS);
-      const db: AuthUser[] = JSON.parse(dbStr);
+    const result = await registerBuyerAction({
+      name,
+      email,
+      password,
+    });
 
-      // Check if email already exists
-      const emailExists = db.some(
-        (u) => u.email.toLowerCase() === email.toLowerCase()
-      );
-
-      if (emailExists) {
-        return false;
-      }
-
-      const newUserId = `user-buyer-${Date.now()}`;
-      const newUser: AuthUser = {
-        id: newUserId,
-        name,
-        email,
-        role: "buyer",
-      };
-
-      const updatedDb = [...db, newUser];
-      localStorage.setItem("niloka_users_db", JSON.stringify(updatedDb));
-
-      // Auto login after successful registration
-      setUser(newUser);
-      localStorage.setItem("niloka_auth_user", JSON.stringify(newUser));
-      return true;
-    } catch (e) {
-      console.error("Registration error", e);
+    if (!result.ok) {
       return false;
     }
+
+    const loginResult = await login(email, password);
+    return loginResult !== null;
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("niloka_auth_user");
-    router.push("/");
+  const logout = async () => {
+    await signOut({
+      callbackUrl: "/",
+      redirect: true,
+    });
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading: status === "loading",
+        login,
+        register,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
+  );
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <SessionProvider>
+      <AuthBridge>{children}</AuthBridge>
+    </SessionProvider>
   );
 }
 

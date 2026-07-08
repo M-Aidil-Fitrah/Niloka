@@ -5,7 +5,6 @@ import type { AmpasListing } from "@/lib/contracts";
 
 type AmpasCardProps = {
   listing: AmpasListing;
-  onContact: (listing: AmpasListing) => void;
   viewMode: "grid" | "list";
 };
 
@@ -18,7 +17,7 @@ const usageLabels: Record<string, string> = {
   "animal-feed": "Pakan Ternak",
 };
 
-export function AmpasCard({ listing, onContact, viewMode }: AmpasCardProps) {
+export function AmpasCard({ listing, viewMode }: AmpasCardProps) {
   const formattedPrice = `Rp ${listing.pricePerKg.amount.toLocaleString("id-ID")}/Kg`;
   const locationString = `${listing.location.district}, ${listing.location.city}`;
 

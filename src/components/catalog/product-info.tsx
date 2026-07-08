@@ -36,32 +36,34 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedProds = localStorage.getItem("niloka_products");
-      if (storedProds) {
-        const parsed = JSON.parse(storedProds) as Product[];
-        const found = parsed.find((p) => p.id === product.id);
-        if (found) {
-          setLocalProduct(found);
-        }
-      }
       const storedSellers = localStorage.getItem("niloka_sellers");
-      if (storedSellers) {
-        const parsedS = JSON.parse(storedSellers) as Seller[];
-        const foundS = parsedS.find((s) => s.id === seller.id);
-        if (foundS) {
-          setLocalSeller(foundS);
-        }
-      }
       const storedPromos = localStorage.getItem("niloka_promos");
-      if (storedPromos) {
-        const parsedP = JSON.parse(storedPromos) as Promo[];
-        const filtered = parsedP.filter(
-          (promo) =>
-            promo.status === "active" &&
-            promo.sellerId === product.sellerId &&
-            (promo.productIds.length === 0 || promo.productIds.includes(product.id))
-        );
-        setLocalPromos(filtered);
-      }
+      setTimeout(() => {
+        if (storedProds) {
+          const parsed = JSON.parse(storedProds) as Product[];
+          const found = parsed.find((p) => p.id === product.id);
+          if (found) {
+            setLocalProduct(found);
+          }
+        }
+        if (storedSellers) {
+          const parsedS = JSON.parse(storedSellers) as Seller[];
+          const foundS = parsedS.find((s) => s.id === seller.id);
+          if (foundS) {
+            setLocalSeller(foundS);
+          }
+        }
+        if (storedPromos) {
+          const parsedP = JSON.parse(storedPromos) as Promo[];
+          const filtered = parsedP.filter(
+            (promo) =>
+              promo.status === "active" &&
+              promo.sellerId === product.sellerId &&
+              (promo.productIds.length === 0 || promo.productIds.includes(product.id))
+          );
+          setLocalPromos(filtered);
+        }
+      }, 0);
     }
   }, [product.id, seller.id, product.sellerId]);
 
