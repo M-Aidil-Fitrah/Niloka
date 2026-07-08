@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import type { CircularUse } from "@/lib/landing-types";
+import type { CircularUse } from "@/lib/landing-data";
 
 type CircularSectionProps = {
   circularUses: CircularUse[];

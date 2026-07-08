@@ -26,7 +26,6 @@ export const metadata: Metadata = {
 import { CartProvider } from "@/context/cart-context";
 import { AuthProvider } from "@/context/auth-context";
 import { FloatingChatbot } from "@/components/chatbot/floating-chatbot";
-import { ToastProvider } from "@/components/ui/toast";
 
 export default function RootLayout({
   children,
@@ -44,7 +43,6 @@ export default function RootLayout({
           <CartProvider>
             {children}
             <FloatingChatbot />
-            <ToastProvider />
           </CartProvider>
         </AuthProvider>
       </body>
