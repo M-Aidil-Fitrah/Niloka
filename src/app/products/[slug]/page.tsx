@@ -5,7 +5,6 @@ import {
   getPassportByProductIdDto,
   getProductBySlugDto,
   getPromosForSellerDto,
-  getPublishedProductsDto,
   getReviewsForProductDto,
   getSellerByIdDto,
 } from "@/lib/dal/marketplace";
@@ -15,16 +14,11 @@ import { PassportSummary } from "@/components/catalog/passport-summary";
 import { ProductReviews } from "@/components/catalog/product-reviews";
 import { ChevronLeftIcon } from "@/components/ui/icons";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
-
-export async function generateStaticParams() {
-  const products = await getPublishedProductsDto();
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

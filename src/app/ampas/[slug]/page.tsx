@@ -3,23 +3,17 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  getActiveAmpasListingsDto,
   getAmpasListingBySlugDto,
   getSellerByIdDto,
 } from "@/lib/dal/marketplace";
 import { AmpasDetailInfo } from "@/components/ampas/ampas-detail-info";
 import { ChevronLeftIcon } from "@/components/ui/icons";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
-
-export async function generateStaticParams() {
-  const listings = await getActiveAmpasListingsDto();
-  return listings.map((listing) => ({
-    slug: listing.slug,
-  }));
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
