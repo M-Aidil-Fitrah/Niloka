@@ -26,8 +26,8 @@ const navItems: NavItem[] = [
     href: "/bundles",
   },
   {
-    label: "AromaMatch",
-    href: "/aromamatch",
+    label: "Berita & Artikel",
+    href: "/artikel",
   },
   {
     label: "Nilam Passport",
@@ -58,7 +58,7 @@ export function SiteNavbar() {
         const stored = localStorage.getItem("niloka_chats");
         if (stored) {
           const threads = JSON.parse(stored);
-          const hasUnread = threads.some((t: any) => t.unread);
+          const hasUnread = threads.some((t: { unread: boolean }) => t.unread);
           setHasUnreadChats(hasUnread);
         }
       };
