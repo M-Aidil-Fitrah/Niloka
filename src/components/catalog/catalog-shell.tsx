@@ -1,10 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Grid, List } from "lucide-react";
-import type { Product, ProductCategory, ProductForm, ProductFunction } from "@/lib/contracts";
+import type {
+  Product,
+  ProductCategory,
+  ProductForm,
+  ProductFunction,
+  Promo,
+} from "@/lib/contracts";
 import { CatalogSidebar } from "@/components/catalog/catalog-sidebar";
 import { ProductCard } from "@/components/catalog/product-card";
 import { Pagination } from "@/components/ui/pagination";
@@ -12,7 +18,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDownIcon, FilterIcon } from "@/components/ui/icons";
 import { formatRupiah } from "@/lib/formatters";
-import { getActivePromosForProduct } from "@/lib/mock-queries";
 import { cn } from "@/lib/styles";
 
 type SortOption = "featured" | "price-asc" | "price-desc" | "newest";
@@ -20,6 +25,7 @@ type SortOption = "featured" | "price-asc" | "price-desc" | "newest";
 type CatalogShellProps = {
   products: Product[];
   categories: ProductCategory[];
+  promos: Promo[];
 };
 
 const PRODUCTS_PER_PAGE = 8;
@@ -31,20 +37,7 @@ const sortLabels: Record<SortOption, string> = {
   newest: "Terbaru",
 };
 
-export function CatalogShell({ products, categories }: CatalogShellProps) {
-  const [localProducts, setLocalProducts] = useState<Product[]>(products);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedProds = localStorage.getItem("niloka_products");
-      setTimeout(() => {
-        if (storedProds) {
-          setLocalProducts(JSON.parse(storedProds));
-        }
-      }, 0);
-    }
-  }, []);
-
+export function CatalogShell({ products, categories, promos }: CatalogShellProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedForms, setSelectedForms] = useState<ProductForm[]>([]);
@@ -61,7 +54,22 @@ export function CatalogShell({ products, categories }: CatalogShellProps) {
     setCurrentPage(1);
   }
 
-  const filtered = localProducts.filter((product) => {
+  function getPromosForProduct(productId: string) {
+    const product = products.find((item) => item.id === productId);
+
+    if (!product) {
+      return [];
+    }
+
+    return promos.filter(
+      (promo) =>
+        promo.status === "active" &&
+        promo.sellerId === product.sellerId &&
+        (promo.productIds.length === 0 || promo.productIds.includes(productId)),
+    );
+  }
+
+  const filtered = products.filter((product) => {
     // Only display published products
     if (product.status !== "published") {
       return false;
@@ -244,13 +252,17 @@ export function CatalogShell({ products, categories }: CatalogShellProps) {
           viewMode === "grid" ? (
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
               {paginatedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  promos={getPromosForProduct(product.id)}
+                />
               ))}
             </div>
           ) : (
             <div className="space-y-4 animate-in fade-in duration-300">
               {paginatedProducts.map((product) => {
-                const promos = getActivePromosForProduct(product.id);
+                const productPromos = getPromosForProduct(product.id);
                 return (
                   <Link
                     key={product.id}
@@ -309,9 +321,9 @@ export function CatalogShell({ products, categories }: CatalogShellProps) {
                           )}
                         </div>
 
-                        {promos.length > 0 && (
+                        {productPromos.length > 0 && (
                           <span className="rounded-full bg-emerald-800 px-2 py-0.5 text-[9px] font-extrabold text-white-soft shadow-sm border border-emerald-700/50">
-                            {promos[0].code}: {promos[0].type === "percentage" ? `${promos[0].value}%` : "Diskon"}
+                            {productPromos[0].code}: {productPromos[0].type === "percentage" ? `${productPromos[0].value}%` : "Diskon"}
                           </span>
                         )}
                       </div>

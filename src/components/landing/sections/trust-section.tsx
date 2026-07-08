@@ -1,8 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { StarIcon } from "@/components/ui/icons";
-import { reviews } from "@/lib/mock-data";
+import type { Review } from "@/lib/contracts";
 
-export function TrustSection() {
+type TrustSectionProps = {
+  reviews: Review[];
+};
+
+export function TrustSection({ reviews }: TrustSectionProps) {
   if (reviews.length === 0) {
     return null;
   }

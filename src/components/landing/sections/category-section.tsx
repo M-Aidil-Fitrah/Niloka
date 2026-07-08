@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import type { CategoryTile } from "@/lib/landing-data";
+import type { CategoryTile } from "@/lib/landing-types";
 
 type CategorySectionProps = {
   categoryTiles: CategoryTile[];

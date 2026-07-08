@@ -564,6 +564,13 @@ export async function getPublishedProductsDto(): Promise<Product[]> {
   });
 }
 
+export async function getFeaturedProductsDto(limit: number): Promise<Product[]> {
+  const products = await getPublishedProductsDto();
+  return products
+    .sort((first, second) => first.featuredRank - second.featuredRank)
+    .slice(0, limit);
+}
+
 export async function getProductCategoriesDto(): Promise<ProductCategory[]> {
   const rows = await prisma.productCategory.findMany({
     orderBy: {
@@ -572,6 +579,11 @@ export async function getProductCategoriesDto(): Promise<ProductCategory[]> {
   });
 
   return rows.map(mapProductCategory);
+}
+
+export async function getFeaturedProductCategoryDto(): Promise<ProductCategory | null> {
+  const [category] = await getProductCategoriesDto();
+  return category ?? null;
 }
 
 export async function getProductBySlugDto(
@@ -623,6 +635,31 @@ export async function getPassportByProductIdDto(
   return row ? mapPassport(row) : null;
 }
 
+export async function getPassportsDto(): Promise<NilamPassport[]> {
+  const rows = await prisma.nilamPassport.findMany({
+    orderBy: {
+      validatedAt: "desc",
+    },
+  });
+
+  return rows.map(mapPassport);
+}
+
+export async function getFeaturedPassportDto(): Promise<NilamPassport | null> {
+  const [passport] = await getPassportsDto();
+  return passport ?? null;
+}
+
+export async function getSellersDto(): Promise<Seller[]> {
+  const rows = await prisma.seller.findMany({
+    orderBy: {
+      displayName: "asc",
+    },
+  });
+
+  return rows.map(mapSeller);
+}
+
 export async function getSellerByIdDto(
   sellerId: string,
 ): Promise<Seller | null> {
@@ -650,12 +687,43 @@ export async function getReviewsForProductDto(
   return rows.map(mapReview);
 }
 
+export async function getRecentReviewsDto(limit: number): Promise<Review[]> {
+  const rows = await prisma.review.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: limit,
+  });
+
+  return rows.map(mapReview);
+}
+
 export async function getPromosForSellerDto(
   sellerId: string,
 ): Promise<Promo[]> {
   const rows = await prisma.promo.findMany({
     where: {
       sellerId,
+    },
+    include: {
+      products: {
+        select: {
+          productId: true,
+        },
+      },
+    },
+    orderBy: {
+      startsAt: "desc",
+    },
+  });
+
+  return rows.map(mapPromo);
+}
+
+export async function getPublicPromoSuggestionsDto(): Promise<Promo[]> {
+  const rows = await prisma.promo.findMany({
+    where: {
+      status: PromoStatus.ACTIVE,
     },
     include: {
       products: {
@@ -683,6 +751,11 @@ export async function getActiveAmpasListingsDto(): Promise<AmpasListing[]> {
   });
 
   return rows.map(mapAmpasListing);
+}
+
+export async function getFeaturedAmpasListingDto(): Promise<AmpasListing | null> {
+  const [listing] = await getActiveAmpasListingsDto();
+  return listing ?? null;
 }
 
 export async function getAmpasListingBySlugDto(
