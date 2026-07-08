@@ -30,6 +30,7 @@ export type UserMinAggregateOutputType = {
   email: string | null
   emailVerified: Date | null
   image: string | null
+  imageAssetId: string | null
   role: $Enums.UserRole | null
   passwordHash: string | null
   sellerId: string | null
@@ -46,6 +47,7 @@ export type UserMaxAggregateOutputType = {
   email: string | null
   emailVerified: Date | null
   image: string | null
+  imageAssetId: string | null
   role: $Enums.UserRole | null
   passwordHash: string | null
   sellerId: string | null
@@ -62,6 +64,7 @@ export type UserCountAggregateOutputType = {
   email: number
   emailVerified: number
   image: number
+  imageAssetId: number
   role: number
   passwordHash: number
   sellerId: number
@@ -80,6 +83,7 @@ export type UserMinAggregateInputType = {
   email?: true
   emailVerified?: true
   image?: true
+  imageAssetId?: true
   role?: true
   passwordHash?: true
   sellerId?: true
@@ -96,6 +100,7 @@ export type UserMaxAggregateInputType = {
   email?: true
   emailVerified?: true
   image?: true
+  imageAssetId?: true
   role?: true
   passwordHash?: true
   sellerId?: true
@@ -112,6 +117,7 @@ export type UserCountAggregateInputType = {
   email?: true
   emailVerified?: true
   image?: true
+  imageAssetId?: true
   role?: true
   passwordHash?: true
   sellerId?: true
@@ -201,6 +207,7 @@ export type UserGroupByOutputType = {
   email: string | null
   emailVerified: Date | null
   image: string | null
+  imageAssetId: string | null
   role: $Enums.UserRole
   passwordHash: string | null
   sellerId: string | null
@@ -238,6 +245,7 @@ export type UserWhereInput = {
   email?: Prisma.StringNullableFilter<"User"> | string | null
   emailVerified?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   image?: Prisma.StringNullableFilter<"User"> | string | null
+  imageAssetId?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
   sellerId?: Prisma.StringNullableFilter<"User"> | string | null
@@ -247,6 +255,8 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   seller?: Prisma.XOR<Prisma.SellerNullableScalarRelationFilter, Prisma.SellerWhereInput> | null
+  imageAsset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
+  uploadedAssets?: Prisma.UploadedAssetListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   carts?: Prisma.CartListRelationFilter
@@ -263,6 +273,7 @@ export type UserOrderByWithRelationInput = {
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   emailVerified?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   sellerId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -272,6 +283,8 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   seller?: Prisma.SellerOrderByWithRelationInput
+  imageAsset?: Prisma.UploadedAssetOrderByWithRelationInput
+  uploadedAssets?: Prisma.UploadedAssetOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   carts?: Prisma.CartOrderByRelationAggregateInput
@@ -291,6 +304,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringNullableFilter<"User"> | string | null
   emailVerified?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   image?: Prisma.StringNullableFilter<"User"> | string | null
+  imageAssetId?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
   sellerId?: Prisma.StringNullableFilter<"User"> | string | null
@@ -300,6 +314,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   seller?: Prisma.XOR<Prisma.SellerNullableScalarRelationFilter, Prisma.SellerWhereInput> | null
+  imageAsset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
+  uploadedAssets?: Prisma.UploadedAssetListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   carts?: Prisma.CartListRelationFilter
@@ -316,6 +332,7 @@ export type UserOrderByWithAggregationInput = {
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   emailVerified?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   sellerId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -338,6 +355,7 @@ export type UserScalarWhereWithAggregatesInput = {
   email?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   emailVerified?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   image?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  imageAssetId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
   passwordHash?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   sellerId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -362,6 +380,8 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
@@ -378,6 +398,7 @@ export type UserUncheckedCreateInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
@@ -386,6 +407,7 @@ export type UserUncheckedCreateInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
@@ -410,6 +432,8 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
@@ -426,6 +450,7 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -434,6 +459,7 @@ export type UserUncheckedUpdateInput = {
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
@@ -450,6 +476,7 @@ export type UserCreateManyInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
@@ -481,6 +508,7 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -497,6 +525,7 @@ export type UserCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   role?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
@@ -513,6 +542,7 @@ export type UserMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   role?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
@@ -529,6 +559,7 @@ export type UserMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   role?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
@@ -709,6 +740,64 @@ export type UserUpdateOneWithoutOrdersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOrdersInput, Prisma.UserUpdateWithoutOrdersInput>, Prisma.UserUncheckedUpdateWithoutOrdersInput>
 }
 
+export type UserCreateNestedOneWithoutUploadedAssetsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUploadedAssetsInput, Prisma.UserUncheckedCreateWithoutUploadedAssetsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUploadedAssetsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedManyWithoutImageAssetInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutImageAssetInput, Prisma.UserUncheckedCreateWithoutImageAssetInput> | Prisma.UserCreateWithoutImageAssetInput[] | Prisma.UserUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutImageAssetInput | Prisma.UserCreateOrConnectWithoutImageAssetInput[]
+  createMany?: Prisma.UserCreateManyImageAssetInputEnvelope
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUncheckedCreateNestedManyWithoutImageAssetInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutImageAssetInput, Prisma.UserUncheckedCreateWithoutImageAssetInput> | Prisma.UserCreateWithoutImageAssetInput[] | Prisma.UserUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutImageAssetInput | Prisma.UserCreateOrConnectWithoutImageAssetInput[]
+  createMany?: Prisma.UserCreateManyImageAssetInputEnvelope
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUpdateOneWithoutUploadedAssetsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUploadedAssetsInput, Prisma.UserUncheckedCreateWithoutUploadedAssetsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUploadedAssetsInput
+  upsert?: Prisma.UserUpsertWithoutUploadedAssetsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUploadedAssetsInput, Prisma.UserUpdateWithoutUploadedAssetsInput>, Prisma.UserUncheckedUpdateWithoutUploadedAssetsInput>
+}
+
+export type UserUpdateManyWithoutImageAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutImageAssetInput, Prisma.UserUncheckedCreateWithoutImageAssetInput> | Prisma.UserCreateWithoutImageAssetInput[] | Prisma.UserUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutImageAssetInput | Prisma.UserCreateOrConnectWithoutImageAssetInput[]
+  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutImageAssetInput | Prisma.UserUpsertWithWhereUniqueWithoutImageAssetInput[]
+  createMany?: Prisma.UserCreateManyImageAssetInputEnvelope
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  update?: Prisma.UserUpdateWithWhereUniqueWithoutImageAssetInput | Prisma.UserUpdateWithWhereUniqueWithoutImageAssetInput[]
+  updateMany?: Prisma.UserUpdateManyWithWhereWithoutImageAssetInput | Prisma.UserUpdateManyWithWhereWithoutImageAssetInput[]
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
+export type UserUncheckedUpdateManyWithoutImageAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutImageAssetInput, Prisma.UserUncheckedCreateWithoutImageAssetInput> | Prisma.UserCreateWithoutImageAssetInput[] | Prisma.UserUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutImageAssetInput | Prisma.UserCreateOrConnectWithoutImageAssetInput[]
+  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutImageAssetInput | Prisma.UserUpsertWithWhereUniqueWithoutImageAssetInput[]
+  createMany?: Prisma.UserCreateManyImageAssetInputEnvelope
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  update?: Prisma.UserUpdateWithWhereUniqueWithoutImageAssetInput | Prisma.UserUpdateWithWhereUniqueWithoutImageAssetInput[]
+  updateMany?: Prisma.UserUpdateManyWithWhereWithoutImageAssetInput | Prisma.UserUpdateManyWithWhereWithoutImageAssetInput[]
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
 export type UserCreateNestedOneWithoutBuyerChatThreadsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutBuyerChatThreadsInput, Prisma.UserUncheckedCreateWithoutBuyerChatThreadsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuyerChatThreadsInput
@@ -755,6 +844,8 @@ export type UserCreateWithoutAccountsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
@@ -770,6 +861,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
@@ -778,6 +870,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
@@ -817,6 +910,8 @@ export type UserUpdateWithoutAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
@@ -832,6 +927,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -840,6 +936,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
@@ -863,6 +960,8 @@ export type UserCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
@@ -878,6 +977,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
@@ -886,6 +986,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
@@ -925,6 +1026,8 @@ export type UserUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
@@ -940,6 +1043,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -948,6 +1052,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
@@ -970,6 +1075,8 @@ export type UserCreateWithoutSellerInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
@@ -986,6 +1093,7 @@ export type UserUncheckedCreateWithoutSellerInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   locationProvince?: string | null
@@ -993,6 +1101,7 @@ export type UserUncheckedCreateWithoutSellerInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
@@ -1038,6 +1147,7 @@ export type UserScalarWhereInput = {
   email?: Prisma.StringNullableFilter<"User"> | string | null
   emailVerified?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   image?: Prisma.StringNullableFilter<"User"> | string | null
+  imageAssetId?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
   sellerId?: Prisma.StringNullableFilter<"User"> | string | null
@@ -1062,6 +1172,8 @@ export type UserCreateWithoutSellerApplicationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
@@ -1077,6 +1189,7 @@ export type UserUncheckedCreateWithoutSellerApplicationsInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
@@ -1085,6 +1198,7 @@ export type UserUncheckedCreateWithoutSellerApplicationsInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
@@ -1124,6 +1238,8 @@ export type UserUpdateWithoutSellerApplicationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
@@ -1139,6 +1255,7 @@ export type UserUncheckedUpdateWithoutSellerApplicationsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1147,6 +1264,7 @@ export type UserUncheckedUpdateWithoutSellerApplicationsInput = {
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
@@ -1170,6 +1288,8 @@ export type UserCreateWithoutReviewsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
@@ -1185,6 +1305,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
@@ -1193,6 +1314,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
@@ -1232,6 +1354,8 @@ export type UserUpdateWithoutReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
@@ -1247,6 +1371,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1255,6 +1380,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
@@ -1278,6 +1404,8 @@ export type UserCreateWithoutCartsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
@@ -1293,6 +1421,7 @@ export type UserUncheckedCreateWithoutCartsInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
@@ -1301,6 +1430,7 @@ export type UserUncheckedCreateWithoutCartsInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
@@ -1340,6 +1470,8 @@ export type UserUpdateWithoutCartsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
@@ -1355,6 +1487,7 @@ export type UserUncheckedUpdateWithoutCartsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1363,6 +1496,7 @@ export type UserUncheckedUpdateWithoutCartsInput = {
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
@@ -1386,6 +1520,8 @@ export type UserCreateWithoutOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
@@ -1401,6 +1537,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
@@ -1409,6 +1546,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
@@ -1448,6 +1586,8 @@ export type UserUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
@@ -1463,6 +1603,183 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
+  buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutUploadedAssetsInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
+  buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutUploadedAssetsInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  imageAssetId?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  sellerId?: string | null
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
+  buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutUploadedAssetsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUploadedAssetsInput, Prisma.UserUncheckedCreateWithoutUploadedAssetsInput>
+}
+
+export type UserCreateWithoutImageAssetInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
+  buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutImageAssetInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  sellerId?: string | null
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
+  buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutImageAssetInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutImageAssetInput, Prisma.UserUncheckedCreateWithoutImageAssetInput>
+}
+
+export type UserCreateManyImageAssetInputEnvelope = {
+  data: Prisma.UserCreateManyImageAssetInput | Prisma.UserCreateManyImageAssetInput[]
+  skipDuplicates?: boolean
+}
+
+export type UserUpsertWithoutUploadedAssetsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUploadedAssetsInput, Prisma.UserUncheckedUpdateWithoutUploadedAssetsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUploadedAssetsInput, Prisma.UserUncheckedCreateWithoutUploadedAssetsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUploadedAssetsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUploadedAssetsInput, Prisma.UserUncheckedUpdateWithoutUploadedAssetsInput>
+}
+
+export type UserUpdateWithoutUploadedAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
+  buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUploadedAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1474,10 +1791,27 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserUpsertWithWhereUniqueWithoutImageAssetInput = {
+  where: Prisma.UserWhereUniqueInput
+  update: Prisma.XOR<Prisma.UserUpdateWithoutImageAssetInput, Prisma.UserUncheckedUpdateWithoutImageAssetInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutImageAssetInput, Prisma.UserUncheckedCreateWithoutImageAssetInput>
+}
+
+export type UserUpdateWithWhereUniqueWithoutImageAssetInput = {
+  where: Prisma.UserWhereUniqueInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutImageAssetInput, Prisma.UserUncheckedUpdateWithoutImageAssetInput>
+}
+
+export type UserUpdateManyWithWhereWithoutImageAssetInput = {
+  where: Prisma.UserScalarWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateManyMutationInput, Prisma.UserUncheckedUpdateManyWithoutImageAssetInput>
 }
 
 export type UserCreateWithoutBuyerChatThreadsInput = {
@@ -1494,6 +1828,8 @@ export type UserCreateWithoutBuyerChatThreadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
@@ -1509,6 +1845,7 @@ export type UserUncheckedCreateWithoutBuyerChatThreadsInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
@@ -1517,6 +1854,7 @@ export type UserUncheckedCreateWithoutBuyerChatThreadsInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
@@ -1556,6 +1894,8 @@ export type UserUpdateWithoutBuyerChatThreadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
@@ -1571,6 +1911,7 @@ export type UserUncheckedUpdateWithoutBuyerChatThreadsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1579,6 +1920,7 @@ export type UserUncheckedUpdateWithoutBuyerChatThreadsInput = {
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
@@ -1602,6 +1944,8 @@ export type UserCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
@@ -1617,6 +1961,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
@@ -1625,6 +1970,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   locationDistrict?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
@@ -1664,6 +2010,8 @@ export type UserUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
@@ -1679,6 +2027,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1687,6 +2036,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
@@ -1702,6 +2052,7 @@ export type UserCreateManySellerInput = {
   email?: string | null
   emailVerified?: Date | string | null
   image?: string | null
+  imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
   locationProvince?: string | null
@@ -1724,6 +2075,8 @@ export type UserUpdateWithoutSellerInput = {
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
@@ -1740,6 +2093,7 @@ export type UserUncheckedUpdateWithoutSellerInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1747,6 +2101,7 @@ export type UserUncheckedUpdateWithoutSellerInput = {
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
@@ -1763,8 +2118,91 @@ export type UserUncheckedUpdateManyWithoutSellerInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type UserCreateManyImageAssetInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  sellerId?: string | null
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type UserUpdateWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
+  buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
+  buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateManyWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1778,6 +2216,7 @@ export type UserUncheckedUpdateManyWithoutSellerInput = {
  */
 
 export type UserCountOutputType = {
+  uploadedAssets: number
   accounts: number
   sessions: number
   carts: number
@@ -1789,6 +2228,7 @@ export type UserCountOutputType = {
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  uploadedAssets?: boolean | UserCountOutputTypeCountUploadedAssetsArgs
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   carts?: boolean | UserCountOutputTypeCountCartsArgs
@@ -1807,6 +2247,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUploadedAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UploadedAssetWhereInput
 }
 
 /**
@@ -1872,6 +2319,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   email?: boolean
   emailVerified?: boolean
   image?: boolean
+  imageAssetId?: boolean
   role?: boolean
   passwordHash?: boolean
   sellerId?: boolean
@@ -1881,6 +2329,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   seller?: boolean | Prisma.User$sellerArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.User$imageAssetArgs<ExtArgs>
+  uploadedAssets?: boolean | Prisma.User$uploadedAssetsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   carts?: boolean | Prisma.User$cartsArgs<ExtArgs>
@@ -1898,6 +2348,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   emailVerified?: boolean
   image?: boolean
+  imageAssetId?: boolean
   role?: boolean
   passwordHash?: boolean
   sellerId?: boolean
@@ -1907,6 +2358,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   seller?: boolean | Prisma.User$sellerArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.User$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1915,6 +2367,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   emailVerified?: boolean
   image?: boolean
+  imageAssetId?: boolean
   role?: boolean
   passwordHash?: boolean
   sellerId?: boolean
@@ -1924,6 +2377,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   seller?: boolean | Prisma.User$sellerArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.User$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1932,6 +2386,7 @@ export type UserSelectScalar = {
   email?: boolean
   emailVerified?: boolean
   image?: boolean
+  imageAssetId?: boolean
   role?: boolean
   passwordHash?: boolean
   sellerId?: boolean
@@ -1942,9 +2397,11 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "role" | "passwordHash" | "sellerId" | "locationProvince" | "locationCity" | "locationDistrict" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "imageAssetId" | "role" | "passwordHash" | "sellerId" | "locationProvince" | "locationCity" | "locationDistrict" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.User$sellerArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.User$imageAssetArgs<ExtArgs>
+  uploadedAssets?: boolean | Prisma.User$uploadedAssetsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   carts?: boolean | Prisma.User$cartsArgs<ExtArgs>
@@ -1957,15 +2414,19 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.User$sellerArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.User$imageAssetArgs<ExtArgs>
 }
 export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.User$sellerArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.User$imageAssetArgs<ExtArgs>
 }
 
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
     seller: Prisma.$SellerPayload<ExtArgs> | null
+    imageAsset: Prisma.$UploadedAssetPayload<ExtArgs> | null
+    uploadedAssets: Prisma.$UploadedAssetPayload<ExtArgs>[]
     accounts: Prisma.$AccountPayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     carts: Prisma.$CartPayload<ExtArgs>[]
@@ -1981,6 +2442,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     email: string | null
     emailVerified: Date | null
     image: string | null
+    imageAssetId: string | null
     role: $Enums.UserRole
     passwordHash: string | null
     sellerId: string | null
@@ -2384,6 +2846,8 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   seller<T extends Prisma.User$sellerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sellerArgs<ExtArgs>>): Prisma.Prisma__SellerClient<runtime.Types.Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  imageAsset<T extends Prisma.User$imageAssetArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$imageAssetArgs<ExtArgs>>): Prisma.Prisma__UploadedAssetClient<runtime.Types.Result.GetResult<Prisma.$UploadedAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  uploadedAssets<T extends Prisma.User$uploadedAssetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$uploadedAssetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UploadedAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   carts<T extends Prisma.User$cartsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$cartsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2426,6 +2890,7 @@ export interface UserFieldRefs {
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly emailVerified: Prisma.FieldRef<"User", 'DateTime'>
   readonly image: Prisma.FieldRef<"User", 'String'>
+  readonly imageAssetId: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'UserRole'>
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly sellerId: Prisma.FieldRef<"User", 'String'>
@@ -2851,6 +3316,49 @@ export type User$sellerArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   include?: Prisma.SellerInclude<ExtArgs> | null
   where?: Prisma.SellerWhereInput
+}
+
+/**
+ * User.imageAsset
+ */
+export type User$imageAssetArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UploadedAsset
+   */
+  select?: Prisma.UploadedAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UploadedAsset
+   */
+  omit?: Prisma.UploadedAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UploadedAssetInclude<ExtArgs> | null
+  where?: Prisma.UploadedAssetWhereInput
+}
+
+/**
+ * User.uploadedAssets
+ */
+export type User$uploadedAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UploadedAsset
+   */
+  select?: Prisma.UploadedAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UploadedAsset
+   */
+  omit?: Prisma.UploadedAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UploadedAssetInclude<ExtArgs> | null
+  where?: Prisma.UploadedAssetWhereInput
+  orderBy?: Prisma.UploadedAssetOrderByWithRelationInput | Prisma.UploadedAssetOrderByWithRelationInput[]
+  cursor?: Prisma.UploadedAssetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UploadedAssetScalarFieldEnum | Prisma.UploadedAssetScalarFieldEnum[]
 }
 
 /**

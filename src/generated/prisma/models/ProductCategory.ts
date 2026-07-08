@@ -32,6 +32,7 @@ export type ProductCategoryMinAggregateOutputType = {
   targetMarket: $Enums.ProductTargetMarket | null
   imageSrc: string | null
   imageAlt: string | null
+  imageAssetId: string | null
 }
 
 export type ProductCategoryMaxAggregateOutputType = {
@@ -42,6 +43,7 @@ export type ProductCategoryMaxAggregateOutputType = {
   targetMarket: $Enums.ProductTargetMarket | null
   imageSrc: string | null
   imageAlt: string | null
+  imageAssetId: string | null
 }
 
 export type ProductCategoryCountAggregateOutputType = {
@@ -52,6 +54,7 @@ export type ProductCategoryCountAggregateOutputType = {
   targetMarket: number
   imageSrc: number
   imageAlt: number
+  imageAssetId: number
   _all: number
 }
 
@@ -64,6 +67,7 @@ export type ProductCategoryMinAggregateInputType = {
   targetMarket?: true
   imageSrc?: true
   imageAlt?: true
+  imageAssetId?: true
 }
 
 export type ProductCategoryMaxAggregateInputType = {
@@ -74,6 +78,7 @@ export type ProductCategoryMaxAggregateInputType = {
   targetMarket?: true
   imageSrc?: true
   imageAlt?: true
+  imageAssetId?: true
 }
 
 export type ProductCategoryCountAggregateInputType = {
@@ -84,6 +89,7 @@ export type ProductCategoryCountAggregateInputType = {
   targetMarket?: true
   imageSrc?: true
   imageAlt?: true
+  imageAssetId?: true
   _all?: true
 }
 
@@ -167,6 +173,7 @@ export type ProductCategoryGroupByOutputType = {
   targetMarket: $Enums.ProductTargetMarket
   imageSrc: string
   imageAlt: string
+  imageAssetId: string | null
   _count: ProductCategoryCountAggregateOutputType | null
   _min: ProductCategoryMinAggregateOutputType | null
   _max: ProductCategoryMaxAggregateOutputType | null
@@ -198,7 +205,9 @@ export type ProductCategoryWhereInput = {
   targetMarket?: Prisma.EnumProductTargetMarketFilter<"ProductCategory"> | $Enums.ProductTargetMarket
   imageSrc?: Prisma.StringFilter<"ProductCategory"> | string
   imageAlt?: Prisma.StringFilter<"ProductCategory"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"ProductCategory"> | string | null
   products?: Prisma.ProductListRelationFilter
+  imageAsset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
 }
 
 export type ProductCategoryOrderByWithRelationInput = {
@@ -209,7 +218,9 @@ export type ProductCategoryOrderByWithRelationInput = {
   targetMarket?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   products?: Prisma.ProductOrderByRelationAggregateInput
+  imageAsset?: Prisma.UploadedAssetOrderByWithRelationInput
 }
 
 export type ProductCategoryWhereUniqueInput = Prisma.AtLeast<{
@@ -223,7 +234,9 @@ export type ProductCategoryWhereUniqueInput = Prisma.AtLeast<{
   targetMarket?: Prisma.EnumProductTargetMarketFilter<"ProductCategory"> | $Enums.ProductTargetMarket
   imageSrc?: Prisma.StringFilter<"ProductCategory"> | string
   imageAlt?: Prisma.StringFilter<"ProductCategory"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"ProductCategory"> | string | null
   products?: Prisma.ProductListRelationFilter
+  imageAsset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
 }, "id" | "slug">
 
 export type ProductCategoryOrderByWithAggregationInput = {
@@ -234,6 +247,7 @@ export type ProductCategoryOrderByWithAggregationInput = {
   targetMarket?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProductCategoryCountOrderByAggregateInput
   _max?: Prisma.ProductCategoryMaxOrderByAggregateInput
   _min?: Prisma.ProductCategoryMinOrderByAggregateInput
@@ -250,6 +264,7 @@ export type ProductCategoryScalarWhereWithAggregatesInput = {
   targetMarket?: Prisma.EnumProductTargetMarketWithAggregatesFilter<"ProductCategory"> | $Enums.ProductTargetMarket
   imageSrc?: Prisma.StringWithAggregatesFilter<"ProductCategory"> | string
   imageAlt?: Prisma.StringWithAggregatesFilter<"ProductCategory"> | string
+  imageAssetId?: Prisma.StringNullableWithAggregatesFilter<"ProductCategory"> | string | null
 }
 
 export type ProductCategoryCreateInput = {
@@ -261,6 +276,7 @@ export type ProductCategoryCreateInput = {
   imageSrc: string
   imageAlt: string
   products?: Prisma.ProductCreateNestedManyWithoutCategoryInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutCategoryImagesInput
 }
 
 export type ProductCategoryUncheckedCreateInput = {
@@ -271,6 +287,7 @@ export type ProductCategoryUncheckedCreateInput = {
   targetMarket: $Enums.ProductTargetMarket
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutCategoryInput
 }
 
@@ -283,6 +300,7 @@ export type ProductCategoryUpdateInput = {
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
   products?: Prisma.ProductUpdateManyWithoutCategoryNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutCategoryImagesNestedInput
 }
 
 export type ProductCategoryUncheckedUpdateInput = {
@@ -293,6 +311,7 @@ export type ProductCategoryUncheckedUpdateInput = {
   targetMarket?: Prisma.EnumProductTargetMarketFieldUpdateOperationsInput | $Enums.ProductTargetMarket
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   products?: Prisma.ProductUncheckedUpdateManyWithoutCategoryNestedInput
 }
 
@@ -304,6 +323,7 @@ export type ProductCategoryCreateManyInput = {
   targetMarket: $Enums.ProductTargetMarket
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
 }
 
 export type ProductCategoryUpdateManyMutationInput = {
@@ -324,6 +344,7 @@ export type ProductCategoryUncheckedUpdateManyInput = {
   targetMarket?: Prisma.EnumProductTargetMarketFieldUpdateOperationsInput | $Enums.ProductTargetMarket
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProductCategoryCountOrderByAggregateInput = {
@@ -334,6 +355,7 @@ export type ProductCategoryCountOrderByAggregateInput = {
   targetMarket?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
 }
 
 export type ProductCategoryMaxOrderByAggregateInput = {
@@ -344,6 +366,7 @@ export type ProductCategoryMaxOrderByAggregateInput = {
   targetMarket?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
 }
 
 export type ProductCategoryMinOrderByAggregateInput = {
@@ -354,11 +377,22 @@ export type ProductCategoryMinOrderByAggregateInput = {
   targetMarket?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
 }
 
 export type ProductCategoryScalarRelationFilter = {
   is?: Prisma.ProductCategoryWhereInput
   isNot?: Prisma.ProductCategoryWhereInput
+}
+
+export type ProductCategoryListRelationFilter = {
+  every?: Prisma.ProductCategoryWhereInput
+  some?: Prisma.ProductCategoryWhereInput
+  none?: Prisma.ProductCategoryWhereInput
+}
+
+export type ProductCategoryOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type EnumProductTargetMarketFieldUpdateOperationsInput = {
@@ -379,6 +413,48 @@ export type ProductCategoryUpdateOneRequiredWithoutProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductCategoryUpdateToOneWithWhereWithoutProductsInput, Prisma.ProductCategoryUpdateWithoutProductsInput>, Prisma.ProductCategoryUncheckedUpdateWithoutProductsInput>
 }
 
+export type ProductCategoryCreateNestedManyWithoutImageAssetInput = {
+  create?: Prisma.XOR<Prisma.ProductCategoryCreateWithoutImageAssetInput, Prisma.ProductCategoryUncheckedCreateWithoutImageAssetInput> | Prisma.ProductCategoryCreateWithoutImageAssetInput[] | Prisma.ProductCategoryUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ProductCategoryCreateOrConnectWithoutImageAssetInput | Prisma.ProductCategoryCreateOrConnectWithoutImageAssetInput[]
+  createMany?: Prisma.ProductCategoryCreateManyImageAssetInputEnvelope
+  connect?: Prisma.ProductCategoryWhereUniqueInput | Prisma.ProductCategoryWhereUniqueInput[]
+}
+
+export type ProductCategoryUncheckedCreateNestedManyWithoutImageAssetInput = {
+  create?: Prisma.XOR<Prisma.ProductCategoryCreateWithoutImageAssetInput, Prisma.ProductCategoryUncheckedCreateWithoutImageAssetInput> | Prisma.ProductCategoryCreateWithoutImageAssetInput[] | Prisma.ProductCategoryUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ProductCategoryCreateOrConnectWithoutImageAssetInput | Prisma.ProductCategoryCreateOrConnectWithoutImageAssetInput[]
+  createMany?: Prisma.ProductCategoryCreateManyImageAssetInputEnvelope
+  connect?: Prisma.ProductCategoryWhereUniqueInput | Prisma.ProductCategoryWhereUniqueInput[]
+}
+
+export type ProductCategoryUpdateManyWithoutImageAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCategoryCreateWithoutImageAssetInput, Prisma.ProductCategoryUncheckedCreateWithoutImageAssetInput> | Prisma.ProductCategoryCreateWithoutImageAssetInput[] | Prisma.ProductCategoryUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ProductCategoryCreateOrConnectWithoutImageAssetInput | Prisma.ProductCategoryCreateOrConnectWithoutImageAssetInput[]
+  upsert?: Prisma.ProductCategoryUpsertWithWhereUniqueWithoutImageAssetInput | Prisma.ProductCategoryUpsertWithWhereUniqueWithoutImageAssetInput[]
+  createMany?: Prisma.ProductCategoryCreateManyImageAssetInputEnvelope
+  set?: Prisma.ProductCategoryWhereUniqueInput | Prisma.ProductCategoryWhereUniqueInput[]
+  disconnect?: Prisma.ProductCategoryWhereUniqueInput | Prisma.ProductCategoryWhereUniqueInput[]
+  delete?: Prisma.ProductCategoryWhereUniqueInput | Prisma.ProductCategoryWhereUniqueInput[]
+  connect?: Prisma.ProductCategoryWhereUniqueInput | Prisma.ProductCategoryWhereUniqueInput[]
+  update?: Prisma.ProductCategoryUpdateWithWhereUniqueWithoutImageAssetInput | Prisma.ProductCategoryUpdateWithWhereUniqueWithoutImageAssetInput[]
+  updateMany?: Prisma.ProductCategoryUpdateManyWithWhereWithoutImageAssetInput | Prisma.ProductCategoryUpdateManyWithWhereWithoutImageAssetInput[]
+  deleteMany?: Prisma.ProductCategoryScalarWhereInput | Prisma.ProductCategoryScalarWhereInput[]
+}
+
+export type ProductCategoryUncheckedUpdateManyWithoutImageAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCategoryCreateWithoutImageAssetInput, Prisma.ProductCategoryUncheckedCreateWithoutImageAssetInput> | Prisma.ProductCategoryCreateWithoutImageAssetInput[] | Prisma.ProductCategoryUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ProductCategoryCreateOrConnectWithoutImageAssetInput | Prisma.ProductCategoryCreateOrConnectWithoutImageAssetInput[]
+  upsert?: Prisma.ProductCategoryUpsertWithWhereUniqueWithoutImageAssetInput | Prisma.ProductCategoryUpsertWithWhereUniqueWithoutImageAssetInput[]
+  createMany?: Prisma.ProductCategoryCreateManyImageAssetInputEnvelope
+  set?: Prisma.ProductCategoryWhereUniqueInput | Prisma.ProductCategoryWhereUniqueInput[]
+  disconnect?: Prisma.ProductCategoryWhereUniqueInput | Prisma.ProductCategoryWhereUniqueInput[]
+  delete?: Prisma.ProductCategoryWhereUniqueInput | Prisma.ProductCategoryWhereUniqueInput[]
+  connect?: Prisma.ProductCategoryWhereUniqueInput | Prisma.ProductCategoryWhereUniqueInput[]
+  update?: Prisma.ProductCategoryUpdateWithWhereUniqueWithoutImageAssetInput | Prisma.ProductCategoryUpdateWithWhereUniqueWithoutImageAssetInput[]
+  updateMany?: Prisma.ProductCategoryUpdateManyWithWhereWithoutImageAssetInput | Prisma.ProductCategoryUpdateManyWithWhereWithoutImageAssetInput[]
+  deleteMany?: Prisma.ProductCategoryScalarWhereInput | Prisma.ProductCategoryScalarWhereInput[]
+}
+
 export type ProductCategoryCreateWithoutProductsInput = {
   id: string
   slug: string
@@ -387,6 +463,7 @@ export type ProductCategoryCreateWithoutProductsInput = {
   targetMarket: $Enums.ProductTargetMarket
   imageSrc: string
   imageAlt: string
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutCategoryImagesInput
 }
 
 export type ProductCategoryUncheckedCreateWithoutProductsInput = {
@@ -397,6 +474,7 @@ export type ProductCategoryUncheckedCreateWithoutProductsInput = {
   targetMarket: $Enums.ProductTargetMarket
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
 }
 
 export type ProductCategoryCreateOrConnectWithoutProductsInput = {
@@ -423,9 +501,115 @@ export type ProductCategoryUpdateWithoutProductsInput = {
   targetMarket?: Prisma.EnumProductTargetMarketFieldUpdateOperationsInput | $Enums.ProductTargetMarket
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutCategoryImagesNestedInput
 }
 
 export type ProductCategoryUncheckedUpdateWithoutProductsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  targetMarket?: Prisma.EnumProductTargetMarketFieldUpdateOperationsInput | $Enums.ProductTargetMarket
+  imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type ProductCategoryCreateWithoutImageAssetInput = {
+  id: string
+  slug: string
+  name: string
+  description: string
+  targetMarket: $Enums.ProductTargetMarket
+  imageSrc: string
+  imageAlt: string
+  products?: Prisma.ProductCreateNestedManyWithoutCategoryInput
+}
+
+export type ProductCategoryUncheckedCreateWithoutImageAssetInput = {
+  id: string
+  slug: string
+  name: string
+  description: string
+  targetMarket: $Enums.ProductTargetMarket
+  imageSrc: string
+  imageAlt: string
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutCategoryInput
+}
+
+export type ProductCategoryCreateOrConnectWithoutImageAssetInput = {
+  where: Prisma.ProductCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductCategoryCreateWithoutImageAssetInput, Prisma.ProductCategoryUncheckedCreateWithoutImageAssetInput>
+}
+
+export type ProductCategoryCreateManyImageAssetInputEnvelope = {
+  data: Prisma.ProductCategoryCreateManyImageAssetInput | Prisma.ProductCategoryCreateManyImageAssetInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProductCategoryUpsertWithWhereUniqueWithoutImageAssetInput = {
+  where: Prisma.ProductCategoryWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProductCategoryUpdateWithoutImageAssetInput, Prisma.ProductCategoryUncheckedUpdateWithoutImageAssetInput>
+  create: Prisma.XOR<Prisma.ProductCategoryCreateWithoutImageAssetInput, Prisma.ProductCategoryUncheckedCreateWithoutImageAssetInput>
+}
+
+export type ProductCategoryUpdateWithWhereUniqueWithoutImageAssetInput = {
+  where: Prisma.ProductCategoryWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProductCategoryUpdateWithoutImageAssetInput, Prisma.ProductCategoryUncheckedUpdateWithoutImageAssetInput>
+}
+
+export type ProductCategoryUpdateManyWithWhereWithoutImageAssetInput = {
+  where: Prisma.ProductCategoryScalarWhereInput
+  data: Prisma.XOR<Prisma.ProductCategoryUpdateManyMutationInput, Prisma.ProductCategoryUncheckedUpdateManyWithoutImageAssetInput>
+}
+
+export type ProductCategoryScalarWhereInput = {
+  AND?: Prisma.ProductCategoryScalarWhereInput | Prisma.ProductCategoryScalarWhereInput[]
+  OR?: Prisma.ProductCategoryScalarWhereInput[]
+  NOT?: Prisma.ProductCategoryScalarWhereInput | Prisma.ProductCategoryScalarWhereInput[]
+  id?: Prisma.StringFilter<"ProductCategory"> | string
+  slug?: Prisma.StringFilter<"ProductCategory"> | string
+  name?: Prisma.StringFilter<"ProductCategory"> | string
+  description?: Prisma.StringFilter<"ProductCategory"> | string
+  targetMarket?: Prisma.EnumProductTargetMarketFilter<"ProductCategory"> | $Enums.ProductTargetMarket
+  imageSrc?: Prisma.StringFilter<"ProductCategory"> | string
+  imageAlt?: Prisma.StringFilter<"ProductCategory"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"ProductCategory"> | string | null
+}
+
+export type ProductCategoryCreateManyImageAssetInput = {
+  id: string
+  slug: string
+  name: string
+  description: string
+  targetMarket: $Enums.ProductTargetMarket
+  imageSrc: string
+  imageAlt: string
+}
+
+export type ProductCategoryUpdateWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  targetMarket?: Prisma.EnumProductTargetMarketFieldUpdateOperationsInput | $Enums.ProductTargetMarket
+  imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  products?: Prisma.ProductUpdateManyWithoutCategoryNestedInput
+}
+
+export type ProductCategoryUncheckedUpdateWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  targetMarket?: Prisma.EnumProductTargetMarketFieldUpdateOperationsInput | $Enums.ProductTargetMarket
+  imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  products?: Prisma.ProductUncheckedUpdateManyWithoutCategoryNestedInput
+}
+
+export type ProductCategoryUncheckedUpdateManyWithoutImageAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -474,7 +658,9 @@ export type ProductCategorySelect<ExtArgs extends runtime.Types.Extensions.Inter
   targetMarket?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
   products?: boolean | Prisma.ProductCategory$productsArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.ProductCategory$imageAssetArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productCategory"]>
 
@@ -486,6 +672,8 @@ export type ProductCategorySelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   targetMarket?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
+  imageAsset?: boolean | Prisma.ProductCategory$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["productCategory"]>
 
 export type ProductCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -496,6 +684,8 @@ export type ProductCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   targetMarket?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
+  imageAsset?: boolean | Prisma.ProductCategory$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["productCategory"]>
 
 export type ProductCategorySelectScalar = {
@@ -506,20 +696,27 @@ export type ProductCategorySelectScalar = {
   targetMarket?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
 }
 
-export type ProductCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "description" | "targetMarket" | "imageSrc" | "imageAlt", ExtArgs["result"]["productCategory"]>
+export type ProductCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "description" | "targetMarket" | "imageSrc" | "imageAlt" | "imageAssetId", ExtArgs["result"]["productCategory"]>
 export type ProductCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   products?: boolean | Prisma.ProductCategory$productsArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.ProductCategory$imageAssetArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type ProductCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type ProductCategoryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type ProductCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  imageAsset?: boolean | Prisma.ProductCategory$imageAssetArgs<ExtArgs>
+}
+export type ProductCategoryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  imageAsset?: boolean | Prisma.ProductCategory$imageAssetArgs<ExtArgs>
+}
 
 export type $ProductCategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProductCategory"
   objects: {
     products: Prisma.$ProductPayload<ExtArgs>[]
+    imageAsset: Prisma.$UploadedAssetPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -529,6 +726,7 @@ export type $ProductCategoryPayload<ExtArgs extends runtime.Types.Extensions.Int
     targetMarket: $Enums.ProductTargetMarket
     imageSrc: string
     imageAlt: string
+    imageAssetId: string | null
   }, ExtArgs["result"]["productCategory"]>
   composites: {}
 }
@@ -924,6 +1122,7 @@ readonly fields: ProductCategoryFieldRefs;
 export interface Prisma__ProductCategoryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   products<T extends Prisma.ProductCategory$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductCategory$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  imageAsset<T extends Prisma.ProductCategory$imageAssetArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductCategory$imageAssetArgs<ExtArgs>>): Prisma.Prisma__UploadedAssetClient<runtime.Types.Result.GetResult<Prisma.$UploadedAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -960,6 +1159,7 @@ export interface ProductCategoryFieldRefs {
   readonly targetMarket: Prisma.FieldRef<"ProductCategory", 'ProductTargetMarket'>
   readonly imageSrc: Prisma.FieldRef<"ProductCategory", 'String'>
   readonly imageAlt: Prisma.FieldRef<"ProductCategory", 'String'>
+  readonly imageAssetId: Prisma.FieldRef<"ProductCategory", 'String'>
 }
     
 
@@ -1214,6 +1414,10 @@ export type ProductCategoryCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    */
   data: Prisma.ProductCategoryCreateManyInput | Prisma.ProductCategoryCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductCategoryIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1284,6 +1488,10 @@ export type ProductCategoryUpdateManyAndReturnArgs<ExtArgs extends runtime.Types
    * Limit how many ProductCategories to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductCategoryIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1374,6 +1582,25 @@ export type ProductCategory$productsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.ProductScalarFieldEnum | Prisma.ProductScalarFieldEnum[]
+}
+
+/**
+ * ProductCategory.imageAsset
+ */
+export type ProductCategory$imageAssetArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UploadedAsset
+   */
+  select?: Prisma.UploadedAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UploadedAsset
+   */
+  omit?: Prisma.UploadedAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UploadedAssetInclude<ExtArgs> | null
+  where?: Prisma.UploadedAssetWhereInput
 }
 
 /**

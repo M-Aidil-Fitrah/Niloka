@@ -73,6 +73,7 @@ export const ModelName = {
   OrderItem: 'OrderItem',
   Payment: 'Payment',
   Article: 'Article',
+  UploadedAsset: 'UploadedAsset',
   ChatThread: 'ChatThread',
   ChatMessage: 'ChatMessage',
   AdminValidationItem: 'AdminValidationItem',
@@ -101,6 +102,7 @@ export const UserScalarFieldEnum = {
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
+  imageAssetId: 'imageAssetId',
   role: 'role',
   passwordHash: 'passwordHash',
   sellerId: 'sellerId',
@@ -196,7 +198,8 @@ export const ProductCategoryScalarFieldEnum = {
   description: 'description',
   targetMarket: 'targetMarket',
   imageSrc: 'imageSrc',
-  imageAlt: 'imageAlt'
+  imageAlt: 'imageAlt',
+  imageAssetId: 'imageAssetId'
 } as const
 
 export type ProductCategoryScalarFieldEnum = (typeof ProductCategoryScalarFieldEnum)[keyof typeof ProductCategoryScalarFieldEnum]
@@ -220,6 +223,7 @@ export const ProductScalarFieldEnum = {
   status: 'status',
   imageSrc: 'imageSrc',
   imageAlt: 'imageAlt',
+  imageAssetId: 'imageAssetId',
   featuredRank: 'featuredRank',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -233,6 +237,7 @@ export const ProductImageScalarFieldEnum = {
   productId: 'productId',
   src: 'src',
   alt: 'alt',
+  assetId: 'assetId',
   sortOrder: 'sortOrder'
 } as const
 
@@ -277,6 +282,7 @@ export const AmpasListingScalarFieldEnum = {
   status: 'status',
   imageSrc: 'imageSrc',
   imageAlt: 'imageAlt',
+  imageAssetId: 'imageAssetId',
   disclaimer: 'disclaimer',
   distillationDate: 'distillationDate',
   shippingOption: 'shippingOption',
@@ -437,6 +443,7 @@ export const ArticleScalarFieldEnum = {
   authorRole: 'authorRole',
   publishedAt: 'publishedAt',
   imageUrl: 'imageUrl',
+  imageAssetId: 'imageAssetId',
   category: 'category',
   videoUrl: 'videoUrl',
   videoDuration: 'videoDuration',
@@ -445,6 +452,24 @@ export const ArticleScalarFieldEnum = {
 } as const
 
 export type ArticleScalarFieldEnum = (typeof ArticleScalarFieldEnum)[keyof typeof ArticleScalarFieldEnum]
+
+
+export const UploadedAssetScalarFieldEnum = {
+  id: 'id',
+  kind: 'kind',
+  uploadedById: 'uploadedById',
+  originalFilename: 'originalFilename',
+  storageKey: 'storageKey',
+  publicPath: 'publicPath',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  width: 'width',
+  height: 'height',
+  checksum: 'checksum',
+  createdAt: 'createdAt'
+} as const
+
+export type UploadedAssetScalarFieldEnum = (typeof UploadedAssetScalarFieldEnum)[keyof typeof UploadedAssetScalarFieldEnum]
 
 
 export const ChatThreadScalarFieldEnum = {

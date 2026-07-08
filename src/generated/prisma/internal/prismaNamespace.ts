@@ -406,6 +406,7 @@ export const ModelName = {
   OrderItem: 'OrderItem',
   Payment: 'Payment',
   Article: 'Article',
+  UploadedAsset: 'UploadedAsset',
   ChatThread: 'ChatThread',
   ChatMessage: 'ChatMessage',
   AdminValidationItem: 'AdminValidationItem',
@@ -425,7 +426,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "seller" | "sellerApplication" | "productCategory" | "product" | "productImage" | "nilamPassport" | "ampasListing" | "review" | "promo" | "promoProduct" | "bundle" | "bundleProduct" | "cart" | "cartItem" | "order" | "orderItem" | "payment" | "article" | "chatThread" | "chatMessage" | "adminValidationItem" | "auditLog"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "seller" | "sellerApplication" | "productCategory" | "product" | "productImage" | "nilamPassport" | "ampasListing" | "review" | "promo" | "promoProduct" | "bundle" | "bundleProduct" | "cart" | "cartItem" | "order" | "orderItem" | "payment" | "article" | "uploadedAsset" | "chatThread" | "chatMessage" | "adminValidationItem" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2057,6 +2058,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UploadedAsset: {
+      payload: Prisma.$UploadedAssetPayload<ExtArgs>
+      fields: Prisma.UploadedAssetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UploadedAssetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UploadedAssetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload>
+        }
+        findFirst: {
+          args: Prisma.UploadedAssetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UploadedAssetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload>
+        }
+        findMany: {
+          args: Prisma.UploadedAssetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload>[]
+        }
+        create: {
+          args: Prisma.UploadedAssetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload>
+        }
+        createMany: {
+          args: Prisma.UploadedAssetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UploadedAssetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload>[]
+        }
+        delete: {
+          args: Prisma.UploadedAssetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload>
+        }
+        update: {
+          args: Prisma.UploadedAssetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload>
+        }
+        deleteMany: {
+          args: Prisma.UploadedAssetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UploadedAssetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UploadedAssetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload>[]
+        }
+        upsert: {
+          args: Prisma.UploadedAssetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UploadedAssetPayload>
+        }
+        aggregate: {
+          args: Prisma.UploadedAssetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUploadedAsset>
+        }
+        groupBy: {
+          args: Prisma.UploadedAssetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UploadedAssetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UploadedAssetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UploadedAssetCountAggregateOutputType> | number
+        }
+      }
+    }
     ChatThread: {
       payload: Prisma.$ChatThreadPayload<ExtArgs>
       fields: Prisma.ChatThreadFieldRefs
@@ -2398,6 +2473,7 @@ export const UserScalarFieldEnum = {
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
+  imageAssetId: 'imageAssetId',
   role: 'role',
   passwordHash: 'passwordHash',
   sellerId: 'sellerId',
@@ -2493,7 +2569,8 @@ export const ProductCategoryScalarFieldEnum = {
   description: 'description',
   targetMarket: 'targetMarket',
   imageSrc: 'imageSrc',
-  imageAlt: 'imageAlt'
+  imageAlt: 'imageAlt',
+  imageAssetId: 'imageAssetId'
 } as const
 
 export type ProductCategoryScalarFieldEnum = (typeof ProductCategoryScalarFieldEnum)[keyof typeof ProductCategoryScalarFieldEnum]
@@ -2517,6 +2594,7 @@ export const ProductScalarFieldEnum = {
   status: 'status',
   imageSrc: 'imageSrc',
   imageAlt: 'imageAlt',
+  imageAssetId: 'imageAssetId',
   featuredRank: 'featuredRank',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -2530,6 +2608,7 @@ export const ProductImageScalarFieldEnum = {
   productId: 'productId',
   src: 'src',
   alt: 'alt',
+  assetId: 'assetId',
   sortOrder: 'sortOrder'
 } as const
 
@@ -2574,6 +2653,7 @@ export const AmpasListingScalarFieldEnum = {
   status: 'status',
   imageSrc: 'imageSrc',
   imageAlt: 'imageAlt',
+  imageAssetId: 'imageAssetId',
   disclaimer: 'disclaimer',
   distillationDate: 'distillationDate',
   shippingOption: 'shippingOption',
@@ -2734,6 +2814,7 @@ export const ArticleScalarFieldEnum = {
   authorRole: 'authorRole',
   publishedAt: 'publishedAt',
   imageUrl: 'imageUrl',
+  imageAssetId: 'imageAssetId',
   category: 'category',
   videoUrl: 'videoUrl',
   videoDuration: 'videoDuration',
@@ -2742,6 +2823,24 @@ export const ArticleScalarFieldEnum = {
 } as const
 
 export type ArticleScalarFieldEnum = (typeof ArticleScalarFieldEnum)[keyof typeof ArticleScalarFieldEnum]
+
+
+export const UploadedAssetScalarFieldEnum = {
+  id: 'id',
+  kind: 'kind',
+  uploadedById: 'uploadedById',
+  originalFilename: 'originalFilename',
+  storageKey: 'storageKey',
+  publicPath: 'publicPath',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  width: 'width',
+  height: 'height',
+  checksum: 'checksum',
+  createdAt: 'createdAt'
+} as const
+
+export type UploadedAssetScalarFieldEnum = (typeof UploadedAssetScalarFieldEnum)[keyof typeof UploadedAssetScalarFieldEnum]
 
 
 export const ChatThreadScalarFieldEnum = {
@@ -3198,6 +3297,20 @@ export type ListEnumArticleCategoryFieldRefInput<$PrismaModel> = FieldRefInputTy
 
 
 /**
+ * Reference to a field of type 'UploadedAssetKind'
+ */
+export type EnumUploadedAssetKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UploadedAssetKind'>
+    
+
+
+/**
+ * Reference to a field of type 'UploadedAssetKind[]'
+ */
+export type ListEnumUploadedAssetKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UploadedAssetKind[]'>
+    
+
+
+/**
  * Reference to a field of type 'ChatMessageSenderRole'
  */
 export type EnumChatMessageSenderRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatMessageSenderRole'>
@@ -3370,6 +3483,7 @@ export type GlobalOmitConfig = {
   orderItem?: Prisma.OrderItemOmit
   payment?: Prisma.PaymentOmit
   article?: Prisma.ArticleOmit
+  uploadedAsset?: Prisma.UploadedAssetOmit
   chatThread?: Prisma.ChatThreadOmit
   chatMessage?: Prisma.ChatMessageOmit
   adminValidationItem?: Prisma.AdminValidationItemOmit

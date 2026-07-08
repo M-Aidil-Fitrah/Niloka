@@ -17,6 +17,9 @@
 /.postgres-data
 /.postgres.log
 
+# local uploads
+/storage/uploads
+
 # next.js
 /.next/
 /out/

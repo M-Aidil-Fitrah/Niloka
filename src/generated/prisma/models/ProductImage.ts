@@ -39,6 +39,7 @@ export type ProductImageMinAggregateOutputType = {
   productId: string | null
   src: string | null
   alt: string | null
+  assetId: string | null
   sortOrder: number | null
 }
 
@@ -47,6 +48,7 @@ export type ProductImageMaxAggregateOutputType = {
   productId: string | null
   src: string | null
   alt: string | null
+  assetId: string | null
   sortOrder: number | null
 }
 
@@ -55,6 +57,7 @@ export type ProductImageCountAggregateOutputType = {
   productId: number
   src: number
   alt: number
+  assetId: number
   sortOrder: number
   _all: number
 }
@@ -73,6 +76,7 @@ export type ProductImageMinAggregateInputType = {
   productId?: true
   src?: true
   alt?: true
+  assetId?: true
   sortOrder?: true
 }
 
@@ -81,6 +85,7 @@ export type ProductImageMaxAggregateInputType = {
   productId?: true
   src?: true
   alt?: true
+  assetId?: true
   sortOrder?: true
 }
 
@@ -89,6 +94,7 @@ export type ProductImageCountAggregateInputType = {
   productId?: true
   src?: true
   alt?: true
+  assetId?: true
   sortOrder?: true
   _all?: true
 }
@@ -184,6 +190,7 @@ export type ProductImageGroupByOutputType = {
   productId: string
   src: string
   alt: string
+  assetId: string | null
   sortOrder: number
   _count: ProductImageCountAggregateOutputType | null
   _avg: ProductImageAvgAggregateOutputType | null
@@ -215,8 +222,10 @@ export type ProductImageWhereInput = {
   productId?: Prisma.StringFilter<"ProductImage"> | string
   src?: Prisma.StringFilter<"ProductImage"> | string
   alt?: Prisma.StringFilter<"ProductImage"> | string
+  assetId?: Prisma.StringNullableFilter<"ProductImage"> | string | null
   sortOrder?: Prisma.IntFilter<"ProductImage"> | number
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
+  asset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
 }
 
 export type ProductImageOrderByWithRelationInput = {
@@ -224,8 +233,10 @@ export type ProductImageOrderByWithRelationInput = {
   productId?: Prisma.SortOrder
   src?: Prisma.SortOrder
   alt?: Prisma.SortOrder
+  assetId?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   product?: Prisma.ProductOrderByWithRelationInput
+  asset?: Prisma.UploadedAssetOrderByWithRelationInput
 }
 
 export type ProductImageWhereUniqueInput = Prisma.AtLeast<{
@@ -236,8 +247,10 @@ export type ProductImageWhereUniqueInput = Prisma.AtLeast<{
   productId?: Prisma.StringFilter<"ProductImage"> | string
   src?: Prisma.StringFilter<"ProductImage"> | string
   alt?: Prisma.StringFilter<"ProductImage"> | string
+  assetId?: Prisma.StringNullableFilter<"ProductImage"> | string | null
   sortOrder?: Prisma.IntFilter<"ProductImage"> | number
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
+  asset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
 }, "id">
 
 export type ProductImageOrderByWithAggregationInput = {
@@ -245,6 +258,7 @@ export type ProductImageOrderByWithAggregationInput = {
   productId?: Prisma.SortOrder
   src?: Prisma.SortOrder
   alt?: Prisma.SortOrder
+  assetId?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   _count?: Prisma.ProductImageCountOrderByAggregateInput
   _avg?: Prisma.ProductImageAvgOrderByAggregateInput
@@ -261,6 +275,7 @@ export type ProductImageScalarWhereWithAggregatesInput = {
   productId?: Prisma.StringWithAggregatesFilter<"ProductImage"> | string
   src?: Prisma.StringWithAggregatesFilter<"ProductImage"> | string
   alt?: Prisma.StringWithAggregatesFilter<"ProductImage"> | string
+  assetId?: Prisma.StringNullableWithAggregatesFilter<"ProductImage"> | string | null
   sortOrder?: Prisma.IntWithAggregatesFilter<"ProductImage"> | number
 }
 
@@ -270,6 +285,7 @@ export type ProductImageCreateInput = {
   alt: string
   sortOrder?: number
   product: Prisma.ProductCreateNestedOneWithoutGalleryInput
+  asset?: Prisma.UploadedAssetCreateNestedOneWithoutGalleryImagesInput
 }
 
 export type ProductImageUncheckedCreateInput = {
@@ -277,6 +293,7 @@ export type ProductImageUncheckedCreateInput = {
   productId: string
   src: string
   alt: string
+  assetId?: string | null
   sortOrder?: number
 }
 
@@ -286,6 +303,7 @@ export type ProductImageUpdateInput = {
   alt?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   product?: Prisma.ProductUpdateOneRequiredWithoutGalleryNestedInput
+  asset?: Prisma.UploadedAssetUpdateOneWithoutGalleryImagesNestedInput
 }
 
 export type ProductImageUncheckedUpdateInput = {
@@ -293,6 +311,7 @@ export type ProductImageUncheckedUpdateInput = {
   productId?: Prisma.StringFieldUpdateOperationsInput | string
   src?: Prisma.StringFieldUpdateOperationsInput | string
   alt?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -301,6 +320,7 @@ export type ProductImageCreateManyInput = {
   productId: string
   src: string
   alt: string
+  assetId?: string | null
   sortOrder?: number
 }
 
@@ -316,6 +336,7 @@ export type ProductImageUncheckedUpdateManyInput = {
   productId?: Prisma.StringFieldUpdateOperationsInput | string
   src?: Prisma.StringFieldUpdateOperationsInput | string
   alt?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -334,6 +355,7 @@ export type ProductImageCountOrderByAggregateInput = {
   productId?: Prisma.SortOrder
   src?: Prisma.SortOrder
   alt?: Prisma.SortOrder
+  assetId?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
 }
 
@@ -346,6 +368,7 @@ export type ProductImageMaxOrderByAggregateInput = {
   productId?: Prisma.SortOrder
   src?: Prisma.SortOrder
   alt?: Prisma.SortOrder
+  assetId?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
 }
 
@@ -354,6 +377,7 @@ export type ProductImageMinOrderByAggregateInput = {
   productId?: Prisma.SortOrder
   src?: Prisma.SortOrder
   alt?: Prisma.SortOrder
+  assetId?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
 }
 
@@ -403,17 +427,61 @@ export type ProductImageUncheckedUpdateManyWithoutProductNestedInput = {
   deleteMany?: Prisma.ProductImageScalarWhereInput | Prisma.ProductImageScalarWhereInput[]
 }
 
+export type ProductImageCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.ProductImageCreateWithoutAssetInput, Prisma.ProductImageUncheckedCreateWithoutAssetInput> | Prisma.ProductImageCreateWithoutAssetInput[] | Prisma.ProductImageUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.ProductImageCreateOrConnectWithoutAssetInput | Prisma.ProductImageCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.ProductImageCreateManyAssetInputEnvelope
+  connect?: Prisma.ProductImageWhereUniqueInput | Prisma.ProductImageWhereUniqueInput[]
+}
+
+export type ProductImageUncheckedCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.ProductImageCreateWithoutAssetInput, Prisma.ProductImageUncheckedCreateWithoutAssetInput> | Prisma.ProductImageCreateWithoutAssetInput[] | Prisma.ProductImageUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.ProductImageCreateOrConnectWithoutAssetInput | Prisma.ProductImageCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.ProductImageCreateManyAssetInputEnvelope
+  connect?: Prisma.ProductImageWhereUniqueInput | Prisma.ProductImageWhereUniqueInput[]
+}
+
+export type ProductImageUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductImageCreateWithoutAssetInput, Prisma.ProductImageUncheckedCreateWithoutAssetInput> | Prisma.ProductImageCreateWithoutAssetInput[] | Prisma.ProductImageUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.ProductImageCreateOrConnectWithoutAssetInput | Prisma.ProductImageCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.ProductImageUpsertWithWhereUniqueWithoutAssetInput | Prisma.ProductImageUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.ProductImageCreateManyAssetInputEnvelope
+  set?: Prisma.ProductImageWhereUniqueInput | Prisma.ProductImageWhereUniqueInput[]
+  disconnect?: Prisma.ProductImageWhereUniqueInput | Prisma.ProductImageWhereUniqueInput[]
+  delete?: Prisma.ProductImageWhereUniqueInput | Prisma.ProductImageWhereUniqueInput[]
+  connect?: Prisma.ProductImageWhereUniqueInput | Prisma.ProductImageWhereUniqueInput[]
+  update?: Prisma.ProductImageUpdateWithWhereUniqueWithoutAssetInput | Prisma.ProductImageUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.ProductImageUpdateManyWithWhereWithoutAssetInput | Prisma.ProductImageUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.ProductImageScalarWhereInput | Prisma.ProductImageScalarWhereInput[]
+}
+
+export type ProductImageUncheckedUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductImageCreateWithoutAssetInput, Prisma.ProductImageUncheckedCreateWithoutAssetInput> | Prisma.ProductImageCreateWithoutAssetInput[] | Prisma.ProductImageUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.ProductImageCreateOrConnectWithoutAssetInput | Prisma.ProductImageCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.ProductImageUpsertWithWhereUniqueWithoutAssetInput | Prisma.ProductImageUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.ProductImageCreateManyAssetInputEnvelope
+  set?: Prisma.ProductImageWhereUniqueInput | Prisma.ProductImageWhereUniqueInput[]
+  disconnect?: Prisma.ProductImageWhereUniqueInput | Prisma.ProductImageWhereUniqueInput[]
+  delete?: Prisma.ProductImageWhereUniqueInput | Prisma.ProductImageWhereUniqueInput[]
+  connect?: Prisma.ProductImageWhereUniqueInput | Prisma.ProductImageWhereUniqueInput[]
+  update?: Prisma.ProductImageUpdateWithWhereUniqueWithoutAssetInput | Prisma.ProductImageUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.ProductImageUpdateManyWithWhereWithoutAssetInput | Prisma.ProductImageUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.ProductImageScalarWhereInput | Prisma.ProductImageScalarWhereInput[]
+}
+
 export type ProductImageCreateWithoutProductInput = {
   id?: string
   src: string
   alt: string
   sortOrder?: number
+  asset?: Prisma.UploadedAssetCreateNestedOneWithoutGalleryImagesInput
 }
 
 export type ProductImageUncheckedCreateWithoutProductInput = {
   id?: string
   src: string
   alt: string
+  assetId?: string | null
   sortOrder?: number
 }
 
@@ -451,13 +519,57 @@ export type ProductImageScalarWhereInput = {
   productId?: Prisma.StringFilter<"ProductImage"> | string
   src?: Prisma.StringFilter<"ProductImage"> | string
   alt?: Prisma.StringFilter<"ProductImage"> | string
+  assetId?: Prisma.StringNullableFilter<"ProductImage"> | string | null
   sortOrder?: Prisma.IntFilter<"ProductImage"> | number
+}
+
+export type ProductImageCreateWithoutAssetInput = {
+  id?: string
+  src: string
+  alt: string
+  sortOrder?: number
+  product: Prisma.ProductCreateNestedOneWithoutGalleryInput
+}
+
+export type ProductImageUncheckedCreateWithoutAssetInput = {
+  id?: string
+  productId: string
+  src: string
+  alt: string
+  sortOrder?: number
+}
+
+export type ProductImageCreateOrConnectWithoutAssetInput = {
+  where: Prisma.ProductImageWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductImageCreateWithoutAssetInput, Prisma.ProductImageUncheckedCreateWithoutAssetInput>
+}
+
+export type ProductImageCreateManyAssetInputEnvelope = {
+  data: Prisma.ProductImageCreateManyAssetInput | Prisma.ProductImageCreateManyAssetInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProductImageUpsertWithWhereUniqueWithoutAssetInput = {
+  where: Prisma.ProductImageWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProductImageUpdateWithoutAssetInput, Prisma.ProductImageUncheckedUpdateWithoutAssetInput>
+  create: Prisma.XOR<Prisma.ProductImageCreateWithoutAssetInput, Prisma.ProductImageUncheckedCreateWithoutAssetInput>
+}
+
+export type ProductImageUpdateWithWhereUniqueWithoutAssetInput = {
+  where: Prisma.ProductImageWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProductImageUpdateWithoutAssetInput, Prisma.ProductImageUncheckedUpdateWithoutAssetInput>
+}
+
+export type ProductImageUpdateManyWithWhereWithoutAssetInput = {
+  where: Prisma.ProductImageScalarWhereInput
+  data: Prisma.XOR<Prisma.ProductImageUpdateManyMutationInput, Prisma.ProductImageUncheckedUpdateManyWithoutAssetInput>
 }
 
 export type ProductImageCreateManyProductInput = {
   id?: string
   src: string
   alt: string
+  assetId?: string | null
   sortOrder?: number
 }
 
@@ -466,17 +578,52 @@ export type ProductImageUpdateWithoutProductInput = {
   src?: Prisma.StringFieldUpdateOperationsInput | string
   alt?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  asset?: Prisma.UploadedAssetUpdateOneWithoutGalleryImagesNestedInput
 }
 
 export type ProductImageUncheckedUpdateWithoutProductInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   src?: Prisma.StringFieldUpdateOperationsInput | string
   alt?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProductImageUncheckedUpdateManyWithoutProductInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  src?: Prisma.StringFieldUpdateOperationsInput | string
+  alt?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type ProductImageCreateManyAssetInput = {
+  id?: string
+  productId: string
+  src: string
+  alt: string
+  sortOrder?: number
+}
+
+export type ProductImageUpdateWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  src?: Prisma.StringFieldUpdateOperationsInput | string
+  alt?: Prisma.StringFieldUpdateOperationsInput | string
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  product?: Prisma.ProductUpdateOneRequiredWithoutGalleryNestedInput
+}
+
+export type ProductImageUncheckedUpdateWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  src?: Prisma.StringFieldUpdateOperationsInput | string
+  alt?: Prisma.StringFieldUpdateOperationsInput | string
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type ProductImageUncheckedUpdateManyWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
   src?: Prisma.StringFieldUpdateOperationsInput | string
   alt?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
@@ -489,8 +636,10 @@ export type ProductImageSelect<ExtArgs extends runtime.Types.Extensions.Internal
   productId?: boolean
   src?: boolean
   alt?: boolean
+  assetId?: boolean
   sortOrder?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  asset?: boolean | Prisma.ProductImage$assetArgs<ExtArgs>
 }, ExtArgs["result"]["productImage"]>
 
 export type ProductImageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -498,8 +647,10 @@ export type ProductImageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   productId?: boolean
   src?: boolean
   alt?: boolean
+  assetId?: boolean
   sortOrder?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  asset?: boolean | Prisma.ProductImage$assetArgs<ExtArgs>
 }, ExtArgs["result"]["productImage"]>
 
 export type ProductImageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -507,8 +658,10 @@ export type ProductImageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   productId?: boolean
   src?: boolean
   alt?: boolean
+  assetId?: boolean
   sortOrder?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  asset?: boolean | Prisma.ProductImage$assetArgs<ExtArgs>
 }, ExtArgs["result"]["productImage"]>
 
 export type ProductImageSelectScalar = {
@@ -516,30 +669,36 @@ export type ProductImageSelectScalar = {
   productId?: boolean
   src?: boolean
   alt?: boolean
+  assetId?: boolean
   sortOrder?: boolean
 }
 
-export type ProductImageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "src" | "alt" | "sortOrder", ExtArgs["result"]["productImage"]>
+export type ProductImageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "src" | "alt" | "assetId" | "sortOrder", ExtArgs["result"]["productImage"]>
 export type ProductImageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  asset?: boolean | Prisma.ProductImage$assetArgs<ExtArgs>
 }
 export type ProductImageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  asset?: boolean | Prisma.ProductImage$assetArgs<ExtArgs>
 }
 export type ProductImageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  asset?: boolean | Prisma.ProductImage$assetArgs<ExtArgs>
 }
 
 export type $ProductImagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProductImage"
   objects: {
     product: Prisma.$ProductPayload<ExtArgs>
+    asset: Prisma.$UploadedAssetPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     productId: string
     src: string
     alt: string
+    assetId: string | null
     sortOrder: number
   }, ExtArgs["result"]["productImage"]>
   composites: {}
@@ -936,6 +1095,7 @@ readonly fields: ProductImageFieldRefs;
 export interface Prisma__ProductImageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  asset<T extends Prisma.ProductImage$assetArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductImage$assetArgs<ExtArgs>>): Prisma.Prisma__UploadedAssetClient<runtime.Types.Result.GetResult<Prisma.$UploadedAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -969,6 +1129,7 @@ export interface ProductImageFieldRefs {
   readonly productId: Prisma.FieldRef<"ProductImage", 'String'>
   readonly src: Prisma.FieldRef<"ProductImage", 'String'>
   readonly alt: Prisma.FieldRef<"ProductImage", 'String'>
+  readonly assetId: Prisma.FieldRef<"ProductImage", 'String'>
   readonly sortOrder: Prisma.FieldRef<"ProductImage", 'Int'>
 }
     
@@ -1368,6 +1529,25 @@ export type ProductImageDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many ProductImages to delete.
    */
   limit?: number
+}
+
+/**
+ * ProductImage.asset
+ */
+export type ProductImage$assetArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UploadedAsset
+   */
+  select?: Prisma.UploadedAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UploadedAsset
+   */
+  omit?: Prisma.UploadedAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UploadedAssetInclude<ExtArgs> | null
+  where?: Prisma.UploadedAssetWhereInput
 }
 
 /**

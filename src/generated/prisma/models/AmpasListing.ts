@@ -55,6 +55,7 @@ export type AmpasListingMinAggregateOutputType = {
   status: $Enums.AmpasListingStatus | null
   imageSrc: string | null
   imageAlt: string | null
+  imageAssetId: string | null
   disclaimer: string | null
   distillationDate: Date | null
   shippingOption: string | null
@@ -81,6 +82,7 @@ export type AmpasListingMaxAggregateOutputType = {
   status: $Enums.AmpasListingStatus | null
   imageSrc: string | null
   imageAlt: string | null
+  imageAssetId: string | null
   disclaimer: string | null
   distillationDate: Date | null
   shippingOption: string | null
@@ -108,6 +110,7 @@ export type AmpasListingCountAggregateOutputType = {
   status: number
   imageSrc: number
   imageAlt: number
+  imageAssetId: number
   disclaimer: number
   distillationDate: number
   shippingOption: number
@@ -150,6 +153,7 @@ export type AmpasListingMinAggregateInputType = {
   status?: true
   imageSrc?: true
   imageAlt?: true
+  imageAssetId?: true
   disclaimer?: true
   distillationDate?: true
   shippingOption?: true
@@ -176,6 +180,7 @@ export type AmpasListingMaxAggregateInputType = {
   status?: true
   imageSrc?: true
   imageAlt?: true
+  imageAssetId?: true
   disclaimer?: true
   distillationDate?: true
   shippingOption?: true
@@ -203,6 +208,7 @@ export type AmpasListingCountAggregateInputType = {
   status?: true
   imageSrc?: true
   imageAlt?: true
+  imageAssetId?: true
   disclaimer?: true
   distillationDate?: true
   shippingOption?: true
@@ -317,6 +323,7 @@ export type AmpasListingGroupByOutputType = {
   status: $Enums.AmpasListingStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId: string | null
   disclaimer: string
   distillationDate: Date | null
   shippingOption: string | null
@@ -367,6 +374,7 @@ export type AmpasListingWhereInput = {
   status?: Prisma.EnumAmpasListingStatusFilter<"AmpasListing"> | $Enums.AmpasListingStatus
   imageSrc?: Prisma.StringFilter<"AmpasListing"> | string
   imageAlt?: Prisma.StringFilter<"AmpasListing"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"AmpasListing"> | string | null
   disclaimer?: Prisma.StringFilter<"AmpasListing"> | string
   distillationDate?: Prisma.DateTimeNullableFilter<"AmpasListing"> | Date | string | null
   shippingOption?: Prisma.StringNullableFilter<"AmpasListing"> | string | null
@@ -377,6 +385,7 @@ export type AmpasListingWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"AmpasListing"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AmpasListing"> | Date | string
   seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>
+  imageAsset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
   cartItems?: Prisma.CartItemListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
 }
@@ -397,6 +406,7 @@ export type AmpasListingOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   disclaimer?: Prisma.SortOrder
   distillationDate?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingOption?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -407,6 +417,7 @@ export type AmpasListingOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   seller?: Prisma.SellerOrderByWithRelationInput
+  imageAsset?: Prisma.UploadedAssetOrderByWithRelationInput
   cartItems?: Prisma.CartItemOrderByRelationAggregateInput
   orderItems?: Prisma.OrderItemOrderByRelationAggregateInput
 }
@@ -430,6 +441,7 @@ export type AmpasListingWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumAmpasListingStatusFilter<"AmpasListing"> | $Enums.AmpasListingStatus
   imageSrc?: Prisma.StringFilter<"AmpasListing"> | string
   imageAlt?: Prisma.StringFilter<"AmpasListing"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"AmpasListing"> | string | null
   disclaimer?: Prisma.StringFilter<"AmpasListing"> | string
   distillationDate?: Prisma.DateTimeNullableFilter<"AmpasListing"> | Date | string | null
   shippingOption?: Prisma.StringNullableFilter<"AmpasListing"> | string | null
@@ -440,6 +452,7 @@ export type AmpasListingWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"AmpasListing"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AmpasListing"> | Date | string
   seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>
+  imageAsset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
   cartItems?: Prisma.CartItemListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
 }, "id" | "slug">
@@ -460,6 +473,7 @@ export type AmpasListingOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   disclaimer?: Prisma.SortOrder
   distillationDate?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingOption?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -495,6 +509,7 @@ export type AmpasListingScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumAmpasListingStatusWithAggregatesFilter<"AmpasListing"> | $Enums.AmpasListingStatus
   imageSrc?: Prisma.StringWithAggregatesFilter<"AmpasListing"> | string
   imageAlt?: Prisma.StringWithAggregatesFilter<"AmpasListing"> | string
+  imageAssetId?: Prisma.StringNullableWithAggregatesFilter<"AmpasListing"> | string | null
   disclaimer?: Prisma.StringWithAggregatesFilter<"AmpasListing"> | string
   distillationDate?: Prisma.DateTimeNullableWithAggregatesFilter<"AmpasListing"> | Date | string | null
   shippingOption?: Prisma.StringNullableWithAggregatesFilter<"AmpasListing"> | string | null
@@ -531,6 +546,7 @@ export type AmpasListingCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutAmpasListingsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutAmpasImagesInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutAmpasListingInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutAmpasListingInput
 }
@@ -551,6 +567,7 @@ export type AmpasListingUncheckedCreateInput = {
   status?: $Enums.AmpasListingStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   disclaimer: string
   distillationDate?: Date | string | null
   shippingOption?: string | null
@@ -589,6 +606,7 @@ export type AmpasListingUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutAmpasListingsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutAmpasImagesNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutAmpasListingNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutAmpasListingNestedInput
 }
@@ -609,6 +627,7 @@ export type AmpasListingUncheckedUpdateInput = {
   status?: Prisma.EnumAmpasListingStatusFieldUpdateOperationsInput | $Enums.AmpasListingStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disclaimer?: Prisma.StringFieldUpdateOperationsInput | string
   distillationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingOption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -638,6 +657,7 @@ export type AmpasListingCreateManyInput = {
   status?: $Enums.AmpasListingStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   disclaimer: string
   distillationDate?: Date | string | null
   shippingOption?: string | null
@@ -691,6 +711,7 @@ export type AmpasListingUncheckedUpdateManyInput = {
   status?: Prisma.EnumAmpasListingStatusFieldUpdateOperationsInput | $Enums.AmpasListingStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disclaimer?: Prisma.StringFieldUpdateOperationsInput | string
   distillationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingOption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -736,6 +757,7 @@ export type AmpasListingCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   disclaimer?: Prisma.SortOrder
   distillationDate?: Prisma.SortOrder
   shippingOption?: Prisma.SortOrder
@@ -769,6 +791,7 @@ export type AmpasListingMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   disclaimer?: Prisma.SortOrder
   distillationDate?: Prisma.SortOrder
   shippingOption?: Prisma.SortOrder
@@ -795,6 +818,7 @@ export type AmpasListingMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   disclaimer?: Prisma.SortOrder
   distillationDate?: Prisma.SortOrder
   shippingOption?: Prisma.SortOrder
@@ -913,6 +937,48 @@ export type AmpasListingUpdateOneWithoutOrderItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AmpasListingUpdateToOneWithWhereWithoutOrderItemsInput, Prisma.AmpasListingUpdateWithoutOrderItemsInput>, Prisma.AmpasListingUncheckedUpdateWithoutOrderItemsInput>
 }
 
+export type AmpasListingCreateNestedManyWithoutImageAssetInput = {
+  create?: Prisma.XOR<Prisma.AmpasListingCreateWithoutImageAssetInput, Prisma.AmpasListingUncheckedCreateWithoutImageAssetInput> | Prisma.AmpasListingCreateWithoutImageAssetInput[] | Prisma.AmpasListingUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.AmpasListingCreateOrConnectWithoutImageAssetInput | Prisma.AmpasListingCreateOrConnectWithoutImageAssetInput[]
+  createMany?: Prisma.AmpasListingCreateManyImageAssetInputEnvelope
+  connect?: Prisma.AmpasListingWhereUniqueInput | Prisma.AmpasListingWhereUniqueInput[]
+}
+
+export type AmpasListingUncheckedCreateNestedManyWithoutImageAssetInput = {
+  create?: Prisma.XOR<Prisma.AmpasListingCreateWithoutImageAssetInput, Prisma.AmpasListingUncheckedCreateWithoutImageAssetInput> | Prisma.AmpasListingCreateWithoutImageAssetInput[] | Prisma.AmpasListingUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.AmpasListingCreateOrConnectWithoutImageAssetInput | Prisma.AmpasListingCreateOrConnectWithoutImageAssetInput[]
+  createMany?: Prisma.AmpasListingCreateManyImageAssetInputEnvelope
+  connect?: Prisma.AmpasListingWhereUniqueInput | Prisma.AmpasListingWhereUniqueInput[]
+}
+
+export type AmpasListingUpdateManyWithoutImageAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.AmpasListingCreateWithoutImageAssetInput, Prisma.AmpasListingUncheckedCreateWithoutImageAssetInput> | Prisma.AmpasListingCreateWithoutImageAssetInput[] | Prisma.AmpasListingUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.AmpasListingCreateOrConnectWithoutImageAssetInput | Prisma.AmpasListingCreateOrConnectWithoutImageAssetInput[]
+  upsert?: Prisma.AmpasListingUpsertWithWhereUniqueWithoutImageAssetInput | Prisma.AmpasListingUpsertWithWhereUniqueWithoutImageAssetInput[]
+  createMany?: Prisma.AmpasListingCreateManyImageAssetInputEnvelope
+  set?: Prisma.AmpasListingWhereUniqueInput | Prisma.AmpasListingWhereUniqueInput[]
+  disconnect?: Prisma.AmpasListingWhereUniqueInput | Prisma.AmpasListingWhereUniqueInput[]
+  delete?: Prisma.AmpasListingWhereUniqueInput | Prisma.AmpasListingWhereUniqueInput[]
+  connect?: Prisma.AmpasListingWhereUniqueInput | Prisma.AmpasListingWhereUniqueInput[]
+  update?: Prisma.AmpasListingUpdateWithWhereUniqueWithoutImageAssetInput | Prisma.AmpasListingUpdateWithWhereUniqueWithoutImageAssetInput[]
+  updateMany?: Prisma.AmpasListingUpdateManyWithWhereWithoutImageAssetInput | Prisma.AmpasListingUpdateManyWithWhereWithoutImageAssetInput[]
+  deleteMany?: Prisma.AmpasListingScalarWhereInput | Prisma.AmpasListingScalarWhereInput[]
+}
+
+export type AmpasListingUncheckedUpdateManyWithoutImageAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.AmpasListingCreateWithoutImageAssetInput, Prisma.AmpasListingUncheckedCreateWithoutImageAssetInput> | Prisma.AmpasListingCreateWithoutImageAssetInput[] | Prisma.AmpasListingUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.AmpasListingCreateOrConnectWithoutImageAssetInput | Prisma.AmpasListingCreateOrConnectWithoutImageAssetInput[]
+  upsert?: Prisma.AmpasListingUpsertWithWhereUniqueWithoutImageAssetInput | Prisma.AmpasListingUpsertWithWhereUniqueWithoutImageAssetInput[]
+  createMany?: Prisma.AmpasListingCreateManyImageAssetInputEnvelope
+  set?: Prisma.AmpasListingWhereUniqueInput | Prisma.AmpasListingWhereUniqueInput[]
+  disconnect?: Prisma.AmpasListingWhereUniqueInput | Prisma.AmpasListingWhereUniqueInput[]
+  delete?: Prisma.AmpasListingWhereUniqueInput | Prisma.AmpasListingWhereUniqueInput[]
+  connect?: Prisma.AmpasListingWhereUniqueInput | Prisma.AmpasListingWhereUniqueInput[]
+  update?: Prisma.AmpasListingUpdateWithWhereUniqueWithoutImageAssetInput | Prisma.AmpasListingUpdateWithWhereUniqueWithoutImageAssetInput[]
+  updateMany?: Prisma.AmpasListingUpdateManyWithWhereWithoutImageAssetInput | Prisma.AmpasListingUpdateManyWithWhereWithoutImageAssetInput[]
+  deleteMany?: Prisma.AmpasListingScalarWhereInput | Prisma.AmpasListingScalarWhereInput[]
+}
+
 export type AmpasListingCreateWithoutSellerInput = {
   id: string
   slug: string
@@ -937,6 +1003,7 @@ export type AmpasListingCreateWithoutSellerInput = {
   wholesalePricePerKgCurrency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutAmpasImagesInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutAmpasListingInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutAmpasListingInput
 }
@@ -956,6 +1023,7 @@ export type AmpasListingUncheckedCreateWithoutSellerInput = {
   status?: $Enums.AmpasListingStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   disclaimer: string
   distillationDate?: Date | string | null
   shippingOption?: string | null
@@ -1014,6 +1082,7 @@ export type AmpasListingScalarWhereInput = {
   status?: Prisma.EnumAmpasListingStatusFilter<"AmpasListing"> | $Enums.AmpasListingStatus
   imageSrc?: Prisma.StringFilter<"AmpasListing"> | string
   imageAlt?: Prisma.StringFilter<"AmpasListing"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"AmpasListing"> | string | null
   disclaimer?: Prisma.StringFilter<"AmpasListing"> | string
   distillationDate?: Prisma.DateTimeNullableFilter<"AmpasListing"> | Date | string | null
   shippingOption?: Prisma.StringNullableFilter<"AmpasListing"> | string | null
@@ -1050,6 +1119,7 @@ export type AmpasListingCreateWithoutCartItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutAmpasListingsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutAmpasImagesInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutAmpasListingInput
 }
 
@@ -1069,6 +1139,7 @@ export type AmpasListingUncheckedCreateWithoutCartItemsInput = {
   status?: $Enums.AmpasListingStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   disclaimer: string
   distillationDate?: Date | string | null
   shippingOption?: string | null
@@ -1122,6 +1193,7 @@ export type AmpasListingUpdateWithoutCartItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutAmpasListingsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutAmpasImagesNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutAmpasListingNestedInput
 }
 
@@ -1141,6 +1213,7 @@ export type AmpasListingUncheckedUpdateWithoutCartItemsInput = {
   status?: Prisma.EnumAmpasListingStatusFieldUpdateOperationsInput | $Enums.AmpasListingStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disclaimer?: Prisma.StringFieldUpdateOperationsInput | string
   distillationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingOption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1178,6 +1251,7 @@ export type AmpasListingCreateWithoutOrderItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutAmpasListingsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutAmpasImagesInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutAmpasListingInput
 }
 
@@ -1197,6 +1271,7 @@ export type AmpasListingUncheckedCreateWithoutOrderItemsInput = {
   status?: $Enums.AmpasListingStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   disclaimer: string
   distillationDate?: Date | string | null
   shippingOption?: string | null
@@ -1250,6 +1325,7 @@ export type AmpasListingUpdateWithoutOrderItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutAmpasListingsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutAmpasImagesNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutAmpasListingNestedInput
 }
 
@@ -1269,6 +1345,7 @@ export type AmpasListingUncheckedUpdateWithoutOrderItemsInput = {
   status?: Prisma.EnumAmpasListingStatusFieldUpdateOperationsInput | $Enums.AmpasListingStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disclaimer?: Prisma.StringFieldUpdateOperationsInput | string
   distillationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingOption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1279,6 +1356,90 @@ export type AmpasListingUncheckedUpdateWithoutOrderItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutAmpasListingNestedInput
+}
+
+export type AmpasListingCreateWithoutImageAssetInput = {
+  id: string
+  slug: string
+  condition: $Enums.AmpasCondition
+  quantityKg: number
+  pricePerKgAmount: number
+  pricePerKgCurrency?: string
+  locationProvince: string
+  locationCity: string
+  locationDistrict: string
+  distillationProcess: string
+  usageTags?: Prisma.AmpasListingCreateusageTagsInput | $Enums.AmpasUsageTag[]
+  status?: $Enums.AmpasListingStatus
+  imageSrc: string
+  imageAlt: string
+  disclaimer: string
+  distillationDate?: Date | string | null
+  shippingOption?: string | null
+  wholesaleEnabled?: boolean
+  wholesaleMinQtyKg?: number | null
+  wholesalePricePerKgAmount?: number | null
+  wholesalePricePerKgCurrency?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  seller: Prisma.SellerCreateNestedOneWithoutAmpasListingsInput
+  cartItems?: Prisma.CartItemCreateNestedManyWithoutAmpasListingInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutAmpasListingInput
+}
+
+export type AmpasListingUncheckedCreateWithoutImageAssetInput = {
+  id: string
+  slug: string
+  sellerId: string
+  condition: $Enums.AmpasCondition
+  quantityKg: number
+  pricePerKgAmount: number
+  pricePerKgCurrency?: string
+  locationProvince: string
+  locationCity: string
+  locationDistrict: string
+  distillationProcess: string
+  usageTags?: Prisma.AmpasListingCreateusageTagsInput | $Enums.AmpasUsageTag[]
+  status?: $Enums.AmpasListingStatus
+  imageSrc: string
+  imageAlt: string
+  disclaimer: string
+  distillationDate?: Date | string | null
+  shippingOption?: string | null
+  wholesaleEnabled?: boolean
+  wholesaleMinQtyKg?: number | null
+  wholesalePricePerKgAmount?: number | null
+  wholesalePricePerKgCurrency?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutAmpasListingInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutAmpasListingInput
+}
+
+export type AmpasListingCreateOrConnectWithoutImageAssetInput = {
+  where: Prisma.AmpasListingWhereUniqueInput
+  create: Prisma.XOR<Prisma.AmpasListingCreateWithoutImageAssetInput, Prisma.AmpasListingUncheckedCreateWithoutImageAssetInput>
+}
+
+export type AmpasListingCreateManyImageAssetInputEnvelope = {
+  data: Prisma.AmpasListingCreateManyImageAssetInput | Prisma.AmpasListingCreateManyImageAssetInput[]
+  skipDuplicates?: boolean
+}
+
+export type AmpasListingUpsertWithWhereUniqueWithoutImageAssetInput = {
+  where: Prisma.AmpasListingWhereUniqueInput
+  update: Prisma.XOR<Prisma.AmpasListingUpdateWithoutImageAssetInput, Prisma.AmpasListingUncheckedUpdateWithoutImageAssetInput>
+  create: Prisma.XOR<Prisma.AmpasListingCreateWithoutImageAssetInput, Prisma.AmpasListingUncheckedCreateWithoutImageAssetInput>
+}
+
+export type AmpasListingUpdateWithWhereUniqueWithoutImageAssetInput = {
+  where: Prisma.AmpasListingWhereUniqueInput
+  data: Prisma.XOR<Prisma.AmpasListingUpdateWithoutImageAssetInput, Prisma.AmpasListingUncheckedUpdateWithoutImageAssetInput>
+}
+
+export type AmpasListingUpdateManyWithWhereWithoutImageAssetInput = {
+  where: Prisma.AmpasListingScalarWhereInput
+  data: Prisma.XOR<Prisma.AmpasListingUpdateManyMutationInput, Prisma.AmpasListingUncheckedUpdateManyWithoutImageAssetInput>
 }
 
 export type AmpasListingCreateManySellerInput = {
@@ -1296,6 +1457,7 @@ export type AmpasListingCreateManySellerInput = {
   status?: $Enums.AmpasListingStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   disclaimer: string
   distillationDate?: Date | string | null
   shippingOption?: string | null
@@ -1331,6 +1493,7 @@ export type AmpasListingUpdateWithoutSellerInput = {
   wholesalePricePerKgCurrency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutAmpasImagesNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutAmpasListingNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutAmpasListingNestedInput
 }
@@ -1338,6 +1501,119 @@ export type AmpasListingUpdateWithoutSellerInput = {
 export type AmpasListingUncheckedUpdateWithoutSellerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  condition?: Prisma.EnumAmpasConditionFieldUpdateOperationsInput | $Enums.AmpasCondition
+  quantityKg?: Prisma.IntFieldUpdateOperationsInput | number
+  pricePerKgAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  pricePerKgCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  locationProvince?: Prisma.StringFieldUpdateOperationsInput | string
+  locationCity?: Prisma.StringFieldUpdateOperationsInput | string
+  locationDistrict?: Prisma.StringFieldUpdateOperationsInput | string
+  distillationProcess?: Prisma.StringFieldUpdateOperationsInput | string
+  usageTags?: Prisma.AmpasListingUpdateusageTagsInput | $Enums.AmpasUsageTag[]
+  status?: Prisma.EnumAmpasListingStatusFieldUpdateOperationsInput | $Enums.AmpasListingStatus
+  imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  disclaimer?: Prisma.StringFieldUpdateOperationsInput | string
+  distillationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  shippingOption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wholesaleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wholesaleMinQtyKg?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wholesalePricePerKgAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wholesalePricePerKgCurrency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutAmpasListingNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutAmpasListingNestedInput
+}
+
+export type AmpasListingUncheckedUpdateManyWithoutSellerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  condition?: Prisma.EnumAmpasConditionFieldUpdateOperationsInput | $Enums.AmpasCondition
+  quantityKg?: Prisma.IntFieldUpdateOperationsInput | number
+  pricePerKgAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  pricePerKgCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  locationProvince?: Prisma.StringFieldUpdateOperationsInput | string
+  locationCity?: Prisma.StringFieldUpdateOperationsInput | string
+  locationDistrict?: Prisma.StringFieldUpdateOperationsInput | string
+  distillationProcess?: Prisma.StringFieldUpdateOperationsInput | string
+  usageTags?: Prisma.AmpasListingUpdateusageTagsInput | $Enums.AmpasUsageTag[]
+  status?: Prisma.EnumAmpasListingStatusFieldUpdateOperationsInput | $Enums.AmpasListingStatus
+  imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  disclaimer?: Prisma.StringFieldUpdateOperationsInput | string
+  distillationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  shippingOption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wholesaleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wholesaleMinQtyKg?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wholesalePricePerKgAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wholesalePricePerKgCurrency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AmpasListingCreateManyImageAssetInput = {
+  id: string
+  slug: string
+  sellerId: string
+  condition: $Enums.AmpasCondition
+  quantityKg: number
+  pricePerKgAmount: number
+  pricePerKgCurrency?: string
+  locationProvince: string
+  locationCity: string
+  locationDistrict: string
+  distillationProcess: string
+  usageTags?: Prisma.AmpasListingCreateusageTagsInput | $Enums.AmpasUsageTag[]
+  status?: $Enums.AmpasListingStatus
+  imageSrc: string
+  imageAlt: string
+  disclaimer: string
+  distillationDate?: Date | string | null
+  shippingOption?: string | null
+  wholesaleEnabled?: boolean
+  wholesaleMinQtyKg?: number | null
+  wholesalePricePerKgAmount?: number | null
+  wholesalePricePerKgCurrency?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AmpasListingUpdateWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  condition?: Prisma.EnumAmpasConditionFieldUpdateOperationsInput | $Enums.AmpasCondition
+  quantityKg?: Prisma.IntFieldUpdateOperationsInput | number
+  pricePerKgAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  pricePerKgCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  locationProvince?: Prisma.StringFieldUpdateOperationsInput | string
+  locationCity?: Prisma.StringFieldUpdateOperationsInput | string
+  locationDistrict?: Prisma.StringFieldUpdateOperationsInput | string
+  distillationProcess?: Prisma.StringFieldUpdateOperationsInput | string
+  usageTags?: Prisma.AmpasListingUpdateusageTagsInput | $Enums.AmpasUsageTag[]
+  status?: Prisma.EnumAmpasListingStatusFieldUpdateOperationsInput | $Enums.AmpasListingStatus
+  imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  disclaimer?: Prisma.StringFieldUpdateOperationsInput | string
+  distillationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  shippingOption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wholesaleEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wholesaleMinQtyKg?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wholesalePricePerKgAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  wholesalePricePerKgCurrency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  seller?: Prisma.SellerUpdateOneRequiredWithoutAmpasListingsNestedInput
+  cartItems?: Prisma.CartItemUpdateManyWithoutAmpasListingNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutAmpasListingNestedInput
+}
+
+export type AmpasListingUncheckedUpdateWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  sellerId?: Prisma.StringFieldUpdateOperationsInput | string
   condition?: Prisma.EnumAmpasConditionFieldUpdateOperationsInput | $Enums.AmpasCondition
   quantityKg?: Prisma.IntFieldUpdateOperationsInput | number
   pricePerKgAmount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1363,9 +1639,10 @@ export type AmpasListingUncheckedUpdateWithoutSellerInput = {
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutAmpasListingNestedInput
 }
 
-export type AmpasListingUncheckedUpdateManyWithoutSellerInput = {
+export type AmpasListingUncheckedUpdateManyWithoutImageAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  sellerId?: Prisma.StringFieldUpdateOperationsInput | string
   condition?: Prisma.EnumAmpasConditionFieldUpdateOperationsInput | $Enums.AmpasCondition
   quantityKg?: Prisma.IntFieldUpdateOperationsInput | number
   pricePerKgAmount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1445,6 +1722,7 @@ export type AmpasListingSelect<ExtArgs extends runtime.Types.Extensions.Internal
   status?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
   disclaimer?: boolean
   distillationDate?: boolean
   shippingOption?: boolean
@@ -1455,6 +1733,7 @@ export type AmpasListingSelect<ExtArgs extends runtime.Types.Extensions.Internal
   createdAt?: boolean
   updatedAt?: boolean
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.AmpasListing$imageAssetArgs<ExtArgs>
   cartItems?: boolean | Prisma.AmpasListing$cartItemsArgs<ExtArgs>
   orderItems?: boolean | Prisma.AmpasListing$orderItemsArgs<ExtArgs>
   _count?: boolean | Prisma.AmpasListingCountOutputTypeDefaultArgs<ExtArgs>
@@ -1476,6 +1755,7 @@ export type AmpasListingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   status?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
   disclaimer?: boolean
   distillationDate?: boolean
   shippingOption?: boolean
@@ -1486,6 +1766,7 @@ export type AmpasListingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   updatedAt?: boolean
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.AmpasListing$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["ampasListing"]>
 
 export type AmpasListingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1504,6 +1785,7 @@ export type AmpasListingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   status?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
   disclaimer?: boolean
   distillationDate?: boolean
   shippingOption?: boolean
@@ -1514,6 +1796,7 @@ export type AmpasListingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   updatedAt?: boolean
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.AmpasListing$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["ampasListing"]>
 
 export type AmpasListingSelectScalar = {
@@ -1532,6 +1815,7 @@ export type AmpasListingSelectScalar = {
   status?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
   disclaimer?: boolean
   distillationDate?: boolean
   shippingOption?: boolean
@@ -1543,24 +1827,28 @@ export type AmpasListingSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AmpasListingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "sellerId" | "condition" | "quantityKg" | "pricePerKgAmount" | "pricePerKgCurrency" | "locationProvince" | "locationCity" | "locationDistrict" | "distillationProcess" | "usageTags" | "status" | "imageSrc" | "imageAlt" | "disclaimer" | "distillationDate" | "shippingOption" | "wholesaleEnabled" | "wholesaleMinQtyKg" | "wholesalePricePerKgAmount" | "wholesalePricePerKgCurrency" | "createdAt" | "updatedAt", ExtArgs["result"]["ampasListing"]>
+export type AmpasListingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "sellerId" | "condition" | "quantityKg" | "pricePerKgAmount" | "pricePerKgCurrency" | "locationProvince" | "locationCity" | "locationDistrict" | "distillationProcess" | "usageTags" | "status" | "imageSrc" | "imageAlt" | "imageAssetId" | "disclaimer" | "distillationDate" | "shippingOption" | "wholesaleEnabled" | "wholesaleMinQtyKg" | "wholesalePricePerKgAmount" | "wholesalePricePerKgCurrency" | "createdAt" | "updatedAt", ExtArgs["result"]["ampasListing"]>
 export type AmpasListingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.AmpasListing$imageAssetArgs<ExtArgs>
   cartItems?: boolean | Prisma.AmpasListing$cartItemsArgs<ExtArgs>
   orderItems?: boolean | Prisma.AmpasListing$orderItemsArgs<ExtArgs>
   _count?: boolean | Prisma.AmpasListingCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AmpasListingIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.AmpasListing$imageAssetArgs<ExtArgs>
 }
 export type AmpasListingIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.AmpasListing$imageAssetArgs<ExtArgs>
 }
 
 export type $AmpasListingPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AmpasListing"
   objects: {
     seller: Prisma.$SellerPayload<ExtArgs>
+    imageAsset: Prisma.$UploadedAssetPayload<ExtArgs> | null
     cartItems: Prisma.$CartItemPayload<ExtArgs>[]
     orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
   }
@@ -1580,6 +1868,7 @@ export type $AmpasListingPayload<ExtArgs extends runtime.Types.Extensions.Intern
     status: $Enums.AmpasListingStatus
     imageSrc: string
     imageAlt: string
+    imageAssetId: string | null
     disclaimer: string
     distillationDate: Date | null
     shippingOption: string | null
@@ -1984,6 +2273,7 @@ readonly fields: AmpasListingFieldRefs;
 export interface Prisma__AmpasListingClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   seller<T extends Prisma.SellerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SellerDefaultArgs<ExtArgs>>): Prisma.Prisma__SellerClient<runtime.Types.Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  imageAsset<T extends Prisma.AmpasListing$imageAssetArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AmpasListing$imageAssetArgs<ExtArgs>>): Prisma.Prisma__UploadedAssetClient<runtime.Types.Result.GetResult<Prisma.$UploadedAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   cartItems<T extends Prisma.AmpasListing$cartItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AmpasListing$cartItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orderItems<T extends Prisma.AmpasListing$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AmpasListing$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2030,6 +2320,7 @@ export interface AmpasListingFieldRefs {
   readonly status: Prisma.FieldRef<"AmpasListing", 'AmpasListingStatus'>
   readonly imageSrc: Prisma.FieldRef<"AmpasListing", 'String'>
   readonly imageAlt: Prisma.FieldRef<"AmpasListing", 'String'>
+  readonly imageAssetId: Prisma.FieldRef<"AmpasListing", 'String'>
   readonly disclaimer: Prisma.FieldRef<"AmpasListing", 'String'>
   readonly distillationDate: Prisma.FieldRef<"AmpasListing", 'DateTime'>
   readonly shippingOption: Prisma.FieldRef<"AmpasListing", 'String'>
@@ -2437,6 +2728,25 @@ export type AmpasListingDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many AmpasListings to delete.
    */
   limit?: number
+}
+
+/**
+ * AmpasListing.imageAsset
+ */
+export type AmpasListing$imageAssetArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UploadedAsset
+   */
+  select?: Prisma.UploadedAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UploadedAsset
+   */
+  omit?: Prisma.UploadedAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UploadedAssetInclude<ExtArgs> | null
+  where?: Prisma.UploadedAssetWhereInput
 }
 
 /**
