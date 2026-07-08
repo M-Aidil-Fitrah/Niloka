@@ -2,13 +2,7 @@ import { LandingMotion } from "@/components/landing/landing-motion";
 import { SiteFooter } from "@/components/ui/footer";
 import { SiteNavbar } from "@/components/ui/navbar";
 import { BackToTop } from "@/components/ui/back-to-top";
-import {
-  bestSellerProducts,
-  categoryTiles,
-  circularUses,
-  passportItems,
-  storyMetrics,
-} from "@/lib/landing-data";
+import { getLandingPageData } from "@/lib/landing-data";
 
 // Import sections
 import { HeroSection } from "@/components/landing/sections/hero-section";
@@ -20,7 +14,17 @@ import { CircularSection } from "@/components/landing/sections/circular-section"
 import { NewArrivalsSection } from "@/components/landing/sections/new-arrivals-section";
 import { TrustSection } from "@/components/landing/sections/trust-section";
 
-export default function Home() {
+export default async function Home() {
+  const {
+    bestSellerProducts,
+    categoryTiles,
+    circularUses,
+    newArrivalProducts,
+    passportItems,
+    reviews,
+    storyMetrics,
+  } = await getLandingPageData();
+
   return (
     <LandingMotion>
       <main className="min-h-screen overflow-hidden bg-cream-50 text-ink-900" id="top">
@@ -45,11 +49,11 @@ export default function Home() {
         </section>
 
         {/* New Arrival Section */}
-        <NewArrivalsSection />
+        <NewArrivalsSection products={newArrivalProducts} />
 
 
         {/* Trust/Review Strip */}
-        <TrustSection />
+        <TrustSection reviews={reviews} />
 
         <SiteFooter />
 

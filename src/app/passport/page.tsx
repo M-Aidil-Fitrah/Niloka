@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getPublishedProducts, getPassports } from "@/lib/mock-queries";
+import {
+  getPassportsDto,
+  getPublishedProductsDto,
+} from "@/lib/dal/marketplace";
 import { SectionShell } from "@/components/ui/section-shell";
 import { PassportSkeleton } from "@/components/ui/skeletons";
 
@@ -18,9 +21,11 @@ export const metadata: Metadata = {
   description: "Cari dan verifikasi keaslian serta transparansi asal bahan baku minyak nilam Aceh untuk produk kecantikan, kesehatan, dan wewangian Anda.",
 };
 
-export default function PassportPage() {
-  const products = getPublishedProducts();
-  const passports = getPassports();
+export default async function PassportPage() {
+  const [products, passports] = await Promise.all([
+    getPublishedProductsDto(),
+    getPassportsDto(),
+  ]);
 
   return (
     <SectionShell

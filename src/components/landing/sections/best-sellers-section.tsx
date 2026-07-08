@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CartIcon } from "@/components/ui/icons";
-import type { ProductCard } from "@/lib/landing-data";
+import type { ProductCard } from "@/lib/landing-types";
 
 type BestSellersSectionProps = {
   products: ProductCard[];

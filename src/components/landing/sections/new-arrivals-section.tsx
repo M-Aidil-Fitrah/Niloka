@@ -3,23 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CartIcon } from "@/components/ui/icons";
-import { getPublishedProducts } from "@/lib/mock-queries";
-import { formatRupiah } from "@/lib/formatters";
+import type { ProductCard } from "@/lib/landing-types";
 
-export function NewArrivalsSection() {
-  const newArrivals = getPublishedProducts()
-    .filter((product) => product.tags.includes("new-arrival"))
-    .map((product) => ({
-      id: product.id,
-      name: product.name,
-      tag: "New arrival",
-      price: formatRupiah(product.price.amount),
-      originalPrice: product.originalPrice ? formatRupiah(product.originalPrice.amount) : undefined,
-      imageUrl: product.image.src,
-      imageAlt: product.image.alt,
-    }));
+type NewArrivalsSectionProps = {
+  products: ProductCard[];
+};
 
-  if (newArrivals.length === 0) {
+export function NewArrivalsSection({ products }: NewArrivalsSectionProps) {
+  if (products.length === 0) {
     return null;
   }
 
@@ -39,7 +30,7 @@ export function NewArrivalsSection() {
       </div>
 
       <div className="product-grid grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {newArrivals.map((product) => (
+        {products.map((product) => (
           <Card className="product-card overflow-hidden" key={product.id}>
             <div className="relative aspect-[4/3] bg-cream-100">
               <Image

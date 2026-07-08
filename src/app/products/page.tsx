@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getPublishedProducts, getProductCategories } from "@/lib/mock-queries";
+import {
+  getProductCategoriesDto,
+  getPublicPromoSuggestionsDto,
+  getPublishedProductsDto,
+} from "@/lib/dal/marketplace";
 import { SectionShell } from "@/components/ui/section-shell";
 import { CatalogSkeleton } from "@/components/ui/skeletons";
 
@@ -18,9 +22,12 @@ export const metadata: Metadata = {
   description: "Jelajahi produk turunan minyak nilam Aceh berkualitas tinggi, mulai dari minyak atsiri murni, roll-on aromaterapi, sabun artisan, hingga lilin wangi alami.",
 };
 
-export default function ProductsPage() {
-  const products = getPublishedProducts();
-  const categories = getProductCategories();
+export default async function ProductsPage() {
+  const [products, categories, promos] = await Promise.all([
+    getPublishedProductsDto(),
+    getProductCategoriesDto(),
+    getPublicPromoSuggestionsDto(),
+  ]);
 
   return (
     <SectionShell
@@ -32,6 +39,7 @@ export default function ProductsPage() {
         <CatalogShell
           products={products}
           categories={categories}
+          promos={promos}
         />
       </div>
     </SectionShell>
