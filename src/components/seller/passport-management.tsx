@@ -6,6 +6,8 @@ import type { NilamPassport, Product, ProductFunction } from "@/lib/contracts";
 import { showToast } from "../dashboard/dashboard-layout";
 import { PassportTable } from "./passport/passport-table";
 import { PassportDrawer } from "./passport/passport-drawer";
+import { useAuth } from "@/context/auth-context";
+import { savePassportAction, getSellerPassportsAction } from "@/lib/actions/passport-actions";
 
 type PassportManagementProps = {
   products: Product[];
@@ -15,22 +17,21 @@ export function PassportManagement({ products }: PassportManagementProps) {
   const [passports, setPassports] = useState<NilamPassport[]>([]);
   const [activePassport, setActivePassport] = useState<NilamPassport | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentSellerId, setCurrentSellerId] = useState("seller-aceh-aroma");
+  const { user } = useAuth();
+
+  const currentSellerId = user?.sellerId || "seller-aceh-aroma";
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("niloka_passports");
-      const user = localStorage.getItem("niloka_current_user");
-      setTimeout(() => {
-        if (stored) {
-          setPassports(JSON.parse(stored));
-        }
-        if (user && user !== "buyer") {
-          setCurrentSellerId(user);
-        }
-      }, 0);
+    if (user?.sellerId) {
+      getSellerPassportsAction()
+        .then((data) => {
+          setPassports(data);
+        })
+        .catch((err) => {
+          console.error("Failed to load seller passports", err);
+        });
     }
-  }, []);
+  }, [user]);
 
   // Filter products by seller and then filter passports matching those products
   const sellerProductIds = products.filter((p) => p.sellerId === currentSellerId).map((p) => p.id);
@@ -85,14 +86,26 @@ export function PassportManagement({ products }: PassportManagementProps) {
 
   const handleSave = () => {
     if (!activePassport) return;
-    const updated = passports.map((p) => (p.id === activePassport.id ? activePassport : p));
-    setPassports(updated);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("niloka_passports", JSON.stringify(updated));
-    }
-    setIsEditing(false);
-    setActivePassport(null);
-    showToast("Nilam Passport berhasil diperbarui!", "success");
+
+    // Set validationStatus temporarily to pending-review in optimistic UI update
+    const updatedPassport = {
+      ...activePassport,
+      validationStatus: "pending-review" as const,
+    };
+
+    savePassportAction(updatedPassport).then((res) => {
+      if (res.ok) {
+        setPassports(passports.map((p) => (p.id === updatedPassport.id ? updatedPassport : p)));
+        setIsEditing(false);
+        setActivePassport(null);
+        showToast("Nilam Passport berhasil diajukan untuk peninjauan!", "success");
+      } else {
+        showToast(res.message, "error");
+      }
+    }).catch((err) => {
+      console.error(err);
+      showToast("Gagal mengajukan Nilam Passport.", "error");
+    });
   };
 
   return (

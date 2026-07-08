@@ -6,6 +6,8 @@ import type { Promo, PromoStatus, Product } from "@/lib/contracts";
 import { showToast } from "../dashboard/dashboard-layout";
 import { PromoTable } from "./promo/promo-table";
 import { PromoDrawer } from "./promo/promo-drawer";
+import { useAuth } from "@/context/auth-context";
+import { savePromoAction, deletePromoAction } from "@/lib/actions/promo-actions";
 
 type PromoManagementProps = {
   promos: Promo[];
@@ -17,22 +19,14 @@ export function PromoManagement({ promos: initialPromos, products = [] }: PromoM
   const [isEditing, setIsEditing] = useState(false);
   const [activePromo, setActivePromo] = useState<Partial<Promo> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentSellerId, setCurrentSellerId] = useState("seller-aceh-aroma");
+  const { user } = useAuth();
+
+  const currentSellerId = user?.sellerId || "seller-aceh-aroma";
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("niloka_promos");
-      const user = localStorage.getItem("niloka_current_user");
-      setTimeout(() => {
-        if (stored) {
-          setPromos(JSON.parse(stored));
-        }
-        if (user && user !== "buyer") {
-          setCurrentSellerId(user);
-        }
-      }, 0);
-    }
-  }, []);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPromos(initialPromos);
+  }, [initialPromos]);
   
   const itemsPerPage = 6;
   const sellerPromos = promos.filter((p) => p.sellerId === currentSellerId);
@@ -77,17 +71,23 @@ export function PromoManagement({ promos: initialPromos, products = [] }: PromoM
   };
 
   const handleDelete = (id: string) => {
-    const filtered = promos.filter((p) => p.id !== id);
-    setPromos(filtered);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("niloka_promos", JSON.stringify(filtered));
-    }
-    const filteredSellerPromos = filtered.filter((p) => p.sellerId === currentSellerId);
-    const newTotalPages = Math.ceil(filteredSellerPromos.length / itemsPerPage);
-    if (currentPage > newTotalPages && newTotalPages > 0) {
-      setCurrentPage(newTotalPages);
-    }
-    showToast("Voucher promo berhasil dinonaktifkan.", "success");
+    deletePromoAction(id).then((res) => {
+      if (res.ok) {
+        const filtered = promos.filter((p) => p.id !== id);
+        setPromos(filtered);
+        const filteredSellerPromos = filtered.filter((p) => p.sellerId === currentSellerId);
+        const newTotalPages = Math.ceil(filteredSellerPromos.length / itemsPerPage);
+        if (currentPage > newTotalPages && newTotalPages > 0) {
+          setCurrentPage(newTotalPages);
+        }
+        showToast("Voucher promo berhasil dinonaktifkan.", "success");
+      } else {
+        showToast(res.message, "error");
+      }
+    }).catch((err) => {
+      console.error(err);
+      showToast("Gagal menghapus promo.", "error");
+    });
   };
 
   const handleGenerateCode = () => {
@@ -120,20 +120,24 @@ export function PromoManagement({ promos: initialPromos, products = [] }: PromoM
       status: calculatedStatus,
     } as Promo;
 
-    let updatedPromos: Promo[] = [];
-    if (promos.some((p) => p.id === updated.id)) {
-      updatedPromos = promos.map((p) => (p.id === updated.id ? updated : p));
-    } else {
-      updatedPromos = [updated, ...promos];
-      setCurrentPage(1);
-    }
-    setPromos(updatedPromos);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("niloka_promos", JSON.stringify(updatedPromos));
-    }
-    setIsEditing(false);
-    setActivePromo(null);
-    showToast("Voucher promo berhasil disimpan!", "success");
+    savePromoAction(updated).then((res) => {
+      if (res.ok) {
+        if (promos.some((p) => p.id === updated.id)) {
+          setPromos(promos.map((p) => (p.id === updated.id ? updated : p)));
+        } else {
+          setPromos([updated, ...promos]);
+          setCurrentPage(1);
+        }
+        setIsEditing(false);
+        setActivePromo(null);
+        showToast("Voucher promo berhasil disimpan!", "success");
+      } else {
+        showToast(res.message, "error");
+      }
+    }).catch((err) => {
+      console.error(err);
+      showToast("Gagal menyimpan voucher promo.", "error");
+    });
   };
 
   return (

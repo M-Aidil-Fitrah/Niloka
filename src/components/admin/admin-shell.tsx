@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LayoutDashboard, ClipboardCheck, FileText, CheckCircle2, XCircle } from "lucide-react";
 import { DashboardShell, DashboardSidebar, DashboardTopbar } from "../dashboard/dashboard-layout";
 import { AdminStats } from "./admin-stats";
@@ -8,6 +8,7 @@ import { ValidationTable } from "./validation-table";
 import { ReviewModal } from "./review-modal";
 import type { AdminValidationItem, Seller } from "@/lib/contracts";
 import { useAuth } from "@/context/auth-context";
+import { approveValidationAction, rejectValidationAction, getAuditLogsAction } from "@/lib/actions/admin-actions";
 
 type AdminShellProps = {
   validationItems: AdminValidationItem[];
@@ -18,7 +19,14 @@ export function AdminShell({ validationItems: initialItems, sellers }: AdminShel
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [validationItems, setValidationItems] = useState<AdminValidationItem[]>(initialItems);
+  const [auditLogs, setAuditLogs] = useState<{ id: string; userId: string | null; action: string; target: string; targetId: string; metadata: string; createdAt: string }[]>([]);
   const { user } = useAuth();
+
+  // Sync initial items
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setValidationItems(initialItems);
+  }, [initialItems]);
 
   // Review modal state
   const [selectedItem, setSelectedItem] = useState<AdminValidationItem | null>(null);
@@ -32,6 +40,19 @@ export function AdminShell({ validationItems: initialItems, sellers }: AdminShel
     { id: "moderation", label: "Antrean Moderasi", icon: ClipboardCheck, count: queuedCount },
     { id: "logs", label: "Log Audit", icon: FileText },
   ];
+
+  // Fetch audit logs dynamically when tab changes to logs
+  useEffect(() => {
+    if (activeTab === "logs") {
+      getAuditLogsAction()
+        .then((logs) => {
+          setAuditLogs(logs);
+        })
+        .catch((err) => {
+          console.error("Failed to load audit logs", err);
+        });
+    }
+  }, [activeTab]);
 
   // Map active tab to current panel component
   const renderContent = () => {
@@ -60,38 +81,44 @@ export function AdminShell({ validationItems: initialItems, sellers }: AdminShel
               <p className="text-xs text-ink-600 mt-1">Aktivitas verifikasi dan moderasi batch panen terakhir</p>
             </div>
             <div className="space-y-4">
-              <div className="flex gap-4 items-start text-xs pb-3 border-b border-line/35">
-                <div className="p-2 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl shrink-0">
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-                <div className="space-y-0.5">
-                  <p className="font-extrabold text-brand-950">Menerbitkan Kode Batch NLK-LHG-981</p>
-                  <p className="text-ink-600 text-[11px]">Validasi Nilam Passport &quot;Essential Oil Nilam Super&quot; oleh Admin UPTD</p>
-                  <span className="text-[10px] font-bold text-ink-500 block pt-1">6 Juli 2026, 14:32</span>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start text-xs pb-3 border-b border-line/35">
-                <div className="p-2 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl shrink-0">
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-                <div className="space-y-0.5">
-                  <p className="font-extrabold text-brand-950">Verifikasi Mitra Baru &quot;Mulia Atsiri Aceh&quot;</p>
-                  <p className="text-ink-600 text-[11px]">Pemeriksaan dokumen izin usaha mikro disetujui</p>
-                  <span className="text-[10px] font-bold text-ink-500 block pt-1">5 Juli 2026, 09:15</span>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start text-xs">
-                <div className="p-2 bg-red-50 text-red-800 border border-red-200 rounded-xl shrink-0">
-                  <XCircle className="h-4 w-4" />
-                </div>
-                <div className="space-y-0.5">
-                  <p className="font-extrabold text-brand-950">Penolakan Listing B2B Ampas Sulingan</p>
-                  <p className="text-ink-600 text-[11px]">Penyuling Acehara terindikasi mengklaim khasiat medis berlebih di deskripsi</p>
-                  <span className="text-[10px] font-bold text-ink-500 block pt-1">4 Juli 2026, 11:20</span>
-                </div>
-              </div>
+              {auditLogs.length === 0 ? (
+                <div className="text-xs text-ink-500 py-4 text-center">Belum ada aktivitas audit log yang tercatat.</div>
+              ) : (
+                auditLogs.map((log) => {
+                  const isReject = log.action.includes("REJECT") || log.action.includes("DELETE");
+                  return (
+                    <div key={log.id} className="flex gap-4 items-start text-xs pb-3 border-b border-line/35">
+                      <div className={`p-2 border rounded-xl shrink-0 ${
+                        isReject 
+                          ? "bg-red-50 text-red-800 border-red-200" 
+                          : "bg-emerald-50 text-emerald-800 border-emerald-200"
+                      }`}>
+                        {isReject ? <XCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                      </div>
+                      <div className="space-y-0.5">
+                        <p className="font-extrabold text-brand-950 uppercase">{log.action.replace(/_/g, " ")}</p>
+                        <p className="text-ink-600 text-[11px] leading-relaxed">
+                          Target: <strong className="text-brand-950 font-bold">{log.target}</strong> (ID: {log.targetId})
+                        </p>
+                        {log.metadata && (
+                          <pre className="text-[10px] text-ink-500 font-mono bg-cream-50/50 p-1.5 rounded-lg max-w-full overflow-x-auto mt-1 whitespace-pre-wrap leading-tight">
+                            {log.metadata}
+                          </pre>
+                        )}
+                        <span className="text-[10px] font-bold text-ink-500 block pt-1">
+                          {new Date(log.createdAt).toLocaleString("id-ID", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         );
@@ -114,20 +141,32 @@ export function AdminShell({ validationItems: initialItems, sellers }: AdminShel
   };
 
   const handleApprove = (id: string, notes: string) => {
-    setValidationItems(
-      validationItems.map((item) =>
-        item.id === id ? { ...item, status: "approved", notes: notes || item.notes } : item
-      )
-    );
+    approveValidationAction(id, notes).then((res) => {
+      if (res.ok) {
+        setValidationItems(
+          validationItems.map((item) =>
+            item.id === id ? { ...item, status: "approved", notes: notes || item.notes } : item
+          )
+        );
+      }
+    }).catch((err) => {
+      console.error(err);
+    });
     setSelectedItem(null);
   };
 
   const handleReject = (id: string, notes: string) => {
-    setValidationItems(
-      validationItems.map((item) =>
-        item.id === id ? { ...item, status: "rejected", notes: notes || item.notes } : item
-      )
-    );
+    rejectValidationAction(id, notes).then((res) => {
+      if (res.ok) {
+        setValidationItems(
+          validationItems.map((item) =>
+            item.id === id ? { ...item, status: "rejected", notes: notes || item.notes } : item
+          )
+        );
+      }
+    }).catch((err) => {
+      console.error(err);
+    });
     setSelectedItem(null);
   };
 

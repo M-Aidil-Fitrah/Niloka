@@ -1,15 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/context/auth-context";
-import {
-  getPromosForSeller,
-  getPublishedProducts,
-} from "@/lib/mock-queries";
 import { getSellerAmpasListingsAction } from "@/lib/actions/ampas-actions";
-import type { AmpasListing } from "@/lib/contracts";
+import { getSellerProductsAction } from "@/lib/actions/product-actions";
+import { getSellerPromosAction } from "@/lib/actions/promo-actions";
+import type { AmpasListing, Product, Promo } from "@/lib/contracts";
 import { SellerDashboardSkeleton } from "@/components/ui/skeletons";
 
 const SellerDashboardShell = dynamic(
@@ -25,6 +23,8 @@ export default function SellerPage() {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [ampasListings, setAmpasListings] = useState<AmpasListing[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [promos, setPromos] = useState<Promo[]>([]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -42,6 +42,7 @@ export default function SellerPage() {
 
   useEffect(() => {
     if (isAuthorized && user?.sellerId) {
+      // Fetch ampas listings
       getSellerAmpasListingsAction()
         .then((data) => {
           setAmpasListings(data);
@@ -49,19 +50,30 @@ export default function SellerPage() {
         .catch((err) => {
           console.error("Failed to load seller ampas listings", err);
         });
+
+      // Fetch products
+      getSellerProductsAction()
+        .then((data) => {
+          setProducts(data);
+        })
+        .catch((err) => {
+          console.error("Failed to load seller products", err);
+        });
+
+      // Fetch promos
+      getSellerPromosAction()
+        .then((data) => {
+          setPromos(data);
+        })
+        .catch((err) => {
+          console.error("Failed to load seller promos", err);
+        });
     }
   }, [isAuthorized, user]);
 
   if (isLoading || !isAuthorized || !user) {
     return <SellerDashboardSkeleton />;
   }
-
-  // Filter products, promos dynamically for the logged-in seller
-  const sellerId = user.sellerId || "seller-aceh-aroma";
-  const allProducts = getPublishedProducts();
-
-  const products = allProducts.filter((p) => p.sellerId === sellerId);
-  const promos = getPromosForSeller(sellerId);
 
   return (
     <SellerDashboardShell
