@@ -4,6 +4,8 @@ import { SiteNavbar } from "@/components/ui/navbar";
 import { BackToTop } from "@/components/ui/back-to-top";
 import { getLandingPageData } from "@/lib/landing-data";
 
+export const dynamic = "force-dynamic";
+
 // Import sections
 import { HeroSection } from "@/components/landing/sections/hero-section";
 import { CategorySection } from "@/components/landing/sections/category-section";

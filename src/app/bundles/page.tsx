@@ -1,8 +1,10 @@
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import { getPublishedProducts, getBundles, getSellers } from "@/lib/mock-queries";
 import { BundleSkeleton } from "@/components/ui/skeletons";
 
-const BundleShell = dynamic(
+export const dynamic = "force-dynamic";
+
+const BundleShell = nextDynamic(
   () => import("@/components/catalog/bundle-shell").then((mod) => mod.BundleShell),
   {
     loading: () => <BundleSkeleton />,

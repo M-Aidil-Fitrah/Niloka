@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import { getActiveAmpasListingsDto } from "@/lib/dal/marketplace";
 import { SectionShell } from "@/components/ui/section-shell";
 import { AmpasSkeleton } from "@/components/ui/skeletons";
 
+export const dynamic = "force-dynamic";
+
 // Lazy load AmpasShell with SSR enabled for B2B SEO indexation
-const AmpasShell = dynamic(
+const AmpasShell = nextDynamic(
   () => import("@/components/ampas/ampas-shell").then((m) => m.AmpasShell),
   {
     loading: () => <AmpasSkeleton />,
