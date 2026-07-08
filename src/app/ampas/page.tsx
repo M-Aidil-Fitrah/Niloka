@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getActiveAmpasListings } from "@/lib/mock-queries";
+import { getActiveAmpasListingsDto } from "@/lib/dal/marketplace";
 import { SectionShell } from "@/components/ui/section-shell";
 import { AmpasSkeleton } from "@/components/ui/skeletons";
 
@@ -18,8 +18,8 @@ export const metadata: Metadata = {
   description: "Marketplace B2B ampas penyulingan minyak nilam Aceh. Temukan biomasa kering atau kompos basah berkualitas sisa penyulingan untuk kebutuhan industri, briket, dan kompos.",
 };
 
-export default function AmpasPage() {
-  const listings = getActiveAmpasListings();
+export default async function AmpasPage() {
+  const listings = await getActiveAmpasListingsDto();
 
   return (
     <SectionShell
@@ -33,3 +33,4 @@ export default function AmpasPage() {
     </SectionShell>
   );
 }
+

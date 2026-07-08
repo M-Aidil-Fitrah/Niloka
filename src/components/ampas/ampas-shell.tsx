@@ -21,18 +21,13 @@ const usageFilters = [
 ];
 
 export function AmpasShell({ listings }: AmpasShellProps) {
-  const [localListings, setLocalListings] = useState<AmpasListing[]>(listings);
+  const localListings = listings;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("niloka_ampas_listings");
-      setTimeout(() => {
-        if (stored) {
-          setLocalListings(JSON.parse(stored));
-        }
-      }, 0);
+      localStorage.setItem("niloka_ampas_listings", JSON.stringify(listings));
     }
-  }, []);
+  }, [listings]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCondition, setSelectedCondition] = useState<"Semua" | "dry" | "wet">("Semua");

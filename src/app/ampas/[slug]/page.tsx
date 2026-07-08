@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  getAmpasListingBySlug,
-  getSellerById,
-  getActiveAmpasListings,
-} from "@/lib/mock-queries";
+  getActiveAmpasListingsDto,
+  getAmpasListingBySlugDto,
+  getSellerByIdDto,
+} from "@/lib/dal/marketplace";
 import { AmpasDetailInfo } from "@/components/ampas/ampas-detail-info";
 import { ChevronLeftIcon } from "@/components/ui/icons";
 
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  const listings = getActiveAmpasListings();
+  const listings = await getActiveAmpasListingsDto();
   return listings.map((listing) => ({
     slug: listing.slug,
   }));
@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const listing = getAmpasListingBySlug(slug);
+  const listing = await getAmpasListingBySlugDto(slug);
 
   if (!listing) {
     return {
@@ -44,13 +44,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AmpasDetailPage({ params }: Props) {
   const { slug } = await params;
-  const listing = getAmpasListingBySlug(slug);
+  const listing = await getAmpasListingBySlugDto(slug);
 
   if (!listing) {
     notFound();
   }
 
-  const seller = getSellerById(listing.sellerId);
+  const seller = await getSellerByIdDto(listing.sellerId);
 
   if (!seller) {
     notFound();

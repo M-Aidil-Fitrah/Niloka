@@ -770,3 +770,19 @@ export async function getAmpasListingBySlugDto(
 
   return row ? mapAmpasListing(row) : null;
 }
+
+export async function getAmpasListingsBySellerIdDto(
+  sellerId: string,
+): Promise<AmpasListing[]> {
+  const rows = await prisma.ampasListing.findMany({
+    where: {
+      sellerId,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  return rows.map(mapAmpasListing);
+}
+

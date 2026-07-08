@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/context/auth-context";
 import {
-  getActiveAmpasListings,
   getPromosForSeller,
   getPublishedProducts,
 } from "@/lib/mock-queries";
+import { getSellerAmpasListingsAction } from "@/lib/actions/ampas-actions";
+import type { AmpasListing } from "@/lib/contracts";
 import { SellerDashboardSkeleton } from "@/components/ui/skeletons";
 
 const SellerDashboardShell = dynamic(
@@ -23,6 +24,7 @@ export default function SellerPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [ampasListings, setAmpasListings] = useState<AmpasListing[]>([]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -38,17 +40,27 @@ export default function SellerPage() {
     }
   }, [user, isLoading, router]);
 
+  useEffect(() => {
+    if (isAuthorized && user?.sellerId) {
+      getSellerAmpasListingsAction()
+        .then((data) => {
+          setAmpasListings(data);
+        })
+        .catch((err) => {
+          console.error("Failed to load seller ampas listings", err);
+        });
+    }
+  }, [isAuthorized, user]);
+
   if (isLoading || !isAuthorized || !user) {
     return <SellerDashboardSkeleton />;
   }
 
-  // Filter products, promos, and ampas listings dynamically for the logged-in seller
+  // Filter products, promos dynamically for the logged-in seller
   const sellerId = user.sellerId || "seller-aceh-aroma";
   const allProducts = getPublishedProducts();
-  const allAmpasListings = getActiveAmpasListings();
 
   const products = allProducts.filter((p) => p.sellerId === sellerId);
-  const ampasListings = allAmpasListings.filter((a) => a.sellerId === sellerId);
   const promos = getPromosForSeller(sellerId);
 
   return (
@@ -59,3 +71,4 @@ export default function SellerPage() {
     />
   );
 }
+

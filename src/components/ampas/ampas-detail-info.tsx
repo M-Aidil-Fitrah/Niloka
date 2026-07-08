@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,34 +25,12 @@ const usageLabels: Record<string, string> = {
 
 export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
   const { addItem } = useCart();
-  const [localListing, setLocalListing] = useState<AmpasListing>(listing);
-  const [localSeller, setLocalSeller] = useState<Seller>(seller);
+  const localListing = listing;
+  const localSeller = seller;
   const [isAdded, setIsAdded] = useState(false);
-  const [quantity, setQuantity] = useState<number>(10);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedListings = localStorage.getItem("niloka_ampas_listings");
-      const storedSellers = localStorage.getItem("niloka_sellers");
-      setTimeout(() => {
-        if (storedListings) {
-          const parsed = JSON.parse(storedListings) as AmpasListing[];
-          const found = parsed.find((l) => l.id === listing.id);
-          if (found) {
-            setLocalListing(found);
-            setQuantity(found.wholesaleEnabled && found.wholesaleMinQtyKg ? found.wholesaleMinQtyKg : 10);
-          }
-        }
-        if (storedSellers) {
-          const parsedS = JSON.parse(storedSellers) as Seller[];
-          const foundS = parsedS.find((s) => s.id === seller.id);
-          if (foundS) {
-            setLocalSeller(foundS);
-          }
-        }
-      }, 0);
-    }
-  }, [listing.id, seller.id]);
+  const [quantity, setQuantity] = useState<number>(
+    listing.wholesaleEnabled && listing.wholesaleMinQtyKg ? listing.wholesaleMinQtyKg : 10
+  );
 
   // Recalculate price per Kg dynamically based on quantity
   const isWholesaleApplied = !!(
