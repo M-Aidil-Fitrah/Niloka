@@ -19,7 +19,7 @@ export function PassportManagement({ products }: PassportManagementProps) {
   const [isEditing, setIsEditing] = useState(false);
   const { user } = useAuth();
 
-  const currentSellerId = user?.sellerId || "seller-aceh-aroma";
+  const currentSellerId = user?.sellerId ?? "";
 
   useEffect(() => {
     if (user?.sellerId) {

@@ -31,7 +31,7 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
   const [activeListing, setActiveListing] = useState<Partial<AmpasListing> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const currentSellerId = user?.sellerId || "seller-aceh-aroma";
+  const currentSellerId = user?.sellerId ?? "";
   
   const itemsPerPage = 4;
   const sellerListings = listings;
@@ -60,6 +60,11 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
   }, []);
 
   const handleOpenAdd = () => {
+    if (!currentSellerId) {
+      showToast("Akun ini belum terhubung ke profil seller.", "error");
+      return;
+    }
+
     setActiveListing({
       id: `ampas-${Date.now()}`,
       slug: "",

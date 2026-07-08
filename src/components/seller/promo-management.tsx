@@ -21,7 +21,7 @@ export function PromoManagement({ promos: initialPromos, products = [] }: PromoM
   const [currentPage, setCurrentPage] = useState(1);
   const { user } = useAuth();
 
-  const currentSellerId = user?.sellerId || "seller-aceh-aroma";
+  const currentSellerId = user?.sellerId ?? "";
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -43,6 +43,11 @@ export function PromoManagement({ promos: initialPromos, products = [] }: PromoM
   }, []);
 
   const handleOpenAdd = () => {
+    if (!currentSellerId) {
+      showToast("Akun ini belum terhubung ke profil seller.", "error");
+      return;
+    }
+
     setActivePromo({
       id: `promo-${Date.now()}`,
       sellerId: currentSellerId,

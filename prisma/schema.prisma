@@ -137,6 +137,22 @@ enum PaymentStatus {
   EXPIRED
 }
 
+enum PaymentMethod {
+  QRIS
+  VIRTUAL_ACCOUNT
+  EWALLET
+  MANUAL_TRANSFER
+}
+
+enum OrderFulfillmentStatus {
+  PENDING_PAYMENT
+  READY_TO_PROCESS
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
 enum AdminValidationTarget {
   SELLER
   PRODUCT
@@ -264,6 +280,7 @@ model Seller {
   ampasListings      AmpasListing[]
   reviews            Review[]
   promos             Promo[]
+  orderFulfillments  OrderFulfillment[]
   validationItems    AdminValidationItem[]
   applications       SellerApplication[]
   chatThreads        ChatThread[]
@@ -535,14 +552,26 @@ model Order {
   platformFeeCurrency      String      @default("IDR") @map("platform_fee_currency")
   shippingEstimateAmount   Int         @map("shipping_estimate_amount")
   shippingEstimateCurrency String      @default("IDR") @map("shipping_estimate_currency")
+  discountAmount           Int         @default(0) @map("discount_amount")
+  discountCurrency         String      @default("IDR") @map("discount_currency")
+  promoCode                String?     @map("promo_code")
   grandTotalAmount         Int         @map("grand_total_amount")
   grandTotalCurrency       String      @default("IDR") @map("grand_total_currency")
+  receiverName             String?     @map("receiver_name")
+  receiverPhone            String?     @map("receiver_phone")
+  shippingAddress          String?     @map("shipping_address") @db.Text
+  shippingCity             String?     @map("shipping_city")
+  shippingProvince         String?     @map("shipping_province")
+  courierCode              String?     @map("courier_code")
+  courierName              String?     @map("courier_name")
+  paymentExpiresAt         DateTime?   @map("payment_expires_at")
   createdAt                DateTime    @default(now()) @map("created_at")
   updatedAt                DateTime    @updatedAt @map("updated_at")
 
   user                     User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   items                    OrderItem[]
   payments                 Payment[]
+  fulfillments             OrderFulfillment[]
 
   @@map("orders")
 }
@@ -553,6 +582,7 @@ model OrderItem {
   kind              CartItemKind
   productId         String?       @map("product_id")
   ampasListingId    String?       @map("ampas_listing_id")
+  sellerId          String?       @map("seller_id")
   quantity          Int
   unitPriceAmount   Int           @map("unit_price_amount")
   unitPriceCurrency String        @default("IDR") @map("unit_price_currency")
@@ -561,24 +591,60 @@ model OrderItem {
   product           Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
   ampasListing      AmpasListing? @relation(fields: [ampasListingId], references: [id], onDelete: SetNull)
 
+  @@index([sellerId])
   @@map("order_items")
 }
 
 model Payment {
-  id         String        @id @default(cuid())
-  orderId    String        @map("order_id")
-  provider   String
-  status     PaymentStatus @default(PENDING)
-  amount     Int
-  currency   String        @default("IDR")
-  externalId String?       @map("external_id")
-  snapToken  String?       @map("snap_token")
-  createdAt  DateTime      @default(now()) @map("created_at")
-  updatedAt  DateTime      @updatedAt @map("updated_at")
+  id                 String         @id @default(cuid())
+  orderId            String         @map("order_id")
+  provider           String
+  paymentMethod      PaymentMethod? @map("payment_method")
+  status             PaymentStatus  @default(PENDING)
+  amount             Int
+  currency           String         @default("IDR")
+  externalId         String?        @map("external_id")
+  snapToken          String?        @map("snap_token")
+  transactionId      String?        @map("transaction_id")
+  transactionStatus  String?        @map("transaction_status")
+  fraudStatus        String?        @map("fraud_status")
+  vaNumber           String?        @map("va_number")
+  qrString           String?        @map("qr_string") @db.Text
+  qrUrl              String?        @map("qr_url") @db.Text
+  deeplinkUrl        String?        @map("deeplink_url") @db.Text
+  rawResponse        Json?          @map("raw_response")
+  rawNotification    Json?          @map("raw_notification")
+  paidAt             DateTime?      @map("paid_at")
+  expiredAt          DateTime?      @map("expired_at")
+  lastStatusSyncedAt DateTime?      @map("last_status_synced_at")
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt @map("updated_at")
 
-  order      Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order              Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
+  @@index([orderId, status])
+  @@index([transactionId])
   @@map("payments")
+}
+
+model OrderFulfillment {
+  id             String                 @id @default(cuid())
+  orderId        String                 @map("order_id")
+  sellerId       String                 @map("seller_id")
+  status         OrderFulfillmentStatus @default(PENDING_PAYMENT)
+  trackingNumber String?                @map("tracking_number")
+  shippingNote   String?                @map("shipping_note") @db.Text
+  shippedAt      DateTime?              @map("shipped_at")
+  deliveredAt    DateTime?              @map("delivered_at")
+  createdAt      DateTime               @default(now()) @map("created_at")
+  updatedAt      DateTime               @updatedAt @map("updated_at")
+
+  order          Order                  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  seller         Seller                 @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@unique([orderId, sellerId])
+  @@index([sellerId, status])
+  @@map("order_fulfillments")
 }
 
 model Article {

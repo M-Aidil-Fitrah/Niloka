@@ -5,6 +5,10 @@ import type {
   AmpasListing,
   AmpasListingStatus as ContractAmpasListingStatus,
   AmpasUsageTag as ContractAmpasUsageTag,
+  Article,
+  ArticleCategory as ContractArticleCategory,
+  Bundle,
+  BundleType as ContractBundleType,
   NilamPassport,
   PassportValidationStatus as ContractPassportValidationStatus,
   Product,
@@ -27,6 +31,8 @@ import {
   AmpasCondition,
   AmpasListingStatus,
   AmpasUsageTag,
+  ArticleCategory,
+  BundleType,
   PassportValidationStatus,
   Prisma,
   ProductForm,
@@ -151,6 +157,18 @@ type PromoWithProducts = Prisma.PromoGetPayload<{
     };
   };
 }>;
+
+type BundleWithProducts = Prisma.BundleGetPayload<{
+  include: {
+    products: {
+      select: {
+        productId: true;
+      };
+    };
+  };
+}>;
+
+type ArticleRow = Prisma.ArticleGetPayload<Record<string, never>>;
 
 function toIsoString(date: Date): string {
   return date.toISOString();
@@ -356,6 +374,28 @@ function toContractPromoType(value: PromoType): ContractPromoType {
   }
 }
 
+function toContractBundleType(value: BundleType): ContractBundleType {
+  switch (value) {
+    case BundleType.SINGLE_SELLER:
+      return "single-seller";
+    case BundleType.CROSS_SELLER:
+      return "cross-seller";
+  }
+}
+
+function toContractArticleCategory(value: ArticleCategory): ContractArticleCategory {
+  switch (value) {
+    case ArticleCategory.PUPUK:
+      return "pupuk";
+    case ArticleCategory.ENERGI:
+      return "energi";
+    case ArticleCategory.BUDIDAYA:
+      return "budidaya";
+    case ArticleCategory.OLAHAN:
+      return "olahan";
+  }
+}
+
 function mapSeller(row: SellerRow): Seller {
   return {
     id: row.id,
@@ -527,6 +567,40 @@ function mapPromo(row: PromoWithProducts): Promo {
     usageLimit: row.usageLimit,
     usedCount: row.usedCount,
     productIds: row.products.map((product) => product.productId),
+  };
+}
+
+function mapBundle(row: BundleWithProducts): Bundle {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    type: toContractBundleType(row.type),
+    productIds: row.products.map((product) => product.productId),
+    price: {
+      amount: row.priceAmount,
+      currency: "IDR",
+    },
+    description: row.description,
+  };
+}
+
+function mapArticle(row: ArticleRow): Article {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt,
+    content: row.content,
+    author: row.author,
+    authorRole: row.authorRole ?? undefined,
+    publishedAt: toIsoString(row.publishedAt),
+    imageUrl: row.imageUrl,
+    category: toContractArticleCategory(row.category),
+    videoUrl: row.videoUrl ?? undefined,
+    videoDuration: row.videoDuration ?? undefined,
+    readTime: row.readTime,
+    tags: row.tags,
   };
 }
 
@@ -786,3 +860,41 @@ export async function getAmpasListingsBySellerIdDto(
   return rows.map(mapAmpasListing);
 }
 
+export async function getBundlesDto(): Promise<Bundle[]> {
+  const rows = await prisma.bundle.findMany({
+    include: {
+      products: {
+        select: {
+          productId: true,
+        },
+      },
+    },
+    orderBy: {
+      title: "asc",
+    },
+  });
+
+  return rows.map(mapBundle);
+}
+
+export async function getArticlesDto(): Promise<Article[]> {
+  const rows = await prisma.article.findMany({
+    orderBy: {
+      publishedAt: "desc",
+    },
+  });
+
+  return rows.map(mapArticle);
+}
+
+export async function getArticleBySlugDto(
+  slug: string,
+): Promise<Article | null> {
+  const row = await prisma.article.findUnique({
+    where: {
+      slug,
+    },
+  });
+
+  return row ? mapArticle(row) : null;
+}

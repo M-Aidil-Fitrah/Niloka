@@ -72,6 +72,7 @@ export const ModelName = {
   Order: 'Order',
   OrderItem: 'OrderItem',
   Payment: 'Payment',
+  OrderFulfillment: 'OrderFulfillment',
   Article: 'Article',
   UploadedAsset: 'UploadedAsset',
   ChatThread: 'ChatThread',
@@ -394,8 +395,19 @@ export const OrderScalarFieldEnum = {
   platformFeeCurrency: 'platformFeeCurrency',
   shippingEstimateAmount: 'shippingEstimateAmount',
   shippingEstimateCurrency: 'shippingEstimateCurrency',
+  discountAmount: 'discountAmount',
+  discountCurrency: 'discountCurrency',
+  promoCode: 'promoCode',
   grandTotalAmount: 'grandTotalAmount',
   grandTotalCurrency: 'grandTotalCurrency',
+  receiverName: 'receiverName',
+  receiverPhone: 'receiverPhone',
+  shippingAddress: 'shippingAddress',
+  shippingCity: 'shippingCity',
+  shippingProvince: 'shippingProvince',
+  courierCode: 'courierCode',
+  courierName: 'courierName',
+  paymentExpiresAt: 'paymentExpiresAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -409,6 +421,7 @@ export const OrderItemScalarFieldEnum = {
   kind: 'kind',
   productId: 'productId',
   ampasListingId: 'ampasListingId',
+  sellerId: 'sellerId',
   quantity: 'quantity',
   unitPriceAmount: 'unitPriceAmount',
   unitPriceCurrency: 'unitPriceCurrency'
@@ -421,16 +434,45 @@ export const PaymentScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
   provider: 'provider',
+  paymentMethod: 'paymentMethod',
   status: 'status',
   amount: 'amount',
   currency: 'currency',
   externalId: 'externalId',
   snapToken: 'snapToken',
+  transactionId: 'transactionId',
+  transactionStatus: 'transactionStatus',
+  fraudStatus: 'fraudStatus',
+  vaNumber: 'vaNumber',
+  qrString: 'qrString',
+  qrUrl: 'qrUrl',
+  deeplinkUrl: 'deeplinkUrl',
+  rawResponse: 'rawResponse',
+  rawNotification: 'rawNotification',
+  paidAt: 'paidAt',
+  expiredAt: 'expiredAt',
+  lastStatusSyncedAt: 'lastStatusSyncedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const OrderFulfillmentScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  sellerId: 'sellerId',
+  status: 'status',
+  trackingNumber: 'trackingNumber',
+  shippingNote: 'shippingNote',
+  shippedAt: 'shippedAt',
+  deliveredAt: 'deliveredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrderFulfillmentScalarFieldEnum = (typeof OrderFulfillmentScalarFieldEnum)[keyof typeof OrderFulfillmentScalarFieldEnum]
 
 
 export const ArticleScalarFieldEnum = {

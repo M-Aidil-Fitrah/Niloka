@@ -221,7 +221,7 @@ export function ShippingForm({
             >
               <option value="qris">QRIS (Gopay / OVO / Dana)</option>
               <option value="va">Virtual Account (Mandiri / BCA / BNI)</option>
-              <option value="cc">Kartu Kredit / Debit</option>
+              <option value="ewallet">E-wallet (GoPay / ShopeePay)</option>
             </select>
           </div>
         </div>

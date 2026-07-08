@@ -45,8 +45,11 @@ import {
   ArticleCategory,
   BundleType,
   CartItemKind,
+  OrderFulfillmentStatus,
   OrderStatus,
   PassportValidationStatus,
+  PaymentMethod,
+  PaymentStatus,
   PrismaClient,
   ProductForm,
   ProductFunction,
@@ -304,6 +307,62 @@ function toOrderStatus(value: ContractOrderStatus): OrderStatus {
   }
 }
 
+function getOrderItemSellerId(item: {
+  kind: ContractCartItemKind;
+  productId: string | null;
+  ampasListingId: string | null;
+}): string {
+  if (item.kind === "product" && item.productId) {
+    const product = products.find((candidate) => candidate.id === item.productId);
+    return product?.sellerId ?? "seller-aceh-aroma";
+  }
+
+  if (item.kind === "ampas-listing" && item.ampasListingId) {
+    const listing = ampasListings.find(
+      (candidate) => candidate.id === item.ampasListingId,
+    );
+    return listing?.sellerId ?? "seller-koperasi-lestari";
+  }
+
+  return "seller-aceh-aroma";
+}
+
+function getFulfillmentStatus(
+  status: ContractOrderStatus,
+): OrderFulfillmentStatus {
+  switch (status) {
+    case "paid":
+      return OrderFulfillmentStatus.READY_TO_PROCESS;
+    case "fulfilled":
+      return OrderFulfillmentStatus.DELIVERED;
+    case "draft":
+    case "pending-payment":
+      return OrderFulfillmentStatus.PENDING_PAYMENT;
+  }
+}
+
+function getPaymentStatus(status: ContractOrderStatus): PaymentStatus {
+  switch (status) {
+    case "paid":
+    case "fulfilled":
+      return PaymentStatus.PAID;
+    case "draft":
+    case "pending-payment":
+      return PaymentStatus.PENDING;
+  }
+}
+
+function getMidtransTransactionStatus(status: ContractOrderStatus): string {
+  switch (status) {
+    case "paid":
+    case "fulfilled":
+      return "settlement";
+    case "draft":
+    case "pending-payment":
+      return "pending";
+  }
+}
+
 function toAdminValidationTarget(
   value: ContractAdminValidationTarget,
 ): AdminValidationTarget {
@@ -348,6 +407,7 @@ async function clearDemoData() {
   await prisma.adminValidationItem.deleteMany();
   await prisma.chatMessage.deleteMany();
   await prisma.chatThread.deleteMany();
+  await prisma.orderFulfillment.deleteMany();
   await prisma.payment.deleteMany();
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
@@ -625,13 +685,24 @@ async function seedCartAndOrders() {
         platformFeeCurrency: order.platformFee.currency,
         shippingEstimateAmount: order.shippingEstimate.amount,
         shippingEstimateCurrency: order.shippingEstimate.currency,
+        discountAmount: 0,
+        discountCurrency: "IDR",
         grandTotalAmount: order.grandTotal.amount,
         grandTotalCurrency: order.grandTotal.currency,
+        receiverName: "Budi Handoko",
+        receiverPhone: "081234567890",
+        shippingAddress: "Jl. Teuku Umar No. 12",
+        shippingCity: "Banda Aceh",
+        shippingProvince: "Aceh",
+        courierCode: "jne",
+        courierName: "JNE Regular",
+        paymentExpiresAt: new Date("2026-07-09T10:00:00.000Z"),
         items: {
           create: order.items.map((item) => ({
             kind: toCartItemKind(item.kind),
             productId: item.productId,
             ampasListingId: item.ampasListingId,
+            sellerId: getOrderItemSellerId(item),
             quantity: item.quantity,
             unitPriceAmount: item.unitPrice.amount,
             unitPriceCurrency: item.unitPrice.currency,
@@ -639,12 +710,45 @@ async function seedCartAndOrders() {
         },
         payments: {
           create: {
-            provider: "midtrans-mock",
-            status: "PENDING",
+            provider: "MIDTRANS_CORE_MOCK",
+            paymentMethod: PaymentMethod.QRIS,
+            status: getPaymentStatus(order.status),
             amount: order.grandTotal.amount,
             currency: order.grandTotal.currency,
             externalId: `${order.id}-${cart.id}`,
+            transactionId: `MT-DEMO-${order.id}`,
+            transactionStatus: getMidtransTransactionStatus(order.status),
+            qrString: `midtrans-demo-qr-${order.id}`,
+            qrUrl: `/payments/demo/${order.id}/qr`,
+            paidAt:
+              order.status === "paid" || order.status === "fulfilled"
+                ? new Date("2026-07-08T10:00:00.000Z")
+                : undefined,
+            expiredAt: new Date("2026-07-09T10:00:00.000Z"),
+            lastStatusSyncedAt: new Date("2026-07-08T10:00:00.000Z"),
           },
+        },
+        fulfillments: {
+          create: Array.from(
+            new Set(order.items.map((item) => getOrderItemSellerId(item))),
+          ).map((sellerId) => ({
+            sellerId,
+            status: getFulfillmentStatus(order.status),
+            trackingNumber:
+              order.status === "fulfilled" ? `NILOKA-${order.id}` : undefined,
+            shippingNote:
+              order.status === "fulfilled"
+                ? "Pesanan demo sudah sampai ke pembeli."
+                : undefined,
+            shippedAt:
+              order.status === "fulfilled"
+                ? new Date("2026-07-07T10:00:00.000Z")
+                : undefined,
+            deliveredAt:
+              order.status === "fulfilled"
+                ? new Date("2026-07-08T10:00:00.000Z")
+                : undefined,
+          })),
         },
       },
     });

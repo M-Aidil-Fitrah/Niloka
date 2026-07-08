@@ -218,19 +218,6 @@ class ChatServiceClass {
     };
   }
 
-  // Get current user role safely
-  getCurrentUserRole(): "buyer" | "seller" {
-    if (typeof window === "undefined") return "buyer";
-    const role = localStorage.getItem("niloka_current_user");
-    return role && role !== "buyer" && role !== "user" ? "seller" : "buyer";
-  }
-
-  // Get current seller ID safely
-  getCurrentSellerId(): string | null {
-    if (typeof window === "undefined") return null;
-    const role = localStorage.getItem("niloka_current_user");
-    return role && role !== "buyer" && role !== "user" ? role : null;
-  }
 }
 
 export const ChatService = new ChatServiceClass();

@@ -80,6 +80,19 @@ export type BundleType = "single-seller" | "cross-seller";
 
 export type CartItemKind = "product" | "ampas-listing";
 export type OrderStatus = "draft" | "pending-payment" | "paid" | "fulfilled";
+export type PaymentStatus = "pending" | "paid" | "failed" | "expired";
+export type PaymentMethod =
+  | "qris"
+  | "virtual-account"
+  | "ewallet"
+  | "manual-transfer";
+export type OrderFulfillmentStatus =
+  | "pending-payment"
+  | "ready-to-process"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled";
 
 export type AdminValidationTarget = "seller" | "product" | "nilam-passport";
 export type AdminValidationStatus = "queued" | "approved" | "rejected";
@@ -242,6 +255,103 @@ export type OrderSummary = {
   grandTotal: Money;
 };
 
+export type OrderShippingInfo = {
+  receiverName: string;
+  receiverPhone: string;
+  address: string;
+  city: string;
+  province: string;
+  courierCode: string;
+  courierName: string;
+};
+
+export type OrderLineItem = {
+  id: string;
+  kind: CartItemKind;
+  productId: ProductId | null;
+  ampasListingId: AmpasListingId | null;
+  sellerId: SellerId;
+  name: string;
+  quantity: number;
+  unitPrice: Money;
+  subtotal: Money;
+};
+
+export type OrderPayment = {
+  id: string;
+  provider: string;
+  method: PaymentMethod;
+  status: PaymentStatus;
+  amount: Money;
+  externalId: string;
+  transactionId: string;
+  transactionStatus: string;
+  fraudStatus: string;
+  vaNumber: string;
+  qrString: string;
+  qrUrl: string;
+  deeplinkUrl: string;
+  paidAt: string;
+  expiredAt: string;
+  lastStatusSyncedAt: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type PaymentInstruction = {
+  method: PaymentMethod;
+  status: "pending";
+  amount: Money;
+  title: string;
+  description: string;
+  qrString: string;
+  qrUrl: string;
+  vaNumber: string;
+  deeplinkUrl: string;
+  expiresAt: string;
+};
+
+export type OrderFulfillment = {
+  id: string;
+  sellerId: SellerId;
+  sellerName: string;
+  status: OrderFulfillmentStatus;
+  trackingNumber: string;
+  shippingNote: string;
+  shippedAt: string;
+  deliveredAt: string;
+  updatedAt: string;
+};
+
+export type OrderTracking = {
+  id: OrderId;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  createdAt: string;
+  updatedAt: string;
+  paymentExpiresAt: string;
+  subtotal: Money;
+  platformFee: Money;
+  shippingEstimate: Money;
+  discount: Money;
+  promoCode: string;
+  grandTotal: Money;
+  shipping: OrderShippingInfo;
+  items: OrderLineItem[];
+  payments: OrderPayment[];
+  fulfillments: OrderFulfillment[];
+};
+
+export type SellerFinanceSummary = {
+  sellerId: SellerId;
+  grossRevenue: Money;
+  platformCommission: Money;
+  netRevenue: Money;
+  paidOrderCount: number;
+  pendingOrderCount: number;
+  fulfilledOrderCount: number;
+};
+
 export type AdminValidationItem = {
   id: AdminValidationItemId;
   target: AdminValidationTarget;
@@ -331,4 +441,3 @@ export type Article = {
   readTime: string;
   tags: string[];
 };
-

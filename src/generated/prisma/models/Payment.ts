@@ -38,11 +38,22 @@ export type PaymentMinAggregateOutputType = {
   id: string | null
   orderId: string | null
   provider: string | null
+  paymentMethod: $Enums.PaymentMethod | null
   status: $Enums.PaymentStatus | null
   amount: number | null
   currency: string | null
   externalId: string | null
   snapToken: string | null
+  transactionId: string | null
+  transactionStatus: string | null
+  fraudStatus: string | null
+  vaNumber: string | null
+  qrString: string | null
+  qrUrl: string | null
+  deeplinkUrl: string | null
+  paidAt: Date | null
+  expiredAt: Date | null
+  lastStatusSyncedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -51,11 +62,22 @@ export type PaymentMaxAggregateOutputType = {
   id: string | null
   orderId: string | null
   provider: string | null
+  paymentMethod: $Enums.PaymentMethod | null
   status: $Enums.PaymentStatus | null
   amount: number | null
   currency: string | null
   externalId: string | null
   snapToken: string | null
+  transactionId: string | null
+  transactionStatus: string | null
+  fraudStatus: string | null
+  vaNumber: string | null
+  qrString: string | null
+  qrUrl: string | null
+  deeplinkUrl: string | null
+  paidAt: Date | null
+  expiredAt: Date | null
+  lastStatusSyncedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -64,11 +86,24 @@ export type PaymentCountAggregateOutputType = {
   id: number
   orderId: number
   provider: number
+  paymentMethod: number
   status: number
   amount: number
   currency: number
   externalId: number
   snapToken: number
+  transactionId: number
+  transactionStatus: number
+  fraudStatus: number
+  vaNumber: number
+  qrString: number
+  qrUrl: number
+  deeplinkUrl: number
+  rawResponse: number
+  rawNotification: number
+  paidAt: number
+  expiredAt: number
+  lastStatusSyncedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -87,11 +122,22 @@ export type PaymentMinAggregateInputType = {
   id?: true
   orderId?: true
   provider?: true
+  paymentMethod?: true
   status?: true
   amount?: true
   currency?: true
   externalId?: true
   snapToken?: true
+  transactionId?: true
+  transactionStatus?: true
+  fraudStatus?: true
+  vaNumber?: true
+  qrString?: true
+  qrUrl?: true
+  deeplinkUrl?: true
+  paidAt?: true
+  expiredAt?: true
+  lastStatusSyncedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,11 +146,22 @@ export type PaymentMaxAggregateInputType = {
   id?: true
   orderId?: true
   provider?: true
+  paymentMethod?: true
   status?: true
   amount?: true
   currency?: true
   externalId?: true
   snapToken?: true
+  transactionId?: true
+  transactionStatus?: true
+  fraudStatus?: true
+  vaNumber?: true
+  qrString?: true
+  qrUrl?: true
+  deeplinkUrl?: true
+  paidAt?: true
+  expiredAt?: true
+  lastStatusSyncedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -113,11 +170,24 @@ export type PaymentCountAggregateInputType = {
   id?: true
   orderId?: true
   provider?: true
+  paymentMethod?: true
   status?: true
   amount?: true
   currency?: true
   externalId?: true
   snapToken?: true
+  transactionId?: true
+  transactionStatus?: true
+  fraudStatus?: true
+  vaNumber?: true
+  qrString?: true
+  qrUrl?: true
+  deeplinkUrl?: true
+  rawResponse?: true
+  rawNotification?: true
+  paidAt?: true
+  expiredAt?: true
+  lastStatusSyncedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -213,11 +283,24 @@ export type PaymentGroupByOutputType = {
   id: string
   orderId: string
   provider: string
+  paymentMethod: $Enums.PaymentMethod | null
   status: $Enums.PaymentStatus
   amount: number
   currency: string
   externalId: string | null
   snapToken: string | null
+  transactionId: string | null
+  transactionStatus: string | null
+  fraudStatus: string | null
+  vaNumber: string | null
+  qrString: string | null
+  qrUrl: string | null
+  deeplinkUrl: string | null
+  rawResponse: runtime.JsonValue | null
+  rawNotification: runtime.JsonValue | null
+  paidAt: Date | null
+  expiredAt: Date | null
+  lastStatusSyncedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: PaymentCountAggregateOutputType | null
@@ -249,11 +332,24 @@ export type PaymentWhereInput = {
   id?: Prisma.StringFilter<"Payment"> | string
   orderId?: Prisma.StringFilter<"Payment"> | string
   provider?: Prisma.StringFilter<"Payment"> | string
+  paymentMethod?: Prisma.EnumPaymentMethodNullableFilter<"Payment"> | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
   amount?: Prisma.IntFilter<"Payment"> | number
   currency?: Prisma.StringFilter<"Payment"> | string
   externalId?: Prisma.StringNullableFilter<"Payment"> | string | null
   snapToken?: Prisma.StringNullableFilter<"Payment"> | string | null
+  transactionId?: Prisma.StringNullableFilter<"Payment"> | string | null
+  transactionStatus?: Prisma.StringNullableFilter<"Payment"> | string | null
+  fraudStatus?: Prisma.StringNullableFilter<"Payment"> | string | null
+  vaNumber?: Prisma.StringNullableFilter<"Payment"> | string | null
+  qrString?: Prisma.StringNullableFilter<"Payment"> | string | null
+  qrUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
+  deeplinkUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
+  rawResponse?: Prisma.JsonNullableFilter<"Payment">
+  rawNotification?: Prisma.JsonNullableFilter<"Payment">
+  paidAt?: Prisma.DateTimeNullableFilter<"Payment"> | Date | string | null
+  expiredAt?: Prisma.DateTimeNullableFilter<"Payment"> | Date | string | null
+  lastStatusSyncedAt?: Prisma.DateTimeNullableFilter<"Payment"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
@@ -263,11 +359,24 @@ export type PaymentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   orderId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
+  paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   externalId?: Prisma.SortOrderInput | Prisma.SortOrder
   snapToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  transactionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  transactionStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  fraudStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  vaNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  qrString?: Prisma.SortOrderInput | Prisma.SortOrder
+  qrUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  deeplinkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  rawResponse?: Prisma.SortOrderInput | Prisma.SortOrder
+  rawNotification?: Prisma.SortOrderInput | Prisma.SortOrder
+  paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  expiredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastStatusSyncedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   order?: Prisma.OrderOrderByWithRelationInput
@@ -280,11 +389,24 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PaymentWhereInput | Prisma.PaymentWhereInput[]
   orderId?: Prisma.StringFilter<"Payment"> | string
   provider?: Prisma.StringFilter<"Payment"> | string
+  paymentMethod?: Prisma.EnumPaymentMethodNullableFilter<"Payment"> | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
   amount?: Prisma.IntFilter<"Payment"> | number
   currency?: Prisma.StringFilter<"Payment"> | string
   externalId?: Prisma.StringNullableFilter<"Payment"> | string | null
   snapToken?: Prisma.StringNullableFilter<"Payment"> | string | null
+  transactionId?: Prisma.StringNullableFilter<"Payment"> | string | null
+  transactionStatus?: Prisma.StringNullableFilter<"Payment"> | string | null
+  fraudStatus?: Prisma.StringNullableFilter<"Payment"> | string | null
+  vaNumber?: Prisma.StringNullableFilter<"Payment"> | string | null
+  qrString?: Prisma.StringNullableFilter<"Payment"> | string | null
+  qrUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
+  deeplinkUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
+  rawResponse?: Prisma.JsonNullableFilter<"Payment">
+  rawNotification?: Prisma.JsonNullableFilter<"Payment">
+  paidAt?: Prisma.DateTimeNullableFilter<"Payment"> | Date | string | null
+  expiredAt?: Prisma.DateTimeNullableFilter<"Payment"> | Date | string | null
+  lastStatusSyncedAt?: Prisma.DateTimeNullableFilter<"Payment"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
@@ -294,11 +416,24 @@ export type PaymentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   orderId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
+  paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   externalId?: Prisma.SortOrderInput | Prisma.SortOrder
   snapToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  transactionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  transactionStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  fraudStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  vaNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  qrString?: Prisma.SortOrderInput | Prisma.SortOrder
+  qrUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  deeplinkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  rawResponse?: Prisma.SortOrderInput | Prisma.SortOrder
+  rawNotification?: Prisma.SortOrderInput | Prisma.SortOrder
+  paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  expiredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastStatusSyncedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PaymentCountOrderByAggregateInput
@@ -315,11 +450,24 @@ export type PaymentScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Payment"> | string
   orderId?: Prisma.StringWithAggregatesFilter<"Payment"> | string
   provider?: Prisma.StringWithAggregatesFilter<"Payment"> | string
+  paymentMethod?: Prisma.EnumPaymentMethodNullableWithAggregatesFilter<"Payment"> | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusWithAggregatesFilter<"Payment"> | $Enums.PaymentStatus
   amount?: Prisma.IntWithAggregatesFilter<"Payment"> | number
   currency?: Prisma.StringWithAggregatesFilter<"Payment"> | string
   externalId?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
   snapToken?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  transactionId?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  transactionStatus?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  fraudStatus?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  vaNumber?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  qrString?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  qrUrl?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  deeplinkUrl?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  rawResponse?: Prisma.JsonNullableWithAggregatesFilter<"Payment">
+  rawNotification?: Prisma.JsonNullableWithAggregatesFilter<"Payment">
+  paidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
+  expiredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
+  lastStatusSyncedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Payment"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Payment"> | Date | string
 }
@@ -327,11 +475,24 @@ export type PaymentScalarWhereWithAggregatesInput = {
 export type PaymentCreateInput = {
   id?: string
   provider: string
+  paymentMethod?: $Enums.PaymentMethod | null
   status?: $Enums.PaymentStatus
   amount: number
   currency?: string
   externalId?: string | null
   snapToken?: string | null
+  transactionId?: string | null
+  transactionStatus?: string | null
+  fraudStatus?: string | null
+  vaNumber?: string | null
+  qrString?: string | null
+  qrUrl?: string | null
+  deeplinkUrl?: string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Date | string | null
+  expiredAt?: Date | string | null
+  lastStatusSyncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutPaymentsInput
@@ -341,11 +502,24 @@ export type PaymentUncheckedCreateInput = {
   id?: string
   orderId: string
   provider: string
+  paymentMethod?: $Enums.PaymentMethod | null
   status?: $Enums.PaymentStatus
   amount: number
   currency?: string
   externalId?: string | null
   snapToken?: string | null
+  transactionId?: string | null
+  transactionStatus?: string | null
+  fraudStatus?: string | null
+  vaNumber?: string | null
+  qrString?: string | null
+  qrUrl?: string | null
+  deeplinkUrl?: string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Date | string | null
+  expiredAt?: Date | string | null
+  lastStatusSyncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -353,11 +527,24 @@ export type PaymentUncheckedCreateInput = {
 export type PaymentUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   snapToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fraudStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vaNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrString?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deeplinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastStatusSyncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutPaymentsNestedInput
@@ -367,11 +554,24 @@ export type PaymentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   snapToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fraudStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vaNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrString?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deeplinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastStatusSyncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -380,11 +580,24 @@ export type PaymentCreateManyInput = {
   id?: string
   orderId: string
   provider: string
+  paymentMethod?: $Enums.PaymentMethod | null
   status?: $Enums.PaymentStatus
   amount: number
   currency?: string
   externalId?: string | null
   snapToken?: string | null
+  transactionId?: string | null
+  transactionStatus?: string | null
+  fraudStatus?: string | null
+  vaNumber?: string | null
+  qrString?: string | null
+  qrUrl?: string | null
+  deeplinkUrl?: string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Date | string | null
+  expiredAt?: Date | string | null
+  lastStatusSyncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -392,11 +605,24 @@ export type PaymentCreateManyInput = {
 export type PaymentUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   snapToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fraudStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vaNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrString?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deeplinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastStatusSyncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -405,11 +631,24 @@ export type PaymentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   snapToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fraudStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vaNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrString?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deeplinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastStatusSyncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -428,11 +667,24 @@ export type PaymentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   orderId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
+  paymentMethod?: Prisma.SortOrder
   status?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   externalId?: Prisma.SortOrder
   snapToken?: Prisma.SortOrder
+  transactionId?: Prisma.SortOrder
+  transactionStatus?: Prisma.SortOrder
+  fraudStatus?: Prisma.SortOrder
+  vaNumber?: Prisma.SortOrder
+  qrString?: Prisma.SortOrder
+  qrUrl?: Prisma.SortOrder
+  deeplinkUrl?: Prisma.SortOrder
+  rawResponse?: Prisma.SortOrder
+  rawNotification?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
+  expiredAt?: Prisma.SortOrder
+  lastStatusSyncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -445,11 +697,22 @@ export type PaymentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   orderId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
+  paymentMethod?: Prisma.SortOrder
   status?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   externalId?: Prisma.SortOrder
   snapToken?: Prisma.SortOrder
+  transactionId?: Prisma.SortOrder
+  transactionStatus?: Prisma.SortOrder
+  fraudStatus?: Prisma.SortOrder
+  vaNumber?: Prisma.SortOrder
+  qrString?: Prisma.SortOrder
+  qrUrl?: Prisma.SortOrder
+  deeplinkUrl?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
+  expiredAt?: Prisma.SortOrder
+  lastStatusSyncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -458,11 +721,22 @@ export type PaymentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   orderId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
+  paymentMethod?: Prisma.SortOrder
   status?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   externalId?: Prisma.SortOrder
   snapToken?: Prisma.SortOrder
+  transactionId?: Prisma.SortOrder
+  transactionStatus?: Prisma.SortOrder
+  fraudStatus?: Prisma.SortOrder
+  vaNumber?: Prisma.SortOrder
+  qrString?: Prisma.SortOrder
+  qrUrl?: Prisma.SortOrder
+  deeplinkUrl?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
+  expiredAt?: Prisma.SortOrder
+  lastStatusSyncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -513,6 +787,10 @@ export type PaymentUncheckedUpdateManyWithoutOrderNestedInput = {
   deleteMany?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
 }
 
+export type NullableEnumPaymentMethodFieldUpdateOperationsInput = {
+  set?: $Enums.PaymentMethod | null
+}
+
 export type EnumPaymentStatusFieldUpdateOperationsInput = {
   set?: $Enums.PaymentStatus
 }
@@ -520,11 +798,24 @@ export type EnumPaymentStatusFieldUpdateOperationsInput = {
 export type PaymentCreateWithoutOrderInput = {
   id?: string
   provider: string
+  paymentMethod?: $Enums.PaymentMethod | null
   status?: $Enums.PaymentStatus
   amount: number
   currency?: string
   externalId?: string | null
   snapToken?: string | null
+  transactionId?: string | null
+  transactionStatus?: string | null
+  fraudStatus?: string | null
+  vaNumber?: string | null
+  qrString?: string | null
+  qrUrl?: string | null
+  deeplinkUrl?: string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Date | string | null
+  expiredAt?: Date | string | null
+  lastStatusSyncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -532,11 +823,24 @@ export type PaymentCreateWithoutOrderInput = {
 export type PaymentUncheckedCreateWithoutOrderInput = {
   id?: string
   provider: string
+  paymentMethod?: $Enums.PaymentMethod | null
   status?: $Enums.PaymentStatus
   amount: number
   currency?: string
   externalId?: string | null
   snapToken?: string | null
+  transactionId?: string | null
+  transactionStatus?: string | null
+  fraudStatus?: string | null
+  vaNumber?: string | null
+  qrString?: string | null
+  qrUrl?: string | null
+  deeplinkUrl?: string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Date | string | null
+  expiredAt?: Date | string | null
+  lastStatusSyncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -574,11 +878,24 @@ export type PaymentScalarWhereInput = {
   id?: Prisma.StringFilter<"Payment"> | string
   orderId?: Prisma.StringFilter<"Payment"> | string
   provider?: Prisma.StringFilter<"Payment"> | string
+  paymentMethod?: Prisma.EnumPaymentMethodNullableFilter<"Payment"> | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
   amount?: Prisma.IntFilter<"Payment"> | number
   currency?: Prisma.StringFilter<"Payment"> | string
   externalId?: Prisma.StringNullableFilter<"Payment"> | string | null
   snapToken?: Prisma.StringNullableFilter<"Payment"> | string | null
+  transactionId?: Prisma.StringNullableFilter<"Payment"> | string | null
+  transactionStatus?: Prisma.StringNullableFilter<"Payment"> | string | null
+  fraudStatus?: Prisma.StringNullableFilter<"Payment"> | string | null
+  vaNumber?: Prisma.StringNullableFilter<"Payment"> | string | null
+  qrString?: Prisma.StringNullableFilter<"Payment"> | string | null
+  qrUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
+  deeplinkUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
+  rawResponse?: Prisma.JsonNullableFilter<"Payment">
+  rawNotification?: Prisma.JsonNullableFilter<"Payment">
+  paidAt?: Prisma.DateTimeNullableFilter<"Payment"> | Date | string | null
+  expiredAt?: Prisma.DateTimeNullableFilter<"Payment"> | Date | string | null
+  lastStatusSyncedAt?: Prisma.DateTimeNullableFilter<"Payment"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
 }
@@ -586,11 +903,24 @@ export type PaymentScalarWhereInput = {
 export type PaymentCreateManyOrderInput = {
   id?: string
   provider: string
+  paymentMethod?: $Enums.PaymentMethod | null
   status?: $Enums.PaymentStatus
   amount: number
   currency?: string
   externalId?: string | null
   snapToken?: string | null
+  transactionId?: string | null
+  transactionStatus?: string | null
+  fraudStatus?: string | null
+  vaNumber?: string | null
+  qrString?: string | null
+  qrUrl?: string | null
+  deeplinkUrl?: string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Date | string | null
+  expiredAt?: Date | string | null
+  lastStatusSyncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -598,11 +928,24 @@ export type PaymentCreateManyOrderInput = {
 export type PaymentUpdateWithoutOrderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   snapToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fraudStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vaNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrString?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deeplinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastStatusSyncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -610,11 +953,24 @@ export type PaymentUpdateWithoutOrderInput = {
 export type PaymentUncheckedUpdateWithoutOrderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   snapToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fraudStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vaNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrString?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deeplinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastStatusSyncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -622,11 +978,24 @@ export type PaymentUncheckedUpdateWithoutOrderInput = {
 export type PaymentUncheckedUpdateManyWithoutOrderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   snapToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fraudStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vaNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrString?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deeplinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawResponse?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  rawNotification?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastStatusSyncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -637,11 +1006,24 @@ export type PaymentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   id?: boolean
   orderId?: boolean
   provider?: boolean
+  paymentMethod?: boolean
   status?: boolean
   amount?: boolean
   currency?: boolean
   externalId?: boolean
   snapToken?: boolean
+  transactionId?: boolean
+  transactionStatus?: boolean
+  fraudStatus?: boolean
+  vaNumber?: boolean
+  qrString?: boolean
+  qrUrl?: boolean
+  deeplinkUrl?: boolean
+  rawResponse?: boolean
+  rawNotification?: boolean
+  paidAt?: boolean
+  expiredAt?: boolean
+  lastStatusSyncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
@@ -651,11 +1033,24 @@ export type PaymentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   orderId?: boolean
   provider?: boolean
+  paymentMethod?: boolean
   status?: boolean
   amount?: boolean
   currency?: boolean
   externalId?: boolean
   snapToken?: boolean
+  transactionId?: boolean
+  transactionStatus?: boolean
+  fraudStatus?: boolean
+  vaNumber?: boolean
+  qrString?: boolean
+  qrUrl?: boolean
+  deeplinkUrl?: boolean
+  rawResponse?: boolean
+  rawNotification?: boolean
+  paidAt?: boolean
+  expiredAt?: boolean
+  lastStatusSyncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
@@ -665,11 +1060,24 @@ export type PaymentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   orderId?: boolean
   provider?: boolean
+  paymentMethod?: boolean
   status?: boolean
   amount?: boolean
   currency?: boolean
   externalId?: boolean
   snapToken?: boolean
+  transactionId?: boolean
+  transactionStatus?: boolean
+  fraudStatus?: boolean
+  vaNumber?: boolean
+  qrString?: boolean
+  qrUrl?: boolean
+  deeplinkUrl?: boolean
+  rawResponse?: boolean
+  rawNotification?: boolean
+  paidAt?: boolean
+  expiredAt?: boolean
+  lastStatusSyncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
@@ -679,16 +1087,29 @@ export type PaymentSelectScalar = {
   id?: boolean
   orderId?: boolean
   provider?: boolean
+  paymentMethod?: boolean
   status?: boolean
   amount?: boolean
   currency?: boolean
   externalId?: boolean
   snapToken?: boolean
+  transactionId?: boolean
+  transactionStatus?: boolean
+  fraudStatus?: boolean
+  vaNumber?: boolean
+  qrString?: boolean
+  qrUrl?: boolean
+  deeplinkUrl?: boolean
+  rawResponse?: boolean
+  rawNotification?: boolean
+  paidAt?: boolean
+  expiredAt?: boolean
+  lastStatusSyncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PaymentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "provider" | "status" | "amount" | "currency" | "externalId" | "snapToken" | "createdAt" | "updatedAt", ExtArgs["result"]["payment"]>
+export type PaymentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "provider" | "paymentMethod" | "status" | "amount" | "currency" | "externalId" | "snapToken" | "transactionId" | "transactionStatus" | "fraudStatus" | "vaNumber" | "qrString" | "qrUrl" | "deeplinkUrl" | "rawResponse" | "rawNotification" | "paidAt" | "expiredAt" | "lastStatusSyncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["payment"]>
 export type PaymentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
 }
@@ -708,11 +1129,24 @@ export type $PaymentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     id: string
     orderId: string
     provider: string
+    paymentMethod: $Enums.PaymentMethod | null
     status: $Enums.PaymentStatus
     amount: number
     currency: string
     externalId: string | null
     snapToken: string | null
+    transactionId: string | null
+    transactionStatus: string | null
+    fraudStatus: string | null
+    vaNumber: string | null
+    qrString: string | null
+    qrUrl: string | null
+    deeplinkUrl: string | null
+    rawResponse: runtime.JsonValue | null
+    rawNotification: runtime.JsonValue | null
+    paidAt: Date | null
+    expiredAt: Date | null
+    lastStatusSyncedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["payment"]>
@@ -1142,11 +1576,24 @@ export interface PaymentFieldRefs {
   readonly id: Prisma.FieldRef<"Payment", 'String'>
   readonly orderId: Prisma.FieldRef<"Payment", 'String'>
   readonly provider: Prisma.FieldRef<"Payment", 'String'>
+  readonly paymentMethod: Prisma.FieldRef<"Payment", 'PaymentMethod'>
   readonly status: Prisma.FieldRef<"Payment", 'PaymentStatus'>
   readonly amount: Prisma.FieldRef<"Payment", 'Int'>
   readonly currency: Prisma.FieldRef<"Payment", 'String'>
   readonly externalId: Prisma.FieldRef<"Payment", 'String'>
   readonly snapToken: Prisma.FieldRef<"Payment", 'String'>
+  readonly transactionId: Prisma.FieldRef<"Payment", 'String'>
+  readonly transactionStatus: Prisma.FieldRef<"Payment", 'String'>
+  readonly fraudStatus: Prisma.FieldRef<"Payment", 'String'>
+  readonly vaNumber: Prisma.FieldRef<"Payment", 'String'>
+  readonly qrString: Prisma.FieldRef<"Payment", 'String'>
+  readonly qrUrl: Prisma.FieldRef<"Payment", 'String'>
+  readonly deeplinkUrl: Prisma.FieldRef<"Payment", 'String'>
+  readonly rawResponse: Prisma.FieldRef<"Payment", 'Json'>
+  readonly rawNotification: Prisma.FieldRef<"Payment", 'Json'>
+  readonly paidAt: Prisma.FieldRef<"Payment", 'DateTime'>
+  readonly expiredAt: Prisma.FieldRef<"Payment", 'DateTime'>
+  readonly lastStatusSyncedAt: Prisma.FieldRef<"Payment", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Payment", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Payment", 'DateTime'>
 }

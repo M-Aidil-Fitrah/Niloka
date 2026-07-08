@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LayoutDashboard, ShoppingBag, Leaf, ShieldCheck, Tag, FileText } from "lucide-react";
 import { DashboardShell, DashboardSidebar, DashboardTopbar } from "../dashboard/dashboard-layout";
 import { SellerStats } from "./seller-stats";
@@ -25,10 +25,6 @@ export function SellerDashboardShell({
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useAuth();
-
-  useEffect(() => {
-    localStorage.setItem("niloka_current_user", user?.sellerId || "seller-aceh-aroma");
-  }, [user?.sellerId]);
 
   const navigation = [
     { id: "overview", label: "Ringkasan Toko", icon: LayoutDashboard },

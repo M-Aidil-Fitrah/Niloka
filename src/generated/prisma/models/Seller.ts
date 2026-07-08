@@ -297,6 +297,7 @@ export type SellerWhereInput = {
   ampasListings?: Prisma.AmpasListingListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
   promos?: Prisma.PromoListRelationFilter
+  orderFulfillments?: Prisma.OrderFulfillmentListRelationFilter
   validationItems?: Prisma.AdminValidationItemListRelationFilter
   applications?: Prisma.SellerApplicationListRelationFilter
   chatThreads?: Prisma.ChatThreadListRelationFilter
@@ -322,6 +323,7 @@ export type SellerOrderByWithRelationInput = {
   ampasListings?: Prisma.AmpasListingOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
   promos?: Prisma.PromoOrderByRelationAggregateInput
+  orderFulfillments?: Prisma.OrderFulfillmentOrderByRelationAggregateInput
   validationItems?: Prisma.AdminValidationItemOrderByRelationAggregateInput
   applications?: Prisma.SellerApplicationOrderByRelationAggregateInput
   chatThreads?: Prisma.ChatThreadOrderByRelationAggregateInput
@@ -350,6 +352,7 @@ export type SellerWhereUniqueInput = Prisma.AtLeast<{
   ampasListings?: Prisma.AmpasListingListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
   promos?: Prisma.PromoListRelationFilter
+  orderFulfillments?: Prisma.OrderFulfillmentListRelationFilter
   validationItems?: Prisma.AdminValidationItemListRelationFilter
   applications?: Prisma.SellerApplicationListRelationFilter
   chatThreads?: Prisma.ChatThreadListRelationFilter
@@ -417,6 +420,7 @@ export type SellerCreateInput = {
   ampasListings?: Prisma.AmpasListingCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadCreateNestedManyWithoutSellerInput
@@ -442,6 +446,7 @@ export type SellerUncheckedCreateInput = {
   ampasListings?: Prisma.AmpasListingUncheckedCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoUncheckedCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemUncheckedCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSellerInput
@@ -467,6 +472,7 @@ export type SellerUpdateInput = {
   ampasListings?: Prisma.AmpasListingUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUpdateManyWithoutSellerNestedInput
@@ -492,6 +498,7 @@ export type SellerUncheckedUpdateInput = {
   ampasListings?: Prisma.AmpasListingUncheckedUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUncheckedUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUncheckedUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSellerNestedInput
@@ -731,6 +738,20 @@ export type SellerUpdateOneRequiredWithoutPromosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SellerUpdateToOneWithWhereWithoutPromosInput, Prisma.SellerUpdateWithoutPromosInput>, Prisma.SellerUncheckedUpdateWithoutPromosInput>
 }
 
+export type SellerCreateNestedOneWithoutOrderFulfillmentsInput = {
+  create?: Prisma.XOR<Prisma.SellerCreateWithoutOrderFulfillmentsInput, Prisma.SellerUncheckedCreateWithoutOrderFulfillmentsInput>
+  connectOrCreate?: Prisma.SellerCreateOrConnectWithoutOrderFulfillmentsInput
+  connect?: Prisma.SellerWhereUniqueInput
+}
+
+export type SellerUpdateOneRequiredWithoutOrderFulfillmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.SellerCreateWithoutOrderFulfillmentsInput, Prisma.SellerUncheckedCreateWithoutOrderFulfillmentsInput>
+  connectOrCreate?: Prisma.SellerCreateOrConnectWithoutOrderFulfillmentsInput
+  upsert?: Prisma.SellerUpsertWithoutOrderFulfillmentsInput
+  connect?: Prisma.SellerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SellerUpdateToOneWithWhereWithoutOrderFulfillmentsInput, Prisma.SellerUpdateWithoutOrderFulfillmentsInput>, Prisma.SellerUncheckedUpdateWithoutOrderFulfillmentsInput>
+}
+
 export type SellerCreateNestedOneWithoutChatThreadsInput = {
   create?: Prisma.XOR<Prisma.SellerCreateWithoutChatThreadsInput, Prisma.SellerUncheckedCreateWithoutChatThreadsInput>
   connectOrCreate?: Prisma.SellerCreateOrConnectWithoutChatThreadsInput
@@ -780,6 +801,7 @@ export type SellerCreateWithoutUsersInput = {
   ampasListings?: Prisma.AmpasListingCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadCreateNestedManyWithoutSellerInput
@@ -804,6 +826,7 @@ export type SellerUncheckedCreateWithoutUsersInput = {
   ampasListings?: Prisma.AmpasListingUncheckedCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoUncheckedCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemUncheckedCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSellerInput
@@ -844,6 +867,7 @@ export type SellerUpdateWithoutUsersInput = {
   ampasListings?: Prisma.AmpasListingUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUpdateManyWithoutSellerNestedInput
@@ -868,6 +892,7 @@ export type SellerUncheckedUpdateWithoutUsersInput = {
   ampasListings?: Prisma.AmpasListingUncheckedUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUncheckedUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUncheckedUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSellerNestedInput
@@ -893,6 +918,7 @@ export type SellerCreateWithoutApplicationsInput = {
   ampasListings?: Prisma.AmpasListingCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadCreateNestedManyWithoutSellerInput
 }
@@ -917,6 +943,7 @@ export type SellerUncheckedCreateWithoutApplicationsInput = {
   ampasListings?: Prisma.AmpasListingUncheckedCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoUncheckedCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemUncheckedCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSellerInput
 }
@@ -957,6 +984,7 @@ export type SellerUpdateWithoutApplicationsInput = {
   ampasListings?: Prisma.AmpasListingUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUpdateManyWithoutSellerNestedInput
 }
@@ -981,6 +1009,7 @@ export type SellerUncheckedUpdateWithoutApplicationsInput = {
   ampasListings?: Prisma.AmpasListingUncheckedUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUncheckedUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUncheckedUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSellerNestedInput
 }
@@ -1004,6 +1033,7 @@ export type SellerCreateWithoutProductsInput = {
   ampasListings?: Prisma.AmpasListingCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadCreateNestedManyWithoutSellerInput
@@ -1028,6 +1058,7 @@ export type SellerUncheckedCreateWithoutProductsInput = {
   ampasListings?: Prisma.AmpasListingUncheckedCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoUncheckedCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemUncheckedCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSellerInput
@@ -1068,6 +1099,7 @@ export type SellerUpdateWithoutProductsInput = {
   ampasListings?: Prisma.AmpasListingUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUpdateManyWithoutSellerNestedInput
@@ -1092,6 +1124,7 @@ export type SellerUncheckedUpdateWithoutProductsInput = {
   ampasListings?: Prisma.AmpasListingUncheckedUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUncheckedUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUncheckedUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSellerNestedInput
@@ -1116,6 +1149,7 @@ export type SellerCreateWithoutAmpasListingsInput = {
   products?: Prisma.ProductCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadCreateNestedManyWithoutSellerInput
@@ -1140,6 +1174,7 @@ export type SellerUncheckedCreateWithoutAmpasListingsInput = {
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoUncheckedCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemUncheckedCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSellerInput
@@ -1180,6 +1215,7 @@ export type SellerUpdateWithoutAmpasListingsInput = {
   products?: Prisma.ProductUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUpdateManyWithoutSellerNestedInput
@@ -1204,6 +1240,7 @@ export type SellerUncheckedUpdateWithoutAmpasListingsInput = {
   products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUncheckedUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUncheckedUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSellerNestedInput
@@ -1228,6 +1265,7 @@ export type SellerCreateWithoutReviewsInput = {
   products?: Prisma.ProductCreateNestedManyWithoutSellerInput
   ampasListings?: Prisma.AmpasListingCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadCreateNestedManyWithoutSellerInput
@@ -1252,6 +1290,7 @@ export type SellerUncheckedCreateWithoutReviewsInput = {
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput
   ampasListings?: Prisma.AmpasListingUncheckedCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoUncheckedCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemUncheckedCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSellerInput
@@ -1292,6 +1331,7 @@ export type SellerUpdateWithoutReviewsInput = {
   products?: Prisma.ProductUpdateManyWithoutSellerNestedInput
   ampasListings?: Prisma.AmpasListingUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUpdateManyWithoutSellerNestedInput
@@ -1316,6 +1356,7 @@ export type SellerUncheckedUpdateWithoutReviewsInput = {
   products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput
   ampasListings?: Prisma.AmpasListingUncheckedUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUncheckedUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUncheckedUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSellerNestedInput
@@ -1340,6 +1381,7 @@ export type SellerCreateWithoutPromosInput = {
   products?: Prisma.ProductCreateNestedManyWithoutSellerInput
   ampasListings?: Prisma.AmpasListingCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadCreateNestedManyWithoutSellerInput
@@ -1364,6 +1406,7 @@ export type SellerUncheckedCreateWithoutPromosInput = {
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput
   ampasListings?: Prisma.AmpasListingUncheckedCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemUncheckedCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSellerInput
@@ -1404,6 +1447,7 @@ export type SellerUpdateWithoutPromosInput = {
   products?: Prisma.ProductUpdateManyWithoutSellerNestedInput
   ampasListings?: Prisma.AmpasListingUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUpdateManyWithoutSellerNestedInput
@@ -1428,6 +1472,123 @@ export type SellerUncheckedUpdateWithoutPromosInput = {
   products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput
   ampasListings?: Prisma.AmpasListingUncheckedUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutSellerNestedInput
+  validationItems?: Prisma.AdminValidationItemUncheckedUpdateManyWithoutSellerNestedInput
+  applications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutSellerNestedInput
+  chatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSellerNestedInput
+}
+
+export type SellerCreateWithoutOrderFulfillmentsInput = {
+  id: string
+  slug: string
+  displayName: string
+  type: $Enums.SellerType
+  locationProvince: string
+  locationCity: string
+  locationDistrict: string
+  verificationStatus?: $Enums.SellerVerificationStatus
+  joinedAt: Date | string
+  ratingAverage?: number
+  totalReviews?: number
+  contactChannel: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutSellerInput
+  products?: Prisma.ProductCreateNestedManyWithoutSellerInput
+  ampasListings?: Prisma.AmpasListingCreateNestedManyWithoutSellerInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutSellerInput
+  promos?: Prisma.PromoCreateNestedManyWithoutSellerInput
+  validationItems?: Prisma.AdminValidationItemCreateNestedManyWithoutSellerInput
+  applications?: Prisma.SellerApplicationCreateNestedManyWithoutSellerInput
+  chatThreads?: Prisma.ChatThreadCreateNestedManyWithoutSellerInput
+}
+
+export type SellerUncheckedCreateWithoutOrderFulfillmentsInput = {
+  id: string
+  slug: string
+  displayName: string
+  type: $Enums.SellerType
+  locationProvince: string
+  locationCity: string
+  locationDistrict: string
+  verificationStatus?: $Enums.SellerVerificationStatus
+  joinedAt: Date | string
+  ratingAverage?: number
+  totalReviews?: number
+  contactChannel: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutSellerInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput
+  ampasListings?: Prisma.AmpasListingUncheckedCreateNestedManyWithoutSellerInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSellerInput
+  promos?: Prisma.PromoUncheckedCreateNestedManyWithoutSellerInput
+  validationItems?: Prisma.AdminValidationItemUncheckedCreateNestedManyWithoutSellerInput
+  applications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutSellerInput
+  chatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSellerInput
+}
+
+export type SellerCreateOrConnectWithoutOrderFulfillmentsInput = {
+  where: Prisma.SellerWhereUniqueInput
+  create: Prisma.XOR<Prisma.SellerCreateWithoutOrderFulfillmentsInput, Prisma.SellerUncheckedCreateWithoutOrderFulfillmentsInput>
+}
+
+export type SellerUpsertWithoutOrderFulfillmentsInput = {
+  update: Prisma.XOR<Prisma.SellerUpdateWithoutOrderFulfillmentsInput, Prisma.SellerUncheckedUpdateWithoutOrderFulfillmentsInput>
+  create: Prisma.XOR<Prisma.SellerCreateWithoutOrderFulfillmentsInput, Prisma.SellerUncheckedCreateWithoutOrderFulfillmentsInput>
+  where?: Prisma.SellerWhereInput
+}
+
+export type SellerUpdateToOneWithWhereWithoutOrderFulfillmentsInput = {
+  where?: Prisma.SellerWhereInput
+  data: Prisma.XOR<Prisma.SellerUpdateWithoutOrderFulfillmentsInput, Prisma.SellerUncheckedUpdateWithoutOrderFulfillmentsInput>
+}
+
+export type SellerUpdateWithoutOrderFulfillmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumSellerTypeFieldUpdateOperationsInput | $Enums.SellerType
+  locationProvince?: Prisma.StringFieldUpdateOperationsInput | string
+  locationCity?: Prisma.StringFieldUpdateOperationsInput | string
+  locationDistrict?: Prisma.StringFieldUpdateOperationsInput | string
+  verificationStatus?: Prisma.EnumSellerVerificationStatusFieldUpdateOperationsInput | $Enums.SellerVerificationStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ratingAverage?: Prisma.FloatFieldUpdateOperationsInput | number
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  contactChannel?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutSellerNestedInput
+  products?: Prisma.ProductUpdateManyWithoutSellerNestedInput
+  ampasListings?: Prisma.AmpasListingUpdateManyWithoutSellerNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutSellerNestedInput
+  promos?: Prisma.PromoUpdateManyWithoutSellerNestedInput
+  validationItems?: Prisma.AdminValidationItemUpdateManyWithoutSellerNestedInput
+  applications?: Prisma.SellerApplicationUpdateManyWithoutSellerNestedInput
+  chatThreads?: Prisma.ChatThreadUpdateManyWithoutSellerNestedInput
+}
+
+export type SellerUncheckedUpdateWithoutOrderFulfillmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumSellerTypeFieldUpdateOperationsInput | $Enums.SellerType
+  locationProvince?: Prisma.StringFieldUpdateOperationsInput | string
+  locationCity?: Prisma.StringFieldUpdateOperationsInput | string
+  locationDistrict?: Prisma.StringFieldUpdateOperationsInput | string
+  verificationStatus?: Prisma.EnumSellerVerificationStatusFieldUpdateOperationsInput | $Enums.SellerVerificationStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ratingAverage?: Prisma.FloatFieldUpdateOperationsInput | number
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  contactChannel?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutSellerNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput
+  ampasListings?: Prisma.AmpasListingUncheckedUpdateManyWithoutSellerNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSellerNestedInput
+  promos?: Prisma.PromoUncheckedUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUncheckedUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSellerNestedInput
@@ -1453,6 +1614,7 @@ export type SellerCreateWithoutChatThreadsInput = {
   ampasListings?: Prisma.AmpasListingCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationCreateNestedManyWithoutSellerInput
 }
@@ -1477,6 +1639,7 @@ export type SellerUncheckedCreateWithoutChatThreadsInput = {
   ampasListings?: Prisma.AmpasListingUncheckedCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoUncheckedCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutSellerInput
   validationItems?: Prisma.AdminValidationItemUncheckedCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutSellerInput
 }
@@ -1517,6 +1680,7 @@ export type SellerUpdateWithoutChatThreadsInput = {
   ampasListings?: Prisma.AmpasListingUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUpdateManyWithoutSellerNestedInput
 }
@@ -1541,6 +1705,7 @@ export type SellerUncheckedUpdateWithoutChatThreadsInput = {
   ampasListings?: Prisma.AmpasListingUncheckedUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUncheckedUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutSellerNestedInput
   validationItems?: Prisma.AdminValidationItemUncheckedUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutSellerNestedInput
 }
@@ -1565,6 +1730,7 @@ export type SellerCreateWithoutValidationItemsInput = {
   ampasListings?: Prisma.AmpasListingCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadCreateNestedManyWithoutSellerInput
 }
@@ -1589,6 +1755,7 @@ export type SellerUncheckedCreateWithoutValidationItemsInput = {
   ampasListings?: Prisma.AmpasListingUncheckedCreateNestedManyWithoutSellerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSellerInput
   promos?: Prisma.PromoUncheckedCreateNestedManyWithoutSellerInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutSellerInput
   applications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutSellerInput
   chatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSellerInput
 }
@@ -1629,6 +1796,7 @@ export type SellerUpdateWithoutValidationItemsInput = {
   ampasListings?: Prisma.AmpasListingUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUpdateManyWithoutSellerNestedInput
 }
@@ -1653,6 +1821,7 @@ export type SellerUncheckedUpdateWithoutValidationItemsInput = {
   ampasListings?: Prisma.AmpasListingUncheckedUpdateManyWithoutSellerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSellerNestedInput
   promos?: Prisma.PromoUncheckedUpdateManyWithoutSellerNestedInput
+  orderFulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutSellerNestedInput
   applications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutSellerNestedInput
   chatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSellerNestedInput
 }
@@ -1668,6 +1837,7 @@ export type SellerCountOutputType = {
   ampasListings: number
   reviews: number
   promos: number
+  orderFulfillments: number
   validationItems: number
   applications: number
   chatThreads: number
@@ -1679,6 +1849,7 @@ export type SellerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   ampasListings?: boolean | SellerCountOutputTypeCountAmpasListingsArgs
   reviews?: boolean | SellerCountOutputTypeCountReviewsArgs
   promos?: boolean | SellerCountOutputTypeCountPromosArgs
+  orderFulfillments?: boolean | SellerCountOutputTypeCountOrderFulfillmentsArgs
   validationItems?: boolean | SellerCountOutputTypeCountValidationItemsArgs
   applications?: boolean | SellerCountOutputTypeCountApplicationsArgs
   chatThreads?: boolean | SellerCountOutputTypeCountChatThreadsArgs
@@ -1732,6 +1903,13 @@ export type SellerCountOutputTypeCountPromosArgs<ExtArgs extends runtime.Types.E
 /**
  * SellerCountOutputType without action
  */
+export type SellerCountOutputTypeCountOrderFulfillmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderFulfillmentWhereInput
+}
+
+/**
+ * SellerCountOutputType without action
+ */
 export type SellerCountOutputTypeCountValidationItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AdminValidationItemWhereInput
 }
@@ -1771,6 +1949,7 @@ export type SellerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   ampasListings?: boolean | Prisma.Seller$ampasListingsArgs<ExtArgs>
   reviews?: boolean | Prisma.Seller$reviewsArgs<ExtArgs>
   promos?: boolean | Prisma.Seller$promosArgs<ExtArgs>
+  orderFulfillments?: boolean | Prisma.Seller$orderFulfillmentsArgs<ExtArgs>
   validationItems?: boolean | Prisma.Seller$validationItemsArgs<ExtArgs>
   applications?: boolean | Prisma.Seller$applicationsArgs<ExtArgs>
   chatThreads?: boolean | Prisma.Seller$chatThreadsArgs<ExtArgs>
@@ -1835,6 +2014,7 @@ export type SellerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   ampasListings?: boolean | Prisma.Seller$ampasListingsArgs<ExtArgs>
   reviews?: boolean | Prisma.Seller$reviewsArgs<ExtArgs>
   promos?: boolean | Prisma.Seller$promosArgs<ExtArgs>
+  orderFulfillments?: boolean | Prisma.Seller$orderFulfillmentsArgs<ExtArgs>
   validationItems?: boolean | Prisma.Seller$validationItemsArgs<ExtArgs>
   applications?: boolean | Prisma.Seller$applicationsArgs<ExtArgs>
   chatThreads?: boolean | Prisma.Seller$chatThreadsArgs<ExtArgs>
@@ -1851,6 +2031,7 @@ export type $SellerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     ampasListings: Prisma.$AmpasListingPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
     promos: Prisma.$PromoPayload<ExtArgs>[]
+    orderFulfillments: Prisma.$OrderFulfillmentPayload<ExtArgs>[]
     validationItems: Prisma.$AdminValidationItemPayload<ExtArgs>[]
     applications: Prisma.$SellerApplicationPayload<ExtArgs>[]
     chatThreads: Prisma.$ChatThreadPayload<ExtArgs>[]
@@ -2269,6 +2450,7 @@ export interface Prisma__SellerClient<T, Null = never, ExtArgs extends runtime.T
   ampasListings<T extends Prisma.Seller$ampasListingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$ampasListingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AmpasListingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.Seller$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   promos<T extends Prisma.Seller$promosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$promosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PromoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  orderFulfillments<T extends Prisma.Seller$orderFulfillmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$orderFulfillmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderFulfillmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   validationItems<T extends Prisma.Seller$validationItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$validationItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdminValidationItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   applications<T extends Prisma.Seller$applicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatThreads<T extends Prisma.Seller$chatThreadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$chatThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2825,6 +3007,30 @@ export type Seller$promosArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.PromoScalarFieldEnum | Prisma.PromoScalarFieldEnum[]
+}
+
+/**
+ * Seller.orderFulfillments
+ */
+export type Seller$orderFulfillmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrderFulfillment
+   */
+  select?: Prisma.OrderFulfillmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrderFulfillment
+   */
+  omit?: Prisma.OrderFulfillmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderFulfillmentInclude<ExtArgs> | null
+  where?: Prisma.OrderFulfillmentWhereInput
+  orderBy?: Prisma.OrderFulfillmentOrderByWithRelationInput | Prisma.OrderFulfillmentOrderByWithRelationInput[]
+  cursor?: Prisma.OrderFulfillmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderFulfillmentScalarFieldEnum | Prisma.OrderFulfillmentScalarFieldEnum[]
 }
 
 /**
