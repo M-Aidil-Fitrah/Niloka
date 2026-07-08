@@ -9,6 +9,7 @@ import { AmpasManagement } from "./ampas-management";
 import { PassportManagement } from "./passport-management";
 import { PromoManagement } from "./promo-management";
 import type { Product, AmpasListing, Promo } from "@/lib/contracts";
+import { useAuth } from "@/context/auth-context";
 
 type SellerDashboardShellProps = {
   products: Product[];
@@ -23,11 +24,12 @@ export function SellerDashboardShell({
 }: SellerDashboardShellProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  useEffect(() => {
-    localStorage.setItem("niloka_current_user", "seller-aceh-aroma");
-  }, []);
+  const { user } = useAuth();
 
-  // Sidebar navigation configuration
+  useEffect(() => {
+    localStorage.setItem("niloka_current_user", user?.sellerId || "seller-aceh-aroma");
+  }, [user?.sellerId]);
+
   const navigation = [
     { id: "overview", label: "Ringkasan Toko", icon: LayoutDashboard },
     { id: "products", label: "Katalog Produk", icon: ShoppingBag, count: products.length },
@@ -37,7 +39,6 @@ export function SellerDashboardShell({
     { id: "logs", label: "Log Aktivitas", icon: FileText },
   ];
 
-  // Map active tab to current panel component
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
@@ -112,7 +113,6 @@ export function SellerDashboardShell({
 
   return (
     <DashboardShell>
-      {/* 1. Static/Drawer Sidebar */}
       <DashboardSidebar
         brandName="Niloka Seller"
         logoChar="S"
@@ -123,16 +123,12 @@ export function SellerDashboardShell({
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      {/* 2. Right Pane: Topbar & Scrollable Content */}
       <div className="flex-1 h-full flex flex-col overflow-hidden">
         <DashboardTopbar
-          title={
-            navigation.find((item) => item.id === activeTab)?.label ||
-            "Dashboard"
-          }
+          title={navigation.find((item) => item.id === activeTab)?.label || "Dashboard"}
           subtitle={getSubTitle()}
-          profileName="Aceh Aroma Co."
-          profileRole="Penyuling Mitra"
+          profileName={user?.name || "Aceh Aroma Co."}
+          profileRole={user?.sellerType ? `Mitra ${user.sellerType.toUpperCase()}` : "Penyuling Mitra"}
           profileImage="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
           onMenuClick={() => setIsSidebarOpen(true)}
           chatHref="/chat?mode=seller"

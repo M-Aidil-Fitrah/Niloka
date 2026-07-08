@@ -15,7 +15,7 @@ const MarkdownMessage = dynamic(
   },
 );
 
-const hiddenPrefixes = ["/admin", "/seller", "/checkout"];
+const hiddenPrefixes = ["/admin", "/seller", "/checkout", "/auth"];
 
 const starterQuestions = [
   "Produk nilam apa yang cocok untuk relaksasi?",
@@ -42,7 +42,7 @@ export function FloatingChatbot() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     createMessage(
       "assistant",
-      "Halo, aku Chatbot **NILOKA**. Aku bisa bantu soal produk nilam, Nilam Passport, promo, AromaMatch, dan Ampas Nilam B2B.",
+      "Halo, aku Chatbot **NILOKA**. Aku bisa bantu soal produk nilam, Nilam Passport, promo, Berita & Artikel Edukasi Limbah Nilam, dan Ampas Nilam B2B.",
     ),
   ]);
   const [lastResponse, setLastResponse] = useState<ChatResponse | null>(null);

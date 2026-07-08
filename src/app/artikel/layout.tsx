@@ -2,11 +2,11 @@ import type { ReactNode } from "react";
 import { SiteNavbar } from "@/components/ui/navbar";
 import { SiteFooter } from "@/components/ui/footer";
 
-type AromaMatchLayoutProps = {
+type ArtikelLayoutProps = {
   children: ReactNode;
 };
 
-export default function AromaMatchLayout({ children }: AromaMatchLayoutProps) {
+export default function ArtikelLayout({ children }: ArtikelLayoutProps) {
   return (
     <div className="relative flex min-h-screen flex-col bg-cream-50">
       <SiteNavbar />

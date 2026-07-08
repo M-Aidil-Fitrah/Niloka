@@ -338,3 +338,23 @@ export type ProductDescriptionResponse = {
   safetyNotice: string;
   missingFields: string[];
 };
+
+export type ArticleCategory = "pupuk" | "energi" | "budidaya" | "olahan";
+
+export type Article = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string; // Markdown format
+  author: string;
+  authorRole?: string;
+  publishedAt: string;
+  imageUrl: string;
+  category: ArticleCategory;
+  videoUrl?: string; // YouTube video URL
+  videoDuration?: string;
+  readTime: string;
+  tags: string[];
+};
+
