@@ -128,6 +128,11 @@ export type Payment = Prisma.PaymentModel
  */
 export type Article = Prisma.ArticleModel
 /**
+ * Model UploadedAsset
+ * 
+ */
+export type UploadedAsset = Prisma.UploadedAssetModel
+/**
  * Model ChatThread
  * 
  */

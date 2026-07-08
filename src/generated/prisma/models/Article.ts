@@ -34,6 +34,7 @@ export type ArticleMinAggregateOutputType = {
   authorRole: string | null
   publishedAt: Date | null
   imageUrl: string | null
+  imageAssetId: string | null
   category: $Enums.ArticleCategory | null
   videoUrl: string | null
   videoDuration: string | null
@@ -50,6 +51,7 @@ export type ArticleMaxAggregateOutputType = {
   authorRole: string | null
   publishedAt: Date | null
   imageUrl: string | null
+  imageAssetId: string | null
   category: $Enums.ArticleCategory | null
   videoUrl: string | null
   videoDuration: string | null
@@ -66,6 +68,7 @@ export type ArticleCountAggregateOutputType = {
   authorRole: number
   publishedAt: number
   imageUrl: number
+  imageAssetId: number
   category: number
   videoUrl: number
   videoDuration: number
@@ -85,6 +88,7 @@ export type ArticleMinAggregateInputType = {
   authorRole?: true
   publishedAt?: true
   imageUrl?: true
+  imageAssetId?: true
   category?: true
   videoUrl?: true
   videoDuration?: true
@@ -101,6 +105,7 @@ export type ArticleMaxAggregateInputType = {
   authorRole?: true
   publishedAt?: true
   imageUrl?: true
+  imageAssetId?: true
   category?: true
   videoUrl?: true
   videoDuration?: true
@@ -117,6 +122,7 @@ export type ArticleCountAggregateInputType = {
   authorRole?: true
   publishedAt?: true
   imageUrl?: true
+  imageAssetId?: true
   category?: true
   videoUrl?: true
   videoDuration?: true
@@ -207,6 +213,7 @@ export type ArticleGroupByOutputType = {
   authorRole: string | null
   publishedAt: Date
   imageUrl: string
+  imageAssetId: string | null
   category: $Enums.ArticleCategory
   videoUrl: string | null
   videoDuration: string | null
@@ -245,11 +252,13 @@ export type ArticleWhereInput = {
   authorRole?: Prisma.StringNullableFilter<"Article"> | string | null
   publishedAt?: Prisma.DateTimeFilter<"Article"> | Date | string
   imageUrl?: Prisma.StringFilter<"Article"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"Article"> | string | null
   category?: Prisma.EnumArticleCategoryFilter<"Article"> | $Enums.ArticleCategory
   videoUrl?: Prisma.StringNullableFilter<"Article"> | string | null
   videoDuration?: Prisma.StringNullableFilter<"Article"> | string | null
   readTime?: Prisma.StringFilter<"Article"> | string
   tags?: Prisma.StringNullableListFilter<"Article">
+  imageAsset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
 }
 
 export type ArticleOrderByWithRelationInput = {
@@ -262,11 +271,13 @@ export type ArticleOrderByWithRelationInput = {
   authorRole?: Prisma.SortOrderInput | Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   category?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   videoDuration?: Prisma.SortOrderInput | Prisma.SortOrder
   readTime?: Prisma.SortOrder
   tags?: Prisma.SortOrder
+  imageAsset?: Prisma.UploadedAssetOrderByWithRelationInput
 }
 
 export type ArticleWhereUniqueInput = Prisma.AtLeast<{
@@ -282,11 +293,13 @@ export type ArticleWhereUniqueInput = Prisma.AtLeast<{
   authorRole?: Prisma.StringNullableFilter<"Article"> | string | null
   publishedAt?: Prisma.DateTimeFilter<"Article"> | Date | string
   imageUrl?: Prisma.StringFilter<"Article"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"Article"> | string | null
   category?: Prisma.EnumArticleCategoryFilter<"Article"> | $Enums.ArticleCategory
   videoUrl?: Prisma.StringNullableFilter<"Article"> | string | null
   videoDuration?: Prisma.StringNullableFilter<"Article"> | string | null
   readTime?: Prisma.StringFilter<"Article"> | string
   tags?: Prisma.StringNullableListFilter<"Article">
+  imageAsset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
 }, "id" | "slug">
 
 export type ArticleOrderByWithAggregationInput = {
@@ -299,6 +312,7 @@ export type ArticleOrderByWithAggregationInput = {
   authorRole?: Prisma.SortOrderInput | Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   category?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   videoDuration?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -322,6 +336,7 @@ export type ArticleScalarWhereWithAggregatesInput = {
   authorRole?: Prisma.StringNullableWithAggregatesFilter<"Article"> | string | null
   publishedAt?: Prisma.DateTimeWithAggregatesFilter<"Article"> | Date | string
   imageUrl?: Prisma.StringWithAggregatesFilter<"Article"> | string
+  imageAssetId?: Prisma.StringNullableWithAggregatesFilter<"Article"> | string | null
   category?: Prisma.EnumArticleCategoryWithAggregatesFilter<"Article"> | $Enums.ArticleCategory
   videoUrl?: Prisma.StringNullableWithAggregatesFilter<"Article"> | string | null
   videoDuration?: Prisma.StringNullableWithAggregatesFilter<"Article"> | string | null
@@ -344,6 +359,7 @@ export type ArticleCreateInput = {
   videoDuration?: string | null
   readTime: string
   tags?: Prisma.ArticleCreatetagsInput | string[]
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutArticleImagesInput
 }
 
 export type ArticleUncheckedCreateInput = {
@@ -356,6 +372,7 @@ export type ArticleUncheckedCreateInput = {
   authorRole?: string | null
   publishedAt: Date | string
   imageUrl: string
+  imageAssetId?: string | null
   category: $Enums.ArticleCategory
   videoUrl?: string | null
   videoDuration?: string | null
@@ -378,6 +395,7 @@ export type ArticleUpdateInput = {
   videoDuration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   readTime?: Prisma.StringFieldUpdateOperationsInput | string
   tags?: Prisma.ArticleUpdatetagsInput | string[]
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutArticleImagesNestedInput
 }
 
 export type ArticleUncheckedUpdateInput = {
@@ -390,6 +408,7 @@ export type ArticleUncheckedUpdateInput = {
   authorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.EnumArticleCategoryFieldUpdateOperationsInput | $Enums.ArticleCategory
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   videoDuration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -407,6 +426,7 @@ export type ArticleCreateManyInput = {
   authorRole?: string | null
   publishedAt: Date | string
   imageUrl: string
+  imageAssetId?: string | null
   category: $Enums.ArticleCategory
   videoUrl?: string | null
   videoDuration?: string | null
@@ -441,6 +461,7 @@ export type ArticleUncheckedUpdateManyInput = {
   authorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.EnumArticleCategoryFieldUpdateOperationsInput | $Enums.ArticleCategory
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   videoDuration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -458,6 +479,7 @@ export type ArticleCountOrderByAggregateInput = {
   authorRole?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   category?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
   videoDuration?: Prisma.SortOrder
@@ -475,6 +497,7 @@ export type ArticleMaxOrderByAggregateInput = {
   authorRole?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   category?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
   videoDuration?: Prisma.SortOrder
@@ -491,10 +514,21 @@ export type ArticleMinOrderByAggregateInput = {
   authorRole?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   category?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
   videoDuration?: Prisma.SortOrder
   readTime?: Prisma.SortOrder
+}
+
+export type ArticleListRelationFilter = {
+  every?: Prisma.ArticleWhereInput
+  some?: Prisma.ArticleWhereInput
+  none?: Prisma.ArticleWhereInput
+}
+
+export type ArticleOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type ArticleCreatetagsInput = {
@@ -510,6 +544,197 @@ export type ArticleUpdatetagsInput = {
   push?: string | string[]
 }
 
+export type ArticleCreateNestedManyWithoutImageAssetInput = {
+  create?: Prisma.XOR<Prisma.ArticleCreateWithoutImageAssetInput, Prisma.ArticleUncheckedCreateWithoutImageAssetInput> | Prisma.ArticleCreateWithoutImageAssetInput[] | Prisma.ArticleUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ArticleCreateOrConnectWithoutImageAssetInput | Prisma.ArticleCreateOrConnectWithoutImageAssetInput[]
+  createMany?: Prisma.ArticleCreateManyImageAssetInputEnvelope
+  connect?: Prisma.ArticleWhereUniqueInput | Prisma.ArticleWhereUniqueInput[]
+}
+
+export type ArticleUncheckedCreateNestedManyWithoutImageAssetInput = {
+  create?: Prisma.XOR<Prisma.ArticleCreateWithoutImageAssetInput, Prisma.ArticleUncheckedCreateWithoutImageAssetInput> | Prisma.ArticleCreateWithoutImageAssetInput[] | Prisma.ArticleUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ArticleCreateOrConnectWithoutImageAssetInput | Prisma.ArticleCreateOrConnectWithoutImageAssetInput[]
+  createMany?: Prisma.ArticleCreateManyImageAssetInputEnvelope
+  connect?: Prisma.ArticleWhereUniqueInput | Prisma.ArticleWhereUniqueInput[]
+}
+
+export type ArticleUpdateManyWithoutImageAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.ArticleCreateWithoutImageAssetInput, Prisma.ArticleUncheckedCreateWithoutImageAssetInput> | Prisma.ArticleCreateWithoutImageAssetInput[] | Prisma.ArticleUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ArticleCreateOrConnectWithoutImageAssetInput | Prisma.ArticleCreateOrConnectWithoutImageAssetInput[]
+  upsert?: Prisma.ArticleUpsertWithWhereUniqueWithoutImageAssetInput | Prisma.ArticleUpsertWithWhereUniqueWithoutImageAssetInput[]
+  createMany?: Prisma.ArticleCreateManyImageAssetInputEnvelope
+  set?: Prisma.ArticleWhereUniqueInput | Prisma.ArticleWhereUniqueInput[]
+  disconnect?: Prisma.ArticleWhereUniqueInput | Prisma.ArticleWhereUniqueInput[]
+  delete?: Prisma.ArticleWhereUniqueInput | Prisma.ArticleWhereUniqueInput[]
+  connect?: Prisma.ArticleWhereUniqueInput | Prisma.ArticleWhereUniqueInput[]
+  update?: Prisma.ArticleUpdateWithWhereUniqueWithoutImageAssetInput | Prisma.ArticleUpdateWithWhereUniqueWithoutImageAssetInput[]
+  updateMany?: Prisma.ArticleUpdateManyWithWhereWithoutImageAssetInput | Prisma.ArticleUpdateManyWithWhereWithoutImageAssetInput[]
+  deleteMany?: Prisma.ArticleScalarWhereInput | Prisma.ArticleScalarWhereInput[]
+}
+
+export type ArticleUncheckedUpdateManyWithoutImageAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.ArticleCreateWithoutImageAssetInput, Prisma.ArticleUncheckedCreateWithoutImageAssetInput> | Prisma.ArticleCreateWithoutImageAssetInput[] | Prisma.ArticleUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ArticleCreateOrConnectWithoutImageAssetInput | Prisma.ArticleCreateOrConnectWithoutImageAssetInput[]
+  upsert?: Prisma.ArticleUpsertWithWhereUniqueWithoutImageAssetInput | Prisma.ArticleUpsertWithWhereUniqueWithoutImageAssetInput[]
+  createMany?: Prisma.ArticleCreateManyImageAssetInputEnvelope
+  set?: Prisma.ArticleWhereUniqueInput | Prisma.ArticleWhereUniqueInput[]
+  disconnect?: Prisma.ArticleWhereUniqueInput | Prisma.ArticleWhereUniqueInput[]
+  delete?: Prisma.ArticleWhereUniqueInput | Prisma.ArticleWhereUniqueInput[]
+  connect?: Prisma.ArticleWhereUniqueInput | Prisma.ArticleWhereUniqueInput[]
+  update?: Prisma.ArticleUpdateWithWhereUniqueWithoutImageAssetInput | Prisma.ArticleUpdateWithWhereUniqueWithoutImageAssetInput[]
+  updateMany?: Prisma.ArticleUpdateManyWithWhereWithoutImageAssetInput | Prisma.ArticleUpdateManyWithWhereWithoutImageAssetInput[]
+  deleteMany?: Prisma.ArticleScalarWhereInput | Prisma.ArticleScalarWhereInput[]
+}
+
+export type ArticleCreateWithoutImageAssetInput = {
+  id: string
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  author: string
+  authorRole?: string | null
+  publishedAt: Date | string
+  imageUrl: string
+  category: $Enums.ArticleCategory
+  videoUrl?: string | null
+  videoDuration?: string | null
+  readTime: string
+  tags?: Prisma.ArticleCreatetagsInput | string[]
+}
+
+export type ArticleUncheckedCreateWithoutImageAssetInput = {
+  id: string
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  author: string
+  authorRole?: string | null
+  publishedAt: Date | string
+  imageUrl: string
+  category: $Enums.ArticleCategory
+  videoUrl?: string | null
+  videoDuration?: string | null
+  readTime: string
+  tags?: Prisma.ArticleCreatetagsInput | string[]
+}
+
+export type ArticleCreateOrConnectWithoutImageAssetInput = {
+  where: Prisma.ArticleWhereUniqueInput
+  create: Prisma.XOR<Prisma.ArticleCreateWithoutImageAssetInput, Prisma.ArticleUncheckedCreateWithoutImageAssetInput>
+}
+
+export type ArticleCreateManyImageAssetInputEnvelope = {
+  data: Prisma.ArticleCreateManyImageAssetInput | Prisma.ArticleCreateManyImageAssetInput[]
+  skipDuplicates?: boolean
+}
+
+export type ArticleUpsertWithWhereUniqueWithoutImageAssetInput = {
+  where: Prisma.ArticleWhereUniqueInput
+  update: Prisma.XOR<Prisma.ArticleUpdateWithoutImageAssetInput, Prisma.ArticleUncheckedUpdateWithoutImageAssetInput>
+  create: Prisma.XOR<Prisma.ArticleCreateWithoutImageAssetInput, Prisma.ArticleUncheckedCreateWithoutImageAssetInput>
+}
+
+export type ArticleUpdateWithWhereUniqueWithoutImageAssetInput = {
+  where: Prisma.ArticleWhereUniqueInput
+  data: Prisma.XOR<Prisma.ArticleUpdateWithoutImageAssetInput, Prisma.ArticleUncheckedUpdateWithoutImageAssetInput>
+}
+
+export type ArticleUpdateManyWithWhereWithoutImageAssetInput = {
+  where: Prisma.ArticleScalarWhereInput
+  data: Prisma.XOR<Prisma.ArticleUpdateManyMutationInput, Prisma.ArticleUncheckedUpdateManyWithoutImageAssetInput>
+}
+
+export type ArticleScalarWhereInput = {
+  AND?: Prisma.ArticleScalarWhereInput | Prisma.ArticleScalarWhereInput[]
+  OR?: Prisma.ArticleScalarWhereInput[]
+  NOT?: Prisma.ArticleScalarWhereInput | Prisma.ArticleScalarWhereInput[]
+  id?: Prisma.StringFilter<"Article"> | string
+  slug?: Prisma.StringFilter<"Article"> | string
+  title?: Prisma.StringFilter<"Article"> | string
+  excerpt?: Prisma.StringFilter<"Article"> | string
+  content?: Prisma.StringFilter<"Article"> | string
+  author?: Prisma.StringFilter<"Article"> | string
+  authorRole?: Prisma.StringNullableFilter<"Article"> | string | null
+  publishedAt?: Prisma.DateTimeFilter<"Article"> | Date | string
+  imageUrl?: Prisma.StringFilter<"Article"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"Article"> | string | null
+  category?: Prisma.EnumArticleCategoryFilter<"Article"> | $Enums.ArticleCategory
+  videoUrl?: Prisma.StringNullableFilter<"Article"> | string | null
+  videoDuration?: Prisma.StringNullableFilter<"Article"> | string | null
+  readTime?: Prisma.StringFilter<"Article"> | string
+  tags?: Prisma.StringNullableListFilter<"Article">
+}
+
+export type ArticleCreateManyImageAssetInput = {
+  id: string
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  author: string
+  authorRole?: string | null
+  publishedAt: Date | string
+  imageUrl: string
+  category: $Enums.ArticleCategory
+  videoUrl?: string | null
+  videoDuration?: string | null
+  readTime: string
+  tags?: Prisma.ArticleCreatetagsInput | string[]
+}
+
+export type ArticleUpdateWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  excerpt?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  author?: Prisma.StringFieldUpdateOperationsInput | string
+  authorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumArticleCategoryFieldUpdateOperationsInput | $Enums.ArticleCategory
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoDuration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  readTime?: Prisma.StringFieldUpdateOperationsInput | string
+  tags?: Prisma.ArticleUpdatetagsInput | string[]
+}
+
+export type ArticleUncheckedUpdateWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  excerpt?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  author?: Prisma.StringFieldUpdateOperationsInput | string
+  authorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumArticleCategoryFieldUpdateOperationsInput | $Enums.ArticleCategory
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoDuration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  readTime?: Prisma.StringFieldUpdateOperationsInput | string
+  tags?: Prisma.ArticleUpdatetagsInput | string[]
+}
+
+export type ArticleUncheckedUpdateManyWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  excerpt?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  author?: Prisma.StringFieldUpdateOperationsInput | string
+  authorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumArticleCategoryFieldUpdateOperationsInput | $Enums.ArticleCategory
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoDuration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  readTime?: Prisma.StringFieldUpdateOperationsInput | string
+  tags?: Prisma.ArticleUpdatetagsInput | string[]
+}
+
 
 
 export type ArticleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -522,11 +747,13 @@ export type ArticleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   authorRole?: boolean
   publishedAt?: boolean
   imageUrl?: boolean
+  imageAssetId?: boolean
   category?: boolean
   videoUrl?: boolean
   videoDuration?: boolean
   readTime?: boolean
   tags?: boolean
+  imageAsset?: boolean | Prisma.Article$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["article"]>
 
 export type ArticleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -539,11 +766,13 @@ export type ArticleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   authorRole?: boolean
   publishedAt?: boolean
   imageUrl?: boolean
+  imageAssetId?: boolean
   category?: boolean
   videoUrl?: boolean
   videoDuration?: boolean
   readTime?: boolean
   tags?: boolean
+  imageAsset?: boolean | Prisma.Article$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["article"]>
 
 export type ArticleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -556,11 +785,13 @@ export type ArticleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   authorRole?: boolean
   publishedAt?: boolean
   imageUrl?: boolean
+  imageAssetId?: boolean
   category?: boolean
   videoUrl?: boolean
   videoDuration?: boolean
   readTime?: boolean
   tags?: boolean
+  imageAsset?: boolean | Prisma.Article$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["article"]>
 
 export type ArticleSelectScalar = {
@@ -573,6 +804,7 @@ export type ArticleSelectScalar = {
   authorRole?: boolean
   publishedAt?: boolean
   imageUrl?: boolean
+  imageAssetId?: boolean
   category?: boolean
   videoUrl?: boolean
   videoDuration?: boolean
@@ -580,11 +812,22 @@ export type ArticleSelectScalar = {
   tags?: boolean
 }
 
-export type ArticleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "excerpt" | "content" | "author" | "authorRole" | "publishedAt" | "imageUrl" | "category" | "videoUrl" | "videoDuration" | "readTime" | "tags", ExtArgs["result"]["article"]>
+export type ArticleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "excerpt" | "content" | "author" | "authorRole" | "publishedAt" | "imageUrl" | "imageAssetId" | "category" | "videoUrl" | "videoDuration" | "readTime" | "tags", ExtArgs["result"]["article"]>
+export type ArticleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  imageAsset?: boolean | Prisma.Article$imageAssetArgs<ExtArgs>
+}
+export type ArticleIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  imageAsset?: boolean | Prisma.Article$imageAssetArgs<ExtArgs>
+}
+export type ArticleIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  imageAsset?: boolean | Prisma.Article$imageAssetArgs<ExtArgs>
+}
 
 export type $ArticlePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Article"
-  objects: {}
+  objects: {
+    imageAsset: Prisma.$UploadedAssetPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     slug: string
@@ -595,6 +838,7 @@ export type $ArticlePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     authorRole: string | null
     publishedAt: Date
     imageUrl: string
+    imageAssetId: string | null
     category: $Enums.ArticleCategory
     videoUrl: string | null
     videoDuration: string | null
@@ -994,6 +1238,7 @@ readonly fields: ArticleFieldRefs;
  */
 export interface Prisma__ArticleClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  imageAsset<T extends Prisma.Article$imageAssetArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Article$imageAssetArgs<ExtArgs>>): Prisma.Prisma__UploadedAssetClient<runtime.Types.Result.GetResult<Prisma.$UploadedAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1032,6 +1277,7 @@ export interface ArticleFieldRefs {
   readonly authorRole: Prisma.FieldRef<"Article", 'String'>
   readonly publishedAt: Prisma.FieldRef<"Article", 'DateTime'>
   readonly imageUrl: Prisma.FieldRef<"Article", 'String'>
+  readonly imageAssetId: Prisma.FieldRef<"Article", 'String'>
   readonly category: Prisma.FieldRef<"Article", 'ArticleCategory'>
   readonly videoUrl: Prisma.FieldRef<"Article", 'String'>
   readonly videoDuration: Prisma.FieldRef<"Article", 'String'>
@@ -1054,6 +1300,10 @@ export type ArticleFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.ArticleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
+  /**
    * Filter, which Article to fetch.
    */
   where: Prisma.ArticleWhereUniqueInput
@@ -1072,6 +1322,10 @@ export type ArticleFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.ArticleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
+  /**
    * Filter, which Article to fetch.
    */
   where: Prisma.ArticleWhereUniqueInput
@@ -1089,6 +1343,10 @@ export type ArticleFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Omit specific fields from the Article
    */
   omit?: Prisma.ArticleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
   /**
    * Filter, which Article to fetch.
    */
@@ -1138,6 +1396,10 @@ export type ArticleFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.ArticleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
+  /**
    * Filter, which Article to fetch.
    */
   where?: Prisma.ArticleWhereInput
@@ -1185,6 +1447,10 @@ export type ArticleFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the Article
    */
   omit?: Prisma.ArticleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
   /**
    * Filter, which Articles to fetch.
    */
@@ -1234,6 +1500,10 @@ export type ArticleCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.ArticleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
+  /**
    * The data needed to create a Article.
    */
   data: Prisma.XOR<Prisma.ArticleCreateInput, Prisma.ArticleUncheckedCreateInput>
@@ -1267,6 +1537,10 @@ export type ArticleCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    */
   data: Prisma.ArticleCreateManyInput | Prisma.ArticleCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1281,6 +1555,10 @@ export type ArticleUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Article
    */
   omit?: Prisma.ArticleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
   /**
    * The data needed to update a Article.
    */
@@ -1333,6 +1611,10 @@ export type ArticleUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many Articles to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1347,6 +1629,10 @@ export type ArticleUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Article
    */
   omit?: Prisma.ArticleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
   /**
    * The filter to search for the Article to update in case it exists.
    */
@@ -1374,6 +1660,10 @@ export type ArticleDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.ArticleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
+  /**
    * Filter which Article to delete.
    */
   where: Prisma.ArticleWhereUniqueInput
@@ -1394,6 +1684,25 @@ export type ArticleDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
+ * Article.imageAsset
+ */
+export type Article$imageAssetArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UploadedAsset
+   */
+  select?: Prisma.UploadedAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UploadedAsset
+   */
+  omit?: Prisma.UploadedAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UploadedAssetInclude<ExtArgs> | null
+  where?: Prisma.UploadedAssetWhereInput
+}
+
+/**
  * Article without action
  */
 export type ArticleDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1405,4 +1714,8 @@ export type ArticleDefaultArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Article
    */
   omit?: Prisma.ArticleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
 }

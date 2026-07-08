@@ -56,6 +56,7 @@ export type ProductMinAggregateOutputType = {
   status: $Enums.ProductStatus | null
   imageSrc: string | null
   imageAlt: string | null
+  imageAssetId: string | null
   featuredRank: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -77,6 +78,7 @@ export type ProductMaxAggregateOutputType = {
   status: $Enums.ProductStatus | null
   imageSrc: string | null
   imageAlt: string | null
+  imageAssetId: string | null
   featuredRank: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -100,6 +102,7 @@ export type ProductCountAggregateOutputType = {
   status: number
   imageSrc: number
   imageAlt: number
+  imageAssetId: number
   featuredRank: number
   createdAt: number
   updatedAt: number
@@ -137,6 +140,7 @@ export type ProductMinAggregateInputType = {
   status?: true
   imageSrc?: true
   imageAlt?: true
+  imageAssetId?: true
   featuredRank?: true
   createdAt?: true
   updatedAt?: true
@@ -158,6 +162,7 @@ export type ProductMaxAggregateInputType = {
   status?: true
   imageSrc?: true
   imageAlt?: true
+  imageAssetId?: true
   featuredRank?: true
   createdAt?: true
   updatedAt?: true
@@ -181,6 +186,7 @@ export type ProductCountAggregateInputType = {
   status?: true
   imageSrc?: true
   imageAlt?: true
+  imageAssetId?: true
   featuredRank?: true
   createdAt?: true
   updatedAt?: true
@@ -291,6 +297,7 @@ export type ProductGroupByOutputType = {
   status: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId: string | null
   featuredRank: number
   createdAt: Date
   updatedAt: Date
@@ -337,11 +344,13 @@ export type ProductWhereInput = {
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   imageSrc?: Prisma.StringFilter<"Product"> | string
   imageAlt?: Prisma.StringFilter<"Product"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"Product"> | string | null
   featuredRank?: Prisma.IntFilter<"Product"> | number
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>
   category?: Prisma.XOR<Prisma.ProductCategoryScalarRelationFilter, Prisma.ProductCategoryWhereInput>
+  imageAsset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
   gallery?: Prisma.ProductImageListRelationFilter
   passport?: Prisma.XOR<Prisma.NilamPassportNullableScalarRelationFilter, Prisma.NilamPassportWhereInput> | null
   reviews?: Prisma.ReviewListRelationFilter
@@ -369,11 +378,13 @@ export type ProductOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   featuredRank?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   seller?: Prisma.SellerOrderByWithRelationInput
   category?: Prisma.ProductCategoryOrderByWithRelationInput
+  imageAsset?: Prisma.UploadedAssetOrderByWithRelationInput
   gallery?: Prisma.ProductImageOrderByRelationAggregateInput
   passport?: Prisma.NilamPassportOrderByWithRelationInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
@@ -404,11 +415,13 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   imageSrc?: Prisma.StringFilter<"Product"> | string
   imageAlt?: Prisma.StringFilter<"Product"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"Product"> | string | null
   featuredRank?: Prisma.IntFilter<"Product"> | number
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>
   category?: Prisma.XOR<Prisma.ProductCategoryScalarRelationFilter, Prisma.ProductCategoryWhereInput>
+  imageAsset?: Prisma.XOR<Prisma.UploadedAssetNullableScalarRelationFilter, Prisma.UploadedAssetWhereInput> | null
   gallery?: Prisma.ProductImageListRelationFilter
   passport?: Prisma.XOR<Prisma.NilamPassportNullableScalarRelationFilter, Prisma.NilamPassportWhereInput> | null
   reviews?: Prisma.ReviewListRelationFilter
@@ -436,6 +449,7 @@ export type ProductOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   featuredRank?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -467,6 +481,7 @@ export type ProductScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumProductStatusWithAggregatesFilter<"Product"> | $Enums.ProductStatus
   imageSrc?: Prisma.StringWithAggregatesFilter<"Product"> | string
   imageAlt?: Prisma.StringWithAggregatesFilter<"Product"> | string
+  imageAssetId?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   featuredRank?: Prisma.IntWithAggregatesFilter<"Product"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -493,6 +508,7 @@ export type ProductCreateInput = {
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutProductsInput
   category: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutProductImagesInput
   gallery?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   passport?: Prisma.NilamPassportCreateNestedOneWithoutProductInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
@@ -520,6 +536,7 @@ export type ProductUncheckedCreateInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -553,6 +570,7 @@ export type ProductUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput
   category?: Prisma.ProductCategoryUpdateOneRequiredWithoutProductsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutProductImagesNestedInput
   gallery?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   passport?: Prisma.NilamPassportUpdateOneWithoutProductNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
@@ -580,6 +598,7 @@ export type ProductUncheckedUpdateInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -610,6 +629,7 @@ export type ProductCreateManyInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -654,6 +674,7 @@ export type ProductUncheckedUpdateManyInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -703,6 +724,7 @@ export type ProductCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   featuredRank?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -731,6 +753,7 @@ export type ProductMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   featuredRank?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -752,6 +775,7 @@ export type ProductMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   imageSrc?: Prisma.SortOrder
   imageAlt?: Prisma.SortOrder
+  imageAssetId?: Prisma.SortOrder
   featuredRank?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -986,6 +1010,48 @@ export type ProductUpdateOneWithoutOrderItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutOrderItemsInput, Prisma.ProductUpdateWithoutOrderItemsInput>, Prisma.ProductUncheckedUpdateWithoutOrderItemsInput>
 }
 
+export type ProductCreateNestedManyWithoutImageAssetInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutImageAssetInput, Prisma.ProductUncheckedCreateWithoutImageAssetInput> | Prisma.ProductCreateWithoutImageAssetInput[] | Prisma.ProductUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutImageAssetInput | Prisma.ProductCreateOrConnectWithoutImageAssetInput[]
+  createMany?: Prisma.ProductCreateManyImageAssetInputEnvelope
+  connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+}
+
+export type ProductUncheckedCreateNestedManyWithoutImageAssetInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutImageAssetInput, Prisma.ProductUncheckedCreateWithoutImageAssetInput> | Prisma.ProductCreateWithoutImageAssetInput[] | Prisma.ProductUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutImageAssetInput | Prisma.ProductCreateOrConnectWithoutImageAssetInput[]
+  createMany?: Prisma.ProductCreateManyImageAssetInputEnvelope
+  connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+}
+
+export type ProductUpdateManyWithoutImageAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutImageAssetInput, Prisma.ProductUncheckedCreateWithoutImageAssetInput> | Prisma.ProductCreateWithoutImageAssetInput[] | Prisma.ProductUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutImageAssetInput | Prisma.ProductCreateOrConnectWithoutImageAssetInput[]
+  upsert?: Prisma.ProductUpsertWithWhereUniqueWithoutImageAssetInput | Prisma.ProductUpsertWithWhereUniqueWithoutImageAssetInput[]
+  createMany?: Prisma.ProductCreateManyImageAssetInputEnvelope
+  set?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  disconnect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  delete?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  update?: Prisma.ProductUpdateWithWhereUniqueWithoutImageAssetInput | Prisma.ProductUpdateWithWhereUniqueWithoutImageAssetInput[]
+  updateMany?: Prisma.ProductUpdateManyWithWhereWithoutImageAssetInput | Prisma.ProductUpdateManyWithWhereWithoutImageAssetInput[]
+  deleteMany?: Prisma.ProductScalarWhereInput | Prisma.ProductScalarWhereInput[]
+}
+
+export type ProductUncheckedUpdateManyWithoutImageAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutImageAssetInput, Prisma.ProductUncheckedCreateWithoutImageAssetInput> | Prisma.ProductCreateWithoutImageAssetInput[] | Prisma.ProductUncheckedCreateWithoutImageAssetInput[]
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutImageAssetInput | Prisma.ProductCreateOrConnectWithoutImageAssetInput[]
+  upsert?: Prisma.ProductUpsertWithWhereUniqueWithoutImageAssetInput | Prisma.ProductUpsertWithWhereUniqueWithoutImageAssetInput[]
+  createMany?: Prisma.ProductCreateManyImageAssetInputEnvelope
+  set?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  disconnect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  delete?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  update?: Prisma.ProductUpdateWithWhereUniqueWithoutImageAssetInput | Prisma.ProductUpdateWithWhereUniqueWithoutImageAssetInput[]
+  updateMany?: Prisma.ProductUpdateManyWithWhereWithoutImageAssetInput | Prisma.ProductUpdateManyWithWhereWithoutImageAssetInput[]
+  deleteMany?: Prisma.ProductScalarWhereInput | Prisma.ProductScalarWhereInput[]
+}
+
 export type ProductCreateWithoutSellerInput = {
   id: string
   slug: string
@@ -1006,6 +1072,7 @@ export type ProductCreateWithoutSellerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   category: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutProductImagesInput
   gallery?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   passport?: Prisma.NilamPassportCreateNestedOneWithoutProductInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
@@ -1032,6 +1099,7 @@ export type ProductUncheckedCreateWithoutSellerInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1091,6 +1159,7 @@ export type ProductScalarWhereInput = {
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   imageSrc?: Prisma.StringFilter<"Product"> | string
   imageAlt?: Prisma.StringFilter<"Product"> | string
+  imageAssetId?: Prisma.StringNullableFilter<"Product"> | string | null
   featuredRank?: Prisma.IntFilter<"Product"> | number
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -1116,6 +1185,7 @@ export type ProductCreateWithoutCategoryInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutProductsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutProductImagesInput
   gallery?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   passport?: Prisma.NilamPassportCreateNestedOneWithoutProductInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
@@ -1142,6 +1212,7 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1201,6 +1272,7 @@ export type ProductCreateWithoutGalleryInput = {
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutProductsInput
   category: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutProductImagesInput
   passport?: Prisma.NilamPassportCreateNestedOneWithoutProductInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
   promoProducts?: Prisma.PromoProductCreateNestedManyWithoutProductInput
@@ -1227,6 +1299,7 @@ export type ProductUncheckedCreateWithoutGalleryInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1275,6 +1348,7 @@ export type ProductUpdateWithoutGalleryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput
   category?: Prisma.ProductCategoryUpdateOneRequiredWithoutProductsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutProductImagesNestedInput
   passport?: Prisma.NilamPassportUpdateOneWithoutProductNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
   promoProducts?: Prisma.PromoProductUpdateManyWithoutProductNestedInput
@@ -1301,6 +1375,7 @@ export type ProductUncheckedUpdateWithoutGalleryInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1333,6 +1408,7 @@ export type ProductCreateWithoutPassportInput = {
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutProductsInput
   category: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutProductImagesInput
   gallery?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
   promoProducts?: Prisma.PromoProductCreateNestedManyWithoutProductInput
@@ -1359,6 +1435,7 @@ export type ProductUncheckedCreateWithoutPassportInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1407,6 +1484,7 @@ export type ProductUpdateWithoutPassportInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput
   category?: Prisma.ProductCategoryUpdateOneRequiredWithoutProductsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutProductImagesNestedInput
   gallery?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
   promoProducts?: Prisma.PromoProductUpdateManyWithoutProductNestedInput
@@ -1433,6 +1511,7 @@ export type ProductUncheckedUpdateWithoutPassportInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1465,6 +1544,7 @@ export type ProductCreateWithoutReviewsInput = {
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutProductsInput
   category: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutProductImagesInput
   gallery?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   passport?: Prisma.NilamPassportCreateNestedOneWithoutProductInput
   promoProducts?: Prisma.PromoProductCreateNestedManyWithoutProductInput
@@ -1491,6 +1571,7 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1539,6 +1620,7 @@ export type ProductUpdateWithoutReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput
   category?: Prisma.ProductCategoryUpdateOneRequiredWithoutProductsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutProductImagesNestedInput
   gallery?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   passport?: Prisma.NilamPassportUpdateOneWithoutProductNestedInput
   promoProducts?: Prisma.PromoProductUpdateManyWithoutProductNestedInput
@@ -1565,6 +1647,7 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1597,6 +1680,7 @@ export type ProductCreateWithoutPromoProductsInput = {
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutProductsInput
   category: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutProductImagesInput
   gallery?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   passport?: Prisma.NilamPassportCreateNestedOneWithoutProductInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
@@ -1623,6 +1707,7 @@ export type ProductUncheckedCreateWithoutPromoProductsInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1671,6 +1756,7 @@ export type ProductUpdateWithoutPromoProductsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput
   category?: Prisma.ProductCategoryUpdateOneRequiredWithoutProductsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutProductImagesNestedInput
   gallery?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   passport?: Prisma.NilamPassportUpdateOneWithoutProductNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
@@ -1697,6 +1783,7 @@ export type ProductUncheckedUpdateWithoutPromoProductsInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1729,6 +1816,7 @@ export type ProductCreateWithoutBundleProductsInput = {
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutProductsInput
   category: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutProductImagesInput
   gallery?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   passport?: Prisma.NilamPassportCreateNestedOneWithoutProductInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
@@ -1755,6 +1843,7 @@ export type ProductUncheckedCreateWithoutBundleProductsInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1803,6 +1892,7 @@ export type ProductUpdateWithoutBundleProductsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput
   category?: Prisma.ProductCategoryUpdateOneRequiredWithoutProductsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutProductImagesNestedInput
   gallery?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   passport?: Prisma.NilamPassportUpdateOneWithoutProductNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
@@ -1829,6 +1919,7 @@ export type ProductUncheckedUpdateWithoutBundleProductsInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1861,6 +1952,7 @@ export type ProductCreateWithoutCartItemsInput = {
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutProductsInput
   category: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutProductImagesInput
   gallery?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   passport?: Prisma.NilamPassportCreateNestedOneWithoutProductInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
@@ -1887,6 +1979,7 @@ export type ProductUncheckedCreateWithoutCartItemsInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1935,6 +2028,7 @@ export type ProductUpdateWithoutCartItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput
   category?: Prisma.ProductCategoryUpdateOneRequiredWithoutProductsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutProductImagesNestedInput
   gallery?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   passport?: Prisma.NilamPassportUpdateOneWithoutProductNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
@@ -1961,6 +2055,7 @@ export type ProductUncheckedUpdateWithoutCartItemsInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1993,6 +2088,7 @@ export type ProductCreateWithoutOrderItemsInput = {
   updatedAt?: Date | string
   seller: Prisma.SellerCreateNestedOneWithoutProductsInput
   category: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutProductImagesInput
   gallery?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   passport?: Prisma.NilamPassportCreateNestedOneWithoutProductInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
@@ -2019,6 +2115,7 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2067,6 +2164,7 @@ export type ProductUpdateWithoutOrderItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput
   category?: Prisma.ProductCategoryUpdateOneRequiredWithoutProductsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutProductImagesNestedInput
   gallery?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   passport?: Prisma.NilamPassportUpdateOneWithoutProductNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
@@ -2093,6 +2191,7 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2102,6 +2201,92 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   promoProducts?: Prisma.PromoProductUncheckedUpdateManyWithoutProductNestedInput
   bundleProducts?: Prisma.BundleProductUncheckedUpdateManyWithoutProductNestedInput
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutProductNestedInput
+}
+
+export type ProductCreateWithoutImageAssetInput = {
+  id: string
+  slug: string
+  name: string
+  shortDescription: string
+  form: $Enums.ProductForm
+  functions?: Prisma.ProductCreatefunctionsInput | $Enums.ProductFunction[]
+  tags?: Prisma.ProductCreatetagsInput | $Enums.ProductTag[]
+  priceAmount: number
+  priceCurrency?: string
+  originalPriceAmount?: number | null
+  originalPriceCurrency?: string | null
+  stock: number
+  status?: $Enums.ProductStatus
+  imageSrc: string
+  imageAlt: string
+  featuredRank?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  seller: Prisma.SellerCreateNestedOneWithoutProductsInput
+  category: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  gallery?: Prisma.ProductImageCreateNestedManyWithoutProductInput
+  passport?: Prisma.NilamPassportCreateNestedOneWithoutProductInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
+  promoProducts?: Prisma.PromoProductCreateNestedManyWithoutProductInput
+  bundleProducts?: Prisma.BundleProductCreateNestedManyWithoutProductInput
+  cartItems?: Prisma.CartItemCreateNestedManyWithoutProductInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
+}
+
+export type ProductUncheckedCreateWithoutImageAssetInput = {
+  id: string
+  slug: string
+  sellerId: string
+  categoryId: string
+  name: string
+  shortDescription: string
+  form: $Enums.ProductForm
+  functions?: Prisma.ProductCreatefunctionsInput | $Enums.ProductFunction[]
+  tags?: Prisma.ProductCreatetagsInput | $Enums.ProductTag[]
+  priceAmount: number
+  priceCurrency?: string
+  originalPriceAmount?: number | null
+  originalPriceCurrency?: string | null
+  stock: number
+  status?: $Enums.ProductStatus
+  imageSrc: string
+  imageAlt: string
+  featuredRank?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  gallery?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
+  passport?: Prisma.NilamPassportUncheckedCreateNestedOneWithoutProductInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProductInput
+  promoProducts?: Prisma.PromoProductUncheckedCreateNestedManyWithoutProductInput
+  bundleProducts?: Prisma.BundleProductUncheckedCreateNestedManyWithoutProductInput
+  cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutProductInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
+}
+
+export type ProductCreateOrConnectWithoutImageAssetInput = {
+  where: Prisma.ProductWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductCreateWithoutImageAssetInput, Prisma.ProductUncheckedCreateWithoutImageAssetInput>
+}
+
+export type ProductCreateManyImageAssetInputEnvelope = {
+  data: Prisma.ProductCreateManyImageAssetInput | Prisma.ProductCreateManyImageAssetInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProductUpsertWithWhereUniqueWithoutImageAssetInput = {
+  where: Prisma.ProductWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProductUpdateWithoutImageAssetInput, Prisma.ProductUncheckedUpdateWithoutImageAssetInput>
+  create: Prisma.XOR<Prisma.ProductCreateWithoutImageAssetInput, Prisma.ProductUncheckedCreateWithoutImageAssetInput>
+}
+
+export type ProductUpdateWithWhereUniqueWithoutImageAssetInput = {
+  where: Prisma.ProductWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProductUpdateWithoutImageAssetInput, Prisma.ProductUncheckedUpdateWithoutImageAssetInput>
+}
+
+export type ProductUpdateManyWithWhereWithoutImageAssetInput = {
+  where: Prisma.ProductScalarWhereInput
+  data: Prisma.XOR<Prisma.ProductUpdateManyMutationInput, Prisma.ProductUncheckedUpdateManyWithoutImageAssetInput>
 }
 
 export type ProductCreateManySellerInput = {
@@ -2121,6 +2306,7 @@ export type ProductCreateManySellerInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2146,6 +2332,7 @@ export type ProductUpdateWithoutSellerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.ProductCategoryUpdateOneRequiredWithoutProductsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutProductImagesNestedInput
   gallery?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   passport?: Prisma.NilamPassportUpdateOneWithoutProductNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
@@ -2172,6 +2359,7 @@ export type ProductUncheckedUpdateWithoutSellerInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2201,6 +2389,7 @@ export type ProductUncheckedUpdateManyWithoutSellerInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2223,6 +2412,7 @@ export type ProductCreateManyCategoryInput = {
   status?: $Enums.ProductStatus
   imageSrc: string
   imageAlt: string
+  imageAssetId?: string | null
   featuredRank?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2248,6 +2438,7 @@ export type ProductUpdateWithoutCategoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutProductImagesNestedInput
   gallery?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   passport?: Prisma.NilamPassportUpdateOneWithoutProductNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
@@ -2274,6 +2465,7 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
   imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2290,6 +2482,113 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   sellerId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  form?: Prisma.EnumProductFormFieldUpdateOperationsInput | $Enums.ProductForm
+  functions?: Prisma.ProductUpdatefunctionsInput | $Enums.ProductFunction[]
+  tags?: Prisma.ProductUpdatetagsInput | $Enums.ProductTag[]
+  priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  originalPriceAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  originalPriceCurrency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+  imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ProductCreateManyImageAssetInput = {
+  id: string
+  slug: string
+  sellerId: string
+  categoryId: string
+  name: string
+  shortDescription: string
+  form: $Enums.ProductForm
+  functions?: Prisma.ProductCreatefunctionsInput | $Enums.ProductFunction[]
+  tags?: Prisma.ProductCreatetagsInput | $Enums.ProductTag[]
+  priceAmount: number
+  priceCurrency?: string
+  originalPriceAmount?: number | null
+  originalPriceCurrency?: string | null
+  stock: number
+  status?: $Enums.ProductStatus
+  imageSrc: string
+  imageAlt: string
+  featuredRank?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ProductUpdateWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  form?: Prisma.EnumProductFormFieldUpdateOperationsInput | $Enums.ProductForm
+  functions?: Prisma.ProductUpdatefunctionsInput | $Enums.ProductFunction[]
+  tags?: Prisma.ProductUpdatetagsInput | $Enums.ProductTag[]
+  priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  originalPriceAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  originalPriceCurrency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+  imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput
+  category?: Prisma.ProductCategoryUpdateOneRequiredWithoutProductsNestedInput
+  gallery?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
+  passport?: Prisma.NilamPassportUpdateOneWithoutProductNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
+  promoProducts?: Prisma.PromoProductUpdateManyWithoutProductNestedInput
+  bundleProducts?: Prisma.BundleProductUpdateManyWithoutProductNestedInput
+  cartItems?: Prisma.CartItemUpdateManyWithoutProductNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
+}
+
+export type ProductUncheckedUpdateWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  sellerId?: Prisma.StringFieldUpdateOperationsInput | string
+  categoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  form?: Prisma.EnumProductFormFieldUpdateOperationsInput | $Enums.ProductForm
+  functions?: Prisma.ProductUpdatefunctionsInput | $Enums.ProductFunction[]
+  tags?: Prisma.ProductUpdatetagsInput | $Enums.ProductTag[]
+  priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  priceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  originalPriceAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  originalPriceCurrency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+  imageSrc?: Prisma.StringFieldUpdateOperationsInput | string
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
+  featuredRank?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gallery?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
+  passport?: Prisma.NilamPassportUncheckedUpdateOneWithoutProductNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProductNestedInput
+  promoProducts?: Prisma.PromoProductUncheckedUpdateManyWithoutProductNestedInput
+  bundleProducts?: Prisma.BundleProductUncheckedUpdateManyWithoutProductNestedInput
+  cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutProductNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
+}
+
+export type ProductUncheckedUpdateManyWithoutImageAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  sellerId?: Prisma.StringFieldUpdateOperationsInput | string
+  categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   shortDescription?: Prisma.StringFieldUpdateOperationsInput | string
   form?: Prisma.EnumProductFormFieldUpdateOperationsInput | $Enums.ProductForm
@@ -2402,11 +2701,13 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   status?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
   featuredRank?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
   category?: boolean | Prisma.ProductCategoryDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.Product$imageAssetArgs<ExtArgs>
   gallery?: boolean | Prisma.Product$galleryArgs<ExtArgs>
   passport?: boolean | Prisma.Product$passportArgs<ExtArgs>
   reviews?: boolean | Prisma.Product$reviewsArgs<ExtArgs>
@@ -2435,11 +2736,13 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   status?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
   featuredRank?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
   category?: boolean | Prisma.ProductCategoryDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.Product$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["product"]>
 
 export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2460,11 +2763,13 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   status?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
   featuredRank?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
   category?: boolean | Prisma.ProductCategoryDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.Product$imageAssetArgs<ExtArgs>
 }, ExtArgs["result"]["product"]>
 
 export type ProductSelectScalar = {
@@ -2485,15 +2790,17 @@ export type ProductSelectScalar = {
   status?: boolean
   imageSrc?: boolean
   imageAlt?: boolean
+  imageAssetId?: boolean
   featuredRank?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "sellerId" | "categoryId" | "name" | "shortDescription" | "form" | "functions" | "tags" | "priceAmount" | "priceCurrency" | "originalPriceAmount" | "originalPriceCurrency" | "stock" | "status" | "imageSrc" | "imageAlt" | "featuredRank" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "sellerId" | "categoryId" | "name" | "shortDescription" | "form" | "functions" | "tags" | "priceAmount" | "priceCurrency" | "originalPriceAmount" | "originalPriceCurrency" | "stock" | "status" | "imageSrc" | "imageAlt" | "imageAssetId" | "featuredRank" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
   category?: boolean | Prisma.ProductCategoryDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.Product$imageAssetArgs<ExtArgs>
   gallery?: boolean | Prisma.Product$galleryArgs<ExtArgs>
   passport?: boolean | Prisma.Product$passportArgs<ExtArgs>
   reviews?: boolean | Prisma.Product$reviewsArgs<ExtArgs>
@@ -2506,10 +2813,12 @@ export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type ProductIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
   category?: boolean | Prisma.ProductCategoryDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.Product$imageAssetArgs<ExtArgs>
 }
 export type ProductIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>
   category?: boolean | Prisma.ProductCategoryDefaultArgs<ExtArgs>
+  imageAsset?: boolean | Prisma.Product$imageAssetArgs<ExtArgs>
 }
 
 export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2517,6 +2826,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     seller: Prisma.$SellerPayload<ExtArgs>
     category: Prisma.$ProductCategoryPayload<ExtArgs>
+    imageAsset: Prisma.$UploadedAssetPayload<ExtArgs> | null
     gallery: Prisma.$ProductImagePayload<ExtArgs>[]
     passport: Prisma.$NilamPassportPayload<ExtArgs> | null
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
@@ -2543,6 +2853,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     status: $Enums.ProductStatus
     imageSrc: string
     imageAlt: string
+    imageAssetId: string | null
     featuredRank: number
     createdAt: Date
     updatedAt: Date
@@ -2942,6 +3253,7 @@ export interface Prisma__ProductClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   seller<T extends Prisma.SellerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SellerDefaultArgs<ExtArgs>>): Prisma.Prisma__SellerClient<runtime.Types.Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   category<T extends Prisma.ProductCategoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductCategoryDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductCategoryClient<runtime.Types.Result.GetResult<Prisma.$ProductCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  imageAsset<T extends Prisma.Product$imageAssetArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$imageAssetArgs<ExtArgs>>): Prisma.Prisma__UploadedAssetClient<runtime.Types.Result.GetResult<Prisma.$UploadedAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   gallery<T extends Prisma.Product$galleryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$galleryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   passport<T extends Prisma.Product$passportArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$passportArgs<ExtArgs>>): Prisma.Prisma__NilamPassportClient<runtime.Types.Result.GetResult<Prisma.$NilamPassportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   reviews<T extends Prisma.Product$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2995,6 +3307,7 @@ export interface ProductFieldRefs {
   readonly status: Prisma.FieldRef<"Product", 'ProductStatus'>
   readonly imageSrc: Prisma.FieldRef<"Product", 'String'>
   readonly imageAlt: Prisma.FieldRef<"Product", 'String'>
+  readonly imageAssetId: Prisma.FieldRef<"Product", 'String'>
   readonly featuredRank: Prisma.FieldRef<"Product", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Product", 'DateTime'>
@@ -3396,6 +3709,25 @@ export type ProductDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Products to delete.
    */
   limit?: number
+}
+
+/**
+ * Product.imageAsset
+ */
+export type Product$imageAssetArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UploadedAsset
+   */
+  select?: Prisma.UploadedAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UploadedAsset
+   */
+  omit?: Prisma.UploadedAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UploadedAssetInclude<ExtArgs> | null
+  where?: Prisma.UploadedAssetWhereInput
 }
 
 /**

@@ -518,6 +518,23 @@ export type EnumArticleCategoryWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumArticleCategoryFilter<$PrismaModel>
 }
 
+export type EnumUploadedAssetKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.UploadedAssetKind | Prisma.EnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  in?: $Enums.UploadedAssetKind[] | Prisma.ListEnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UploadedAssetKind[] | Prisma.ListEnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUploadedAssetKindFilter<$PrismaModel> | $Enums.UploadedAssetKind
+}
+
+export type EnumUploadedAssetKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.UploadedAssetKind | Prisma.EnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  in?: $Enums.UploadedAssetKind[] | Prisma.ListEnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UploadedAssetKind[] | Prisma.ListEnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUploadedAssetKindWithAggregatesFilter<$PrismaModel> | $Enums.UploadedAssetKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumUploadedAssetKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumUploadedAssetKindFilter<$PrismaModel>
+}
+
 export type EnumChatMessageSenderRoleFilter<$PrismaModel = never> = {
   equals?: $Enums.ChatMessageSenderRole | Prisma.EnumChatMessageSenderRoleFieldRefInput<$PrismaModel>
   in?: $Enums.ChatMessageSenderRole[] | Prisma.ListEnumChatMessageSenderRoleFieldRefInput<$PrismaModel>
@@ -1107,6 +1124,23 @@ export type NestedEnumArticleCategoryWithAggregatesFilter<$PrismaModel = never> 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumArticleCategoryFilter<$PrismaModel>
   _max?: Prisma.NestedEnumArticleCategoryFilter<$PrismaModel>
+}
+
+export type NestedEnumUploadedAssetKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.UploadedAssetKind | Prisma.EnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  in?: $Enums.UploadedAssetKind[] | Prisma.ListEnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UploadedAssetKind[] | Prisma.ListEnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUploadedAssetKindFilter<$PrismaModel> | $Enums.UploadedAssetKind
+}
+
+export type NestedEnumUploadedAssetKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.UploadedAssetKind | Prisma.EnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  in?: $Enums.UploadedAssetKind[] | Prisma.ListEnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UploadedAssetKind[] | Prisma.ListEnumUploadedAssetKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUploadedAssetKindWithAggregatesFilter<$PrismaModel> | $Enums.UploadedAssetKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumUploadedAssetKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumUploadedAssetKindFilter<$PrismaModel>
 }
 
 export type NestedEnumChatMessageSenderRoleFilter<$PrismaModel = never> = {

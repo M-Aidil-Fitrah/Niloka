@@ -231,3 +231,15 @@ export const ChatMessageSenderRole = {
 } as const
 
 export type ChatMessageSenderRole = (typeof ChatMessageSenderRole)[keyof typeof ChatMessageSenderRole]
+
+
+export const UploadedAssetKind = {
+  PRODUCT_IMAGE: 'PRODUCT_IMAGE',
+  CATEGORY_IMAGE: 'CATEGORY_IMAGE',
+  AMPAS_IMAGE: 'AMPAS_IMAGE',
+  ARTICLE_IMAGE: 'ARTICLE_IMAGE',
+  USER_AVATAR: 'USER_AVATAR',
+  DOCUMENT: 'DOCUMENT'
+} as const
+
+export type UploadedAssetKind = (typeof UploadedAssetKind)[keyof typeof UploadedAssetKind]

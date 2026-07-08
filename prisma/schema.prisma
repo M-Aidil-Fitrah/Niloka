@@ -163,12 +163,22 @@ enum ChatMessageSenderRole {
   SYSTEM
 }
 
+enum UploadedAssetKind {
+  PRODUCT_IMAGE
+  CATEGORY_IMAGE
+  AMPAS_IMAGE
+  ARTICLE_IMAGE
+  USER_AVATAR
+  DOCUMENT
+}
+
 model User {
   id                 String    @id @default(cuid())
   name               String?
   email              String?   @unique
   emailVerified      DateTime? @map("email_verified")
   image              String?
+  imageAssetId       String?   @map("image_asset_id")
   role               UserRole  @default(BUYER)
   passwordHash       String?   @map("password_hash")
   sellerId           String?   @map("seller_id")
@@ -179,6 +189,8 @@ model User {
   updatedAt          DateTime  @updatedAt @map("updated_at")
 
   seller             Seller?   @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+  imageAsset         UploadedAsset? @relation("UserAvatarAsset", fields: [imageAssetId], references: [id], onDelete: SetNull)
+  uploadedAssets     UploadedAsset[] @relation("UploadedAssetOwner")
   accounts           Account[]
   sessions           Session[]
   carts              Cart[]
@@ -287,8 +299,10 @@ model ProductCategory {
   targetMarket ProductTargetMarket @map("target_market")
   imageSrc     String              @map("image_src")
   imageAlt     String              @map("image_alt")
+  imageAssetId String?             @map("image_asset_id")
 
   products     Product[]
+  imageAsset   UploadedAsset?      @relation("ProductCategoryImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
 
   @@map("product_categories")
 }
@@ -311,12 +325,14 @@ model Product {
   status                ProductStatus     @default(DRAFT)
   imageSrc              String            @map("image_src")
   imageAlt              String            @map("image_alt")
+  imageAssetId          String?           @map("image_asset_id")
   featuredRank          Int               @default(999) @map("featured_rank")
   createdAt             DateTime          @default(now()) @map("created_at")
   updatedAt             DateTime          @updatedAt @map("updated_at")
 
   seller                Seller            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   category              ProductCategory   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  imageAsset            UploadedAsset?    @relation("ProductPrimaryImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
   gallery               ProductImage[]
   passport              NilamPassport?
   reviews               Review[]
@@ -327,6 +343,7 @@ model Product {
 
   @@index([sellerId])
   @@index([categoryId])
+  @@index([imageAssetId])
   @@map("products")
 }
 
@@ -335,9 +352,11 @@ model ProductImage {
   productId String  @map("product_id")
   src       String
   alt       String
+  assetId   String? @map("asset_id")
   sortOrder Int     @default(0) @map("sort_order")
 
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  asset     UploadedAsset? @relation("ProductGalleryAsset", fields: [assetId], references: [id], onDelete: SetNull)
 
   @@map("product_images")
 }
@@ -381,6 +400,7 @@ model AmpasListing {
   status                         AmpasListingStatus @default(DRAFT)
   imageSrc                       String             @map("image_src")
   imageAlt                       String             @map("image_alt")
+  imageAssetId                   String?            @map("image_asset_id")
   disclaimer                     String             @db.Text
   distillationDate               DateTime?          @map("distillation_date")
   shippingOption                 String?            @map("shipping_option")
@@ -392,10 +412,12 @@ model AmpasListing {
   updatedAt                      DateTime           @updatedAt @map("updated_at")
 
   seller                         Seller             @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  imageAsset                     UploadedAsset?     @relation("AmpasListingImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
   cartItems                      CartItem[]
   orderItems                     OrderItem[]
 
   @@index([sellerId])
+  @@index([imageAssetId])
   @@map("ampas_listings")
 }
 
@@ -569,13 +591,42 @@ model Article {
   authorRole    String?         @map("author_role")
   publishedAt   DateTime        @map("published_at")
   imageUrl      String          @map("image_url")
+  imageAssetId  String?         @map("image_asset_id")
   category      ArticleCategory
   videoUrl      String?         @map("video_url")
   videoDuration String?         @map("video_duration")
   readTime      String          @map("read_time")
   tags          String[]
+  imageAsset    UploadedAsset?  @relation("ArticleImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
 
   @@map("articles")
+}
+
+model UploadedAsset {
+  id               String            @id @default(cuid())
+  kind             UploadedAssetKind
+  uploadedById     String?           @map("uploaded_by_id")
+  originalFilename String            @map("original_filename")
+  storageKey       String            @unique @map("storage_key")
+  publicPath       String            @unique @map("public_path")
+  mimeType         String            @default("image/webp") @map("mime_type")
+  sizeBytes        Int               @map("size_bytes")
+  width            Int
+  height           Int
+  checksum         String?
+  createdAt        DateTime          @default(now()) @map("created_at")
+
+  uploadedBy       User?             @relation("UploadedAssetOwner", fields: [uploadedById], references: [id], onDelete: SetNull)
+  userAvatars      User[]            @relation("UserAvatarAsset")
+  categoryImages   ProductCategory[] @relation("ProductCategoryImage")
+  productImages    Product[]         @relation("ProductPrimaryImage")
+  galleryImages    ProductImage[]    @relation("ProductGalleryAsset")
+  ampasImages      AmpasListing[]    @relation("AmpasListingImage")
+  articleImages    Article[]         @relation("ArticleImage")
+
+  @@index([kind])
+  @@index([uploadedById])
+  @@map("uploaded_assets")
 }
 
 model ChatThread {
