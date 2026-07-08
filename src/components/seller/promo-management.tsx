@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
-import type { Promo, PromoStatus, PromoType, Product } from "@/lib/contracts";
+import type { Promo, PromoStatus, Product } from "@/lib/contracts";
 import { showToast } from "../dashboard/dashboard-layout";
 import { PromoTable } from "./promo/promo-table";
 import { PromoDrawer } from "./promo/promo-drawer";

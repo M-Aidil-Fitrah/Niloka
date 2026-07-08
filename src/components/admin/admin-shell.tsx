@@ -136,7 +136,6 @@ export function AdminShell({ validationItems: initialItems, sellers }: AdminShel
       {/* 1. Static/Drawer Sidebar */}
       <DashboardSidebar
         brandName="Niloka Admin"
-        logoChar="A"
         navigation={navigation}
         activeTab={activeTab}
         onTabChange={setActiveTab}

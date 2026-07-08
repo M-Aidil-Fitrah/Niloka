@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Plus, Minus, Trash2, ShoppingBag, CheckCircle } from "lucide-react";
+import { Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
 import type { CartItem, Money } from "@/lib/contracts";
 
 type CartItemsListProps = {

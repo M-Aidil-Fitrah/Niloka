@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, type ReactNode, type ComponentType } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Bell, MessageSquare, Settings, Menu, X, ChevronDown, LogOut, ShieldCheck, User } from "lucide-react";
+import { Bell, MessageSquare, Settings, Menu, X, ChevronDown, LogOut, User } from "lucide-react";
 import { cn } from "@/lib/styles";
 import nilokaLogo from "@/public/assets/logo/logo.png";
 
@@ -91,7 +91,6 @@ export type SidebarNavItem = {
 
 type DashboardSidebarProps = {
   brandName: string; // e.g. "NILOKA SELLER" or "NILOKA ADMIN"
-  logoChar: string;
   navigation: SidebarNavItem[];
   activeTab: string;
   onTabChange: (id: string) => void;
@@ -101,7 +100,6 @@ type DashboardSidebarProps = {
 
 export function DashboardSidebar({
   brandName,
-  logoChar,
   navigation,
   activeTab,
   onTabChange,

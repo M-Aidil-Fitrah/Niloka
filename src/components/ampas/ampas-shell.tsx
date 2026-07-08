@@ -139,7 +139,6 @@ export function AmpasShell({ listings }: AmpasShellProps) {
               <AmpasCard
                 key={listing.id}
                 listing={listing}
-                onContact={() => {}}
                 viewMode={viewMode}
               />
             ))}

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, MapPin, Calendar, HelpCircle, Truck, ShoppingCart, Send, Info, Scale } from "lucide-react";
+import { CheckCircle, MapPin, Calendar, Truck, ShoppingCart, Send, Scale } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
 import type { AmpasListing, Seller } from "@/lib/contracts";
 import { useCart } from "@/context/cart-context";
@@ -94,14 +94,7 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
     .join(" ");
 
   const hasWholesale = localListing.wholesaleEnabled && localListing.wholesaleMinQtyKg && localListing.wholesalePricePerKg;
-  const remainingWeight = hasWholesale && localListing.wholesaleMinQtyKg ? localListing.wholesaleMinQtyKg - quantity : 0;
 
-  // Build WhatsApp template text
-  const waMessage = `Halo ${localSeller.displayName}, saya tertarik dengan penawaran Ampas Nilam: ${title}.
-- Kuantitas Rencana: ${quantity.toLocaleString("id-ID")} Kg
-- Estimasi Nilai: Rp ${totalCost.toLocaleString("id-ID")} ${isWholesaleApplied ? "(Harga Grosir Diterapkan)" : ""}
-
-Mohon informasi mengenai pengiriman logistik lebih lanjut. Terima kasih.`;
 
   return (
     <div className="flex flex-col space-y-6">

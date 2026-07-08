@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, AlertTriangle } from "lucide-react";
-import type { AmpasListing, AmpasCondition, AmpasUsageTag } from "@/lib/contracts";
+import type { AmpasListing, AmpasUsageTag } from "@/lib/contracts";
 import { showToast } from "../dashboard/dashboard-layout";
 import { AmpasTable } from "./ampas/ampas-table";
 import { AmpasDrawer } from "./ampas/ampas-drawer";
