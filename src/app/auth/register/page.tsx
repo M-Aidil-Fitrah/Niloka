@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -20,12 +20,6 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Real-time validation states
-  const [nameError, setNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   // Refs for GSAP
   const containerRef = useRef<HTMLDivElement>(null);
@@ -139,56 +133,17 @@ export default function RegisterPage() {
     return val === pass ? "" : "Konfirmasi sandi tidak cocok";
   };
 
-  // Run validations in real-time as user types
-  useEffect(() => {
-    if (name) {
-      setNameError(validateName(name));
-    } else {
-      setNameError("");
-    }
-  }, [name]);
-
-  useEffect(() => {
-    if (email) {
-      setEmailError(validateEmail(email));
-    } else {
-      setEmailError("");
-    }
-  }, [email]);
-
-  useEffect(() => {
-    if (password) {
-      setPasswordError(validatePassword(password));
-    } else {
-      setPasswordError("");
-    }
-    if (confirmPassword) {
-      setConfirmPasswordError(validateConfirmPassword(confirmPassword, password));
-    }
-  }, [password, confirmPassword]);
-
-  useEffect(() => {
-    if (confirmPassword) {
-      setConfirmPasswordError(validateConfirmPassword(confirmPassword, password));
-    } else {
-      setConfirmPasswordError("");
-    }
-  }, [confirmPassword, password]);
+  // Derive validation errors dynamically
+  const nameError = name ? validateName(name) : "";
+  const emailError = email ? validateEmail(email) : "";
+  const passwordError = password ? validatePassword(password) : "";
+  const confirmPasswordError = confirmPassword ? validateConfirmPassword(confirmPassword, password) : "";
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    const currentNameErr = validateName(name);
-    const currentEmailErr = validateEmail(email);
-    const currentPasswordErr = validatePassword(password);
-    const currentConfirmPasswordErr = validateConfirmPassword(confirmPassword, password);
-
-    if (currentNameErr || currentEmailErr || currentPasswordErr || currentConfirmPasswordErr) {
-      setNameError(currentNameErr);
-      setEmailError(currentEmailErr);
-      setPasswordError(currentPasswordErr);
-      setConfirmPasswordError(currentConfirmPasswordErr);
+    if (nameError || emailError || passwordError || confirmPasswordError) {
       return;
     }
 
@@ -218,10 +173,13 @@ export default function RegisterPage() {
       {/* LEFT PANEL: Branding & Visual Hero (Visible on lg screens) */}
       <div className="hidden lg:flex lg:w-[40%] h-full text-white-soft relative p-10 flex-col justify-between overflow-hidden shrink-0">
         {/* Full-bleed high-quality Unsplash image representing patchouli/essential oils */}
-        <img
+        <Image
           ref={heroImgRef}
           src="https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=1000&auto=format&fit=crop"
           alt="Minyak Atsiri Nilam"
+          fill
+          priority
+          sizes="40vw"
           className="absolute inset-[-20px] w-[calc(100%+40px)] h-[calc(100%+40px)] object-cover"
         />
         {/* Dark overlay for readability */}

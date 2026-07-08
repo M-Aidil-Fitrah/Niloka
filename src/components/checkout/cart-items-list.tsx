@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Plus, Minus, Trash2, ShoppingBag, CheckCircle } from "lucide-react";
-import type { CartItem } from "@/lib/contracts";
+import type { CartItem, Money } from "@/lib/contracts";
 
 type CartItemsListProps = {
   resolvedItems: (CartItem & {
@@ -9,8 +9,8 @@ type CartItemsListProps = {
     imageAlt: string;
     wholesaleEnabled?: boolean;
     wholesaleMinQtyKg?: number;
-    wholesalePricePerKg?: any;
-    normalPricePerKg?: any;
+    wholesalePricePerKg?: Money | null;
+    normalPricePerKg?: Money | null;
   })[];
   updateQuantity: (id: string, qty: number) => void;
   removeItem: (id: string) => void;

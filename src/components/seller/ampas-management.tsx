@@ -21,13 +21,15 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("niloka_ampas_listings");
-      if (stored) {
-        setListings(JSON.parse(stored));
-      }
       const user = localStorage.getItem("niloka_current_user");
-      if (user && user !== "buyer") {
-        setCurrentSellerId(user);
-      }
+      setTimeout(() => {
+        if (stored) {
+          setListings(JSON.parse(stored));
+        }
+        if (user && user !== "buyer") {
+          setCurrentSellerId(user);
+        }
+      }, 0);
     }
   }, []);
   
@@ -142,7 +144,7 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
       }
     }
 
-    const updated = activeListing as AmpasListing;
+    const updated = { ...activeListing } as AmpasListing;
     if (!updated.slug) {
       updated.slug = `ampas-nilam-${updated.id.replace("ampas-", "")}`;
     }

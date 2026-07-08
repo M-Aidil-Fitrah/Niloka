@@ -7,7 +7,7 @@ import { showToast } from "@/components/dashboard/dashboard-layout";
 
 type AIDescriptionGeneratorProps = {
   activeProduct: Partial<Product>;
-  setActiveProduct: (product: any) => void;
+  setActiveProduct: React.Dispatch<React.SetStateAction<Partial<Product> | null>>;
 };
 
 export function AIDescriptionGenerator({ activeProduct, setActiveProduct }: AIDescriptionGeneratorProps) {
@@ -47,7 +47,7 @@ export function AIDescriptionGenerator({ activeProduct, setActiveProduct }: AIDe
 
       const data = await res.json();
       if (data.shortDescription) {
-        setActiveProduct((prev: any) => prev ? { ...prev, shortDescription: data.shortDescription } : null);
+        setActiveProduct((prev) => prev ? { ...prev, shortDescription: data.shortDescription } : null);
         setAiFeedback("Deskripsi berhasil digenerate!");
         showToast("AI berhasil menyusun deskripsi produk!", "success");
       }

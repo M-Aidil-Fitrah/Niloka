@@ -67,7 +67,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const storedUser = localStorage.getItem("niloka_auth_user");
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        setTimeout(() => {
+          setUser(JSON.parse(storedUser));
+        }, 0);
       }
 
       // Initialize mock users database in localStorage if not exists

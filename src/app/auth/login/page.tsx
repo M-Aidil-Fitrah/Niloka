@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -18,10 +18,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Real-time validation states
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
   // Refs for GSAP
   const containerRef = useRef<HTMLDivElement>(null);
@@ -125,33 +121,15 @@ export default function LoginPage() {
     return val.length >= 6 ? "" : "Kata sandi minimal 6 karakter";
   };
 
-  // Run validations in real-time as user types
-  useEffect(() => {
-    if (email) {
-      setEmailError(validateEmail(email));
-    } else {
-      setEmailError("");
-    }
-  }, [email]);
-
-  useEffect(() => {
-    if (password) {
-      setPasswordError(validatePassword(password));
-    } else {
-      setPasswordError("");
-    }
-  }, [password]);
+  // Derive validation errors dynamically
+  const emailError = email ? validateEmail(email) : "";
+  const passwordError = password ? validatePassword(password) : "";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    const currentEmailErr = validateEmail(email);
-    const currentPasswordErr = validatePassword(password);
-
-    if (currentEmailErr || currentPasswordErr) {
-      setEmailError(currentEmailErr);
-      setPasswordError(currentPasswordErr);
+    if (emailError || passwordError) {
       return;
     }
 
@@ -179,10 +157,13 @@ export default function LoginPage() {
       {/* LEFT PANEL: Branding & Visual Hero (Visible on lg screens) */}
       <div className="hidden lg:flex lg:w-[40%] h-full text-white-soft relative p-10 flex-col justify-between overflow-hidden shrink-0">
         {/* Full-bleed high-quality Unsplash image representing patchouli/essential oils */}
-        <img
+        <Image
           ref={heroImgRef}
           src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1000&auto=format&fit=crop"
           alt="Minyak Atsiri Nilam"
+          fill
+          priority
+          sizes="40vw"
           className="absolute inset-[-20px] w-[calc(100%+40px)] h-[calc(100%+40px)] object-cover"
         />
         {/* Dark overlay for readability */}

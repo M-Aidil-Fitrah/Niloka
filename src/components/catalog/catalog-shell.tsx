@@ -37,9 +37,11 @@ export function CatalogShell({ products, categories }: CatalogShellProps) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedProds = localStorage.getItem("niloka_products");
-      if (storedProds) {
-        setLocalProducts(JSON.parse(storedProds));
-      }
+      setTimeout(() => {
+        if (storedProds) {
+          setLocalProducts(JSON.parse(storedProds));
+        }
+      }, 0);
     }
   }, []);
 

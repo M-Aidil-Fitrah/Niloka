@@ -194,7 +194,7 @@ export function AmpasDrawer({
               <select
                 className="w-full text-xs font-bold border border-line rounded-xl px-4 py-2.5 outline-none focus:border-brand-900 bg-white-soft text-brand-950"
                 value={activeListing.shippingOption || "both"}
-                onChange={(e) => setActiveListing({ ...activeListing, shippingOption: e.target.value as any })}
+                onChange={(e) => setActiveListing({ ...activeListing, shippingOption: e.target.value as "self-pickup" | "cargo" | "both" })}
               >
                 <option value="self-pickup">Ambil Mandiri (Self-Pickup)</option>
                 <option value="cargo">Kargo Logistik</option>

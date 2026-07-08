@@ -31,7 +31,9 @@ export default function SellerPage() {
       } else if (user.role !== "seller") {
         router.replace("/");
       } else {
-        setIsAuthorized(true);
+        setTimeout(() => {
+          setIsAuthorized(true);
+        }, 0);
       }
     }
   }, [user, isLoading, router]);

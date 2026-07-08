@@ -22,7 +22,9 @@ export function ChatClient() {
   const currentUserRole = modeParam === "seller" ? "seller" : "buyer";
 
   useEffect(() => {
-    setCurrentSellerId(ChatService.getCurrentSellerId());
+    setTimeout(() => {
+      setCurrentSellerId(ChatService.getCurrentSellerId());
+    }, 0);
   }, []);
 
   // Detect mobile viewport
@@ -33,11 +35,6 @@ export function ChatClient() {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Read seller ID from localStorage only after mount, avoids hydration mismatch
-  useEffect(() => {
-    setCurrentSellerId(ChatService.getCurrentSellerId());
   }, []);
 
   // Subscribe to threads updates

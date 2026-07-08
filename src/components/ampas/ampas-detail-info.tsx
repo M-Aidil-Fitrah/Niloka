@@ -33,22 +33,24 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedListings = localStorage.getItem("niloka_ampas_listings");
-      if (storedListings) {
-        const parsed = JSON.parse(storedListings) as AmpasListing[];
-        const found = parsed.find((l) => l.id === listing.id);
-        if (found) {
-          setLocalListing(found);
-          setQuantity(found.wholesaleEnabled && found.wholesaleMinQtyKg ? found.wholesaleMinQtyKg : 10);
-        }
-      }
       const storedSellers = localStorage.getItem("niloka_sellers");
-      if (storedSellers) {
-        const parsedS = JSON.parse(storedSellers) as Seller[];
-        const foundS = parsedS.find((s) => s.id === seller.id);
-        if (foundS) {
-          setLocalSeller(foundS);
+      setTimeout(() => {
+        if (storedListings) {
+          const parsed = JSON.parse(storedListings) as AmpasListing[];
+          const found = parsed.find((l) => l.id === listing.id);
+          if (found) {
+            setLocalListing(found);
+            setQuantity(found.wholesaleEnabled && found.wholesaleMinQtyKg ? found.wholesaleMinQtyKg : 10);
+          }
         }
-      }
+        if (storedSellers) {
+          const parsedS = JSON.parse(storedSellers) as Seller[];
+          const foundS = parsedS.find((s) => s.id === seller.id);
+          if (foundS) {
+            setLocalSeller(foundS);
+          }
+        }
+      }, 0);
     }
   }, [listing.id, seller.id]);
 

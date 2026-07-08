@@ -22,7 +22,6 @@ import { StepSuccess } from "@/components/seller/apply-form/step-success";
 
 export default function ApplySellerPage() {
   const { user, isLoading } = useAuth();
-  const router = useRouter();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,7 +35,7 @@ export default function ApplySellerPage() {
   const [shopName, setShopName] = useState("");
   const [businessType, setBusinessType] = useState("umkm");
   const [description, setDescription] = useState("");
-  const [province, setProvince] = useState("Aceh");
+  const province = "Aceh";
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
@@ -45,13 +44,12 @@ export default function ApplySellerPage() {
   const [nibFileName, setNibFileName] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
 
-  // Error states
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
   // Initialize name from logged-in user
   useEffect(() => {
     if (user) {
-      setName(user.name);
+      setTimeout(() => {
+        setName(user.name);
+      }, 0);
     }
   }, [user]);
 
@@ -82,36 +80,24 @@ export default function ApplySellerPage() {
     return val.trim().length >= 10 ? "" : "Deskripsi usaha minimal 10 karakter";
   };
 
-  // Run validations in real-time as values change
-  useEffect(() => {
+  // Derive validation errors dynamically
+  const errors = React.useMemo(() => {
+    const errs: Record<string, string> = {};
     if (currentStep === 1) {
-      setErrors({
-        name: name ? validateName(name) : "",
-        phone: phone ? validatePhone(phone) : "",
-        nik: nik ? validateNik(nik) : "",
-      });
+      errs.name = name ? validateName(name) : "";
+      errs.phone = phone ? validatePhone(phone) : "";
+      errs.nik = nik ? validateNik(nik) : "";
+    } else if (currentStep === 2) {
+      errs.shopName = shopName ? validateShopName(shopName) : "";
+      errs.description = description ? validateDescription(description) : "";
+      errs.city = city ? (city.trim() ? "" : "Kota/Kabupaten wajib diisi") : "";
+      errs.district = district ? (district.trim() ? "" : "Kecamatan wajib diisi") : "";
+      errs.detailAddress = detailAddress ? (detailAddress.trim() ? "" : "Alamat lengkap wajib diisi") : "";
+    } else if (currentStep === 3) {
+      errs.ktp = ktpFileName ? "" : "Foto KTP wajib diunggah";
     }
-  }, [name, phone, nik, currentStep]);
-
-  useEffect(() => {
-    if (currentStep === 2) {
-      setErrors({
-        shopName: shopName ? validateShopName(shopName) : "",
-        description: description ? validateDescription(description) : "",
-        city: city ? (city.trim() ? "" : "Kota/Kabupaten wajib diisi") : "",
-        district: district ? (district.trim() ? "" : "Kecamatan wajib diisi") : "",
-        detailAddress: detailAddress ? (detailAddress.trim() ? "" : "Alamat lengkap wajib diisi") : "",
-      });
-    }
-  }, [shopName, description, city, district, detailAddress, currentStep]);
-
-  useEffect(() => {
-    if (currentStep === 3) {
-      setErrors({
-        ktp: ktpFileName ? "" : "Foto KTP wajib diunggah",
-      });
-    }
-  }, [ktpFileName, currentStep]);
+    return errs;
+  }, [currentStep, name, phone, nik, shopName, description, city, district, detailAddress, ktpFileName]);
 
   // Step validation state for locking button
   const isStep1Invalid = 
@@ -172,7 +158,6 @@ export default function ApplySellerPage() {
   // Mock File Uploads
   const triggerKtpUpload = () => {
     setKtpFileName("ktp_terverifikasi.jpg");
-    setErrors((prev) => ({ ...prev, ktp: "" }));
   };
 
   const triggerNibUpload = () => {

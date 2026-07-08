@@ -22,13 +22,15 @@ export function PromoManagement({ promos: initialPromos, products = [] }: PromoM
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("niloka_promos");
-      if (stored) {
-        setPromos(JSON.parse(stored));
-      }
       const user = localStorage.getItem("niloka_current_user");
-      if (user && user !== "buyer") {
-        setCurrentSellerId(user);
-      }
+      setTimeout(() => {
+        if (stored) {
+          setPromos(JSON.parse(stored));
+        }
+        if (user && user !== "buyer") {
+          setCurrentSellerId(user);
+        }
+      }, 0);
     }
   }, []);
   
