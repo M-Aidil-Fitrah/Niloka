@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import {
   getProductCategoriesDto,
   getPublicPromoSuggestionsDto,
@@ -8,8 +8,10 @@ import {
 import { SectionShell } from "@/components/ui/section-shell";
 import { CatalogSkeleton } from "@/components/ui/skeletons";
 
+export const dynamic = "force-dynamic";
+
 // Dynamically import CatalogShell with Server-Side Rendering enabled but chunking the Client JS
-const CatalogShell = dynamic(
+const CatalogShell = nextDynamic(
   () => import("@/components/catalog/catalog-shell").then((m) => m.CatalogShell),
   {
     loading: () => <CatalogSkeleton />,

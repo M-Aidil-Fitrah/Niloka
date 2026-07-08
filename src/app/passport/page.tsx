@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import {
   getPassportsDto,
   getPublishedProductsDto,
@@ -7,8 +7,10 @@ import {
 import { SectionShell } from "@/components/ui/section-shell";
 import { PassportSkeleton } from "@/components/ui/skeletons";
 
+export const dynamic = "force-dynamic";
+
 // Dynamically import PassportShell with SSR enabled for SEO indexing
-const PassportShell = dynamic(
+const PassportShell = nextDynamic(
   () => import("@/components/passport/passport-shell").then((m) => m.PassportShell),
   {
     loading: () => <PassportSkeleton />,
