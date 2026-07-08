@@ -2,15 +2,16 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { CartItem, AmpasListing, Money } from "@/lib/contracts";
-import {
-  cartItems as defaultCartItems,
-  products as defaultProducts,
-  ampasListings as defaultAmpasListings,
-  sellers as defaultSellers,
-  promos as defaultPromos,
-  nilamPassports as defaultPassports,
-} from "@/lib/mock-data";
 import { getAmpasListingById } from "@/lib/mock-queries";
+import { useAuth } from "@/context/auth-context";
+import { useRouter } from "next/navigation";
+import {
+  fetchCartAction,
+  addToCartAction,
+  removeFromCartAction,
+  updateCartItemQuantityAction,
+  clearCartAction,
+} from "@/lib/actions/checkout-actions";
 
 type CartContextType = {
   items: CartItem[];
@@ -47,116 +48,100 @@ const resolveAmpasUnitPrice = (ampasListingId: string | null, quantity: number, 
 };
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load from localStorage on mount
+  // Load from database if user is logged in, else set empty
   useEffect(() => {
+    let active = true;
+    if (user) {
+      fetchCartAction()
+        .then((cartItems) => {
+          if (active) {
+            setItems(cartItems);
+            setIsInitialized(true);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to load cart items from server", err);
+          if (active) {
+            setItems([]);
+            setIsInitialized(true);
+          }
+        });
+    } else {
+      setTimeout(() => {
+        if (active) {
+          setItems([]);
+          setIsInitialized(true);
+        }
+      }, 0);
+    }
+    return () => {
+      active = false;
+    };
+  }, [user]);
+
+  const checkAuth = () => {
+    if (!user) {
+      router.push("/auth/login");
+      return false;
+    }
+    return true;
+  };
+
+  const addItem = async (newItem: Omit<CartItem, "id">) => {
+    if (!checkAuth()) return;
     try {
-      if (typeof window !== "undefined") {
-        if (!localStorage.getItem("niloka_products")) {
-          localStorage.setItem("niloka_products", JSON.stringify(defaultProducts));
-        }
-        if (!localStorage.getItem("niloka_ampas_listings")) {
-          localStorage.setItem("niloka_ampas_listings", JSON.stringify(defaultAmpasListings));
-        }
-        if (!localStorage.getItem("niloka_sellers")) {
-          localStorage.setItem("niloka_sellers", JSON.stringify(defaultSellers));
-        }
-        if (!localStorage.getItem("niloka_promos")) {
-          localStorage.setItem("niloka_promos", JSON.stringify(defaultPromos));
-        }
-        if (!localStorage.getItem("niloka_passports")) {
-          localStorage.setItem("niloka_passports", JSON.stringify(defaultPassports));
-        }
+      const res = await addToCartAction(newItem);
+      if (res.ok && res.items) {
+        setItems(res.items);
       }
-      const stored = localStorage.getItem("niloka_cart");
-      const initialItems = stored ? JSON.parse(stored) : defaultCartItems;
-      setTimeout(() => {
-        setItems(initialItems);
-        setIsInitialized(true);
-      }, 0);
-    } catch {
-      setTimeout(() => {
-        setItems(defaultCartItems);
-        setIsInitialized(true);
-      }, 0);
+    } catch (err) {
+      console.error("Failed to add item to cart", err);
     }
-  }, []);
-
-  // Save to localStorage on changes
-  useEffect(() => {
-    if (isInitialized) {
-      try {
-        localStorage.setItem("niloka_cart", JSON.stringify(items));
-      } catch (e) {
-        console.error("Failed to persist cart items", e);
-      }
-    }
-  }, [items, isInitialized]);
-
-  const addItem = (newItem: Omit<CartItem, "id">) => {
-    setItems((prev) => {
-      // Check if item of same product or ampas listing already exists
-      const existingIndex = prev.findIndex(
-        (item) =>
-          (newItem.kind === "product" &&
-            item.kind === "product" &&
-            item.productId === newItem.productId) ||
-          (newItem.kind === "ampas-listing" &&
-            item.kind === "ampas-listing" &&
-            item.ampasListingId === newItem.ampasListingId)
-      );
-
-      if (existingIndex > -1) {
-        const updated = [...prev];
-        const newQty = updated[existingIndex].quantity + newItem.quantity;
-        updated[existingIndex].quantity = newQty;
-        if (newItem.kind === "ampas-listing") {
-          updated[existingIndex].unitPrice = resolveAmpasUnitPrice(
-            newItem.ampasListingId,
-            newQty,
-            newItem.unitPrice
-          );
-        }
-        return updated;
-      }
-
-      // Add as new item
-      const id = `cart-${newItem.kind}-${Date.now()}`;
-      let finalPrice = newItem.unitPrice;
-      if (newItem.kind === "ampas-listing") {
-        finalPrice = resolveAmpasUnitPrice(newItem.ampasListingId, newItem.quantity, newItem.unitPrice);
-      }
-      return [...prev, { ...newItem, id, unitPrice: finalPrice } as CartItem];
-    });
   };
 
-  const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
+  const removeItem = async (id: string) => {
+    if (!checkAuth()) return;
+    try {
+      const res = await removeFromCartAction(id);
+      if (res.ok && res.items) {
+        setItems(res.items);
+      }
+    } catch (err) {
+      console.error("Failed to remove item", err);
+    }
   };
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = async (id: string, quantity: number) => {
+    if (!checkAuth()) return;
     if (quantity <= 0) {
-      removeItem(id);
+      await removeItem(id);
       return;
     }
-    setItems((prev) =>
-      prev.map((item) => {
-        if (item.id === id) {
-          let unitPrice = item.unitPrice;
-          if (item.kind === "ampas-listing") {
-            unitPrice = resolveAmpasUnitPrice(item.ampasListingId, quantity, item.unitPrice);
-          }
-          return { ...item, quantity, unitPrice };
-        }
-        return item;
-      })
-    );
+    try {
+      const res = await updateCartItemQuantityAction(id, quantity);
+      if (res.ok && res.items) {
+        setItems(res.items);
+      }
+    } catch (err) {
+      console.error("Failed to update quantity", err);
+    }
   };
 
-  const clearCart = () => {
-    setItems([]);
+  const clearCart = async () => {
+    if (!checkAuth()) return;
+    try {
+      const res = await clearCartAction();
+      if (res.ok) {
+        setItems(res.items);
+      }
+    } catch (err) {
+      console.error("Failed to clear cart", err);
+    }
   };
 
   const totalCount = items.reduce((acc, item) => acc + item.quantity, 0);

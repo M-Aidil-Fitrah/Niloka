@@ -11,6 +11,7 @@ import { PaymentSnapModal } from "./payment-snap-modal";
 import { ShieldCheck, ShoppingCart, Calendar, Receipt, Trash2, Printer, RefreshCw } from "lucide-react";
 import type { Product, AmpasListing, CartItem, Promo, Money } from "@/lib/contracts";
 import { getPublicPromoSuggestions, validatePromoCode } from "@/lib/mock-queries";
+import { checkoutAction, fetchOrderHistoryAction } from "@/lib/actions/checkout-actions";
 
 type CheckoutShellProps = {
   products: Product[];
@@ -81,10 +82,10 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
   const [ordersHistory, setOrdersHistory] = useState<OrderHistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
 
-  const loadOrderHistory = () => {
+  const loadOrderHistory = async () => {
     try {
-      const stored = localStorage.getItem("niloka_orders");
-      setOrdersHistory(stored ? JSON.parse(stored) : []);
+      const data = await fetchOrderHistoryAction();
+      setOrdersHistory(data);
     } catch (e) {
       console.error("Failed to load order history", e);
     }
@@ -196,61 +197,47 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
     setPromoError("");
   };
 
-  const handleSimulateSuccess = () => {
+  const handleSimulateSuccess = async () => {
     setIsPaying(true);
     setPayError("");
-    setTimeout(() => {
-      setIsPaying(false);
-      setIsSnapOpen(false);
-      setIsSuccess(true);
-      const newOrderId = `NLK-TX-${Math.floor(100000 + Math.random() * 900000)}`;
-      setGeneratedOrderId(newOrderId);
-      
-      // Snapshot states for receipt display
-      setInvoiceSubtotal(subtotal);
-      setInvoiceShippingFee(shippingFee);
-      setInvoicePlatformFee(platformFee);
-      setInvoiceDiscount(discountAmount);
-      setInvoiceGrandTotal(grandTotal);
-      setInvoiceItems(resolvedItems);
+    try {
+      const res = await checkoutAction({
+        subtotal,
+        platformFee,
+        shippingEstimate: shippingFee,
+        grandTotal,
+        shippingAddress: `${receiverName} (${phone}) - ${address}, ${city}, ${province}`,
+        paymentMethod: paymentMethod.toUpperCase(),
+      });
 
-      // Save order to history
-      try {
-        const stored = localStorage.getItem("niloka_orders");
-        const list = stored ? JSON.parse(stored) : [];
-        const newOrder: OrderHistoryItem = {
-          orderId: newOrderId,
-          date: new Date().toISOString(),
-          items: resolvedItems.map((item) => ({
-            name: item.name,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice.amount,
-            kind: item.kind,
-          })),
-          shippingAddress: {
-            receiverName,
-            phone,
-            address,
-            city,
-            province,
-          },
-          courier: courierNames[courier],
-          paymentMethod,
-          subtotal,
-          platformFee,
-          shippingFee,
-          discount: discountAmount,
-          grandTotal,
-        };
-        const nextOrdersHistory = [newOrder, ...list];
-        localStorage.setItem("niloka_orders", JSON.stringify(nextOrdersHistory));
-        setOrdersHistory(nextOrdersHistory);
-      } catch (e) {
-        console.error("Failed to persist order to local storage", e);
+      if (res.ok && res.orderId) {
+        setIsPaying(false);
+        setIsSnapOpen(false);
+        setIsSuccess(true);
+        setGeneratedOrderId(res.orderId);
+        
+        // Snapshot states for receipt display
+        setInvoiceSubtotal(subtotal);
+        setInvoiceShippingFee(shippingFee);
+        setInvoicePlatformFee(platformFee);
+        setInvoiceDiscount(discountAmount);
+        setInvoiceGrandTotal(grandTotal);
+        setInvoiceItems(resolvedItems);
+
+        // Fetch fresh history
+        const updatedHistory = await fetchOrderHistoryAction();
+        setOrdersHistory(updatedHistory);
+
+        clearCart();
+      } else {
+        setIsPaying(false);
+        setPayError(res.message || "Gagal memproses transaksi.");
       }
-
-      clearCart();
-    }, 1500);
+    } catch (err) {
+      console.error(err);
+      setIsPaying(false);
+      setPayError("Koneksi server gagal.");
+    }
   };
 
   const handleSimulateFailure = () => {
