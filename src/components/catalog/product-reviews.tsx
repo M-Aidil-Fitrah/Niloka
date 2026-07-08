@@ -6,6 +6,7 @@ import { StarIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import type { Review, ReviewTag } from "@/lib/contracts";
+import { submitReviewAction } from "@/lib/actions/review-actions";
 
 type ProductReviewsProps = {
   reviews: Review[];
@@ -43,6 +44,7 @@ const AVAILABLE_TAGS: { key: ReviewTag; label: string }[] = [
 export function ProductReviews({ reviews: initialReviews, productId, sellerId }: ProductReviewsProps) {
   const [reviewsList, setReviewsList] = useState<Review[]>(initialReviews);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   // Form State
   const [authorName, setAuthorName] = useState("");
@@ -63,34 +65,43 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
     );
   };
 
-  const handleSubmitReview = (e: React.FormEvent) => {
+  const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!authorName.trim() || !body.trim()) return;
+    if (!authorName.trim() || !body.trim() || submitting) return;
 
-    const newReview: Review & { photo?: string } = {
-      id: `review-mock-${Date.now()}`,
-      productId,
-      sellerId,
-      authorName,
-      rating,
-      tags: selectedTags,
-      body,
-      createdAt: new Date().toISOString(),
-    };
+    setSubmitting(true);
+    try {
+      const result = await submitReviewAction({
+        productId,
+        sellerId,
+        authorName,
+        rating,
+        tags: selectedTags,
+        body,
+      });
 
-    if (selectedPhotoSrc) {
-      newReview.photo = selectedPhotoSrc;
+      if (result.ok && result.review) {
+        const newReview = {
+          ...result.review,
+          photo: selectedPhotoSrc || undefined,
+        };
+        setReviewsList((prev) => [newReview, ...prev]);
+
+        // Reset Form State
+        setAuthorName("");
+        setRating(5);
+        setBody("");
+        setSelectedTags([]);
+        setSelectedPhotoSrc(null);
+        setIsFormOpen(false);
+      } else {
+        alert(result.message);
+      }
+    } catch {
+      alert("Gagal mengirimkan ulasan. Silakan login terlebih dahulu.");
+    } finally {
+      setSubmitting(false);
     }
-
-    setReviewsList((prev) => [newReview, ...prev]);
-
-    // Reset Form State
-    setAuthorName("");
-    setRating(5);
-    setBody("");
-    setSelectedTags([]);
-    setSelectedPhotoSrc(null);
-    setIsFormOpen(false);
   };
 
   return (
@@ -268,9 +279,10 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
             </button>
             <Button
               type="submit"
-              className="h-9 px-5 rounded-xl bg-brand-900 hover:bg-brand-850 text-white-soft font-bold"
+              disabled={submitting}
+              className="h-9 px-5 rounded-xl bg-brand-900 hover:bg-brand-850 text-white-soft font-bold disabled:opacity-50"
             >
-              Kirim Ulasan
+              {submitting ? "Mengirim..." : "Kirim Ulasan"}
             </Button>
           </div>
         </form>

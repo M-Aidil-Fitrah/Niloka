@@ -11,6 +11,8 @@ import {
   ChevronRight, 
   ChevronLeft
 } from "lucide-react";
+import { showToast } from "@/lib/toast";
+import { submitSellerApplicationAction } from "@/lib/actions/seller-actions";
 
 // Subcomponents
 import { StepPersonalInfo } from "@/components/seller/apply-form/step-personal-info";
@@ -129,28 +131,31 @@ export default function ApplySellerPage() {
     if (!agreeTerms) return;
 
     setIsSubmitting(true);
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-
-    // Save to localStorage for mock database verification
-    const application = {
-      id: `validation-seller-demo-${Date.now()}`,
-      target: "seller",
-      targetId: `seller-demo-${Date.now()}`,
-      status: "queued",
-      submittedBy: user?.id || "unknown",
-      submittedAt: new Date().toISOString(),
-      notes: `Pengajuan dari ${name} (Toko: ${shopName}, Tipe: ${businessType.toUpperCase()}). Menunggu review.`,
-    };
     try {
-      const stored = localStorage.getItem("niloka_demo_applications") || "[]";
-      const list = JSON.parse(stored);
-      list.push(application);
-      localStorage.setItem("niloka_demo_applications", JSON.stringify(list));
+      const res = await submitSellerApplicationAction({
+        name,
+        phone,
+        nik,
+        shopName,
+        businessType,
+        description,
+        province,
+        city,
+        district,
+        detailAddress,
+      });
+
+      setIsSubmitting(false);
+      if (res.ok) {
+        setIsSubmitted(true);
+        showToast(res.message, "success");
+      } else {
+        showToast(res.message, "error");
+      }
     } catch (err) {
       console.error(err);
+      setIsSubmitting(false);
+      showToast("Terjadi kesalahan koneksi ke server.", "error");
     }
   };
 
