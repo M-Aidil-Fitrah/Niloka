@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  getActiveAmpasListingsDto,
   getAmpasListingBySlugDto,
   getSellerByIdDto,
 } from "@/lib/dal/marketplace";

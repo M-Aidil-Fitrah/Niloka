@@ -1,8 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import type { CartItem, AmpasListing, Money } from "@/lib/contracts";
-import { getAmpasListingById } from "@/lib/mock-queries";
+import type { CartItem } from "@/lib/contracts";
 import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
 import {
@@ -24,34 +23,10 @@ type CartContextType = {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const resolveAmpasUnitPrice = (ampasListingId: string | null, quantity: number, defaultPrice: Money) => {
-  if (!ampasListingId) return defaultPrice;
-  let listing: AmpasListing | null = null;
-  if (typeof window !== "undefined") {
-    const stored = localStorage.getItem("niloka_ampas_listings");
-    if (stored) {
-      const listings = JSON.parse(stored) as AmpasListing[];
-      listing = listings.find((l) => l.id === ampasListingId) || null;
-    }
-  }
-  if (!listing) {
-    listing = getAmpasListingById(ampasListingId);
-  }
-  if (listing && listing.wholesaleEnabled && listing.wholesaleMinQtyKg && listing.wholesalePricePerKg) {
-    if (quantity >= listing.wholesaleMinQtyKg) {
-      return listing.wholesalePricePerKg;
-    } else {
-      return listing.pricePerKg;
-    }
-  }
-  return listing ? listing.pricePerKg : defaultPrice;
-};
-
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
 
   // Load from database if user is logged in, else set empty
   useEffect(() => {
@@ -61,21 +36,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         .then((cartItems) => {
           if (active) {
             setItems(cartItems);
-            setIsInitialized(true);
           }
         })
         .catch((err) => {
           console.error("Failed to load cart items from server", err);
           if (active) {
             setItems([]);
-            setIsInitialized(true);
           }
         });
     } else {
       setTimeout(() => {
         if (active) {
           setItems([]);
-          setIsInitialized(true);
         }
       }, 0);
     }

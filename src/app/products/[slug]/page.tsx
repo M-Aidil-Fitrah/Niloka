@@ -5,7 +5,6 @@ import {
   getPassportByProductIdDto,
   getProductBySlugDto,
   getPromosForSellerDto,
-  getPublishedProductsDto,
   getReviewsForProductDto,
   getSellerByIdDto,
 } from "@/lib/dal/marketplace";
