@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import nextDynamic from "next/dynamic";
-import { getPublishedProductsDto, getActiveAmpasListingsDto } from "@/lib/dal/marketplace";
+import {
+  getActiveAmpasListingsDto,
+  getPublicPromoSuggestionsDto,
+  getPublishedProductsDto,
+} from "@/lib/dal/marketplace";
 import { SectionShell } from "@/components/ui/section-shell";
 import { CheckoutSkeleton } from "@/components/ui/skeletons";
 import { requireUser } from "@/lib/auth/session";
@@ -18,24 +22,26 @@ const CheckoutShell = nextDynamic(
 
 export const metadata: Metadata = {
   title: "Keranjang & Checkout - NILOKA",
-  description: "Kelola keranjang belanja produk nilam dan ajukan pembayaran aman tersertifikasi melalui Midtrans gateway mock.",
+  description: "Kelola keranjang belanja produk nilam dan ajukan pembayaran aman melalui Midtrans Core.",
 };
 
 export default async function CheckoutPage() {
   await requireUser();
-  const products = await getPublishedProductsDto();
-  const listings = await getActiveAmpasListingsDto();
+  const [products, listings, promos] = await Promise.all([
+    getPublishedProductsDto(),
+    getActiveAmpasListingsDto(),
+    getPublicPromoSuggestionsDto(),
+  ]);
 
   return (
     <SectionShell
       eyebrow="Transaksi Niloka"
       title="Keranjang & Checkout"
-      description="Tinjau daftar belanjaan Anda, lengkapi alamat pengiriman, dan lakukan simulasi pembayaran aman."
+      description="Tinjau daftar belanjaan Anda, lengkapi alamat pengiriman, dan lanjutkan pembayaran custom Midtrans Core."
     >
       <div className="mt-8">
-        <CheckoutShell products={products} ampasListings={listings} />
+        <CheckoutShell products={products} ampasListings={listings} promos={promos} />
       </div>
     </SectionShell>
   );
 }
-

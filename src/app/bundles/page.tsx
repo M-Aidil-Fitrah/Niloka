@@ -1,5 +1,9 @@
 import nextDynamic from "next/dynamic";
-import { getPublishedProducts, getBundles, getSellers } from "@/lib/mock-queries";
+import {
+  getBundlesDto,
+  getPublishedProductsDto,
+  getSellersDto,
+} from "@/lib/dal/marketplace";
 import { BundleSkeleton } from "@/components/ui/skeletons";
 
 export const dynamic = "force-dynamic";
@@ -17,9 +21,11 @@ export const metadata = {
 };
 
 export default async function BundlesPage() {
-  const products = getPublishedProducts();
-  const bundles = getBundles();
-  const sellers = getSellers();
+  const [products, bundles, sellers] = await Promise.all([
+    getPublishedProductsDto(),
+    getBundlesDto(),
+    getSellersDto(),
+  ]);
 
   return <BundleShell products={products} bundles={bundles} sellers={sellers} />;
 }

@@ -195,6 +195,28 @@ export const PaymentStatus = {
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
 
 
+export const PaymentMethod = {
+  QRIS: 'QRIS',
+  VIRTUAL_ACCOUNT: 'VIRTUAL_ACCOUNT',
+  EWALLET: 'EWALLET',
+  MANUAL_TRANSFER: 'MANUAL_TRANSFER'
+} as const
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
+
+export const OrderFulfillmentStatus = {
+  PENDING_PAYMENT: 'PENDING_PAYMENT',
+  READY_TO_PROCESS: 'READY_TO_PROCESS',
+  PROCESSING: 'PROCESSING',
+  SHIPPED: 'SHIPPED',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type OrderFulfillmentStatus = (typeof OrderFulfillmentStatus)[keyof typeof OrderFulfillmentStatus]
+
+
 export const AdminValidationTarget = {
   SELLER: 'SELLER',
   PRODUCT: 'PRODUCT',

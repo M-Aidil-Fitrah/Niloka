@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AmpasCard } from "./ampas-card";
 import { AmpasFilters } from "./ampas-filters";
 import { Search } from "lucide-react";
@@ -21,21 +21,13 @@ const usageFilters = [
 ];
 
 export function AmpasShell({ listings }: AmpasShellProps) {
-  const localListings = listings;
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("niloka_ampas_listings", JSON.stringify(listings));
-    }
-  }, [listings]);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCondition, setSelectedCondition] = useState<"Semua" | "dry" | "wet">("Semua");
   const [selectedUsage, setSelectedUsage] = useState("Semua");
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
 
   // Filtering Logic
-  const filteredListings = localListings.filter((l) => {
+  const filteredListings = listings.filter((l) => {
     // Only display active listings
     if (l.status !== "active") {
       return false;
@@ -148,4 +140,3 @@ export function AmpasShell({ listings }: AmpasShellProps) {
     </div>
   );
 }
-

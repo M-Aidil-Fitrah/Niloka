@@ -30,6 +30,7 @@ export type OrderAvgAggregateOutputType = {
   subtotalAmount: number | null
   platformFeeAmount: number | null
   shippingEstimateAmount: number | null
+  discountAmount: number | null
   grandTotalAmount: number | null
 }
 
@@ -37,6 +38,7 @@ export type OrderSumAggregateOutputType = {
   subtotalAmount: number | null
   platformFeeAmount: number | null
   shippingEstimateAmount: number | null
+  discountAmount: number | null
   grandTotalAmount: number | null
 }
 
@@ -50,8 +52,19 @@ export type OrderMinAggregateOutputType = {
   platformFeeCurrency: string | null
   shippingEstimateAmount: number | null
   shippingEstimateCurrency: string | null
+  discountAmount: number | null
+  discountCurrency: string | null
+  promoCode: string | null
   grandTotalAmount: number | null
   grandTotalCurrency: string | null
+  receiverName: string | null
+  receiverPhone: string | null
+  shippingAddress: string | null
+  shippingCity: string | null
+  shippingProvince: string | null
+  courierCode: string | null
+  courierName: string | null
+  paymentExpiresAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,8 +79,19 @@ export type OrderMaxAggregateOutputType = {
   platformFeeCurrency: string | null
   shippingEstimateAmount: number | null
   shippingEstimateCurrency: string | null
+  discountAmount: number | null
+  discountCurrency: string | null
+  promoCode: string | null
   grandTotalAmount: number | null
   grandTotalCurrency: string | null
+  receiverName: string | null
+  receiverPhone: string | null
+  shippingAddress: string | null
+  shippingCity: string | null
+  shippingProvince: string | null
+  courierCode: string | null
+  courierName: string | null
+  paymentExpiresAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -82,8 +106,19 @@ export type OrderCountAggregateOutputType = {
   platformFeeCurrency: number
   shippingEstimateAmount: number
   shippingEstimateCurrency: number
+  discountAmount: number
+  discountCurrency: number
+  promoCode: number
   grandTotalAmount: number
   grandTotalCurrency: number
+  receiverName: number
+  receiverPhone: number
+  shippingAddress: number
+  shippingCity: number
+  shippingProvince: number
+  courierCode: number
+  courierName: number
+  paymentExpiresAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -94,6 +129,7 @@ export type OrderAvgAggregateInputType = {
   subtotalAmount?: true
   platformFeeAmount?: true
   shippingEstimateAmount?: true
+  discountAmount?: true
   grandTotalAmount?: true
 }
 
@@ -101,6 +137,7 @@ export type OrderSumAggregateInputType = {
   subtotalAmount?: true
   platformFeeAmount?: true
   shippingEstimateAmount?: true
+  discountAmount?: true
   grandTotalAmount?: true
 }
 
@@ -114,8 +151,19 @@ export type OrderMinAggregateInputType = {
   platformFeeCurrency?: true
   shippingEstimateAmount?: true
   shippingEstimateCurrency?: true
+  discountAmount?: true
+  discountCurrency?: true
+  promoCode?: true
   grandTotalAmount?: true
   grandTotalCurrency?: true
+  receiverName?: true
+  receiverPhone?: true
+  shippingAddress?: true
+  shippingCity?: true
+  shippingProvince?: true
+  courierCode?: true
+  courierName?: true
+  paymentExpiresAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -130,8 +178,19 @@ export type OrderMaxAggregateInputType = {
   platformFeeCurrency?: true
   shippingEstimateAmount?: true
   shippingEstimateCurrency?: true
+  discountAmount?: true
+  discountCurrency?: true
+  promoCode?: true
   grandTotalAmount?: true
   grandTotalCurrency?: true
+  receiverName?: true
+  receiverPhone?: true
+  shippingAddress?: true
+  shippingCity?: true
+  shippingProvince?: true
+  courierCode?: true
+  courierName?: true
+  paymentExpiresAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -146,8 +205,19 @@ export type OrderCountAggregateInputType = {
   platformFeeCurrency?: true
   shippingEstimateAmount?: true
   shippingEstimateCurrency?: true
+  discountAmount?: true
+  discountCurrency?: true
+  promoCode?: true
   grandTotalAmount?: true
   grandTotalCurrency?: true
+  receiverName?: true
+  receiverPhone?: true
+  shippingAddress?: true
+  shippingCity?: true
+  shippingProvince?: true
+  courierCode?: true
+  courierName?: true
+  paymentExpiresAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -249,8 +319,19 @@ export type OrderGroupByOutputType = {
   platformFeeCurrency: string
   shippingEstimateAmount: number
   shippingEstimateCurrency: string
+  discountAmount: number
+  discountCurrency: string
+  promoCode: string | null
   grandTotalAmount: number
   grandTotalCurrency: string
+  receiverName: string | null
+  receiverPhone: string | null
+  shippingAddress: string | null
+  shippingCity: string | null
+  shippingProvince: string | null
+  courierCode: string | null
+  courierName: string | null
+  paymentExpiresAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: OrderCountAggregateOutputType | null
@@ -288,13 +369,25 @@ export type OrderWhereInput = {
   platformFeeCurrency?: Prisma.StringFilter<"Order"> | string
   shippingEstimateAmount?: Prisma.IntFilter<"Order"> | number
   shippingEstimateCurrency?: Prisma.StringFilter<"Order"> | string
+  discountAmount?: Prisma.IntFilter<"Order"> | number
+  discountCurrency?: Prisma.StringFilter<"Order"> | string
+  promoCode?: Prisma.StringNullableFilter<"Order"> | string | null
   grandTotalAmount?: Prisma.IntFilter<"Order"> | number
   grandTotalCurrency?: Prisma.StringFilter<"Order"> | string
+  receiverName?: Prisma.StringNullableFilter<"Order"> | string | null
+  receiverPhone?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingAddress?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingCity?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingProvince?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierCode?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierName?: Prisma.StringNullableFilter<"Order"> | string | null
+  paymentExpiresAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   items?: Prisma.OrderItemListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
+  fulfillments?: Prisma.OrderFulfillmentListRelationFilter
 }
 
 export type OrderOrderByWithRelationInput = {
@@ -307,13 +400,25 @@ export type OrderOrderByWithRelationInput = {
   platformFeeCurrency?: Prisma.SortOrder
   shippingEstimateAmount?: Prisma.SortOrder
   shippingEstimateCurrency?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
+  discountCurrency?: Prisma.SortOrder
+  promoCode?: Prisma.SortOrderInput | Prisma.SortOrder
   grandTotalAmount?: Prisma.SortOrder
   grandTotalCurrency?: Prisma.SortOrder
+  receiverName?: Prisma.SortOrderInput | Prisma.SortOrder
+  receiverPhone?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingCity?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingProvince?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierName?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   items?: Prisma.OrderItemOrderByRelationAggregateInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
+  fulfillments?: Prisma.OrderFulfillmentOrderByRelationAggregateInput
 }
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -329,13 +434,25 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   platformFeeCurrency?: Prisma.StringFilter<"Order"> | string
   shippingEstimateAmount?: Prisma.IntFilter<"Order"> | number
   shippingEstimateCurrency?: Prisma.StringFilter<"Order"> | string
+  discountAmount?: Prisma.IntFilter<"Order"> | number
+  discountCurrency?: Prisma.StringFilter<"Order"> | string
+  promoCode?: Prisma.StringNullableFilter<"Order"> | string | null
   grandTotalAmount?: Prisma.IntFilter<"Order"> | number
   grandTotalCurrency?: Prisma.StringFilter<"Order"> | string
+  receiverName?: Prisma.StringNullableFilter<"Order"> | string | null
+  receiverPhone?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingAddress?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingCity?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingProvince?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierCode?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierName?: Prisma.StringNullableFilter<"Order"> | string | null
+  paymentExpiresAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   items?: Prisma.OrderItemListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
+  fulfillments?: Prisma.OrderFulfillmentListRelationFilter
 }, "id">
 
 export type OrderOrderByWithAggregationInput = {
@@ -348,8 +465,19 @@ export type OrderOrderByWithAggregationInput = {
   platformFeeCurrency?: Prisma.SortOrder
   shippingEstimateAmount?: Prisma.SortOrder
   shippingEstimateCurrency?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
+  discountCurrency?: Prisma.SortOrder
+  promoCode?: Prisma.SortOrderInput | Prisma.SortOrder
   grandTotalAmount?: Prisma.SortOrder
   grandTotalCurrency?: Prisma.SortOrder
+  receiverName?: Prisma.SortOrderInput | Prisma.SortOrder
+  receiverPhone?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingCity?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingProvince?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierName?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.OrderCountOrderByAggregateInput
@@ -372,8 +500,19 @@ export type OrderScalarWhereWithAggregatesInput = {
   platformFeeCurrency?: Prisma.StringWithAggregatesFilter<"Order"> | string
   shippingEstimateAmount?: Prisma.IntWithAggregatesFilter<"Order"> | number
   shippingEstimateCurrency?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  discountAmount?: Prisma.IntWithAggregatesFilter<"Order"> | number
+  discountCurrency?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  promoCode?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   grandTotalAmount?: Prisma.IntWithAggregatesFilter<"Order"> | number
   grandTotalCurrency?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  receiverName?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  receiverPhone?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  shippingAddress?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  shippingCity?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  shippingProvince?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  courierCode?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  courierName?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  paymentExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
 }
@@ -387,13 +526,25 @@ export type OrderCreateInput = {
   platformFeeCurrency?: string
   shippingEstimateAmount: number
   shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
   grandTotalAmount: number
   grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutOrdersInput
   items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
   payments?: Prisma.PaymentCreateNestedManyWithoutOrderInput
+  fulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateInput = {
@@ -406,12 +557,24 @@ export type OrderUncheckedCreateInput = {
   platformFeeCurrency?: string
   shippingEstimateAmount: number
   shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
   grandTotalAmount: number
   grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutOrderInput
+  fulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUpdateInput = {
@@ -423,13 +586,25 @@ export type OrderUpdateInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
   items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutOrderNestedInput
+  fulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateInput = {
@@ -442,12 +617,24 @@ export type OrderUncheckedUpdateInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutOrderNestedInput
+  fulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateManyInput = {
@@ -460,8 +647,19 @@ export type OrderCreateManyInput = {
   platformFeeCurrency?: string
   shippingEstimateAmount: number
   shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
   grandTotalAmount: number
   grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -475,8 +673,19 @@ export type OrderUpdateManyMutationInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -491,8 +700,19 @@ export type OrderUncheckedUpdateManyInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -517,8 +737,19 @@ export type OrderCountOrderByAggregateInput = {
   platformFeeCurrency?: Prisma.SortOrder
   shippingEstimateAmount?: Prisma.SortOrder
   shippingEstimateCurrency?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
+  discountCurrency?: Prisma.SortOrder
+  promoCode?: Prisma.SortOrder
   grandTotalAmount?: Prisma.SortOrder
   grandTotalCurrency?: Prisma.SortOrder
+  receiverName?: Prisma.SortOrder
+  receiverPhone?: Prisma.SortOrder
+  shippingAddress?: Prisma.SortOrder
+  shippingCity?: Prisma.SortOrder
+  shippingProvince?: Prisma.SortOrder
+  courierCode?: Prisma.SortOrder
+  courierName?: Prisma.SortOrder
+  paymentExpiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -527,6 +758,7 @@ export type OrderAvgOrderByAggregateInput = {
   subtotalAmount?: Prisma.SortOrder
   platformFeeAmount?: Prisma.SortOrder
   shippingEstimateAmount?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
   grandTotalAmount?: Prisma.SortOrder
 }
 
@@ -540,8 +772,19 @@ export type OrderMaxOrderByAggregateInput = {
   platformFeeCurrency?: Prisma.SortOrder
   shippingEstimateAmount?: Prisma.SortOrder
   shippingEstimateCurrency?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
+  discountCurrency?: Prisma.SortOrder
+  promoCode?: Prisma.SortOrder
   grandTotalAmount?: Prisma.SortOrder
   grandTotalCurrency?: Prisma.SortOrder
+  receiverName?: Prisma.SortOrder
+  receiverPhone?: Prisma.SortOrder
+  shippingAddress?: Prisma.SortOrder
+  shippingCity?: Prisma.SortOrder
+  shippingProvince?: Prisma.SortOrder
+  courierCode?: Prisma.SortOrder
+  courierName?: Prisma.SortOrder
+  paymentExpiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -556,8 +799,19 @@ export type OrderMinOrderByAggregateInput = {
   platformFeeCurrency?: Prisma.SortOrder
   shippingEstimateAmount?: Prisma.SortOrder
   shippingEstimateCurrency?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
+  discountCurrency?: Prisma.SortOrder
+  promoCode?: Prisma.SortOrder
   grandTotalAmount?: Prisma.SortOrder
   grandTotalCurrency?: Prisma.SortOrder
+  receiverName?: Prisma.SortOrder
+  receiverPhone?: Prisma.SortOrder
+  shippingAddress?: Prisma.SortOrder
+  shippingCity?: Prisma.SortOrder
+  shippingProvince?: Prisma.SortOrder
+  courierCode?: Prisma.SortOrder
+  courierName?: Prisma.SortOrder
+  paymentExpiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -566,6 +820,7 @@ export type OrderSumOrderByAggregateInput = {
   subtotalAmount?: Prisma.SortOrder
   platformFeeAmount?: Prisma.SortOrder
   shippingEstimateAmount?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
   grandTotalAmount?: Prisma.SortOrder
 }
 
@@ -648,6 +903,20 @@ export type OrderUpdateOneRequiredWithoutPaymentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutPaymentsInput, Prisma.OrderUpdateWithoutPaymentsInput>, Prisma.OrderUncheckedUpdateWithoutPaymentsInput>
 }
 
+export type OrderCreateNestedOneWithoutFulfillmentsInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutFulfillmentsInput, Prisma.OrderUncheckedCreateWithoutFulfillmentsInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutFulfillmentsInput
+  connect?: Prisma.OrderWhereUniqueInput
+}
+
+export type OrderUpdateOneRequiredWithoutFulfillmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutFulfillmentsInput, Prisma.OrderUncheckedCreateWithoutFulfillmentsInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutFulfillmentsInput
+  upsert?: Prisma.OrderUpsertWithoutFulfillmentsInput
+  connect?: Prisma.OrderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutFulfillmentsInput, Prisma.OrderUpdateWithoutFulfillmentsInput>, Prisma.OrderUncheckedUpdateWithoutFulfillmentsInput>
+}
+
 export type OrderCreateWithoutUserInput = {
   id: string
   status?: $Enums.OrderStatus
@@ -657,12 +926,24 @@ export type OrderCreateWithoutUserInput = {
   platformFeeCurrency?: string
   shippingEstimateAmount: number
   shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
   grandTotalAmount: number
   grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
   payments?: Prisma.PaymentCreateNestedManyWithoutOrderInput
+  fulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutUserInput = {
@@ -674,12 +955,24 @@ export type OrderUncheckedCreateWithoutUserInput = {
   platformFeeCurrency?: string
   shippingEstimateAmount: number
   shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
   grandTotalAmount: number
   grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutOrderInput
+  fulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutUserInput = {
@@ -721,8 +1014,19 @@ export type OrderScalarWhereInput = {
   platformFeeCurrency?: Prisma.StringFilter<"Order"> | string
   shippingEstimateAmount?: Prisma.IntFilter<"Order"> | number
   shippingEstimateCurrency?: Prisma.StringFilter<"Order"> | string
+  discountAmount?: Prisma.IntFilter<"Order"> | number
+  discountCurrency?: Prisma.StringFilter<"Order"> | string
+  promoCode?: Prisma.StringNullableFilter<"Order"> | string | null
   grandTotalAmount?: Prisma.IntFilter<"Order"> | number
   grandTotalCurrency?: Prisma.StringFilter<"Order"> | string
+  receiverName?: Prisma.StringNullableFilter<"Order"> | string | null
+  receiverPhone?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingAddress?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingCity?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingProvince?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierCode?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierName?: Prisma.StringNullableFilter<"Order"> | string | null
+  paymentExpiresAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
 }
@@ -736,12 +1040,24 @@ export type OrderCreateWithoutItemsInput = {
   platformFeeCurrency?: string
   shippingEstimateAmount: number
   shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
   grandTotalAmount: number
   grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutOrdersInput
   payments?: Prisma.PaymentCreateNestedManyWithoutOrderInput
+  fulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutItemsInput = {
@@ -754,11 +1070,23 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   platformFeeCurrency?: string
   shippingEstimateAmount: number
   shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
   grandTotalAmount: number
   grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutOrderInput
+  fulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutItemsInput = {
@@ -786,12 +1114,24 @@ export type OrderUpdateWithoutItemsInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutOrderNestedInput
+  fulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutItemsInput = {
@@ -804,11 +1144,23 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutOrderNestedInput
+  fulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutPaymentsInput = {
@@ -820,12 +1172,24 @@ export type OrderCreateWithoutPaymentsInput = {
   platformFeeCurrency?: string
   shippingEstimateAmount: number
   shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
   grandTotalAmount: number
   grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutOrdersInput
   items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
+  fulfillments?: Prisma.OrderFulfillmentCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutPaymentsInput = {
@@ -838,11 +1202,23 @@ export type OrderUncheckedCreateWithoutPaymentsInput = {
   platformFeeCurrency?: string
   shippingEstimateAmount: number
   shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
   grandTotalAmount: number
   grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
+  fulfillments?: Prisma.OrderFulfillmentUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutPaymentsInput = {
@@ -870,12 +1246,24 @@ export type OrderUpdateWithoutPaymentsInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
   items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
+  fulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutPaymentsInput = {
@@ -888,11 +1276,155 @@ export type OrderUncheckedUpdateWithoutPaymentsInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+  fulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutOrderNestedInput
+}
+
+export type OrderCreateWithoutFulfillmentsInput = {
+  id: string
+  status?: $Enums.OrderStatus
+  subtotalAmount: number
+  subtotalCurrency?: string
+  platformFeeAmount: number
+  platformFeeCurrency?: string
+  shippingEstimateAmount: number
+  shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
+  grandTotalAmount: number
+  grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutOrdersInput
+  items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutOrderInput
+}
+
+export type OrderUncheckedCreateWithoutFulfillmentsInput = {
+  id: string
+  userId?: string | null
+  status?: $Enums.OrderStatus
+  subtotalAmount: number
+  subtotalCurrency?: string
+  platformFeeAmount: number
+  platformFeeCurrency?: string
+  shippingEstimateAmount: number
+  shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
+  grandTotalAmount: number
+  grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutOrderInput
+}
+
+export type OrderCreateOrConnectWithoutFulfillmentsInput = {
+  where: Prisma.OrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrderCreateWithoutFulfillmentsInput, Prisma.OrderUncheckedCreateWithoutFulfillmentsInput>
+}
+
+export type OrderUpsertWithoutFulfillmentsInput = {
+  update: Prisma.XOR<Prisma.OrderUpdateWithoutFulfillmentsInput, Prisma.OrderUncheckedUpdateWithoutFulfillmentsInput>
+  create: Prisma.XOR<Prisma.OrderCreateWithoutFulfillmentsInput, Prisma.OrderUncheckedCreateWithoutFulfillmentsInput>
+  where?: Prisma.OrderWhereInput
+}
+
+export type OrderUpdateToOneWithWhereWithoutFulfillmentsInput = {
+  where?: Prisma.OrderWhereInput
+  data: Prisma.XOR<Prisma.OrderUpdateWithoutFulfillmentsInput, Prisma.OrderUncheckedUpdateWithoutFulfillmentsInput>
+}
+
+export type OrderUpdateWithoutFulfillmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  subtotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  subtotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  platformFeeAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
+  items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutOrderNestedInput
+}
+
+export type OrderUncheckedUpdateWithoutFulfillmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  subtotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  subtotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  platformFeeAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateManyUserInput = {
@@ -904,8 +1436,19 @@ export type OrderCreateManyUserInput = {
   platformFeeCurrency?: string
   shippingEstimateAmount: number
   shippingEstimateCurrency?: string
+  discountAmount?: number
+  discountCurrency?: string
+  promoCode?: string | null
   grandTotalAmount: number
   grandTotalCurrency?: string
+  receiverName?: string | null
+  receiverPhone?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingProvince?: string | null
+  courierCode?: string | null
+  courierName?: string | null
+  paymentExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -919,12 +1462,24 @@ export type OrderUpdateWithoutUserInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutOrderNestedInput
+  fulfillments?: Prisma.OrderFulfillmentUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutUserInput = {
@@ -936,12 +1491,24 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutOrderNestedInput
+  fulfillments?: Prisma.OrderFulfillmentUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutUserInput = {
@@ -953,8 +1520,19 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   platformFeeCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   shippingEstimateAmount?: Prisma.IntFieldUpdateOperationsInput | number
   shippingEstimateCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  discountCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  promoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grandTotalAmount?: Prisma.IntFieldUpdateOperationsInput | number
   grandTotalCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  receiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receiverPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -967,11 +1545,13 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
 export type OrderCountOutputType = {
   items: number
   payments: number
+  fulfillments: number
 }
 
 export type OrderCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   items?: boolean | OrderCountOutputTypeCountItemsArgs
   payments?: boolean | OrderCountOutputTypeCountPaymentsArgs
+  fulfillments?: boolean | OrderCountOutputTypeCountFulfillmentsArgs
 }
 
 /**
@@ -998,6 +1578,13 @@ export type OrderCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.PaymentWhereInput
 }
 
+/**
+ * OrderCountOutputType without action
+ */
+export type OrderCountOutputTypeCountFulfillmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderFulfillmentWhereInput
+}
+
 
 export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1009,13 +1596,25 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   platformFeeCurrency?: boolean
   shippingEstimateAmount?: boolean
   shippingEstimateCurrency?: boolean
+  discountAmount?: boolean
+  discountCurrency?: boolean
+  promoCode?: boolean
   grandTotalAmount?: boolean
   grandTotalCurrency?: boolean
+  receiverName?: boolean
+  receiverPhone?: boolean
+  shippingAddress?: boolean
+  shippingCity?: boolean
+  shippingProvince?: boolean
+  courierCode?: boolean
+  courierName?: boolean
+  paymentExpiresAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   items?: boolean | Prisma.Order$itemsArgs<ExtArgs>
   payments?: boolean | Prisma.Order$paymentsArgs<ExtArgs>
+  fulfillments?: boolean | Prisma.Order$fulfillmentsArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
 
@@ -1029,8 +1628,19 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   platformFeeCurrency?: boolean
   shippingEstimateAmount?: boolean
   shippingEstimateCurrency?: boolean
+  discountAmount?: boolean
+  discountCurrency?: boolean
+  promoCode?: boolean
   grandTotalAmount?: boolean
   grandTotalCurrency?: boolean
+  receiverName?: boolean
+  receiverPhone?: boolean
+  shippingAddress?: boolean
+  shippingCity?: boolean
+  shippingProvince?: boolean
+  courierCode?: boolean
+  courierName?: boolean
+  paymentExpiresAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
@@ -1046,8 +1656,19 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   platformFeeCurrency?: boolean
   shippingEstimateAmount?: boolean
   shippingEstimateCurrency?: boolean
+  discountAmount?: boolean
+  discountCurrency?: boolean
+  promoCode?: boolean
   grandTotalAmount?: boolean
   grandTotalCurrency?: boolean
+  receiverName?: boolean
+  receiverPhone?: boolean
+  shippingAddress?: boolean
+  shippingCity?: boolean
+  shippingProvince?: boolean
+  courierCode?: boolean
+  courierName?: boolean
+  paymentExpiresAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
@@ -1063,17 +1684,29 @@ export type OrderSelectScalar = {
   platformFeeCurrency?: boolean
   shippingEstimateAmount?: boolean
   shippingEstimateCurrency?: boolean
+  discountAmount?: boolean
+  discountCurrency?: boolean
+  promoCode?: boolean
   grandTotalAmount?: boolean
   grandTotalCurrency?: boolean
+  receiverName?: boolean
+  receiverPhone?: boolean
+  shippingAddress?: boolean
+  shippingCity?: boolean
+  shippingProvince?: boolean
+  courierCode?: boolean
+  courierName?: boolean
+  paymentExpiresAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "subtotalAmount" | "subtotalCurrency" | "platformFeeAmount" | "platformFeeCurrency" | "shippingEstimateAmount" | "shippingEstimateCurrency" | "grandTotalAmount" | "grandTotalCurrency" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "subtotalAmount" | "subtotalCurrency" | "platformFeeAmount" | "platformFeeCurrency" | "shippingEstimateAmount" | "shippingEstimateCurrency" | "discountAmount" | "discountCurrency" | "promoCode" | "grandTotalAmount" | "grandTotalCurrency" | "receiverName" | "receiverPhone" | "shippingAddress" | "shippingCity" | "shippingProvince" | "courierCode" | "courierName" | "paymentExpiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   items?: boolean | Prisma.Order$itemsArgs<ExtArgs>
   payments?: boolean | Prisma.Order$paymentsArgs<ExtArgs>
+  fulfillments?: boolean | Prisma.Order$fulfillmentsArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1089,6 +1722,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     user: Prisma.$UserPayload<ExtArgs> | null
     items: Prisma.$OrderItemPayload<ExtArgs>[]
     payments: Prisma.$PaymentPayload<ExtArgs>[]
+    fulfillments: Prisma.$OrderFulfillmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1100,8 +1734,19 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     platformFeeCurrency: string
     shippingEstimateAmount: number
     shippingEstimateCurrency: string
+    discountAmount: number
+    discountCurrency: string
+    promoCode: string | null
     grandTotalAmount: number
     grandTotalCurrency: string
+    receiverName: string | null
+    receiverPhone: string | null
+    shippingAddress: string | null
+    shippingCity: string | null
+    shippingProvince: string | null
+    courierCode: string | null
+    courierName: string | null
+    paymentExpiresAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["order"]>
@@ -1501,6 +2146,7 @@ export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Ty
   user<T extends Prisma.Order$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   items<T extends Prisma.Order$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payments<T extends Prisma.Order$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  fulfillments<T extends Prisma.Order$fulfillmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$fulfillmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderFulfillmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1539,8 +2185,19 @@ export interface OrderFieldRefs {
   readonly platformFeeCurrency: Prisma.FieldRef<"Order", 'String'>
   readonly shippingEstimateAmount: Prisma.FieldRef<"Order", 'Int'>
   readonly shippingEstimateCurrency: Prisma.FieldRef<"Order", 'String'>
+  readonly discountAmount: Prisma.FieldRef<"Order", 'Int'>
+  readonly discountCurrency: Prisma.FieldRef<"Order", 'String'>
+  readonly promoCode: Prisma.FieldRef<"Order", 'String'>
   readonly grandTotalAmount: Prisma.FieldRef<"Order", 'Int'>
   readonly grandTotalCurrency: Prisma.FieldRef<"Order", 'String'>
+  readonly receiverName: Prisma.FieldRef<"Order", 'String'>
+  readonly receiverPhone: Prisma.FieldRef<"Order", 'String'>
+  readonly shippingAddress: Prisma.FieldRef<"Order", 'String'>
+  readonly shippingCity: Prisma.FieldRef<"Order", 'String'>
+  readonly shippingProvince: Prisma.FieldRef<"Order", 'String'>
+  readonly courierCode: Prisma.FieldRef<"Order", 'String'>
+  readonly courierName: Prisma.FieldRef<"Order", 'String'>
+  readonly paymentExpiresAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>
 }
@@ -2008,6 +2665,30 @@ export type Order$paymentsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
+}
+
+/**
+ * Order.fulfillments
+ */
+export type Order$fulfillmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrderFulfillment
+   */
+  select?: Prisma.OrderFulfillmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrderFulfillment
+   */
+  omit?: Prisma.OrderFulfillmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderFulfillmentInclude<ExtArgs> | null
+  where?: Prisma.OrderFulfillmentWhereInput
+  orderBy?: Prisma.OrderFulfillmentOrderByWithRelationInput | Prisma.OrderFulfillmentOrderByWithRelationInput[]
+  cursor?: Prisma.OrderFulfillmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderFulfillmentScalarFieldEnum | Prisma.OrderFulfillmentScalarFieldEnum[]
 }
 
 /**

@@ -789,12 +789,48 @@ export const cartItems: CartItem[] = [
 export const orderSummaries: OrderSummary[] = [
   {
     id: "order-preview-001",
-    status: "draft",
+    status: "pending-payment",
     items: cartItems,
     subtotal: idr(269000),
     platformFee: idr(9400),
     shippingEstimate: idr(28000),
     grandTotal: idr(306400),
+  },
+  {
+    id: "order-preview-002",
+    status: "paid",
+    items: [
+      {
+        id: "order-paid-roll-on",
+        kind: "product",
+        productId: "product-roll-on-relief",
+        ampasListingId: null,
+        quantity: 2,
+        unitPrice: idr(89000),
+      },
+    ],
+    subtotal: idr(178000),
+    platformFee: idr(2000),
+    shippingEstimate: idr(15000),
+    grandTotal: idr(195000),
+  },
+  {
+    id: "order-preview-003",
+    status: "fulfilled",
+    items: [
+      {
+        id: "order-fulfilled-ampas",
+        kind: "ampas-listing",
+        productId: null,
+        ampasListingId: "ampas-gayo-dry-biomass",
+        quantity: 100,
+        unitPrice: idr(1800),
+      },
+    ],
+    subtotal: idr(180000),
+    platformFee: idr(5400),
+    shippingEstimate: idr(28000),
+    grandTotal: idr(213400),
   },
 ];
 

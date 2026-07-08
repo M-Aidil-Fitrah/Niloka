@@ -2,9 +2,17 @@
 
 import { requireUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
-import { CartItemKind } from "@/generated/prisma/client";
-import type { CartItem } from "@/lib/contracts";
+import {
+  CartItemKind,
+  OrderFulfillmentStatus,
+  PromoStatus,
+} from "@/generated/prisma/client";
+import type { CartItem, PaymentInstruction } from "@/lib/contracts";
 import { revalidatePath } from "next/cache";
+import {
+  createCorePayment,
+  resolvePaymentChannel,
+} from "@/lib/services/payment-service";
 
 interface CartItemQueryResult {
   id: string;
@@ -15,6 +23,31 @@ interface CartItemQueryResult {
   unitPriceAmount: number;
   unitPriceCurrency: string;
 }
+
+type CheckoutInput = {
+  receiverName: string;
+  phone: string;
+  address: string;
+  city: string;
+  province: string;
+  courierCode: string;
+  paymentMethod: string;
+  promoCode: string;
+};
+
+type CheckoutResult = {
+  ok: boolean;
+  orderId?: string;
+  message?: string;
+  payment?: PaymentInstruction;
+};
+
+const courierRates: Record<string, { name: string; amount: number }> = {
+  jne: { name: "JNE Regular", amount: 15000 },
+  jnt: { name: "J&T Express", amount: 18000 },
+  sicepat: { name: "SiCepat Halu", amount: 12000 },
+  gosend: { name: "GoSend Instant", amount: 25000 },
+};
 
 // Helper to convert Prisma CartItem to domain CartItem contract
 function mapToCartItemDto(item: CartItemQueryResult): CartItem {
@@ -29,6 +62,71 @@ function mapToCartItemDto(item: CartItemQueryResult): CartItem {
       currency: item.unitPriceCurrency as "IDR",
     },
   };
+}
+
+function getCartItemSellerId(item: {
+  product?: { sellerId: string } | null;
+  ampasListing?: { sellerId: string } | null;
+}): string {
+  return item.product?.sellerId ?? item.ampasListing?.sellerId ?? "";
+}
+
+async function calculateDiscount(input: {
+  promoCode: string;
+  subtotal: number;
+  shippingEstimate: number;
+  productIds: string[];
+}): Promise<{ amount: number; code: string }> {
+  const code = input.promoCode.trim().toUpperCase();
+
+  if (!code) {
+    return { amount: 0, code: "" };
+  }
+
+  const promo = await prisma.promo.findFirst({
+    where: {
+      code,
+      status: PromoStatus.ACTIVE,
+    },
+    include: {
+      products: {
+        select: {
+          productId: true,
+        },
+      },
+    },
+  });
+
+  if (!promo || input.subtotal < promo.minSubtotalAmount) {
+    return { amount: 0, code: "" };
+  }
+
+  const eligibleProductIds = promo.products.map((item) => item.productId);
+  const hasEligibleProduct =
+    eligibleProductIds.length === 0 ||
+    input.productIds.some((productId) => eligibleProductIds.includes(productId));
+
+  if (!hasEligibleProduct) {
+    return { amount: 0, code: "" };
+  }
+
+  switch (promo.type) {
+    case "PERCENTAGE":
+      return {
+        amount: Math.floor((input.subtotal * promo.value) / 100),
+        code,
+      };
+    case "FIXED_AMOUNT":
+      return {
+        amount: Math.min(input.subtotal, promo.value),
+        code,
+      };
+    case "FREE_SHIPPING":
+      return {
+        amount: input.shippingEstimate,
+        code,
+      };
+  }
 }
 
 export async function fetchCartAction(): Promise<CartItem[]> {
@@ -253,75 +351,162 @@ export async function clearCartAction(): Promise<{ ok: boolean; items: CartItem[
 }
 
 // Checkout Server Action
-export async function checkoutAction(payload: {
-  subtotal: number;
-  platformFee: number;
-  shippingEstimate: number;
-  grandTotal: number;
-  shippingAddress: string;
-  paymentMethod: string;
-}): Promise<{ ok: boolean; orderId?: string; message?: string }> {
+export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutResult> {
   const user = await requireUser();
+  const courier = courierRates[payload.courierCode] ?? courierRates.jne;
+  const paymentChannel = resolvePaymentChannel(payload.paymentMethod);
 
-  // Find user's cart
   const cart = await prisma.cart.findFirst({
     where: { userId: user.id },
-    include: { items: true }
+    include: {
+      items: {
+        include: {
+          product: {
+            select: {
+              sellerId: true,
+              priceAmount: true,
+              priceCurrency: true,
+            },
+          },
+          ampasListing: {
+            select: {
+              sellerId: true,
+              pricePerKgAmount: true,
+              pricePerKgCurrency: true,
+              wholesaleEnabled: true,
+              wholesaleMinQtyKg: true,
+              wholesalePricePerKgAmount: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!cart || cart.items.length === 0) {
     return { ok: false, message: "Keranjang belanja Anda kosong." };
   }
 
-  // Create Order and mock Payment in a transaction
+  const resolvedItems = cart.items.map((item) => {
+    if (item.kind === CartItemKind.PRODUCT && item.product) {
+      return {
+        ...item,
+        sellerId: item.product.sellerId,
+        unitPriceAmount: item.product.priceAmount,
+        unitPriceCurrency: item.product.priceCurrency,
+      };
+    }
+
+    if (item.kind === CartItemKind.AMPAS_LISTING && item.ampasListing) {
+      const wholesalePrice =
+        item.ampasListing.wholesaleEnabled &&
+        item.ampasListing.wholesaleMinQtyKg &&
+        item.ampasListing.wholesalePricePerKgAmount &&
+        item.quantity >= item.ampasListing.wholesaleMinQtyKg
+          ? item.ampasListing.wholesalePricePerKgAmount
+          : item.ampasListing.pricePerKgAmount;
+
+      return {
+        ...item,
+        sellerId: item.ampasListing.sellerId,
+        unitPriceAmount: wholesalePrice,
+        unitPriceCurrency: item.ampasListing.pricePerKgCurrency,
+      };
+    }
+
+    return {
+      ...item,
+      sellerId: getCartItemSellerId(item),
+    };
+  });
+
+  const subtotal = resolvedItems.reduce(
+    (total, item) => total + item.unitPriceAmount * item.quantity,
+    0,
+  );
+  const platformFee = subtotal > 0 ? 2000 : 0;
+  const shippingEstimate = subtotal > 0 ? courier.amount : 0;
+  const discount = await calculateDiscount({
+    promoCode: payload.promoCode,
+    subtotal,
+    shippingEstimate,
+    productIds: resolvedItems
+      .map((item) => item.productId)
+      .filter((productId): productId is string => Boolean(productId)),
+  });
+  const grandTotal = Math.max(
+    0,
+    subtotal + platformFee + shippingEstimate - discount.amount,
+  );
+  const paymentExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const orderId = `ORD-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
   try {
+    let paymentInstruction: PaymentInstruction | undefined;
+
     await prisma.$transaction(async (tx) => {
-      // 1. Create Order
       const order = await tx.order.create({
         data: {
           id: orderId,
           userId: user.id,
           status: "PENDING_PAYMENT",
-          subtotalAmount: payload.subtotal,
-          platformFeeAmount: payload.platformFee,
-          shippingEstimateAmount: payload.shippingEstimate,
-          grandTotalAmount: payload.grandTotal,
+          subtotalAmount: subtotal,
+          platformFeeAmount: platformFee,
+          shippingEstimateAmount: shippingEstimate,
+          discountAmount: discount.amount,
+          promoCode: discount.code || undefined,
+          grandTotalAmount: grandTotal,
+          receiverName: payload.receiverName,
+          receiverPhone: payload.phone,
+          shippingAddress: payload.address,
+          shippingCity: payload.city,
+          shippingProvince: payload.province,
+          courierCode: payload.courierCode,
+          courierName: courier.name,
+          paymentExpiresAt,
           items: {
-            create: cart.items.map((item) => ({
+            create: resolvedItems.map((item) => ({
               kind: item.kind,
               productId: item.productId,
               ampasListingId: item.ampasListingId,
+              sellerId: item.sellerId || undefined,
               quantity: item.quantity,
               unitPriceAmount: item.unitPriceAmount,
               unitPriceCurrency: item.unitPriceCurrency,
             }))
-          }
+          },
+          fulfillments: {
+            create: Array.from(
+              new Set(
+                resolvedItems
+                  .map((item) => item.sellerId)
+                  .filter((sellerId): sellerId is string => Boolean(sellerId)),
+              ),
+            ).map((sellerId) => ({
+              sellerId,
+              status: OrderFulfillmentStatus.PENDING_PAYMENT,
+            })),
+          },
         }
       });
 
-      // 2. Create mock Payment
-      await tx.payment.create({
-        data: {
-          orderId: order.id,
-          provider: payload.paymentMethod,
-          status: "PENDING",
-          amount: payload.grandTotal,
-          currency: "IDR",
-          externalId: `PAY-${Date.now()}`,
-          snapToken: `snap-token-mock-${crypto.randomUUID()}`
-        }
+      paymentInstruction = await createCorePayment(tx, {
+        orderId: order.id,
+        amount: grandTotal,
+        currency: "IDR",
+        channel: paymentChannel,
+        expiresAt: paymentExpiresAt,
       });
 
-      // 3. Clear CartItems
       await tx.cartItem.deleteMany({
         where: { cartId: cart.id }
       });
     });
 
     revalidatePath("/checkout");
-    return { ok: true, orderId };
+    revalidatePath("/orders");
+
+    return { ok: true, orderId, payment: paymentInstruction };
   } catch (error) {
     console.error("Checkout failed:", error);
     return { ok: false, message: "Terjadi kesalahan saat memproses pesanan." };
@@ -379,18 +564,18 @@ export async function fetchOrderHistoryAction(): Promise<OrderHistoryItem[]> {
       kind: item.kind === "PRODUCT" ? "product" : "ampas-listing",
     })),
     shippingAddress: {
-      receiverName: "Penerima",
-      phone: "",
-      address: "Alamat Pengiriman",
-      city: "",
-      province: "",
+      receiverName: order.receiverName || "Penerima",
+      phone: order.receiverPhone || "",
+      address: order.shippingAddress || "",
+      city: order.shippingCity || "",
+      province: order.shippingProvince || "",
     },
-    courier: "Kurir Pilihan",
-    paymentMethod: order.payments[0]?.provider || "QRIS",
+    courier: order.courierName || order.courierCode || "Kurir Pilihan",
+    paymentMethod: order.payments[0]?.paymentMethod || "QRIS",
     subtotal: order.subtotalAmount,
     platformFee: order.platformFeeAmount,
     shippingFee: order.shippingEstimateAmount,
-    discount: 0,
+    discount: order.discountAmount,
     grandTotal: order.grandTotalAmount,
   }));
 }

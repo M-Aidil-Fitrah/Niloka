@@ -5,7 +5,7 @@ import { ArrowLeft, Clock, Calendar, User, BookOpen } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSanitize from "rehype-sanitize";
-import { getArticleBySlug, getArticles } from "@/lib/mock-queries";
+import { getArticleBySlugDto, getArticlesDto } from "@/lib/dal/marketplace";
 import type { ArticleCategory } from "@/lib/contracts";
 
 type Props = {
@@ -21,14 +21,13 @@ const CATEGORIES: Record<ArticleCategory, string> = {
 
 export default async function ArtikelDetailPage({ params }: Props) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlugDto(slug);
 
   if (!article) {
     notFound();
   }
 
-  // Get related articles (same category, excluding current article)
-  const allArticles = getArticles();
+  const allArticles = await getArticlesDto();
   const relatedArticles = allArticles
     .filter((a) => a.category === article.category && a.id !== article.id)
     .slice(0, 3);

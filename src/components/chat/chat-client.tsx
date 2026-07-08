@@ -5,13 +5,14 @@ import { useSearchParams } from "next/navigation";
 import { ChatService, type ChatThread } from "@/lib/services/chat-service";
 import { BuyerChatView } from "./buyer-chat-view";
 import { SellerChatView } from "./seller-chat-view";
+import { useAuth } from "@/context/auth-context";
 
 export function ChatClient() {
   const searchParams = useSearchParams();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   const [threads, setThreads] = useState<ChatThread[]>([]);
-  const [currentSellerId, setCurrentSellerId] = useState<string | null>(null);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
   const [isMobileView, setIsMobileView] = useState(false);
@@ -20,12 +21,7 @@ export function ChatClient() {
   // Safely get role and seller ID from ChatService
   const modeParam = searchParams.get("mode");
   const currentUserRole = modeParam === "seller" ? "seller" : "buyer";
-
-  useEffect(() => {
-    setTimeout(() => {
-      setCurrentSellerId(ChatService.getCurrentSellerId());
-    }, 0);
-  }, []);
+  const currentSellerId = currentUserRole === "seller" ? user?.sellerId ?? null : null;
 
   // Detect mobile viewport
   useEffect(() => {
@@ -122,11 +118,9 @@ export function ChatClient() {
       ChatService.deleteThread(threadId).then(() => {
         if (activeThreadId === threadId) {
           ChatService.getThreads().then((currentThreads) => {
-            const role = ChatService.getCurrentUserRole();
-            const sellerId = ChatService.getCurrentSellerId();
             const filtered =
-              role === "seller" && sellerId
-                ? currentThreads.filter((t) => t.sellerId === sellerId)
+              currentUserRole === "seller" && currentSellerId
+                ? currentThreads.filter((t) => t.sellerId === currentSellerId)
                 : currentThreads;
 
             const sorted = [...filtered].sort(
