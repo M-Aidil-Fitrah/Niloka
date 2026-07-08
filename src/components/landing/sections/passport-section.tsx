@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import type { PassportItem } from "@/lib/landing-types";
+import type { PassportItem } from "@/lib/landing-data";
 
 type PassportSectionProps = {
   passportItems: PassportItem[];

@@ -4,7 +4,7 @@ import { checkChatGuardrail } from "@/lib/ai/guardrails";
 import { buildProductSuggestions } from "@/lib/ai/normalizers";
 import { generateAiText } from "@/lib/ai/providers";
 import { buildChatPrompt } from "@/lib/ai/prompts";
-import { getPublishedProductsDto } from "@/lib/dal/marketplace";
+import { getPublishedProducts } from "@/lib/mock-queries";
 
 export async function POST(request: Request) {
   const payload: ChatRequest = await request.json();
@@ -36,11 +36,8 @@ export async function POST(request: Request) {
     } satisfies ChatResponse);
   }
 
-  const [products, nilokaContext] = await Promise.all([
-    getPublishedProductsDto(),
-    buildNilokaContext(),
-  ]);
-  const prompt = buildChatPrompt(messages, nilokaContext);
+  const products = getPublishedProducts();
+  const prompt = buildChatPrompt(messages, buildNilokaContext());
   const suggestions = buildProductSuggestions(products, lastMessage.content);
   const mockText = [
     "Berikut rekomendasi dari data NILOKA saat ini:",

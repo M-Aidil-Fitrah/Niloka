@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
-import { showToast } from "@/lib/toast";
 import { ArrowLeft, UserPlus, User, Mail, Lock, ShieldCheck, MapPin } from "lucide-react";
 import nilokaLogo from "@/public/assets/logo/logo.png";
 import gsap from "gsap";
@@ -19,6 +18,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Refs for GSAP
@@ -141,21 +141,20 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     if (nameError || emailError || passwordError || confirmPasswordError) {
-      showToast("Periksa kembali data pendaftaran kamu.", "warning");
       return;
     }
 
     setIsSubmitting(true);
-    const success = await register(name, email, password);
+    const success = await register(name, email);
     setIsSubmitting(false);
 
     if (success) {
-      showToast("Akun berhasil dibuat. Selamat datang di NILOKA.", "success");
       router.push("/");
     } else {
-      showToast("Email sudah terdaftar.", "error");
+      setError("Email sudah terdaftar.");
     }
   };
 
@@ -267,6 +266,12 @@ export default function RegisterPage() {
                 Masuk Sekarang <span className="text-[10px]">↗</span>
               </Link>
             </p>
+
+            {error && (
+              <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-700 text-xs font-bold border border-red-100/80 leading-relaxed form-element-item">
+                {error}
+              </div>
+            )}
 
             <form className="space-y-4" onSubmit={handleRegister}>
               {/* Nama Lengkap */}

@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
-import { showToast } from "@/lib/toast";
 import { ArrowLeft, LogIn, Mail, Lock, ShieldCheck, MapPin } from "lucide-react";
 import nilokaLogo from "@/public/assets/logo/logo.png";
 import gsap from "gsap";
@@ -17,6 +16,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Refs for GSAP
@@ -127,14 +127,14 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     if (emailError || passwordError) {
-      showToast("Periksa kembali format email dan kata sandi.", "warning");
       return;
     }
 
     setIsSubmitting(true);
-    const user = await login(email, password);
+    const user = await login(email);
     setIsSubmitting(false);
 
     if (user) {
@@ -146,7 +146,7 @@ export default function LoginPage() {
         router.push("/");
       }
     } else {
-      showToast("Email atau kata sandi salah.", "error");
+      setError("Email tidak terdaftar.");
     }
   };
 
@@ -250,6 +250,12 @@ export default function LoginPage() {
                 Buat Akun Gratis <span className="text-[10px]">↗</span>
               </Link>
             </p>
+
+            {error && (
+              <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-700 text-xs font-bold border border-red-100/80 leading-relaxed form-element-item">
+                {error}
+              </div>
+            )}
 
             <form className="space-y-4" onSubmit={handleLogin}>
               {/* Email Input */}

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import type { StoryMetric } from "@/lib/landing-types";
+import type { StoryMetric } from "@/lib/landing-data";
 
 type EditorialSectionProps = {
   metrics: StoryMetric[];

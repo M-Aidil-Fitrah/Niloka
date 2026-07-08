@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Bell, MessageSquare, Settings, Menu, X, ChevronDown, LogOut, User } from "lucide-react";
 import { cn } from "@/lib/styles";
 import nilokaLogo from "@/public/assets/logo/logo.png";
-export { showToast } from "@/lib/toast";
 
 // ==========================================
 // 1. DASHBOARD SHELL
@@ -15,7 +14,33 @@ type DashboardShellProps = {
   children: ReactNode;
 };
 
+// Helper to show modern visual feedback
+export function showToast(message: string, type: "success" | "error" | "warning" = "success") {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("show-niloka-toast", { detail: { message, type } }));
+  }
+}
+
 export function DashboardShell({ children }: DashboardShellProps) {
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
+
+  useEffect(() => {
+    const handleToast = (e: Event) => {
+      const customEvent = e as CustomEvent<{ message: string; type: "success" | "error" | "warning" }>;
+      setToast(customEvent.detail);
+    };
+
+    window.addEventListener("show-niloka-toast", handleToast);
+    return () => window.removeEventListener("show-niloka-toast", handleToast);
+  }, []);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   // Global Escape key event handler
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -30,6 +55,26 @@ export function DashboardShell({ children }: DashboardShellProps) {
   return (
     <div className="h-dvh w-full overflow-hidden flex bg-cream-50 text-ink-900 font-sans antialiased max-w-[1920px] mx-auto relative">
       {children}
+
+      {/* Floating Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-[9999] animate-in slide-in-from-bottom-5 duration-300">
+          <div className={cn(
+            "flex items-center gap-3 px-4.5 py-3.5 rounded-2xl border shadow-lg text-xs font-extrabold min-w-[280px]",
+            toast.type === "success" && "bg-emerald-50 border-emerald-250 text-emerald-800",
+            toast.type === "error" && "bg-red-50 border-red-200 text-red-800",
+            toast.type === "warning" && "bg-amber-50 border-amber-250 text-amber-800"
+          )}>
+            <div className="flex-1">{toast.message}</div>
+            <button
+              onClick={() => setToast(null)}
+              className="text-ink-500 hover:text-ink-800 p-0.5 rounded cursor-pointer"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
