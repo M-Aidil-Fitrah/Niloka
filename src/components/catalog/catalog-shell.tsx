@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Grid, List } from "lucide-react";
-import type { Product, ProductCategory, Seller, ProductForm, ProductFunction } from "@/lib/contracts";
+import type { Product, ProductCategory, ProductForm, ProductFunction } from "@/lib/contracts";
 import { CatalogSidebar } from "@/components/catalog/catalog-sidebar";
 import { ProductCard } from "@/components/catalog/product-card";
 import { Pagination } from "@/components/ui/pagination";
@@ -20,7 +20,6 @@ type SortOption = "featured" | "price-asc" | "price-desc" | "newest";
 type CatalogShellProps = {
   products: Product[];
   categories: ProductCategory[];
-  sellers: Seller[];
 };
 
 const PRODUCTS_PER_PAGE = 8;
@@ -32,20 +31,17 @@ const sortLabels: Record<SortOption, string> = {
   newest: "Terbaru",
 };
 
-export function CatalogShell({ products, categories, sellers }: CatalogShellProps) {
+export function CatalogShell({ products, categories }: CatalogShellProps) {
   const [localProducts, setLocalProducts] = useState<Product[]>(products);
-  const [localSellers, setLocalSellers] = useState<Seller[]>(sellers);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedProds = localStorage.getItem("niloka_products");
-      if (storedProds) {
-        setLocalProducts(JSON.parse(storedProds));
-      }
-      const storedSellers = localStorage.getItem("niloka_sellers");
-      if (storedSellers) {
-        setLocalSellers(JSON.parse(storedSellers));
-      }
+      setTimeout(() => {
+        if (storedProds) {
+          setLocalProducts(JSON.parse(storedProds));
+        }
+      }, 0);
     }
   }, []);
 
@@ -53,7 +49,6 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedForms, setSelectedForms] = useState<ProductForm[]>([]);
   const [selectedFunctions, setSelectedFunctions] = useState<ProductFunction[]>([]);
-  const [selectedSellers, setSelectedSellers] = useState<string[]>([]);
   const [sort, setSort] = useState<SortOption>("featured");
   const [showSort, setShowSort] = useState(false);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
@@ -63,7 +58,6 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
     setSelectedCategories([]);
     setSelectedForms([]);
     setSelectedFunctions([]);
-    setSelectedSellers([]);
     setCurrentPage(1);
   }
 
@@ -79,9 +73,6 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
       return false;
     }
     if (selectedFunctions.length > 0 && !product.functions.some((f) => selectedFunctions.includes(f))) {
-      return false;
-    }
-    if (selectedSellers.length > 0 && !selectedSellers.includes(product.sellerId)) {
       return false;
     }
     return true;
@@ -111,8 +102,7 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
   const hasActiveFilters =
     selectedCategories.length > 0 ||
     selectedForms.length > 0 ||
-    selectedFunctions.length > 0 ||
-    selectedSellers.length > 0;
+    selectedFunctions.length > 0;
 
   return (
     <div className="flex gap-8">
@@ -120,15 +110,12 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
       <aside className="hidden w-64 shrink-0 lg:block">
         <CatalogSidebar
           categories={categories}
-          sellers={localSellers}
           selectedCategories={selectedCategories}
           onCategoriesChange={(v: string[]) => { setSelectedCategories(v); setCurrentPage(1); }}
           selectedForms={selectedForms}
           onFormsChange={(v: ProductForm[]) => { setSelectedForms(v); setCurrentPage(1); }}
           selectedFunctions={selectedFunctions}
           onFunctionsChange={(v: ProductFunction[]) => { setSelectedFunctions(v); setCurrentPage(1); }}
-          selectedSellers={selectedSellers}
-          onSellersChange={(v: string[]) => { setSelectedSellers(v); setCurrentPage(1); }}
           onReset={handleResetFilters}
           hasActiveFilters={hasActiveFilters}
         />
@@ -157,15 +144,12 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
             </div>
             <CatalogSidebar
               categories={categories}
-              sellers={localSellers}
               selectedCategories={selectedCategories}
               onCategoriesChange={(v: string[]) => { setSelectedCategories(v); setCurrentPage(1); }}
               selectedForms={selectedForms}
               onFormsChange={(v: ProductForm[]) => { setSelectedForms(v); setCurrentPage(1); }}
               selectedFunctions={selectedFunctions}
               onFunctionsChange={(v: ProductFunction[]) => { setSelectedFunctions(v); setCurrentPage(1); }}
-              selectedSellers={selectedSellers}
-              onSellersChange={(v: string[]) => { setSelectedSellers(v); setCurrentPage(1); }}
               onReset={handleResetFilters}
               hasActiveFilters={hasActiveFilters}
             />
@@ -186,7 +170,7 @@ export function CatalogShell({ products, categories, sellers }: CatalogShellProp
               Filter
               {hasActiveFilters && (
                 <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-900 text-[10px] text-white-soft">
-                  {selectedCategories.length + selectedForms.length + selectedFunctions.length + selectedSellers.length}
+                  {selectedCategories.length + selectedForms.length + selectedFunctions.length}
                 </span>
               )}
             </button>

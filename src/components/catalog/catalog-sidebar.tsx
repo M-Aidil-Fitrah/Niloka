@@ -1,16 +1,13 @@
-import type { ProductCategory, ProductForm, ProductFunction, Seller } from "@/lib/contracts";
+import type { ProductCategory, ProductForm, ProductFunction } from "@/lib/contracts";
 
 type CatalogSidebarProps = {
   categories: ProductCategory[];
-  sellers: Seller[];
   selectedCategories: string[];
   onCategoriesChange: (ids: string[]) => void;
   selectedForms: ProductForm[];
   onFormsChange: (forms: ProductForm[]) => void;
   selectedFunctions: ProductFunction[];
   onFunctionsChange: (fns: ProductFunction[]) => void;
-  selectedSellers: string[];
-  onSellersChange: (ids: string[]) => void;
   onReset: () => void;
   hasActiveFilters: boolean;
 };
@@ -40,15 +37,12 @@ function toggleItem<T>(list: T[], item: T): T[] {
 
 export function CatalogSidebar({
   categories,
-  sellers,
   selectedCategories,
   onCategoriesChange,
   selectedForms,
   onFormsChange,
   selectedFunctions,
   onFunctionsChange,
-  selectedSellers,
-  onSellersChange,
   onReset,
   hasActiveFilters,
 }: CatalogSidebarProps) {
@@ -90,17 +84,6 @@ export function CatalogSidebar({
         ))}
       </FilterGroup>
 
-      {/* Seller */}
-      <FilterGroup title="Seller">
-        {sellers.map((seller) => (
-          <Checkbox
-            key={seller.id}
-            label={seller.displayName}
-            checked={selectedSellers.includes(seller.id)}
-            onChange={() => onSellersChange(toggleItem(selectedSellers, seller.id))}
-          />
-        ))}
-      </FilterGroup>
 
       {hasActiveFilters && (
         <button

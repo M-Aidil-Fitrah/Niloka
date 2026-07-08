@@ -9,7 +9,7 @@ type ProductDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
   activeProduct: Partial<Product> | null;
-  setActiveProduct: (product: Partial<Product> | null) => void;
+  setActiveProduct: React.Dispatch<React.SetStateAction<Partial<Product> | null>>;
   onSave: () => void;
   products: Product[];
 };

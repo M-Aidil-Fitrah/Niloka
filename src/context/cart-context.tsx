@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import type { CartItem, AmpasListing } from "@/lib/contracts";
+import type { CartItem, AmpasListing, Money } from "@/lib/contracts";
 import {
   cartItems as defaultCartItems,
   products as defaultProducts,
@@ -23,7 +23,7 @@ type CartContextType = {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const resolveAmpasUnitPrice = (ampasListingId: string | null, quantity: number, defaultPrice: any) => {
+const resolveAmpasUnitPrice = (ampasListingId: string | null, quantity: number, defaultPrice: Money) => {
   if (!ampasListingId) return defaultPrice;
   let listing: AmpasListing | null = null;
   if (typeof window !== "undefined") {

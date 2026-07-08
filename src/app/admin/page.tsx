@@ -28,7 +28,9 @@ export default function AdminPage() {
       } else if (user.role !== "admin") {
         router.replace("/");
       } else {
-        setIsAuthorized(true);
+        setTimeout(() => {
+          setIsAuthorized(true);
+        }, 0);
       }
     }
   }, [user, isLoading, router]);

@@ -42,8 +42,8 @@
   --color-ink-600: var(--ink-600);
   --color-line: var(--line);
   --color-white-soft: var(--white-soft);
-  --font-sans: var(--font-sans);
-  --font-serif-accent: var(--font-serif-accent);
+  --font-sans: "Plus Jakarta Sans", Arial, Helvetica, sans-serif;
+  --font-serif-accent: "Cormorant Garamond", Georgia, serif;
 }
 
 body {

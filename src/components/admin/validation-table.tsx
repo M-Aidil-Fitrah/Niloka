@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, ShieldAlert, BadgeCheck, XOctagon, RefreshCw } from "lucide-react";
+import { Eye, BadgeCheck, XOctagon, RefreshCw } from "lucide-react";
 import type { AdminValidationItem, Seller } from "@/lib/contracts";
 
 type ValidationTableProps = {

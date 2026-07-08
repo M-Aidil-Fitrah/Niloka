@@ -115,7 +115,6 @@ export function SellerDashboardShell({
     <DashboardShell>
       <DashboardSidebar
         brandName="Niloka Seller"
-        logoChar="S"
         navigation={navigation}
         activeTab={activeTab}
         onTabChange={setActiveTab}

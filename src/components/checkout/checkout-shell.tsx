@@ -9,7 +9,7 @@ import { ShippingForm } from "./shipping-form";
 import { OrderSummaryCard } from "./order-summary-card";
 import { PaymentSnapModal } from "./payment-snap-modal";
 import { ShieldCheck, ShoppingCart, Calendar, Receipt, Trash2, Printer, RefreshCw } from "lucide-react";
-import type { Product, AmpasListing, CartItem, Promo } from "@/lib/contracts";
+import type { Product, AmpasListing, CartItem, Promo, Money } from "@/lib/contracts";
 import { getPublicPromoSuggestions, validatePromoCode } from "@/lib/mock-queries";
 
 type CheckoutShellProps = {
@@ -51,13 +51,15 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedProds = localStorage.getItem("niloka_products");
-      if (storedProds) {
-        setLocalProducts(JSON.parse(storedProds));
-      }
       const storedListings = localStorage.getItem("niloka_ampas_listings");
-      if (storedListings) {
-        setLocalListings(JSON.parse(storedListings));
-      }
+      setTimeout(() => {
+        if (storedProds) {
+          setLocalProducts(JSON.parse(storedProds));
+        }
+        if (storedListings) {
+          setLocalListings(JSON.parse(storedListings));
+        }
+      }, 0);
     }
   }, []);
 
@@ -96,7 +98,6 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
     }
   };
 
-  // Persistent Snapshots for Invoice Display (after cart is cleared)
   const [invoiceItems, setInvoiceItems] = useState<
     (CartItem & {
       name: string;
@@ -104,8 +105,8 @@ export function CheckoutShell({ products, ampasListings }: CheckoutShellProps) {
       imageAlt: string;
       wholesaleEnabled?: boolean;
       wholesaleMinQtyKg?: number;
-      wholesalePricePerKg?: any;
-      normalPricePerKg?: any;
+      wholesalePricePerKg?: Money | null;
+      normalPricePerKg?: Money | null;
     })[]
   >([]);
   const [invoiceSubtotal, setInvoiceSubtotal] = useState(0);

@@ -20,13 +20,15 @@ export function PassportManagement({ products }: PassportManagementProps) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("niloka_passports");
-      if (stored) {
-        setPassports(JSON.parse(stored));
-      }
       const user = localStorage.getItem("niloka_current_user");
-      if (user && user !== "buyer") {
-        setCurrentSellerId(user);
-      }
+      setTimeout(() => {
+        if (stored) {
+          setPassports(JSON.parse(stored));
+        }
+        if (user && user !== "buyer") {
+          setCurrentSellerId(user);
+        }
+      }, 0);
     }
   }, []);
 

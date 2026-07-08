@@ -26,8 +26,6 @@ export type PromoId = string;
 export type BundleId = string;
 export type CartItemId = string;
 export type OrderId = string;
-export type AromaMatchQuestionId = string;
-export type AromaMatchRecommendationId = string;
 export type AdminValidationItemId = string;
 
 export type SellerType = "umkm" | "distiller" | "cooperative";
@@ -82,8 +80,6 @@ export type BundleType = "single-seller" | "cross-seller";
 
 export type CartItemKind = "product" | "ampas-listing";
 export type OrderStatus = "draft" | "pending-payment" | "paid" | "fulfilled";
-
-export type AromaMatchQuestionKind = "single-choice" | "multi-choice" | "budget-range";
 
 export type AdminValidationTarget = "seller" | "product" | "nilam-passport";
 export type AdminValidationStatus = "queued" | "approved" | "rejected";
@@ -244,28 +240,6 @@ export type OrderSummary = {
   platformFee: Money;
   shippingEstimate: Money;
   grandTotal: Money;
-};
-
-export type AromaMatchOption = {
-  id: string;
-  label: string;
-  productFunctions: ProductFunction[];
-};
-
-export type AromaMatchQuestion = {
-  id: AromaMatchQuestionId;
-  step: number;
-  prompt: string;
-  kind: AromaMatchQuestionKind;
-  options: AromaMatchOption[];
-};
-
-export type AromaMatchRecommendation = {
-  id: AromaMatchRecommendationId;
-  productId: ProductId;
-  score: number;
-  reason: string;
-  matchedTags: ProductTag[];
 };
 
 export type AdminValidationItem = {
