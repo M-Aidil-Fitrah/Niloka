@@ -238,6 +238,7 @@ type DashboardTopbarProps = {
   onMenuClick?: () => void;
   backToUrl?: string;
   backToLabel?: string;
+  chatHref?: string;
 };
 
 export function DashboardTopbar({
@@ -249,6 +250,7 @@ export function DashboardTopbar({
   onMenuClick,
   backToUrl = "/",
   backToLabel = "Kembali ke Pasar",
+  chatHref = "/chat",
 }: DashboardTopbarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -256,7 +258,10 @@ export function DashboardTopbar({
   // Click outside to close dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     }
@@ -278,8 +283,12 @@ export function DashboardTopbar({
           </button>
         )}
         <div className="min-w-0">
-          <h2 className="text-xs sm:text-base font-black text-brand-950 tracking-tight leading-tight truncate">{title}</h2>
-          <p className="text-[10px] sm:text-xs text-ink-600 mt-0.5 truncate hidden sm:block">{subtitle}</p>
+          <h2 className="text-xs sm:text-base font-black text-brand-950 tracking-tight leading-tight truncate">
+            {title}
+          </h2>
+          <p className="text-[10px] sm:text-xs text-ink-600 mt-0.5 truncate hidden sm:block">
+            {subtitle}
+          </p>
         </div>
       </div>
 
@@ -304,13 +313,13 @@ export function DashboardTopbar({
           >
             <Bell className="h-3.5 sm:h-4 w-3.5 sm:w-4" />
           </button>
-          <button
-            type="button"
-            className="p-1.5 sm:p-2 text-ink-650 hover:text-brand-950 hover:bg-cream-50 border border-line/50 rounded-xl transition-all cursor-pointer"
+          <Link
+            href={chatHref}
+            className="p-1.5 sm:p-2 text-ink-650 hover:text-brand-950 hover:bg-cream-50 border border-line/50 rounded-xl transition-all cursor-pointer flex items-center justify-center"
             aria-label="Pesan"
           >
             <MessageSquare className="h-3.5 sm:h-4 w-3.5 sm:w-4" />
-          </button>
+          </Link>
         </div>
 
         {/* Profile Dropdown Container */}
@@ -338,15 +347,24 @@ export function DashboardTopbar({
                 {profileRole}
               </span>
             </div>
-            <ChevronDown className={cn("h-3.5 w-3.5 text-ink-600 transition-transform duration-200", isDropdownOpen && "rotate-180")} />
+            <ChevronDown
+              className={cn(
+                "h-3.5 w-3.5 text-ink-600 transition-transform duration-200",
+                isDropdownOpen && "rotate-180",
+              )}
+            />
           </button>
 
           {/* Floating Dropdown Card */}
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2.5 w-56 rounded-2xl border border-line bg-white-soft shadow-xl p-2.5 z-50 animate-in fade-in slide-in-from-top-3 duration-200">
               <div className="px-3 py-2 border-b border-line/40">
-                <span className="font-bold text-brand-950 text-xs block">{profileName}</span>
-                <span className="text-[10px] text-ink-500 block mt-0.5">{profileRole}</span>
+                <span className="font-bold text-brand-950 text-xs block">
+                  {profileName}
+                </span>
+                <span className="text-[10px] text-ink-500 block mt-0.5">
+                  {profileRole}
+                </span>
               </div>
               <div className="py-1.5 space-y-0.5">
                 <button className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-ink-700 hover:bg-cream-100/50 hover:text-brand-950 transition-colors">

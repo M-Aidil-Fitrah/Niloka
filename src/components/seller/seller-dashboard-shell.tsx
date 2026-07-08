@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LayoutDashboard, ShoppingBag, Leaf, ShieldCheck, Tag, FileText } from "lucide-react";
 import { DashboardShell, DashboardSidebar, DashboardTopbar } from "../dashboard/dashboard-layout";
 import { SellerStats } from "./seller-stats";
@@ -26,7 +26,10 @@ export function SellerDashboardShell({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useAuth();
 
-  // Sidebar navigation configuration
+  useEffect(() => {
+    localStorage.setItem("niloka_current_user", user?.sellerId || "seller-aceh-aroma");
+  }, [user?.sellerId]);
+
   const navigation = [
     { id: "overview", label: "Ringkasan Toko", icon: LayoutDashboard },
     { id: "products", label: "Katalog Produk", icon: ShoppingBag, count: products.length },
@@ -36,7 +39,6 @@ export function SellerDashboardShell({
     { id: "logs", label: "Log Aktivitas", icon: FileText },
   ];
 
-  // Map active tab to current panel component
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
@@ -111,7 +113,6 @@ export function SellerDashboardShell({
 
   return (
     <DashboardShell>
-      {/* 1. Static/Drawer Sidebar */}
       <DashboardSidebar
         brandName="Niloka Seller"
         logoChar="S"
@@ -122,7 +123,6 @@ export function SellerDashboardShell({
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      {/* 2. Right Pane: Topbar & Scrollable Content */}
       <div className="flex-1 h-full flex flex-col overflow-hidden">
         <DashboardTopbar
           title={navigation.find((item) => item.id === activeTab)?.label || "Dashboard"}
@@ -131,14 +131,13 @@ export function SellerDashboardShell({
           profileRole={user?.sellerType ? `Mitra ${user.sellerType.toUpperCase()}` : "Penyuling Mitra"}
           profileImage="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
           onMenuClick={() => setIsSidebarOpen(true)}
+          chatHref="/chat?mode=seller"
           backToUrl="/"
           backToLabel="Kembali ke Pasar"
         />
-        
+
         <main className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6">
-          <div className="max-w-6xl mx-auto pb-12">
-            {renderContent()}
-          </div>
+          <div className="max-w-6xl mx-auto pb-12">{renderContent()}</div>
         </main>
       </div>
     </DashboardShell>
