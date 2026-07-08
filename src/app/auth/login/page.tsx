@@ -134,7 +134,7 @@ export default function LoginPage() {
     }
 
     setIsSubmitting(true);
-    const user = await login(email);
+    const user = await login(email, password);
     setIsSubmitting(false);
 
     if (user) {
@@ -146,7 +146,7 @@ export default function LoginPage() {
         router.push("/");
       }
     } else {
-      setError("Email tidak terdaftar.");
+      setError("Email atau kata sandi tidak valid.");
     }
   };
 

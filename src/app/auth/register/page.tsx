@@ -148,7 +148,7 @@ export default function RegisterPage() {
     }
 
     setIsSubmitting(true);
-    const success = await register(name, email);
+    const success = await register(name, email, password);
     setIsSubmitting(false);
 
     if (success) {
