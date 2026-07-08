@@ -1,0 +1,685 @@
+generator client {
+  provider   = "prisma-client"
+  output     = "../src/generated/prisma"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+enum SellerType {
+  UMKM
+  DISTILLER
+  COOPERATIVE
+}
+
+enum SellerVerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum ProductTargetMarket {
+  B2C
+  B2B
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProductForm {
+  ESSENTIAL_OIL
+  ROLL_ON
+  SOAP
+  DIFFUSER
+  PERFUME
+  BODY_OIL
+  BUNDLE
+}
+
+enum ProductFunction {
+  RELAXATION
+  FOCUS
+  SLEEP_SUPPORT
+  SKIN_CARE
+  HOME_FRAGRANCE
+  GIFT
+}
+
+enum ProductTag {
+  BEST_SELLER
+  NEW_ARRIVAL
+  NILAM_PASSPORT
+  AROMA_CALM
+  LIMITED_BATCH
+}
+
+enum PassportValidationStatus {
+  DRAFT
+  PENDING_REVIEW
+  VALIDATED
+}
+
+enum AmpasCondition {
+  WET
+  DRY
+  MIXED
+}
+
+enum AmpasUsageTag {
+  COMPOST
+  BRIQUETTE
+  MUSHROOM_MEDIA
+  MULCH
+  ANIMAL_FEED
+  INDUSTRIAL_CELLULOSE
+}
+
+enum AmpasListingStatus {
+  DRAFT
+  ACTIVE
+  SOLD
+  ARCHIVED
+}
+
+enum ReviewTag {
+  AUTHENTIC_AROMA
+  FAST_DELIVERY
+  CLEAR_PASSPORT
+  GOOD_PACKAGING
+  REPEAT_ORDER
+}
+
+enum PromoType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+}
+
+enum PromoStatus {
+  ACTIVE
+  SCHEDULED
+  EXPIRED
+  DISABLED
+}
+
+enum BundleType {
+  SINGLE_SELLER
+  CROSS_SELLER
+}
+
+enum CartItemKind {
+  PRODUCT
+  AMPAS_LISTING
+}
+
+enum OrderStatus {
+  DRAFT
+  PENDING_PAYMENT
+  PAID
+  FULFILLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+}
+
+enum AdminValidationTarget {
+  SELLER
+  PRODUCT
+  NILAM_PASSPORT
+  AMPAS_LISTING
+}
+
+enum AdminValidationStatus {
+  QUEUED
+  APPROVED
+  REJECTED
+}
+
+enum ArticleCategory {
+  PUPUK
+  ENERGI
+  BUDIDAYA
+  OLAHAN
+}
+
+enum ChatMessageSenderRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum UploadedAssetKind {
+  PRODUCT_IMAGE
+  CATEGORY_IMAGE
+  AMPAS_IMAGE
+  ARTICLE_IMAGE
+  USER_AVATAR
+  DOCUMENT
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  name               String?
+  email              String?   @unique
+  emailVerified      DateTime? @map("email_verified")
+  image              String?
+  imageAssetId       String?   @map("image_asset_id")
+  role               UserRole  @default(BUYER)
+  passwordHash       String?   @map("password_hash")
+  sellerId           String?   @map("seller_id")
+  locationProvince   String?   @map("location_province")
+  locationCity       String?   @map("location_city")
+  locationDistrict   String?   @map("location_district")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  seller             Seller?   @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+  imageAsset         UploadedAsset? @relation("UserAvatarAsset", fields: [imageAssetId], references: [id], onDelete: SetNull)
+  uploadedAssets     UploadedAsset[] @relation("UploadedAssetOwner")
+  accounts           Account[]
+  sessions           Session[]
+  carts              Cart[]
+  orders             Order[]
+  reviews            Review[]
+  sellerApplications SellerApplication[]
+  buyerChatThreads   ChatThread[] @relation("BuyerChatThreads")
+  auditLogs          AuditLog[]
+
+  @@map("users")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Seller {
+  id                 String                   @id
+  slug               String                   @unique
+  displayName        String                   @map("display_name")
+  type               SellerType
+  locationProvince   String                   @map("location_province")
+  locationCity       String                   @map("location_city")
+  locationDistrict   String                   @map("location_district")
+  verificationStatus SellerVerificationStatus @default(PENDING) @map("verification_status")
+  joinedAt           DateTime                 @map("joined_at")
+  ratingAverage      Float                    @default(0) @map("rating_average")
+  totalReviews       Int                      @default(0) @map("total_reviews")
+  contactChannel     String                   @map("contact_channel")
+  createdAt          DateTime                 @default(now()) @map("created_at")
+  updatedAt          DateTime                 @updatedAt @map("updated_at")
+
+  users              User[]
+  products           Product[]
+  ampasListings      AmpasListing[]
+  reviews            Review[]
+  promos             Promo[]
+  validationItems    AdminValidationItem[]
+  applications       SellerApplication[]
+  chatThreads        ChatThread[]
+
+  @@map("sellers")
+}
+
+model SellerApplication {
+  id               String                @id @default(cuid())
+  userId           String                @map("user_id")
+  sellerId         String?               @map("seller_id")
+  businessName     String                @map("business_name")
+  businessType     SellerType            @map("business_type")
+  locationProvince String                @map("location_province")
+  locationCity     String                @map("location_city")
+  locationDistrict String                @map("location_district")
+  notes            String                @db.Text
+  status           AdminValidationStatus @default(QUEUED)
+  submittedAt      DateTime              @default(now()) @map("submitted_at")
+  reviewedAt       DateTime?             @map("reviewed_at")
+
+  user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seller           Seller?               @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+
+  @@map("seller_applications")
+}
+
+model ProductCategory {
+  id           String              @id
+  slug         String              @unique
+  name         String
+  description  String              @db.Text
+  targetMarket ProductTargetMarket @map("target_market")
+  imageSrc     String              @map("image_src")
+  imageAlt     String              @map("image_alt")
+  imageAssetId String?             @map("image_asset_id")
+
+  products     Product[]
+  imageAsset   UploadedAsset?      @relation("ProductCategoryImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
+
+  @@map("product_categories")
+}
+
+model Product {
+  id                    String            @id
+  slug                  String            @unique
+  sellerId              String            @map("seller_id")
+  categoryId            String            @map("category_id")
+  name                  String
+  shortDescription      String            @map("short_description") @db.Text
+  form                  ProductForm
+  functions             ProductFunction[]
+  tags                  ProductTag[]
+  priceAmount           Int               @map("price_amount")
+  priceCurrency         String            @default("IDR") @map("price_currency")
+  originalPriceAmount   Int?              @map("original_price_amount")
+  originalPriceCurrency String?           @map("original_price_currency")
+  stock                 Int
+  status                ProductStatus     @default(DRAFT)
+  imageSrc              String            @map("image_src")
+  imageAlt              String            @map("image_alt")
+  imageAssetId          String?           @map("image_asset_id")
+  featuredRank          Int               @default(999) @map("featured_rank")
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+
+  seller                Seller            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  category              ProductCategory   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  imageAsset            UploadedAsset?    @relation("ProductPrimaryImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
+  gallery               ProductImage[]
+  passport              NilamPassport?
+  reviews               Review[]
+  promoProducts         PromoProduct[]
+  bundleProducts        BundleProduct[]
+  cartItems             CartItem[]
+  orderItems            OrderItem[]
+
+  @@index([sellerId])
+  @@index([categoryId])
+  @@index([imageAssetId])
+  @@map("products")
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String  @map("product_id")
+  src       String
+  alt       String
+  assetId   String? @map("asset_id")
+  sortOrder Int     @default(0) @map("sort_order")
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  asset     UploadedAsset? @relation("ProductGalleryAsset", fields: [assetId], references: [id], onDelete: SetNull)
+
+  @@map("product_images")
+}
+
+model NilamPassport {
+  id               String                   @id
+  productId        String                   @unique @map("product_id")
+  origin           String
+  productKind      ProductForm              @map("product_kind")
+  aromaProfile     String[]                 @map("aroma_profile")
+  functions        ProductFunction[]
+  usage            String                   @db.Text
+  safetyNotes      String                   @map("safety_notes") @db.Text
+  validationStatus PassportValidationStatus @default(DRAFT) @map("validation_status")
+  validatedBy      String?                  @map("validated_by")
+  validatedAt      DateTime?                @map("validated_at")
+  batchCode        String?                  @map("batch_code")
+  farmerGroup      String?                  @map("farmer_group")
+  gpsCoordinates   String?                  @map("gps_coordinates")
+  createdAt        DateTime                 @default(now()) @map("created_at")
+  updatedAt        DateTime                 @updatedAt @map("updated_at")
+
+  product          Product                  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("nilam_passports")
+}
+
+model AmpasListing {
+  id                             String             @id
+  slug                           String             @unique
+  sellerId                       String             @map("seller_id")
+  condition                      AmpasCondition
+  quantityKg                     Int                @map("quantity_kg")
+  pricePerKgAmount               Int                @map("price_per_kg_amount")
+  pricePerKgCurrency             String             @default("IDR") @map("price_per_kg_currency")
+  locationProvince               String             @map("location_province")
+  locationCity                   String             @map("location_city")
+  locationDistrict               String             @map("location_district")
+  distillationProcess            String             @map("distillation_process") @db.Text
+  usageTags                      AmpasUsageTag[]    @map("usage_tags")
+  status                         AmpasListingStatus @default(DRAFT)
+  imageSrc                       String             @map("image_src")
+  imageAlt                       String             @map("image_alt")
+  imageAssetId                   String?            @map("image_asset_id")
+  disclaimer                     String             @db.Text
+  distillationDate               DateTime?          @map("distillation_date")
+  shippingOption                 String?            @map("shipping_option")
+  wholesaleEnabled               Boolean            @default(false) @map("wholesale_enabled")
+  wholesaleMinQtyKg              Int?               @map("wholesale_min_qty_kg")
+  wholesalePricePerKgAmount      Int?               @map("wholesale_price_per_kg_amount")
+  wholesalePricePerKgCurrency    String?            @map("wholesale_price_per_kg_currency")
+  createdAt                      DateTime           @default(now()) @map("created_at")
+  updatedAt                      DateTime           @updatedAt @map("updated_at")
+
+  seller                         Seller             @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  imageAsset                     UploadedAsset?     @relation("AmpasListingImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
+  cartItems                      CartItem[]
+  orderItems                     OrderItem[]
+
+  @@index([sellerId])
+  @@index([imageAssetId])
+  @@map("ampas_listings")
+}
+
+model Review {
+  id         String      @id
+  productId  String      @map("product_id")
+  sellerId   String      @map("seller_id")
+  userId     String?     @map("user_id")
+  authorName String      @map("author_name")
+  rating     Int
+  tags       ReviewTag[]
+  body       String      @db.Text
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  seller     Seller      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("reviews")
+}
+
+model Promo {
+  id                  String         @id
+  sellerId            String         @map("seller_id")
+  title               String
+  code                String         @unique
+  status              PromoStatus
+  type                PromoType
+  value               Int
+  startsAt            DateTime       @map("starts_at")
+  endsAt              DateTime       @map("ends_at")
+  minSubtotalAmount   Int            @map("min_subtotal_amount")
+  minSubtotalCurrency String         @default("IDR") @map("min_subtotal_currency")
+  usageLimit          Int            @map("usage_limit")
+  usedCount           Int            @default(0) @map("used_count")
+
+  seller              Seller         @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  products            PromoProduct[]
+
+  @@map("promos")
+}
+
+model PromoProduct {
+  promoId   String @map("promo_id")
+  productId String @map("product_id")
+
+  promo     Promo   @relation(fields: [promoId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([promoId, productId])
+  @@map("promo_products")
+}
+
+model Bundle {
+  id            String          @id
+  slug          String          @unique
+  title         String
+  type          BundleType
+  priceAmount   Int             @map("price_amount")
+  priceCurrency String          @default("IDR") @map("price_currency")
+  description   String          @db.Text
+
+  products      BundleProduct[]
+
+  @@map("bundles")
+}
+
+model BundleProduct {
+  bundleId  String @map("bundle_id")
+  productId String @map("product_id")
+
+  bundle    Bundle  @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([bundleId, productId])
+  @@map("bundle_products")
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @map("user_id")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id                String        @id
+  cartId            String        @map("cart_id")
+  kind              CartItemKind
+  productId         String?       @map("product_id")
+  ampasListingId    String?       @map("ampas_listing_id")
+  quantity          Int
+  unitPriceAmount   Int           @map("unit_price_amount")
+  unitPriceCurrency String        @default("IDR") @map("unit_price_currency")
+
+  cart              Cart          @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product           Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
+  ampasListing      AmpasListing? @relation(fields: [ampasListingId], references: [id], onDelete: SetNull)
+
+  @@map("cart_items")
+}
+
+model Order {
+  id                       String      @id
+  userId                   String?     @map("user_id")
+  status                   OrderStatus @default(DRAFT)
+  subtotalAmount           Int         @map("subtotal_amount")
+  subtotalCurrency         String      @default("IDR") @map("subtotal_currency")
+  platformFeeAmount        Int         @map("platform_fee_amount")
+  platformFeeCurrency      String      @default("IDR") @map("platform_fee_currency")
+  shippingEstimateAmount   Int         @map("shipping_estimate_amount")
+  shippingEstimateCurrency String      @default("IDR") @map("shipping_estimate_currency")
+  grandTotalAmount         Int         @map("grand_total_amount")
+  grandTotalCurrency       String      @default("IDR") @map("grand_total_currency")
+  createdAt                DateTime    @default(now()) @map("created_at")
+  updatedAt                DateTime    @updatedAt @map("updated_at")
+
+  user                     User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items                    OrderItem[]
+  payments                 Payment[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id                String        @id @default(cuid())
+  orderId           String        @map("order_id")
+  kind              CartItemKind
+  productId         String?       @map("product_id")
+  ampasListingId    String?       @map("ampas_listing_id")
+  quantity          Int
+  unitPriceAmount   Int           @map("unit_price_amount")
+  unitPriceCurrency String        @default("IDR") @map("unit_price_currency")
+
+  order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product           Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
+  ampasListing      AmpasListing? @relation(fields: [ampasListingId], references: [id], onDelete: SetNull)
+
+  @@map("order_items")
+}
+
+model Payment {
+  id         String        @id @default(cuid())
+  orderId    String        @map("order_id")
+  provider   String
+  status     PaymentStatus @default(PENDING)
+  amount     Int
+  currency   String        @default("IDR")
+  externalId String?       @map("external_id")
+  snapToken  String?       @map("snap_token")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @updatedAt @map("updated_at")
+
+  order      Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Article {
+  id            String          @id
+  slug          String          @unique
+  title         String
+  excerpt       String          @db.Text
+  content       String          @db.Text
+  author        String
+  authorRole    String?         @map("author_role")
+  publishedAt   DateTime        @map("published_at")
+  imageUrl      String          @map("image_url")
+  imageAssetId  String?         @map("image_asset_id")
+  category      ArticleCategory
+  videoUrl      String?         @map("video_url")
+  videoDuration String?         @map("video_duration")
+  readTime      String          @map("read_time")
+  tags          String[]
+  imageAsset    UploadedAsset?  @relation("ArticleImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
+
+  @@map("articles")
+}
+
+model UploadedAsset {
+  id               String            @id @default(cuid())
+  kind             UploadedAssetKind
+  uploadedById     String?           @map("uploaded_by_id")
+  originalFilename String            @map("original_filename")
+  storageKey       String            @unique @map("storage_key")
+  publicPath       String            @unique @map("public_path")
+  mimeType         String            @default("image/webp") @map("mime_type")
+  sizeBytes        Int               @map("size_bytes")
+  width            Int
+  height           Int
+  checksum         String?
+  createdAt        DateTime          @default(now()) @map("created_at")
+
+  uploadedBy       User?             @relation("UploadedAssetOwner", fields: [uploadedById], references: [id], onDelete: SetNull)
+  userAvatars      User[]            @relation("UserAvatarAsset")
+  categoryImages   ProductCategory[] @relation("ProductCategoryImage")
+  productImages    Product[]         @relation("ProductPrimaryImage")
+  galleryImages    ProductImage[]    @relation("ProductGalleryAsset")
+  ampasImages      AmpasListing[]    @relation("AmpasListingImage")
+  articleImages    Article[]         @relation("ArticleImage")
+
+  @@index([kind])
+  @@index([uploadedById])
+  @@map("uploaded_assets")
+}
+
+model ChatThread {
+  id        String        @id
+  buyerId   String?       @map("buyer_id")
+  sellerId  String?       @map("seller_id")
+  subject   String
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  buyer     User?         @relation("BuyerChatThreads", fields: [buyerId], references: [id], onDelete: SetNull)
+  seller    Seller?       @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+  messages  ChatMessage[]
+
+  @@map("chat_threads")
+}
+
+model ChatMessage {
+  id         String                @id
+  threadId   String                @map("thread_id")
+  senderRole ChatMessageSenderRole @map("sender_role")
+  body       String                @db.Text
+  createdAt  DateTime              @default(now()) @map("created_at")
+
+  thread     ChatThread            @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
+
+model AdminValidationItem {
+  id          String                @id
+  target      AdminValidationTarget
+  targetId    String                @map("target_id")
+  status      AdminValidationStatus
+  submittedBy String                @map("submitted_by")
+  submittedAt DateTime              @map("submitted_at")
+  notes       String                @db.Text
+
+  seller      Seller                @relation(fields: [submittedBy], references: [id], onDelete: Cascade)
+
+  @@map("admin_validation_items")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?  @map("user_id")
+  action    String
+  target    String
+  targetId  String   @map("target_id")
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}

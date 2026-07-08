@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
-  getProductBySlug,
-  getPassportByProductId,
-  getSellerById,
-  getReviewsForProduct,
-  getPublishedProducts,
-  getPromosForSeller,
-} from "@/lib/mock-queries";
+  getPassportByProductIdDto,
+  getProductBySlugDto,
+  getPromosForSellerDto,
+  getPublishedProductsDto,
+  getReviewsForProductDto,
+  getSellerByIdDto,
+} from "@/lib/dal/marketplace";
 import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductInfo } from "@/components/catalog/product-info";
 import { PassportSummary } from "@/components/catalog/passport-summary";
@@ -20,7 +20,7 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  const products = getPublishedProducts();
+  const products = await getPublishedProductsDto();
   return products.map((product) => ({
     slug: product.slug,
   }));
@@ -28,7 +28,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlugDto(slug);
 
   if (!product) {
     return {
@@ -44,16 +44,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlugDto(slug);
 
   if (!product) {
     notFound();
   }
 
-  const passport = getPassportByProductId(product.id);
-  const seller = getSellerById(product.sellerId);
-  const reviews = getReviewsForProduct(product.id);
-  const promos = getPromosForSeller(product.sellerId);
+  const [passport, seller, reviews, promos] = await Promise.all([
+    getPassportByProductIdDto(product.id),
+    getSellerByIdDto(product.sellerId),
+    getReviewsForProductDto(product.id),
+    getPromosForSellerDto(product.sellerId),
+  ]);
 
   if (!seller) {
     notFound();

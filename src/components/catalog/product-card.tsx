@@ -2,11 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { formatRupiah } from "@/lib/formatters";
-import { getActivePromosForProduct } from "@/lib/mock-queries";
-import type { Product } from "@/lib/contracts";
+import type { Product, Promo } from "@/lib/contracts";
 
 type ProductCardProps = {
   product: Product;
+  promos: Promo[];
 };
 
 const tagLabels: Record<string, string> = {
@@ -17,9 +17,7 @@ const tagLabels: Record<string, string> = {
   "limited-batch": "Limited",
 };
 
-export function ProductCard({ product }: ProductCardProps) {
-  const promos = getActivePromosForProduct(product.id);
-
+export function ProductCard({ product, promos }: ProductCardProps) {
   return (
     <Link
       href={`/products/${product.slug}`}

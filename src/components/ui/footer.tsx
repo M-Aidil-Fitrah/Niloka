@@ -6,7 +6,7 @@ import {
   LinkedinIcon,
   YoutubeIcon,
 } from "@/components/ui/icons";
-import { footerColumns } from "@/lib/landing-data";
+import { footerColumns } from "@/lib/landing-types";
 
 type SocialLink = {
   id: string;
