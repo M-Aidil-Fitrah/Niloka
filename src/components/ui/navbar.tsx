@@ -79,10 +79,7 @@ export function SiteNavbar() {
   }, []);
 
   return (
-    <header
-      className="site-nav page-shell fixed inset-x-0 z-50"
-      style={{ top: `calc(1.5rem + var(--safe-area-top))` }}
-    >
+    <header className="site-nav page-shell fixed inset-x-0 top-6 z-50">
       <div
         className={cn(
           "site-nav-surface grid min-h-16 grid-cols-[auto_1fr_auto] items-center gap-5 rounded-full border px-6 py-3 transition-all duration-300 sm:px-7",
