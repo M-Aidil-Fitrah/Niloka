@@ -58,12 +58,6 @@ type OrderWithRelations = Prisma.OrderGetPayload<{
   };
 }>;
 
-type SellerFinanceOrder = Prisma.OrderGetPayload<{
-  include: {
-    items: true;
-  };
-}>;
-
 function toIsoString(date: Date): string {
   return date.toISOString();
 }
@@ -264,22 +258,6 @@ function mapOrder(row: OrderWithRelations): OrderTracking {
       updatedAt: toIsoString(fulfillment.updatedAt),
     })),
   };
-}
-
-function getSellerCommissionRate(kind: CartItemKind): number {
-  switch (kind) {
-    case CartItemKind.PRODUCT:
-      return 0.05;
-    case CartItemKind.AMPAS_LISTING:
-      return 0.03;
-  }
-}
-
-function isPaidRevenueOrder(order: SellerFinanceOrder): boolean {
-  return (
-    order.status === PrismaOrderStatus.PAID ||
-    order.status === PrismaOrderStatus.FULFILLED
-  );
 }
 
 export async function getBuyerOrdersDto(userId: string): Promise<OrderTracking[]> {

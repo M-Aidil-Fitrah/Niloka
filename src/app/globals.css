@@ -3,6 +3,10 @@
 :root {
   --background: #f8f4e9;
   --foreground: #1f2119;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
   --brand-950: #172217;
   --brand-900: #20341f;
   --brand-800: #2f482d;
