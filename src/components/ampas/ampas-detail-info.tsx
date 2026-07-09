@@ -301,12 +301,10 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
 
           <Link
             href={`/chat?sellerId=${localSeller.id}&listingId=${localListing.id}`}
-            className="flex-1"
+            className="touch-action:manipulation flex-1 h-11 rounded-xl border border-line bg-white-soft text-brand-950 hover:bg-cream-100 text-sm font-semibold transition-all duration-200 inline-flex items-center justify-center gap-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
           >
-            <Button variant="secondary" className="w-full h-11 rounded-xl border-line text-brand-950 hover:bg-cream-100 flex items-center justify-center gap-1.5 cursor-pointer">
-              <Send className="h-4 w-4" />
-              Hubungi Penjual
-            </Button>
+            <Send className="h-4 w-4" />
+            Hubungi Penjual
           </Link>
         </div>
       </div>

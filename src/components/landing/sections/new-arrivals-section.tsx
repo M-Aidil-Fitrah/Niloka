@@ -1,6 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CartIcon } from "@/components/ui/icons";
 import type { ProductCard } from "@/lib/landing-types";
@@ -60,9 +60,12 @@ export function NewArrivalsSection({ products }: NewArrivalsSectionProps) {
                     </span>
                   )}
                 </div>
-                <Button size="sm">
+                <Link
+                  href="/products"
+                  className="touch-action:manipulation inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 bg-brand-900 text-white-soft hover:bg-brand-700 hover:ring-2 hover:ring-gold-500/40 hover:scale-[1.02] active:scale-[0.98] h-9 px-4 text-sm"
+                >
                   <CartIcon /> Cart
-                </Button>
+                </Link>
               </div>
             </div>
           </Card>

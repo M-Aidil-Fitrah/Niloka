@@ -31,6 +31,7 @@ export function LandingMotion({ children }: LandingMotionProps) {
         duration: 1.08,
         easing: (time: number) => Math.min(1, 1.001 - 2 ** (-10 * time)),
         smoothWheel: true,
+        orientation: "vertical",
       });
       const cleanupAnchorLinks: Array<() => void> = [];
       const updateLenis = (time: number) => {
