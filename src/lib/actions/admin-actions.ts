@@ -14,7 +14,7 @@ import {
 } from "@/generated/prisma/client";
 import type { AdminValidationItem, Seller } from "@/lib/contracts";
 
-function fromPrismaValidationTarget(target: AdminValidationTarget): "seller" | "product" | "nilam-passport" {
+function fromPrismaValidationTarget(target: AdminValidationTarget): import("@/lib/contracts").AdminValidationTarget {
   switch (target) {
     case AdminValidationTarget.SELLER:
       return "seller";
@@ -22,6 +22,8 @@ function fromPrismaValidationTarget(target: AdminValidationTarget): "seller" | "
       return "product";
     case AdminValidationTarget.NILAM_PASSPORT:
       return "nilam-passport";
+    case AdminValidationTarget.AMPAS_LISTING:
+      return "ampas-listing";
     default:
       return "seller";
   }

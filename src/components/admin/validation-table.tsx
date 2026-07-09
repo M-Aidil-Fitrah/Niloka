@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Eye, BadgeCheck, XOctagon, RefreshCw } from "lucide-react";
-import type { AdminValidationItem, Seller } from "@/lib/contracts";
+import type { AdminValidationItem, AdminValidationTarget, Seller } from "@/lib/contracts";
 
 type ValidationTableProps = {
   items: AdminValidationItem[];
@@ -33,7 +33,7 @@ export function ValidationTable({ items, sellers, onReviewClick }: ValidationTab
     return sellers.find((s) => s.id === sellerId)?.displayName || "Mitra Penyuling";
   };
 
-  const getTargetBadge = (target: "seller" | "product" | "nilam-passport") => {
+  const getTargetBadge = (target: AdminValidationTarget) => {
     switch (target) {
       case "seller":
         return <span className="bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase">Seller</span>;
@@ -41,6 +41,8 @@ export function ValidationTable({ items, sellers, onReviewClick }: ValidationTab
         return <span className="bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase">Produk</span>;
       case "nilam-passport":
         return <span className="bg-emerald-50 text-emerald-800 border border-emerald-250 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase">Passport</span>;
+      case "ampas-listing":
+        return <span className="bg-purple-50 text-purple-800 border border-purple-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase">Ampas</span>;
     }
   };
 

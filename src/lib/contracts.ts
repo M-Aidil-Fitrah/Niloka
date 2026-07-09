@@ -94,7 +94,7 @@ export type OrderFulfillmentStatus =
   | "delivered"
   | "cancelled";
 
-export type AdminValidationTarget = "seller" | "product" | "nilam-passport";
+export type AdminValidationTarget = "seller" | "product" | "nilam-passport" | "ampas-listing";
 export type AdminValidationStatus = "queued" | "approved" | "rejected";
 
 export type Seller = {

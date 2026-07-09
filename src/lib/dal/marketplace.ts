@@ -264,14 +264,14 @@ function mapProduct(row: ProductWithGallery): Product {
     tags: row.tags.map(fromPrismaProductTag),
     price: {
       amount: row.priceAmount,
-      currency: "IDR",
+      currency: row.priceCurrency as "IDR",
     },
     originalPrice:
       row.originalPriceAmount === null
         ? undefined
         : {
             amount: row.originalPriceAmount,
-            currency: "IDR",
+            currency: row.priceCurrency as "IDR",
           },
     stock: row.stock,
     status: fromPrismaProductStatus(row.status),
@@ -350,7 +350,7 @@ function mapAmpasListing(row: AmpasListingRow): AmpasListing {
         ? undefined
         : {
             amount: row.wholesalePricePerKgAmount,
-            currency: "IDR",
+            currency: (row.wholesalePricePerKgCurrency ?? "IDR") as "IDR",
           },
   };
 }
@@ -381,7 +381,7 @@ function mapPromo(row: PromoWithProducts): Promo {
     endsAt: toIsoString(row.endsAt),
     minSubtotal: {
       amount: row.minSubtotalAmount,
-      currency: "IDR",
+      currency: row.minSubtotalCurrency as "IDR",
     },
     usageLimit: row.usageLimit,
     usedCount: row.usedCount,
@@ -398,7 +398,7 @@ function mapBundle(row: BundleWithProducts): Bundle {
     productIds: row.products.map((product) => product.productId),
     price: {
       amount: row.priceAmount,
-      currency: "IDR",
+      currency: row.priceCurrency as "IDR",
     },
     description: row.description,
   };
