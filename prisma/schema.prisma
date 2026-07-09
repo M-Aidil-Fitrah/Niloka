@@ -435,6 +435,7 @@ model AmpasListing {
 
   @@index([sellerId])
   @@index([imageAssetId])
+  @@index([status])
   @@map("ampas_listings")
 }
 
@@ -453,6 +454,7 @@ model Review {
   seller     Seller      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
 
+  @@index([productId])
   @@map("reviews")
 }
 
@@ -573,6 +575,7 @@ model Order {
   payments                 Payment[]
   fulfillments             OrderFulfillment[]
 
+  @@index([userId])
   @@map("orders")
 }
 

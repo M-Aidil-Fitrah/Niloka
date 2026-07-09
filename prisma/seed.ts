@@ -373,6 +373,8 @@ function toAdminValidationTarget(
       return AdminValidationTarget.PRODUCT;
     case "nilam-passport":
       return AdminValidationTarget.NILAM_PASSPORT;
+    case "ampas-listing":
+      return AdminValidationTarget.AMPAS_LISTING;
   }
 }
 
