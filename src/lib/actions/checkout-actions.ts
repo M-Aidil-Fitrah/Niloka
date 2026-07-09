@@ -11,7 +11,7 @@ import {
 import type { CartItem, PaymentInstruction } from "@/lib/contracts";
 import { revalidatePath } from "next/cache";
 import {
-  createCorePayment,
+  createSnapPayment,
   resolvePaymentChannel,
 } from "@/lib/services/payment-service";
 
@@ -499,7 +499,7 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
         }
       });
 
-      paymentInstruction = await createCorePayment(tx, {
+      paymentInstruction = await createSnapPayment(tx, {
         orderId: order.id,
         amount: grandTotal,
         currency: "IDR",

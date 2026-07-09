@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { PaymentStatus, OrderStatus } from "@/generated/prisma/client";
 import { corsHeaders } from "@/lib/cors";
+import { verifyWebhookSignature } from "@/lib/services/payment-service";
 
 type MidtransNotification = {
   transaction_status: string;
@@ -26,6 +27,12 @@ function mapMidtransStatus(
       return {
         paymentStatus: PaymentStatus.PAID,
         orderStatus: OrderStatus.PAID,
+      };
+    }
+    if (fs === "deny") {
+      return {
+        paymentStatus: PaymentStatus.FAILED,
+        orderStatus: OrderStatus.PENDING_PAYMENT,
       };
     }
   }
@@ -57,10 +64,19 @@ export async function POST(request: NextRequest) {
 
   try {
     const notification: MidtransNotification = await request.json();
-    const { order_id, transaction_status, fraud_status } = notification;
+    const { order_id, transaction_status, fraud_status, status_code, gross_amount, signature_key } = notification;
 
     if (!order_id) {
       return Response.json({ ok: false, message: "order_id is required" }, { status: 400 });
+    }
+
+    const serverKey = process.env.MIDTRANS_SERVER_KEY;
+    if (!serverKey) {
+      return Response.json({ ok: false, message: "MIDTRANS_SERVER_KEY not configured" }, { status: 500 });
+    }
+
+    if (!verifyWebhookSignature(order_id, status_code, gross_amount, serverKey, signature_key)) {
+      return Response.json({ ok: false, message: "Invalid signature" }, { status: 403 });
     }
 
     const statuses = mapMidtransStatus(transaction_status, fraud_status);
@@ -85,6 +101,18 @@ export async function POST(request: NextRequest) {
         where: { id: order_id },
         data: { status: statuses.orderStatus },
       });
+
+      if (statuses.paymentStatus === PaymentStatus.PAID) {
+        await tx.payment.updateMany({
+          where: { orderId: order_id },
+          data: { paidAt: new Date() },
+        });
+
+        await tx.orderFulfillment.updateMany({
+          where: { orderId: order_id },
+          data: { status: "READY_TO_PROCESS" },
+        });
+      }
     });
 
     return Response.json({ ok: true });

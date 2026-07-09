@@ -1,14 +1,9 @@
 import "server-only";
+import { createHash } from "node:crypto";
 
-import {
-  PaymentMethod,
-  PaymentStatus,
-  Prisma,
-} from "@/generated/prisma/client";
-import type {
-  OrderPayment,
-  PaymentInstruction,
-} from "@/lib/contracts";
+import snap from "midtrans-client";
+import { PaymentMethod, PaymentStatus, Prisma } from "@/generated/prisma/client";
+import type { OrderPayment, PaymentInstruction } from "@/lib/contracts";
 
 export type PaymentChannel = "qris" | "virtual-account" | "ewallet";
 
@@ -20,13 +15,13 @@ export type CreatePaymentInput = {
   expiresAt: Date;
 };
 
-type MidtransCoreDraft = {
-  transaction_details: {
-    order_id: string;
-    gross_amount: number;
-  };
-  payment_type: string;
-};
+function getSnapApi() {
+  return new snap.Snap({
+    isProduction: process.env.MIDTRANS_IS_PRODUCTION === "true",
+    serverKey: process.env.MIDTRANS_SERVER_KEY!,
+    clientKey: process.env.MIDTRANS_CLIENT_KEY!,
+  });
+}
 
 function toPrismaPaymentMethod(channel: PaymentChannel): PaymentMethod {
   switch (channel) {
@@ -42,143 +37,91 @@ function toPrismaPaymentMethod(channel: PaymentChannel): PaymentMethod {
 export function resolvePaymentChannel(value: string): PaymentChannel {
   const normalizedValue = value.trim().toLowerCase();
 
-  if (
-    normalizedValue === "va" ||
-    normalizedValue === "virtual-account" ||
-    normalizedValue === "virtual_account"
-  ) {
+  if (normalizedValue === "va" || normalizedValue === "virtual-account" || normalizedValue === "virtual_account") {
     return "virtual-account";
   }
 
-  if (
-    normalizedValue === "ewallet" ||
-    normalizedValue === "e-wallet" ||
-    normalizedValue === "gopay"
-  ) {
+  if (normalizedValue === "ewallet" || normalizedValue === "e-wallet" || normalizedValue === "gopay") {
     return "ewallet";
   }
 
   return "qris";
 }
 
-function buildCoreDraft(input: CreatePaymentInput): MidtransCoreDraft {
-  switch (input.channel) {
-    case "virtual-account":
-      return {
-        transaction_details: {
-          order_id: input.orderId,
-          gross_amount: input.amount,
-        },
-        payment_type: "bank_transfer",
-      };
-    case "ewallet":
-      return {
-        transaction_details: {
-          order_id: input.orderId,
-          gross_amount: input.amount,
-        },
-        payment_type: "gopay",
-      };
-    case "qris":
-      return {
-        transaction_details: {
-          order_id: input.orderId,
-          gross_amount: input.amount,
-        },
-        payment_type: "qris",
-      };
-  }
-}
-
-function createInstruction(input: CreatePaymentInput): PaymentInstruction {
-  const amount = {
-    amount: input.amount,
-    currency: input.currency,
-  };
-
-  switch (input.channel) {
-    case "virtual-account":
-      return {
-        method: "virtual-account",
-        status: "pending",
-        amount,
-        title: "Virtual Account Midtrans",
-        description:
-          "Transfer ke nomor virtual account berikut. Status akan diperbarui otomatis setelah bank mengonfirmasi pembayaran.",
-        qrString: "",
-        qrUrl: "",
-        vaNumber: `8808${input.orderId.replace(/\D/g, "").slice(-10).padStart(10, "0")}`,
-        deeplinkUrl: "",
-        expiresAt: input.expiresAt.toISOString(),
-      };
-    case "ewallet":
-      return {
-        method: "ewallet",
-        status: "pending",
-        amount,
-        title: "E-wallet Midtrans",
-        description:
-          "Buka tautan pembayaran e-wallet berikut dan selesaikan pembayaran. Status akan diperbarui otomatis.",
-        qrString: "",
-        qrUrl: "",
-        vaNumber: "",
-        deeplinkUrl: `/payments/core/${input.orderId}/ewallet`,
-        expiresAt: input.expiresAt.toISOString(),
-      };
-    case "qris":
-      return {
-        method: "qris",
-        status: "pending",
-        amount,
-        title: "QRIS Midtrans",
-        description:
-          "Scan QRIS dari aplikasi pembayaran favorit Anda. Status akan diperbarui otomatis setelah pembayaran terkonfirmasi.",
-        qrString: `midtrans-core-qris:${input.orderId}:${input.amount}`,
-        qrUrl: `/payments/core/${input.orderId}/qris`,
-        vaNumber: "",
-        deeplinkUrl: "",
-        expiresAt: input.expiresAt.toISOString(),
-      };
-  }
-}
-
-export async function createCorePayment(
+export async function createSnapPayment(
   tx: Prisma.TransactionClient,
   input: CreatePaymentInput,
 ): Promise<PaymentInstruction> {
-  const instruction = createInstruction(input);
-  const draft = buildCoreDraft(input);
+  const snapApi = getSnapApi();
+
+  const transactionParams = {
+    transaction_details: {
+      order_id: input.orderId,
+      gross_amount: input.amount,
+    },
+    credit_card: {
+      secure: true,
+    },
+    expiry: {
+      start_time: new Date().toISOString(),
+      unit: "minutes",
+      duration: 60 * 24,
+    },
+  };
+
+  const snapResponse = await snapApi.createTransaction(transactionParams);
+
+  const snapToken: string = snapResponse.token;
+  const redirectUrl: string = snapResponse.redirect_url;
+  const snapTransactionId = `SNAP-${snapResponse.transaction_id || input.orderId}`;
+
+  const title =
+    input.channel === "virtual-account"
+      ? "Virtual Account Midtrans"
+      : input.channel === "ewallet"
+        ? "E-wallet Midtrans"
+        : "QRIS Midtrans";
+  const description =
+    "Klik tombol 'Bayar Sekarang' untuk menyelesaikan pembayaran melalui Midtrans Snap.";
 
   await tx.payment.create({
     data: {
       orderId: input.orderId,
-      provider: process.env.MIDTRANS_SERVER_KEY
-        ? "MIDTRANS_CORE"
-        : "MIDTRANS_CORE_DEV",
+      provider: "MIDTRANS_SNAP",
       paymentMethod: toPrismaPaymentMethod(input.channel),
       status: PaymentStatus.PENDING,
       amount: input.amount,
       currency: input.currency,
       externalId: input.orderId,
-      transactionId: `MT-CORE-${input.orderId}`,
+      snapToken,
+      transactionId: snapTransactionId,
       transactionStatus: "pending",
-      vaNumber: instruction.vaNumber || undefined,
-      qrString: instruction.qrString || undefined,
-      qrUrl: instruction.qrUrl || undefined,
-      deeplinkUrl: instruction.deeplinkUrl || undefined,
-      rawResponse: draft,
+      rawResponse: snapResponse,
       expiredAt: input.expiresAt,
       lastStatusSyncedAt: new Date(),
     },
   });
 
-  return instruction;
+  return {
+    method: input.channel,
+    status: "pending",
+    amount: { amount: input.amount, currency: input.currency },
+    title,
+    description,
+    qrString: "",
+    qrUrl: redirectUrl,
+    vaNumber: "",
+    deeplinkUrl: redirectUrl,
+    snapToken,
+    expiresAt: input.expiresAt.toISOString(),
+    snapRedirectUrl: redirectUrl,
+  };
 }
 
 export function mapPaymentToInstruction(payment: OrderPayment): PaymentInstruction {
   return {
     method: payment.method,
-    status: "pending",
+    status: payment.status === "paid" ? "paid" : payment.status === "failed" ? "failed" : payment.status === "expired" ? "expired" : "pending",
     amount: payment.amount,
     title:
       payment.method === "virtual-account"
@@ -187,11 +130,25 @@ export function mapPaymentToInstruction(payment: OrderPayment): PaymentInstructi
           ? "E-wallet Midtrans"
           : "QRIS Midtrans",
     description:
-      "Selesaikan pembayaran melalui instruksi berikut. Status akan diperbarui otomatis dari server.",
+      "Klik tombol 'Bayar Sekarang' untuk menyelesaikan pembayaran melalui Midtrans Snap.",
     qrString: payment.qrString,
     qrUrl: payment.qrUrl,
     vaNumber: payment.vaNumber,
     deeplinkUrl: payment.deeplinkUrl,
+    snapToken: payment.snapToken,
     expiresAt: payment.expiredAt,
   };
+}
+
+export function verifyWebhookSignature(
+  orderId: string,
+  statusCode: string,
+  grossAmount: string,
+  serverKey: string,
+  signatureKey: string,
+): boolean {
+  const hash = createHash("sha512")
+    .update(orderId + statusCode + grossAmount + serverKey)
+    .digest("hex");
+  return hash === signatureKey;
 }

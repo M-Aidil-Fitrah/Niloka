@@ -1,6 +1,6 @@
 import "server-only";
 
-const REQUIRED_VARS = ["DATABASE_URL", "NEXTAUTH_SECRET"] as const;
+const REQUIRED_VARS = ["DATABASE_URL", "NEXTAUTH_SECRET", "MIDTRANS_SERVER_KEY", "MIDTRANS_CLIENT_KEY"] as const;
 
 const AI_VARS = ["GEMINI_API_KEY", "GROQ_API_KEY"] as const;
 
