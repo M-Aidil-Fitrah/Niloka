@@ -134,19 +134,19 @@ export default function LoginPage() {
     }
 
     setIsSubmitting(true);
-    const user = await login(email, password);
+    const result = await login(email, password);
     setIsSubmitting(false);
 
-    if (user) {
-      if (user.role === "seller") {
+    if (result.ok && result.user) {
+      if (result.user.role === "seller") {
         router.push("/seller");
-      } else if (user.role === "admin") {
+      } else if (result.user.role === "admin") {
         router.push("/admin");
       } else {
         router.push("/");
       }
     } else {
-      showToast("Email atau kata sandi salah.", "error");
+      showToast(result.error || "Email atau kata sandi salah.", "error");
     }
   };
 
