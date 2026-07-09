@@ -1,19 +1,70 @@
 import "server-only";
 import { createHash } from "node:crypto";
 
-import snap from "midtrans-client";
-import { PaymentMethod, PaymentStatus, Prisma } from "@/generated/prisma/client";
+import { Prisma, PaymentMethod, PaymentStatus } from "@/generated/prisma/client";
 import type { OrderPayment, PaymentInstruction } from "@/lib/contracts";
 
-export type PaymentChannel = "qris" | "virtual-account" | "ewallet";
+export type PaymentChannel = "bank_transfer" | "gopay" | "qris";
+export type PaymentBank = "bca" | "mandiri" | "bni";
+
+const BANK_LABELS: Record<PaymentBank, { title: string; description: string }> = {
+  bca: { title: "BCA Virtual Account", description: "Bayar melalui mobile banking, ATM, atau internet banking BCA." },
+  mandiri: { title: "Mandiri Virtual Account", description: "Bayar melalui Mandiri Online, ATM, atau Livin'." },
+  bni: { title: "BNI Virtual Account", description: "Bayar melalui mobile banking, ATM, atau internet banking BNI." },
+};
 
 export type CreatePaymentInput = {
   orderId: string;
   amount: number;
   currency: "IDR";
   channel: PaymentChannel;
+  bank?: PaymentBank;
   expiresAt: Date;
 };
+
+export function calculatePlatformFee(channel: PaymentChannel, subtotal: number): number {
+  switch (channel) {
+    case "bank_transfer":
+      return 4500;
+    case "gopay":
+      return Math.round(subtotal * 0.02) + 2000;
+    case "qris":
+      return Math.round(subtotal * 0.007);
+  }
+}
+
+export function getChannelFromMethod(method: string): { channel: PaymentChannel; bank?: PaymentBank } {
+  if (method === "gopay") return { channel: "gopay" };
+  if (method === "qris") return { channel: "qris" };
+  if (method === "bca") return { channel: "bank_transfer", bank: "bca" };
+  if (method === "mandiri") return { channel: "bank_transfer", bank: "mandiri" };
+  if (method === "bni") return { channel: "bank_transfer", bank: "bni" };
+  return { channel: "bank_transfer", bank: "bca" };
+}
+
+function getCoreApiUrl(): string {
+  const isProduction = process.env.MIDTRANS_IS_PRODUCTION === "true";
+  return isProduction
+    ? "https://api.midtrans.com/v2"
+    : "https://api.sandbox.midtrans.com/v2";
+}
+
+async function midtransCharge(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
+  const serverKey = process.env.MIDTRANS_SERVER_KEY!;
+  const auth = Buffer.from(serverKey + ":").toString("base64");
+  const res = await fetch(`${getCoreApiUrl()}/charge`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Basic ${auth}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  const body = (await res.json()) as Record<string, unknown>;
+  if (!res.ok) throw new Error(`Midtrans charge failed (${res.status}): ${JSON.stringify(body)}`);
+  return body;
+}
 
 function formatMidtransDate(date: Date): string {
   const y = date.getFullYear();
@@ -29,52 +80,43 @@ function formatMidtransDate(date: Date): string {
   return `${y}-${M}-${d} ${h}:${m}:${s} ${tzSign}${tzHours}${tzMins}`;
 }
 
-function getSnapApi() {
-  return new snap.Snap({
-    isProduction: process.env.MIDTRANS_IS_PRODUCTION === "true",
-    serverKey: process.env.MIDTRANS_SERVER_KEY!,
-    clientKey: process.env.MIDTRANS_CLIENT_KEY!,
-  });
-}
-
 function toPrismaPaymentMethod(channel: PaymentChannel): PaymentMethod {
   switch (channel) {
-    case "virtual-account":
-      return PaymentMethod.VIRTUAL_ACCOUNT;
-    case "ewallet":
-      return PaymentMethod.EWALLET;
-    case "qris":
-      return PaymentMethod.QRIS;
+    case "bank_transfer": return PaymentMethod.VIRTUAL_ACCOUNT;
+    case "gopay": return PaymentMethod.EWALLET;
+    case "qris": return PaymentMethod.QRIS;
   }
 }
 
-export function resolvePaymentChannel(value: string): PaymentChannel {
-  const normalizedValue = value.trim().toLowerCase();
-
-  if (normalizedValue === "va" || normalizedValue === "virtual-account" || normalizedValue === "virtual_account") {
-    return "virtual-account";
+function toContractMethod(channel: PaymentChannel): "virtual-account" | "ewallet" | "qris" {
+  switch (channel) {
+    case "bank_transfer": return "virtual-account";
+    case "gopay": return "ewallet";
+    case "qris": return "qris";
   }
-
-  if (normalizedValue === "ewallet" || normalizedValue === "e-wallet" || normalizedValue === "gopay") {
-    return "ewallet";
-  }
-
-  return "qris";
 }
 
-export async function createSnapPayment(
+function getMethodTitle(channel: PaymentChannel, bank?: PaymentBank): string {
+  if (channel === "bank_transfer" && bank) return BANK_LABELS[bank].title;
+  if (channel === "gopay") return "GoPay";
+  return "QRIS";
+}
+
+function getMethodDescription(channel: PaymentChannel, bank?: PaymentBank): string {
+  if (channel === "bank_transfer" && bank) return BANK_LABELS[bank].description;
+  if (channel === "gopay") return "Bayar melalui aplikasi Gojek menggunakan GoPay.";
+  return "Scan QRIS menggunakan aplikasi e-wallet atau mobile banking.";
+}
+
+export async function createCorePayment(
   tx: Prisma.TransactionClient,
   input: CreatePaymentInput,
 ): Promise<PaymentInstruction> {
-  const snapApi = getSnapApi();
-
-  const transactionParams = {
+  const chargePayload: Record<string, unknown> = {
+    payment_type: input.channel,
     transaction_details: {
       order_id: input.orderId,
       gross_amount: input.amount,
-    },
-    credit_card: {
-      secure: true,
     },
     expiry: {
       start_time: formatMidtransDate(new Date()),
@@ -83,74 +125,84 @@ export async function createSnapPayment(
     },
   };
 
-  const snapResponse = await snapApi.createTransaction(transactionParams);
+  if (input.channel === "bank_transfer" && input.bank) {
+    chargePayload.bank_transfer = { bank: input.bank };
+  }
 
-  const snapToken: string = snapResponse.token;
-  const redirectUrl: string = snapResponse.redirect_url;
-  const snapTransactionId = `SNAP-${snapResponse.transaction_id || input.orderId}`;
+  const response = await midtransCharge(chargePayload);
 
-  const title =
-    input.channel === "virtual-account"
-      ? "Virtual Account Midtrans"
-      : input.channel === "ewallet"
-        ? "E-wallet Midtrans"
-        : "QRIS Midtrans";
-  const description =
-    "Klik tombol 'Bayar Sekarang' untuk menyelesaikan pembayaran melalui Midtrans Snap.";
+  const transactionId = (response.transaction_id as string) || input.orderId;
+  const transactionStatus = (response.transaction_status as string) || "pending";
+
+  let vaNumber = "";
+  let qrString = "";
+  let qrUrl = "";
+  let deeplinkUrl = "";
+
+  if (input.channel === "bank_transfer") {
+    const vaArray = response.va_numbers as Array<{ bank: string; va_number: string }> | undefined;
+    if (vaArray && vaArray.length > 0) {
+      vaNumber = vaArray[0].va_number;
+    }
+  } else {
+    const actions = response.actions as Array<{ name: string; url: string }> | undefined;
+    if (actions) {
+      for (const action of actions) {
+        if (action.name === "generate-qr-code") qrUrl = action.url;
+        else if (action.name === "deeplink-redirect") deeplinkUrl = action.url;
+      }
+      if (qrUrl) qrString = qrUrl;
+    }
+  }
 
   await tx.payment.create({
     data: {
       orderId: input.orderId,
-      provider: "MIDTRANS_SNAP",
+      provider: "MIDTRANS_CORE",
       paymentMethod: toPrismaPaymentMethod(input.channel),
       status: PaymentStatus.PENDING,
       amount: input.amount,
       currency: input.currency,
       externalId: input.orderId,
-      snapToken,
-      transactionId: snapTransactionId,
-      transactionStatus: "pending",
-      rawResponse: snapResponse,
+      transactionId,
+      transactionStatus,
+      vaNumber: vaNumber || null,
+      qrString: qrString || null,
+      qrUrl: qrUrl || null,
+      deeplinkUrl: deeplinkUrl || null,
+      rawResponse: response as Prisma.InputJsonValue,
       expiredAt: input.expiresAt,
       lastStatusSyncedAt: new Date(),
     },
   });
 
   return {
-    method: input.channel,
+    method: toContractMethod(input.channel),
     status: "pending",
     amount: { amount: input.amount, currency: input.currency },
-    title,
-    description,
-    qrString: "",
-    qrUrl: redirectUrl,
-    vaNumber: "",
-    deeplinkUrl: redirectUrl,
-    snapToken,
+    title: getMethodTitle(input.channel, input.bank),
+    description: getMethodDescription(input.channel, input.bank),
+    qrString,
+    qrUrl,
+    vaNumber,
+    deeplinkUrl,
     expiresAt: input.expiresAt.toISOString(),
-    snapRedirectUrl: redirectUrl,
   };
 }
 
 export function mapPaymentToInstruction(payment: OrderPayment): PaymentInstruction {
+  const isVA = payment.method === "virtual-account";
   return {
     method: payment.method,
     status: payment.status === "paid" ? "paid" : payment.status === "failed" ? "failed" : payment.status === "expired" ? "expired" : "pending",
     amount: payment.amount,
-    title:
-      payment.method === "virtual-account"
-        ? "Virtual Account Midtrans"
-        : payment.method === "ewallet"
-          ? "E-wallet Midtrans"
-          : "QRIS Midtrans",
-    description:
-      "Klik tombol 'Bayar Sekarang' untuk menyelesaikan pembayaran melalui Midtrans Snap.",
-    qrString: payment.qrString,
-    qrUrl: payment.qrUrl,
-    vaNumber: payment.vaNumber,
-    deeplinkUrl: payment.deeplinkUrl,
-    snapToken: payment.snapToken,
-    expiresAt: payment.expiredAt,
+    title: isVA ? "Virtual Account" : payment.method === "ewallet" ? "GoPay" : "QRIS",
+    description: isVA ? "Bayar melalui transfer ke Virtual Account." : payment.method === "ewallet" ? "Bayar via GoPay." : "Scan QR menggunakan aplikasi pembayaran.",
+    qrString: payment.qrString || "",
+    qrUrl: payment.qrUrl || "",
+    vaNumber: payment.vaNumber || "",
+    deeplinkUrl: payment.deeplinkUrl || "",
+    expiresAt: payment.expiredAt || "",
   };
 }
 

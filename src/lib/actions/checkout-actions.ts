@@ -10,10 +10,7 @@ import {
 } from "@/generated/prisma/client";
 import type { CartItem, PaymentInstruction } from "@/lib/contracts";
 import { revalidatePath } from "next/cache";
-import {
-  createSnapPayment,
-  resolvePaymentChannel,
-} from "@/lib/services/payment-service";
+import { createCorePayment, getChannelFromMethod, calculatePlatformFee } from "@/lib/services/payment-service";
 
 const checkoutInputSchema = z.object({
   receiverName: z.string().trim().min(3, "Nama penerima minimal 3 karakter."),
@@ -363,7 +360,7 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
   }
 
   const courier = courierRates[parsed.data.courierCode] ?? courierRates.jne;
-  const paymentChannel = resolvePaymentChannel(parsed.data.paymentMethod);
+  const { channel: paymentChannel, bank: paymentBank } = getChannelFromMethod(parsed.data.paymentMethod);
 
   const cart = await prisma.cart.findFirst({
     where: { userId: user.id },
@@ -433,7 +430,7 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
     (total, item) => total + item.unitPriceAmount * item.quantity,
     0,
   );
-  const platformFee = subtotal > 0 ? 2000 : 0;
+  const platformFee = subtotal > 0 ? calculatePlatformFee(paymentChannel, subtotal) : 0;
   const shippingEstimate = subtotal > 0 ? courier.amount : 0;
   const discount = await calculateDiscount({
     promoCode: parsed.data.promoCode,
@@ -499,11 +496,12 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
         }
       });
 
-      paymentInstruction = await createSnapPayment(tx, {
+      paymentInstruction = await createCorePayment(tx, {
         orderId: order.id,
         amount: grandTotal,
         currency: "IDR",
         channel: paymentChannel,
+        bank: paymentBank,
         expiresAt: paymentExpiresAt,
       });
 
@@ -638,4 +636,68 @@ export async function confirmPaymentAction(
     console.error("Confirm payment failed:", error);
     return { ok: false, message: "Gagal mengonfirmasi pembayaran." };
   }
+}
+
+export async function getCartItemsDetailAction(
+  itemIds: string[],
+): Promise<{ id: string; kind: "product" | "ampas-listing"; name: string; imageSrc: string; imageAlt: string; quantity: number; unitPriceAmount: number; unitPriceCurrency: string; sellerName: string }[]> {
+  const user = await requireUser();
+
+  const cartItems = await prisma.cartItem.findMany({
+    where: {
+      id: { in: itemIds },
+      cart: { userId: user.id },
+    },
+    include: {
+      product: { select: { name: true, imageSrc: true, imageAlt: true, sellerId: true } },
+      ampasListing: { select: { slug: true, imageSrc: true, imageAlt: true, sellerId: true } },
+    },
+  });
+
+  const sellerIds = cartItems
+    .filter((i) => i.kind === "PRODUCT" && i.product?.sellerId)
+    .map((i) => i.product!.sellerId!);
+  const ampasSellerIds = cartItems
+    .filter((i) => i.kind === "AMPAS_LISTING" && i.ampasListing?.sellerId)
+    .map((i) => i.ampasListing!.sellerId);
+
+  const allSellerIds = [...new Set([...sellerIds, ...ampasSellerIds])];
+
+  const sellers = allSellerIds.length > 0
+    ? await prisma.seller.findMany({
+        where: { id: { in: allSellerIds } },
+        select: { id: true, displayName: true },
+      })
+    : [];
+  const sellerMap = new Map(sellers.map((s) => [s.id, s.displayName]));
+
+  return cartItems.map((item) => {
+    const name =
+      item.kind === "PRODUCT"
+        ? (item.product?.name ?? "Produk Nilam")
+        : item.ampasListing?.slug
+          ? item.ampasListing.slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+          : "Ampas Nilam B2B";
+
+    const ownerId =
+      item.kind === "PRODUCT" ? item.product?.sellerId : item.ampasListing?.sellerId;
+
+    return {
+      id: item.id,
+      kind: item.kind === "PRODUCT" ? "product" : "ampas-listing",
+      name,
+      imageSrc:
+        item.kind === "PRODUCT"
+          ? (item.product?.imageSrc ?? "https://images.unsplash.com/photo-1540555700478-4be289fbecef")
+          : (item.ampasListing?.imageSrc ?? "https://images.unsplash.com/photo-1540555700478-4be289fbecef"),
+      imageAlt:
+        item.kind === "PRODUCT"
+          ? (item.product?.imageAlt ?? "Produk")
+          : (item.ampasListing?.imageAlt ?? "Produk"),
+      quantity: item.quantity,
+      unitPriceAmount: item.unitPriceAmount,
+      unitPriceCurrency: item.unitPriceCurrency,
+      sellerName: ownerId ? (sellerMap.get(ownerId) ?? "Penjual") : "Penjual",
+    };
+  });
 }

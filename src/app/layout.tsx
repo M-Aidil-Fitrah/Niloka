@@ -30,6 +30,7 @@ export const viewport: Viewport = {
 
 import { CartProvider } from "@/context/cart-context";
 import { AuthProvider } from "@/context/auth-context";
+import { CartDrawer } from "@/components/cart/cart-drawer";
 import { FloatingChatbot } from "@/components/chatbot/floating-chatbot";
 import { ToastProvider } from "@/components/ui/toast";
 
@@ -48,6 +49,7 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             {children}
+            <CartDrawer />
             <FloatingChatbot />
             <ToastProvider />
           </CartProvider>

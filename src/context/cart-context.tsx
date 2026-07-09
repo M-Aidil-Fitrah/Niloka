@@ -15,12 +15,20 @@ import {
 
 type CartContextType = {
   items: CartItem[];
-  addItem: (item: Omit<CartItem, "id">) => void;
+  addItem: (item: Omit<CartItem, "id">, suppressToast?: boolean) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  refreshCart: () => Promise<void>;
   totalCount: number;
   isAdding: boolean;
+  selectedIds: Set<string>;
+  toggleSelect: (id: string) => void;
+  toggleSelectAll: () => void;
+  clearSelection: () => void;
+  isCartDrawerOpen: boolean;
+  openCartDrawer: () => void;
+  closeCartDrawer: () => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -30,8 +38,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isAdding, setIsAdding] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
 
-  // Load from database if user is logged in, else set empty
   useEffect(() => {
     let active = true;
     if (user) {
@@ -68,14 +77,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return true;
   }, [user, router]);
 
-  const addItem = useCallback(async (newItem: Omit<CartItem, "id">) => {
+  const addItem = useCallback(async (newItem: Omit<CartItem, "id">, suppressToast?: boolean) => {
     if (!checkAuth()) return;
     setIsAdding(true);
     try {
       const res = await addToCartAction(newItem);
       if (res.ok && res.items) {
         setItems(res.items);
-        showToast("Produk berhasil ditambahkan ke keranjang.", "success");
+        if (!suppressToast) {
+          showToast("Produk berhasil ditambahkan ke keranjang.", "success");
+        }
       }
     } catch (err) {
       console.error("Failed to add item to cart", err);
@@ -91,6 +102,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const res = await removeFromCartAction(id);
       if (res.ok && res.items) {
         setItems(res.items);
+        setSelectedIds((prev) => {
+          const next = new Set(prev);
+          next.delete(id);
+          return next;
+        });
       }
     } catch (err) {
       console.error("Failed to remove item", err);
@@ -121,6 +137,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const res = await clearCartAction();
       if (res.ok) {
         setItems(res.items);
+        setSelectedIds(new Set());
       }
     } catch (err) {
       console.error("Failed to clear cart", err);
@@ -128,9 +145,42 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [checkAuth]);
 
-  const totalCount = useMemo(() => 
+  const refreshCart = useCallback(async () => {
+    if (!user) { setItems([]); return; }
+    try {
+      const cartItems = await fetchCartAction();
+      setItems(cartItems);
+    } catch {
+      setItems([]);
+    }
+  }, [user]);
+
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const toggleSelectAll = useCallback(() => {
+    setSelectedIds((prev) => {
+      if (prev.size === items.length && items.length > 0) return new Set();
+      return new Set(items.map((item) => item.id));
+    });
+  }, [items]);
+
+  const clearSelection = useCallback(() => {
+    setSelectedIds(new Set());
+  }, []);
+
+  const openCartDrawer = useCallback(() => setIsCartDrawerOpen(true), []);
+  const closeCartDrawer = useCallback(() => setIsCartDrawerOpen(false), []);
+
+  const totalCount = useMemo(() =>
     items.reduce((acc, item) => acc + item.quantity, 0),
-    [items]
+    [items],
   );
 
   const value = useMemo(() => ({
@@ -139,9 +189,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     removeItem,
     updateQuantity,
     clearCart,
+    refreshCart,
     totalCount,
     isAdding,
-  }), [items, totalCount, addItem, removeItem, updateQuantity, clearCart, isAdding]);
+    selectedIds,
+    toggleSelect,
+    toggleSelectAll,
+    clearSelection,
+    isCartDrawerOpen,
+    openCartDrawer,
+    closeCartDrawer,
+  }), [items, totalCount, addItem, removeItem, updateQuantity, clearCart, refreshCart, isAdding, selectedIds, toggleSelect, toggleSelectAll, clearSelection, isCartDrawerOpen, openCartDrawer, closeCartDrawer]);
 
   return (
     <CartContext.Provider value={value}>

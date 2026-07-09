@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, MapPin, Calendar, Truck, ShoppingCart, Send, Scale } from "lucide-react";
@@ -25,9 +26,11 @@ const usageLabels: Record<string, string> = {
 
 export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
   const { addItem } = useCart();
+  const router = useRouter();
   const localListing = listing;
   const localSeller = seller;
   const [isAdded, setIsAdded] = useState(false);
+  const [isBuyingNow, setIsBuyingNow] = useState(false);
   const [quantity, setQuantity] = useState<number>(
     listing.wholesaleEnabled && listing.wholesaleMinQtyKg ? listing.wholesaleMinQtyKg : 10
   );
@@ -58,6 +61,20 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
     setTimeout(() => {
       setIsAdded(false);
     }, 2000);
+  };
+
+  const handleBuyNow = () => {
+    setIsBuyingNow(true);
+    addItem({
+      kind: "ampas-listing",
+      productId: null,
+      ampasListingId: localListing.id,
+      quantity,
+      unitPrice: activeUnitPrice,
+    }, true);
+    setTimeout(() => {
+      router.push("/checkout");
+    }, 300);
   };
 
   const handleQtyChange = (val: number) => {
@@ -278,18 +295,27 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
           </div>
         </div>
 
-        {/* Actions buttons */}
+{/* Actions buttons */}
         <div className="pt-2 flex flex-col sm:flex-row gap-3">
           <Button
+            disabled={isBuyingNow}
+            onClick={handleBuyNow}
+            className="flex-1 h-11 rounded-xl bg-brand-950 hover:bg-brand-900 text-white-soft text-xs font-bold shadow-sm flex items-center justify-center gap-1.5"
+          >
+            <ShoppingCart className="h-4 w-4" />
+            {isBuyingNow ? "Memproses..." : "Beli Sekarang"}
+          </Button>
+          <Button
             onClick={handleAddToCart}
-            className={`flex-1 h-11 rounded-xl text-white-soft text-xs font-bold shadow-sm flex items-center justify-center gap-1.5 transition-all duration-300 ${
-              isAdded ? "bg-emerald-700 hover:bg-emerald-600" : "bg-brand-900 hover:bg-brand-850"
+            className={`flex-1 h-11 rounded-xl text-xs font-bold shadow-sm flex items-center justify-center gap-1.5 transition-all duration-300 ${
+              isAdded ? "bg-emerald-700 hover:bg-emerald-600 text-white-soft" : "bg-cream-100 hover:bg-cream-200 text-brand-950"
             }`}
+            variant="secondary"
           >
             {isAdded ? (
               <>
-                <CheckCircle className="h-4.5 w-4.5 text-emerald-400" />
-                Berhasil Ditambahkan!
+                <CheckCircle className="h-4.5 w-4.5" />
+                Ditambahkan!
               </>
             ) : (
               <>
@@ -298,14 +324,11 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
               </>
             )}
           </Button>
-
-          <Link
-            href={`/chat?sellerId=${localSeller.id}&listingId=${localListing.id}`}
-            className="flex-1 h-11 rounded-xl border border-line bg-white-soft text-brand-950 hover:bg-cream-100 text-sm font-semibold transition-all duration-200 inline-flex items-center justify-center gap-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
-            style={{ touchAction: "manipulation" }}
-          >
-            <Send className="h-4 w-4" />
-            Hubungi Penjual
+          <Link href={`/chat?sellerId=${localSeller.id}&listingId=${localListing.id}`} className="flex-1">
+            <Button variant="secondary" className="w-full h-11 rounded-xl text-xs font-bold shadow-sm flex items-center justify-center gap-1.5">
+              <Send className="h-4 w-4" />
+              Hubungi Penjual
+            </Button>
           </Link>
         </div>
       </div>
