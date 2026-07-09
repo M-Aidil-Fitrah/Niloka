@@ -6,6 +6,7 @@ import { ChatService, type ChatThread } from "@/lib/services/chat-service";
 import { BuyerChatView } from "./buyer-chat-view";
 import { SellerChatView } from "./seller-chat-view";
 import { useAuth } from "@/context/auth-context";
+import { useIsMobile } from "@/lib/hooks/use-media-query";
 
 export function ChatClient() {
   const searchParams = useSearchParams();
@@ -15,23 +16,13 @@ export function ChatClient() {
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
-  const [isMobileView, setIsMobileView] = useState(false);
   const [showMobileChat, setShowMobileChat] = useState(false);
+  const isMobileView = useIsMobile(1024);
 
   // Safely get role and seller ID from ChatService
   const modeParam = searchParams.get("mode");
   const currentUserRole = modeParam === "seller" ? "seller" : "buyer";
   const currentSellerId = currentUserRole === "seller" ? user?.sellerId ?? null : null;
-
-  // Detect mobile viewport
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobileView(window.innerWidth < 1024);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   // Subscribe to threads updates
   useEffect(() => {

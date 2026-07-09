@@ -30,12 +30,12 @@ export function ProductGallery({ mainImage, gallery }: ProductGalleryProps) {
 
       {/* Thumbnails */}
       {allImages.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto pb-1">
+        <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-1">
           {allImages.map((img, index) => (
             <button
               key={index}
               onClick={() => setActiveIndex(index)}
-              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border transition-all duration-200 ${
+              className={`relative h-14 w-14 sm:h-20 sm:w-20 shrink-0 overflow-hidden rounded-xl sm:rounded-2xl border transition-all duration-200 ${
                 index === activeIndex
                   ? "border-brand-900 ring-2 ring-gold-500/30"
                   : "border-line hover:border-brand-700/50"
@@ -45,7 +45,7 @@ export function ProductGallery({ mainImage, gallery }: ProductGalleryProps) {
                 alt={img.alt}
                 className="object-cover"
                 fill
-                sizes="80px"
+                sizes="(max-width: 640px) 56px, 80px"
                 src={img.src}
               />
             </button>

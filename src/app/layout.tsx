@@ -1,5 +1,5 @@
 import { Plus_Jakarta_Sans, Cormorant_Garamond } from "next/font/google";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   title: "NILOKA",
   description:
     "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 import { CartProvider } from "@/context/cart-context";

@@ -117,7 +117,7 @@ export function FloatingChatbot() {
       <button
         aria-label={isOpen ? "Tutup Chatbot NILOKA" : "Buka Chatbot NILOKA"}
         className="fixed bottom-5 right-5 z-50 flex h-13 w-13 items-center justify-center rounded-full border border-white/30 bg-brand-950 text-white-soft shadow-2xl transition hover:bg-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
-        style={{ touchAction: "manipulation" }}
+        style={{ touchAction: "manipulation", bottom: `calc(1.25rem + var(--safe-area-bottom))` }}
         onClick={() => setIsOpen((current) => !current)}
         type="button"
       >
