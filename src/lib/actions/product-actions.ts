@@ -4,14 +4,21 @@ import { revalidatePath } from "next/cache";
 import { requireSeller } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import {
-  ProductForm,
-  ProductFunction,
-  ProductTag,
-  ProductStatus,
   PassportValidationStatus,
 } from "@/generated/prisma/client";
 import { z } from "zod";
 import type { Product } from "@/lib/contracts";
+import {
+  toPrismaProductForm,
+  fromPrismaProductForm,
+  toPrismaProductFunction,
+  fromPrismaProductFunction,
+  toPrismaProductTag,
+  fromPrismaProductTag,
+  toPrismaProductStatus,
+  fromPrismaProductStatus,
+  generateSlug,
+} from "@/lib/prisma-mappers";
 
 const productSaveSchema = z.object({
   id: z.string(),
@@ -55,138 +62,7 @@ const productSaveSchema = z.object({
   ).optional().default([]),
 });
 
-function toPrismaProductForm(form: string): ProductForm {
-  switch (form) {
-    case "essential-oil":
-      return ProductForm.ESSENTIAL_OIL;
-    case "roll-on":
-      return ProductForm.ROLL_ON;
-    case "soap":
-      return ProductForm.SOAP;
-    case "diffuser":
-      return ProductForm.DIFFUSER;
-    case "perfume":
-      return ProductForm.PERFUME;
-    case "body-oil":
-      return ProductForm.BODY_OIL;
-    case "bundle":
-      return ProductForm.BUNDLE;
-    default:
-      return ProductForm.ESSENTIAL_OIL;
-  }
-}
 
-function toPrismaProductFunction(func: string): ProductFunction {
-  switch (func) {
-    case "relaxation":
-      return ProductFunction.RELAXATION;
-    case "focus":
-      return ProductFunction.FOCUS;
-    case "sleep-support":
-      return ProductFunction.SLEEP_SUPPORT;
-    case "skin-care":
-      return ProductFunction.SKIN_CARE;
-    case "home-fragrance":
-      return ProductFunction.HOME_FRAGRANCE;
-    case "gift":
-      return ProductFunction.GIFT;
-    default:
-      return ProductFunction.RELAXATION;
-  }
-}
-
-function toPrismaProductTag(tag: string): ProductTag {
-  switch (tag) {
-    case "best-seller":
-      return ProductTag.BEST_SELLER;
-    case "new-arrival":
-      return ProductTag.NEW_ARRIVAL;
-    case "nilam-passport":
-      return ProductTag.NILAM_PASSPORT;
-    case "aroma-calm":
-      return ProductTag.AROMA_CALM;
-    case "limited-batch":
-      return ProductTag.LIMITED_BATCH;
-    default:
-      return ProductTag.NEW_ARRIVAL;
-  }
-}
-
-function toPrismaProductStatus(status: string): ProductStatus {
-  switch (status) {
-    case "draft":
-      return ProductStatus.DRAFT;
-    case "published":
-      return ProductStatus.PUBLISHED;
-    case "archived":
-      return ProductStatus.ARCHIVED;
-    default:
-      return ProductStatus.DRAFT;
-  }
-}
-
-// Map contract enums from DB enums for get
-function fromPrismaProductForm(form: ProductForm): "essential-oil" | "roll-on" | "soap" | "diffuser" | "perfume" | "body-oil" | "bundle" {
-  switch (form) {
-    case ProductForm.ESSENTIAL_OIL:
-      return "essential-oil";
-    case ProductForm.ROLL_ON:
-      return "roll-on";
-    case ProductForm.SOAP:
-      return "soap";
-    case ProductForm.DIFFUSER:
-      return "diffuser";
-    case ProductForm.PERFUME:
-      return "perfume";
-    case ProductForm.BODY_OIL:
-      return "body-oil";
-    case ProductForm.BUNDLE:
-      return "bundle";
-  }
-}
-
-function fromPrismaProductFunction(func: ProductFunction): "relaxation" | "focus" | "sleep-support" | "skin-care" | "home-fragrance" | "gift" {
-  switch (func) {
-    case ProductFunction.RELAXATION:
-      return "relaxation";
-    case ProductFunction.FOCUS:
-      return "focus";
-    case ProductFunction.SLEEP_SUPPORT:
-      return "sleep-support";
-    case ProductFunction.SKIN_CARE:
-      return "skin-care";
-    case ProductFunction.HOME_FRAGRANCE:
-      return "home-fragrance";
-    case ProductFunction.GIFT:
-      return "gift";
-  }
-}
-
-function fromPrismaProductTag(tag: ProductTag): "best-seller" | "new-arrival" | "nilam-passport" | "aroma-calm" | "limited-batch" {
-  switch (tag) {
-    case ProductTag.BEST_SELLER:
-      return "best-seller";
-    case ProductTag.NEW_ARRIVAL:
-      return "new-arrival";
-    case ProductTag.NILAM_PASSPORT:
-      return "nilam-passport";
-    case ProductTag.AROMA_CALM:
-      return "aroma-calm";
-    case ProductTag.LIMITED_BATCH:
-      return "limited-batch";
-  }
-}
-
-function fromPrismaProductStatus(status: ProductStatus): "draft" | "published" | "archived" {
-  switch (status) {
-    case ProductStatus.DRAFT:
-      return "draft";
-    case ProductStatus.PUBLISHED:
-      return "published";
-    case ProductStatus.ARCHIVED:
-      return "archived";
-  }
-}
 
 export type ProductActionResult =
   | { ok: true; id: string }
@@ -230,11 +106,7 @@ export async function saveProductAction(
   }
 
   // Generate unique slug
-  const rawSlug = data.name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-  const slug = `${rawSlug}-${data.id.replace("product-", "").replace("prod-", "").slice(0, 6)}`;
+  const slug = `${generateSlug(data.name)}-${data.id.replace("product-", "").replace("prod-", "").slice(0, 6)}`;
 
   const mappedForm = toPrismaProductForm(data.form);
   const mappedStatus = toPrismaProductStatus(data.status);

@@ -3,14 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { requireSeller } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
-import {
-  AmpasCondition,
-  AmpasListingStatus,
-  AmpasUsageTag,
-} from "@/generated/prisma/client";
 import { z } from "zod";
 import { getAmpasListingsBySellerIdDto } from "@/lib/dal/marketplace";
 import type { AmpasListing } from "@/lib/contracts";
+import {
+  toPrismaAmpasCondition,
+  toPrismaAmpasUsageTag,
+  toPrismaAmpasStatus,
+  generateSlug,
+} from "@/lib/prisma-mappers";
 
 const ampasListingSaveSchema = z.object({
   id: z.string(),
@@ -49,52 +50,7 @@ const ampasListingSaveSchema = z.object({
     .nullable(),
 });
 
-function toPrismaCondition(cond: string): AmpasCondition {
-  switch (cond) {
-    case "wet":
-      return AmpasCondition.WET;
-    case "dry":
-      return AmpasCondition.DRY;
-    case "mixed":
-      return AmpasCondition.MIXED;
-    default:
-      return AmpasCondition.MIXED;
-  }
-}
 
-function toPrismaStatus(status: string): AmpasListingStatus {
-  switch (status) {
-    case "draft":
-      return AmpasListingStatus.DRAFT;
-    case "active":
-      return AmpasListingStatus.ACTIVE;
-    case "sold":
-      return AmpasListingStatus.SOLD;
-    case "archived":
-      return AmpasListingStatus.ARCHIVED;
-    default:
-      return AmpasListingStatus.DRAFT;
-  }
-}
-
-function toPrismaUsageTag(tag: string): AmpasUsageTag {
-  switch (tag) {
-    case "compost":
-      return AmpasUsageTag.COMPOST;
-    case "briquette":
-      return AmpasUsageTag.BRIQUETTE;
-    case "mushroom-media":
-      return AmpasUsageTag.MUSHROOM_MEDIA;
-    case "mulch":
-      return AmpasUsageTag.MULCH;
-    case "animal-feed":
-      return AmpasUsageTag.ANIMAL_FEED;
-    case "industrial-cellulose":
-      return AmpasUsageTag.INDUSTRIAL_CELLULOSE;
-    default:
-      throw new Error(`Invalid usage tag: ${tag}`);
-  }
-}
 
 export type AmpasActionResult =
   | { ok: true }
@@ -137,13 +93,11 @@ export async function saveAmpasListingAction(
     };
   }
 
-  // Generate unique slug
-  const rawSlug = `ampas-${data.condition}-${data.location.city.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${data.id.replace("ampas-", "")}`;
-  const slug = rawSlug.replace(/^-+|-+$/g, "");
+  const slug = `ampas-${data.condition}-${generateSlug(data.location.city)}-${data.id.replace("ampas-", "")}`.replace(/^-+|-+$/g, "");
 
-  const mappedCondition = toPrismaCondition(data.condition);
-  const mappedStatus = toPrismaStatus(data.status);
-  const mappedUsageTags = data.usageTags.map(toPrismaUsageTag);
+  const mappedCondition = toPrismaAmpasCondition(data.condition);
+  const mappedStatus = toPrismaAmpasStatus(data.status);
+  const mappedUsageTags = data.usageTags.map(toPrismaAmpasUsageTag);
   const parsedDistillationDate = data.distillationDate
     ? new Date(data.distillationDate)
     : null;

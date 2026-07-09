@@ -3,7 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { requireSeller } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
-import { PromoStatus, PromoType } from "@/generated/prisma/client";
+import {
+  toPrismaPromoStatus,
+  fromPrismaPromoStatus,
+  toPrismaPromoType,
+  fromPrismaPromoType,
+} from "@/lib/prisma-mappers";
 import { z } from "zod";
 import type { Promo } from "@/lib/contracts";
 
@@ -25,58 +30,6 @@ const promoSaveSchema = z.object({
   usedCount: z.number().optional().default(0),
   productIds: z.array(z.string()).optional().default([]),
 });
-
-function toPrismaPromoStatus(status: string): PromoStatus {
-  switch (status) {
-    case "active":
-      return PromoStatus.ACTIVE;
-    case "scheduled":
-      return PromoStatus.SCHEDULED;
-    case "expired":
-      return PromoStatus.EXPIRED;
-    case "disabled":
-      return PromoStatus.DISABLED;
-    default:
-      return PromoStatus.ACTIVE;
-  }
-}
-
-function toPrismaPromoType(type: string): PromoType {
-  switch (type) {
-    case "percentage":
-      return PromoType.PERCENTAGE;
-    case "fixed-amount":
-      return PromoType.FIXED_AMOUNT;
-    case "free-shipping":
-      return PromoType.FREE_SHIPPING;
-    default:
-      return PromoType.PERCENTAGE;
-  }
-}
-
-function fromPrismaPromoStatus(status: PromoStatus): "active" | "scheduled" | "expired" | "disabled" {
-  switch (status) {
-    case PromoStatus.ACTIVE:
-      return "active";
-    case PromoStatus.SCHEDULED:
-      return "scheduled";
-    case PromoStatus.EXPIRED:
-      return "expired";
-    case PromoStatus.DISABLED:
-      return "disabled";
-  }
-}
-
-function fromPrismaPromoType(type: PromoType): "percentage" | "fixed-amount" | "free-shipping" {
-  switch (type) {
-    case PromoType.PERCENTAGE:
-      return "percentage";
-    case PromoType.FIXED_AMOUNT:
-      return "fixed-amount";
-    case PromoType.FREE_SHIPPING:
-      return "free-shipping";
-  }
-}
 
 export type PromoActionResult =
   | { ok: true; id: string }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Grid, List } from "lucide-react";
@@ -54,26 +54,40 @@ export function CatalogShell({ products, categories, promos }: CatalogShellProps
     setCurrentPage(1);
   }
 
-  function getPromosForProduct(productId: string) {
-    const product = products.find((item) => item.id === productId);
-
-    if (!product) {
-      return [];
+  const promosBySeller = useMemo(() => {
+    const map = new Map<string, Promo[]>();
+    for (const promo of promos) {
+      if (promo.status !== "active") continue;
+      const existing = map.get(promo.sellerId);
+      if (existing) {
+        existing.push(promo);
+      } else {
+        map.set(promo.sellerId, [promo]);
+      }
     }
+    return map;
+  }, [promos]);
 
-    return promos.filter(
-      (promo) =>
-        promo.status === "active" &&
-        promo.sellerId === product.sellerId &&
-        (promo.productIds.length === 0 || promo.productIds.includes(productId)),
-    );
-  }
+  const promosByProduct = useMemo(() => {
+    const map = new Map<string, Promo[]>();
+    for (const product of products) {
+      const sellerPromos = promosBySeller.get(product.sellerId);
+      if (!sellerPromos) {
+        map.set(product.id, []);
+        continue;
+      }
 
-  const filtered = products.filter((product) => {
-    // Only display published products
-    if (product.status !== "published") {
-      return false;
+      map.set(
+        product.id,
+        sellerPromos.filter(
+          (promo) => promo.productIds.length === 0 || promo.productIds.includes(product.id),
+        ),
+      );
     }
+    return map;
+  }, [products, promosBySeller]);
+
+  const filtered = useMemo(() => products.filter((product) => {
     if (selectedCategories.length > 0 && !selectedCategories.includes(product.categoryId)) {
       return false;
     }
@@ -84,9 +98,9 @@ export function CatalogShell({ products, categories, promos }: CatalogShellProps
       return false;
     }
     return true;
-  });
+  }), [products, selectedCategories, selectedForms, selectedFunctions]);
 
-  const sorted = [...filtered].sort((a, b) => {
+  const sorted = useMemo(() => [...filtered].sort((a, b) => {
     switch (sort) {
       case "price-asc":
         return a.price.amount - b.price.amount;
@@ -98,7 +112,7 @@ export function CatalogShell({ products, categories, promos }: CatalogShellProps
       default:
         return a.featuredRank - b.featuredRank;
     }
-  });
+  }), [filtered, sort]);
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PRODUCTS_PER_PAGE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
@@ -111,6 +125,10 @@ export function CatalogShell({ products, categories, promos }: CatalogShellProps
     selectedCategories.length > 0 ||
     selectedForms.length > 0 ||
     selectedFunctions.length > 0;
+
+  function getPromosForProduct(productId: string) {
+    return promosByProduct.get(productId) ?? [];
+  }
 
   return (
     <div className="flex gap-8">

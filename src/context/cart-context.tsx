@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import type { CartItem } from "@/lib/contracts";
 import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
@@ -56,15 +56,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
   }, [user]);
 
-  const checkAuth = () => {
+  const checkAuth = useCallback(() => {
     if (!user) {
       router.push("/auth/login");
       return false;
     }
     return true;
-  };
+  }, [user, router]);
 
-  const addItem = async (newItem: Omit<CartItem, "id">) => {
+  const addItem = useCallback(async (newItem: Omit<CartItem, "id">) => {
     if (!checkAuth()) return;
     try {
       const res = await addToCartAction(newItem);
@@ -74,9 +74,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error("Failed to add item to cart", err);
     }
-  };
+  }, [checkAuth]);
 
-  const removeItem = async (id: string) => {
+  const removeItem = useCallback(async (id: string) => {
     if (!checkAuth()) return;
     try {
       const res = await removeFromCartAction(id);
@@ -86,9 +86,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error("Failed to remove item", err);
     }
-  };
+  }, [checkAuth]);
 
-  const updateQuantity = async (id: string, quantity: number) => {
+  const updateQuantity = useCallback(async (id: string, quantity: number) => {
     if (!checkAuth()) return;
     if (quantity <= 0) {
       await removeItem(id);
@@ -102,9 +102,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error("Failed to update quantity", err);
     }
-  };
+  }, [checkAuth, removeItem]);
 
-  const clearCart = async () => {
+  const clearCart = useCallback(async () => {
     if (!checkAuth()) return;
     try {
       const res = await clearCartAction();
@@ -114,21 +114,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error("Failed to clear cart", err);
     }
-  };
+  }, [checkAuth]);
 
-  const totalCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const totalCount = useMemo(() => 
+    items.reduce((acc, item) => acc + item.quantity, 0),
+    [items]
+  );
+
+  const value = useMemo(() => ({
+    items,
+    addItem,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    totalCount,
+  }), [items, totalCount, addItem, removeItem, updateQuantity, clearCart]);
 
   return (
-    <CartContext.Provider
-      value={{
-        items,
-        addItem,
-        removeItem,
-        updateQuantity,
-        clearCart,
-        totalCount,
-      }}
-    >
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );
