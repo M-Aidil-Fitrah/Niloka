@@ -588,3 +588,54 @@ export async function fetchOrderHistoryAction(): Promise<OrderHistoryItem[]> {
     grandTotal: order.grandTotalAmount,
   }));
 }
+
+export async function confirmPaymentAction(
+  orderId: string,
+): Promise<{ ok: boolean; message?: string }> {
+  const user = await requireUser();
+
+  const order = await prisma.order.findFirst({
+    where: { id: orderId, userId: user.id },
+    include: { payments: { take: 1 } },
+  });
+
+  if (!order) {
+    return { ok: false, message: "Pesanan tidak ditemukan." };
+  }
+
+  const payment = order.payments[0];
+  if (!payment || payment.status !== "PENDING") {
+    return { ok: false, message: "Tidak ada pembayaran yang perlu dikonfirmasi." };
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.payment.update({
+        where: { id: payment.id },
+        data: {
+          status: "PAID",
+          paidAt: new Date(),
+          transactionStatus: "settlement",
+        },
+      });
+
+      await tx.order.update({
+        where: { id: orderId },
+        data: { status: "PAID" },
+      });
+
+      await tx.orderFulfillment.updateMany({
+        where: { orderId },
+        data: { status: "READY_TO_PROCESS" },
+      });
+    });
+
+    revalidatePath("/checkout");
+    revalidatePath("/orders");
+
+    return { ok: true };
+  } catch (error) {
+    console.error("Confirm payment failed:", error);
+    return { ok: false, message: "Gagal mengonfirmasi pembayaran." };
+  }
+}

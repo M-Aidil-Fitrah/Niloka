@@ -26,7 +26,11 @@ import type {
   Promo,
   PromoValidationResult,
 } from "@/lib/contracts";
-import { checkoutAction, fetchOrderHistoryAction } from "@/lib/actions/checkout-actions";
+import {
+  checkoutAction,
+  confirmPaymentAction,
+  fetchOrderHistoryAction,
+} from "@/lib/actions/checkout-actions";
 
 type CheckoutShellProps = {
   products: Product[];
@@ -171,6 +175,7 @@ export function CheckoutShell({ products, ampasListings, promos }: CheckoutShell
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [isCreatingPayment, setIsCreatingPayment] = useState(false);
   const [isCheckingPayment, setIsCheckingPayment] = useState(false);
+  const [isConfirmingPayment, setIsConfirmingPayment] = useState(false);
   const [payError, setPayError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [generatedOrderId, setGeneratedOrderId] = useState("");
@@ -285,6 +290,27 @@ export function CheckoutShell({ products, ampasListings, promos }: CheckoutShell
     clearCart();
     await loadOrderHistory();
   }, [clearCart, loadOrderHistory]);
+
+  const handleConfirmPayment = useCallback(async () => {
+    if (!generatedOrderId || isConfirmingPayment) return;
+
+    setIsConfirmingPayment(true);
+    setPayError("");
+
+    try {
+      const result = await confirmPaymentAction(generatedOrderId);
+      if (result.ok) {
+        setPaymentStatus("paid");
+        await completePaidOrder();
+      } else {
+        setPayError(result.message || "Gagal mengonfirmasi pembayaran.");
+      }
+    } catch {
+      setPayError("Koneksi server gagal.");
+    } finally {
+      setIsConfirmingPayment(false);
+    }
+  }, [completePaidOrder, generatedOrderId, isConfirmingPayment]);
 
   const checkPaymentStatus = useCallback(
     async (orderId = generatedOrderId) => {
@@ -742,11 +768,13 @@ export function CheckoutShell({ products, ampasListings, promos }: CheckoutShell
         <PaymentCoreModal
           orderId={generatedOrderId}
           payment={paymentInstruction}
-          paymentStatus={paymentStatus}
-          isChecking={isCheckingPayment}
-          payError={payError}
-          onClose={() => setIsPaymentOpen(false)}
-          onCheckStatus={() => void checkPaymentStatus(generatedOrderId)}
+paymentStatus={paymentStatus}
+           isChecking={isCheckingPayment}
+           isConfirming={isConfirmingPayment}
+           payError={payError}
+           onClose={() => setIsPaymentOpen(false)}
+           onCheckStatus={() => void checkPaymentStatus(generatedOrderId)}
+           onConfirm={handleConfirmPayment}
         />
       )}
     </div>
