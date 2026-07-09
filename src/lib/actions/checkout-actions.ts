@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { requireUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import {
@@ -14,6 +15,17 @@ import {
   resolvePaymentChannel,
 } from "@/lib/services/payment-service";
 
+const checkoutInputSchema = z.object({
+  receiverName: z.string().trim().min(3, "Nama penerima minimal 3 karakter."),
+  phone: z.string().trim().min(8, "Nomor telepon tidak valid."),
+  address: z.string().trim().min(10, "Alamat minimal 10 karakter."),
+  city: z.string().trim().min(3, "Kota tidak valid."),
+  province: z.string().trim().min(3, "Provinsi tidak valid."),
+  courierCode: z.string().trim().min(1, "Kurir harus dipilih."),
+  paymentMethod: z.string().trim().min(1, "Metode pembayaran harus dipilih."),
+  promoCode: z.string().default(""),
+});
+
 interface CartItemQueryResult {
   id: string;
   kind: CartItemKind;
@@ -24,16 +36,7 @@ interface CartItemQueryResult {
   unitPriceCurrency: string;
 }
 
-type CheckoutInput = {
-  receiverName: string;
-  phone: string;
-  address: string;
-  city: string;
-  province: string;
-  courierCode: string;
-  paymentMethod: string;
-  promoCode: string;
-};
+type CheckoutInput = z.infer<typeof checkoutInputSchema>;
 
 type CheckoutResult = {
   ok: boolean;
@@ -353,8 +356,14 @@ export async function clearCartAction(): Promise<{ ok: boolean; items: CartItem[
 // Checkout Server Action
 export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutResult> {
   const user = await requireUser();
-  const courier = courierRates[payload.courierCode] ?? courierRates.jne;
-  const paymentChannel = resolvePaymentChannel(payload.paymentMethod);
+
+  const parsed = checkoutInputSchema.safeParse(payload);
+  if (!parsed.success) {
+    return { ok: false, message: parsed.error.issues[0]?.message ?? "Data checkout tidak valid." };
+  }
+
+  const courier = courierRates[parsed.data.courierCode] ?? courierRates.jne;
+  const paymentChannel = resolvePaymentChannel(parsed.data.paymentMethod);
 
   const cart = await prisma.cart.findFirst({
     where: { userId: user.id },
@@ -427,7 +436,7 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
   const platformFee = subtotal > 0 ? 2000 : 0;
   const shippingEstimate = subtotal > 0 ? courier.amount : 0;
   const discount = await calculateDiscount({
-    promoCode: payload.promoCode,
+    promoCode: parsed.data.promoCode,
     subtotal,
     shippingEstimate,
     productIds: resolvedItems
@@ -456,12 +465,12 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
           discountAmount: discount.amount,
           promoCode: discount.code || undefined,
           grandTotalAmount: grandTotal,
-          receiverName: payload.receiverName,
-          receiverPhone: payload.phone,
-          shippingAddress: payload.address,
-          shippingCity: payload.city,
-          shippingProvince: payload.province,
-          courierCode: payload.courierCode,
+          receiverName: parsed.data.receiverName,
+          receiverPhone: parsed.data.phone,
+          shippingAddress: parsed.data.address,
+          shippingCity: parsed.data.city,
+          shippingProvince: parsed.data.province,
+          courierCode: parsed.data.courierCode,
           courierName: courier.name,
           paymentExpiresAt,
           items: {
