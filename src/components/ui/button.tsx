@@ -41,12 +41,13 @@ export function Button({
   return (
     <button
       className={cn(
-        "touch-action:manipulation inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 disabled:pointer-events-none disabled:opacity-50",
         getVariantClass(variant),
         getSizeClass(size),
         className,
       )}
       type={type}
+      style={{ touchAction: "manipulation" }}
       {...props}
     >
       {children}

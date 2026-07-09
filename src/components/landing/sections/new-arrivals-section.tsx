@@ -62,7 +62,8 @@ export function NewArrivalsSection({ products }: NewArrivalsSectionProps) {
                 </div>
                 <Link
                   href="/products"
-                  className="touch-action:manipulation inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 bg-brand-900 text-white-soft hover:bg-brand-700 hover:ring-2 hover:ring-gold-500/40 hover:scale-[1.02] active:scale-[0.98] h-9 px-4 text-sm"
+                  className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 bg-brand-900 text-white-soft hover:bg-brand-700 hover:ring-2 hover:ring-gold-500/40 hover:scale-[1.02] active:scale-[0.98] h-9 px-4 text-sm"
+                  style={{ touchAction: "manipulation" }}
                 >
                   <CartIcon /> Cart
                 </Link>

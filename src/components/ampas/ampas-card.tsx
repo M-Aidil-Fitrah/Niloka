@@ -104,7 +104,8 @@ export function AmpasCard({ listing, viewMode }: AmpasCardProps) {
           </div>
           <Link
             href={`/ampas/${listing.slug}`}
-            className="touch-action:manipulation w-full md:w-auto h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200 text-center inline-flex items-center justify-center"
+            className="w-full md:w-auto h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200 text-center inline-flex items-center justify-center"
+            style={{ touchAction: "manipulation" }}
           >
             Lihat Detail
           </Link>
@@ -191,7 +192,8 @@ export function AmpasCard({ listing, viewMode }: AmpasCardProps) {
       <div className="mt-5 pt-3 border-t border-line/40">
         <Link
           href={`/ampas/${listing.slug}`}
-          className="touch-action:manipulation w-full h-10 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200 text-center inline-flex items-center justify-center"
+          className="w-full h-10 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200 text-center inline-flex items-center justify-center"
+          style={{ touchAction: "manipulation" }}
         >
           Lihat Detail
         </Link>
