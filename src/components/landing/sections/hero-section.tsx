@@ -36,14 +36,16 @@ export function HeroSection() {
             <div className="hero-actions mt-6 sm:mt-8 flex flex-col gap-2.5 sm:flex-row">
               <Link
                 href="/products"
-                className="touch-action:manipulation inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 bg-brand-900 text-white-soft hover:bg-brand-700 hover:ring-2 hover:ring-gold-500/40 hover:scale-[1.02] active:scale-[0.98] h-11 px-5 text-sm"
+                className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 bg-brand-900 text-white-soft hover:bg-brand-700 hover:ring-2 hover:ring-gold-500/40 hover:scale-[1.02] active:scale-[0.98] h-11 px-5 text-sm"
+                style={{ touchAction: "manipulation" }}
               >
                 Jelajahi Produk <ArrowRightIcon />
               </Link>
 
               <Link
                 href="#passport"
-                className="touch-action:manipulation inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 border border-line bg-white-soft text-brand-900 hover:bg-cream-50 hover:border-brand-700 hover:ring-2 hover:ring-gold-500/30 hover:scale-[1.02] active:scale-[0.98] h-11 px-5 text-sm"
+                className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 border border-line bg-white-soft text-brand-900 hover:bg-cream-50 hover:border-brand-700 hover:ring-2 hover:ring-gold-500/30 hover:scale-[1.02] active:scale-[0.98] h-11 px-5 text-sm"
+                style={{ touchAction: "manipulation" }}
               >
                 Cek Nilam Passport
               </Link>

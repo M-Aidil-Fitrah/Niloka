@@ -424,13 +424,15 @@ export function CheckoutShell({ products, ampasListings, promos }: CheckoutShell
           <div className="mt-6 flex justify-center gap-3 flex-wrap">
             <Link
               href="/products"
-              className="touch-action:manipulation h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all inline-flex items-center justify-center gap-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+              className="h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all inline-flex items-center justify-center gap-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+              style={{ touchAction: "manipulation" }}
             >
               Beli Produk B2C
             </Link>
             <Link
               href="/ampas"
-              className="touch-action:manipulation h-10 px-5 rounded-xl border border-line bg-white-soft text-brand-900 hover:bg-cream-50 text-xs font-bold transition-all inline-flex items-center justify-center gap-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+              className="h-10 px-5 rounded-xl border border-line bg-white-soft text-brand-900 hover:bg-cream-50 text-xs font-bold transition-all inline-flex items-center justify-center gap-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+              style={{ touchAction: "manipulation" }}
             >
               Bursa Ampas B2B
             </Link>
