@@ -15,6 +15,20 @@ export type CreatePaymentInput = {
   expiresAt: Date;
 };
 
+function formatMidtransDate(date: Date): string {
+  const y = date.getFullYear();
+  const M = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  const h = String(date.getHours()).padStart(2, "0");
+  const m = String(date.getMinutes()).padStart(2, "0");
+  const s = String(date.getSeconds()).padStart(2, "0");
+  const tz = -date.getTimezoneOffset();
+  const tzSign = tz >= 0 ? "+" : "-";
+  const tzHours = String(Math.floor(Math.abs(tz) / 60)).padStart(2, "0");
+  const tzMins = String(Math.abs(tz) % 60).padStart(2, "0");
+  return `${y}-${M}-${d} ${h}:${m}:${s} ${tzSign}${tzHours}${tzMins}`;
+}
+
 function getSnapApi() {
   return new snap.Snap({
     isProduction: process.env.MIDTRANS_IS_PRODUCTION === "true",
@@ -63,7 +77,7 @@ export async function createSnapPayment(
       secure: true,
     },
     expiry: {
-      start_time: new Date().toISOString(),
+      start_time: formatMidtransDate(new Date()),
       unit: "minutes",
       duration: 60 * 24,
     },
