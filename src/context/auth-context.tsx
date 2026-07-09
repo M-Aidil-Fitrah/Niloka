@@ -25,15 +25,19 @@ export type AuthUser = {
   };
 };
 
+type AuthResult = { ok: boolean; user?: AuthUser; error?: string };
+
 type AuthContextType = {
   user: AuthUser | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<AuthUser | null>;
+  isLoggingIn: boolean;
+  isRegistering: boolean;
+  login: (email: string, password: string) => Promise<AuthResult>;
   register: (
     name: string,
     email: string,
     password: string,
-  ) => Promise<boolean>;
+  ) => Promise<AuthResult>;
   logout: () => Promise<void>;
 };
 
@@ -57,7 +61,7 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (
     email: string,
     password: string,
-  ): Promise<AuthUser | null> => {
+  ): Promise<AuthResult> => {
     const result = await signIn("credentials", {
       email,
       password,
@@ -65,22 +69,25 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
     });
 
     if (!result?.ok) {
-      return null;
+      return { ok: false, error: result?.error === "CredentialsSignin" ? "Email atau kata sandi salah." : "Gagal masuk. Silakan coba lagi." };
     }
 
     const nextSession = await update();
     const nextUser = nextSession?.user;
 
     if (!nextUser?.id || !nextUser.email) {
-      return null;
+      return { ok: false, error: "Gagal memuat data pengguna." };
     }
 
     return {
-      id: nextUser.id,
-      name: nextUser.name ?? "Pengguna NILOKA",
-      email: nextUser.email,
-      role: nextUser.role,
-      sellerId: nextUser.sellerId ?? undefined,
+      ok: true,
+      user: {
+        id: nextUser.id,
+        name: nextUser.name ?? "Pengguna NILOKA",
+        email: nextUser.email,
+        role: nextUser.role,
+        sellerId: nextUser.sellerId ?? undefined,
+      },
     };
   }, [update]);
 
@@ -88,7 +95,7 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
     name: string,
     email: string,
     password: string,
-  ): Promise<boolean> => {
+  ): Promise<AuthResult> => {
     const result = await registerBuyerAction({
       name,
       email,
@@ -96,11 +103,15 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
     });
 
     if (!result.ok) {
-      return false;
+      return { ok: false, error: result.message || "Email sudah terdaftar." };
     }
 
     const loginResult = await login(email, password);
-    return loginResult !== null;
+    if (!loginResult.ok) {
+      return { ok: true, user: loginResult.user, error: undefined };
+    }
+
+    return loginResult;
   }, [login]);
 
   const logout = useCallback(async () => {
@@ -113,6 +124,8 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
   const value = useMemo(() => ({
     user,
     isLoading: status === "loading",
+    isLoggingIn: status !== "authenticated" && status !== "loading",
+    isRegistering: status !== "authenticated" && status !== "loading",
     login,
     register,
     logout,

@@ -148,14 +148,14 @@ export default function RegisterPage() {
     }
 
     setIsSubmitting(true);
-    const success = await register(name, email, password);
+    const result = await register(name, email, password);
     setIsSubmitting(false);
 
-    if (success) {
+    if (result.ok) {
       showToast("Akun berhasil dibuat. Selamat datang di NILOKA.", "success");
       router.push("/");
     } else {
-      showToast("Email sudah terdaftar.", "error");
+      showToast(result.error || "Pendaftaran gagal. Silakan coba lagi.", "error");
     }
   };
 

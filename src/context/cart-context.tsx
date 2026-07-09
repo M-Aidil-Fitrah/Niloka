@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo, useCall
 import type { CartItem } from "@/lib/contracts";
 import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
+import { showToast } from "@/lib/toast";
 import {
   fetchCartAction,
   addToCartAction,
@@ -19,6 +20,7 @@ type CartContextType = {
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   totalCount: number;
+  isAdding: boolean;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -27,6 +29,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
+  const [isAdding, setIsAdding] = useState(false);
 
   // Load from database if user is logged in, else set empty
   useEffect(() => {
@@ -40,6 +43,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         })
         .catch((err) => {
           console.error("Failed to load cart items from server", err);
+          showToast("Gagal memuat keranjang belanja.", "error");
           if (active) {
             setItems([]);
           }
@@ -66,13 +70,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback(async (newItem: Omit<CartItem, "id">) => {
     if (!checkAuth()) return;
+    setIsAdding(true);
     try {
       const res = await addToCartAction(newItem);
       if (res.ok && res.items) {
         setItems(res.items);
+        showToast("Produk berhasil ditambahkan ke keranjang.", "success");
       }
     } catch (err) {
       console.error("Failed to add item to cart", err);
+      showToast("Gagal menambahkan produk ke keranjang.", "error");
+    } finally {
+      setIsAdding(false);
     }
   }, [checkAuth]);
 
@@ -85,6 +94,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (err) {
       console.error("Failed to remove item", err);
+      showToast("Gagal menghapus item dari keranjang.", "error");
     }
   }, [checkAuth]);
 
@@ -101,6 +111,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (err) {
       console.error("Failed to update quantity", err);
+      showToast("Gagal memperbarui jumlah item.", "error");
     }
   }, [checkAuth, removeItem]);
 
@@ -113,6 +124,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (err) {
       console.error("Failed to clear cart", err);
+      showToast("Gagal mengosongkan keranjang.", "error");
     }
   }, [checkAuth]);
 
@@ -128,7 +140,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     updateQuantity,
     clearCart,
     totalCount,
-  }), [items, totalCount, addItem, removeItem, updateQuantity, clearCart]);
+    isAdding,
+  }), [items, totalCount, addItem, removeItem, updateQuantity, clearCart, isAdding]);
 
   return (
     <CartContext.Provider value={value}>
