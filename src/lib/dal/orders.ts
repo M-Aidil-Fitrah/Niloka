@@ -442,48 +442,63 @@ export async function getSellerOrdersDto(
 export async function getSellerFinanceSummaryDto(
   sellerId: string,
 ): Promise<SellerFinanceSummary> {
-  const orders = await prisma.order.findMany({
-    where: {
-      items: {
-        some: {
-          sellerId,
+  const [productAgg, ampasAgg, paidCount, pendingCount, fulfilledCount] = await Promise.all([
+    prisma.orderItem.aggregate({
+      where: {
+        sellerId,
+        kind: CartItemKind.PRODUCT,
+        order: {
+          status: {
+            in: [PrismaOrderStatus.PAID, PrismaOrderStatus.FULFILLED],
+          },
         },
       },
-    },
-    include: {
-      items: {
-        where: {
-          sellerId,
+      _sum: {
+        unitPriceAmount: true,
+        quantity: true,
+      },
+    }),
+    prisma.orderItem.aggregate({
+      where: {
+        sellerId,
+        kind: CartItemKind.AMPAS_LISTING,
+        order: {
+          status: {
+            in: [PrismaOrderStatus.PAID, PrismaOrderStatus.FULFILLED],
+          },
         },
       },
-    },
-  });
+      _sum: {
+        unitPriceAmount: true,
+        quantity: true,
+      },
+    }),
+    prisma.order.count({
+      where: {
+        items: { some: { sellerId } },
+        status: { in: [PrismaOrderStatus.PAID, PrismaOrderStatus.FULFILLED] },
+      },
+    }),
+    prisma.order.count({
+      where: {
+        items: { some: { sellerId } },
+        status: PrismaOrderStatus.PENDING_PAYMENT,
+      },
+    }),
+    prisma.order.count({
+      where: {
+        items: { some: { sellerId } },
+        status: PrismaOrderStatus.FULFILLED,
+      },
+    }),
+  ]);
 
-  let grossRevenue = 0;
-  let platformCommission = 0;
-  let paidOrderCount = 0;
-  let pendingOrderCount = 0;
-  let fulfilledOrderCount = 0;
-
-  for (const order of orders) {
-    if (order.status === PrismaOrderStatus.PENDING_PAYMENT) {
-      pendingOrderCount += 1;
-    }
-    if (order.status === PrismaOrderStatus.FULFILLED) {
-      fulfilledOrderCount += 1;
-    }
-    if (!isPaidRevenueOrder(order)) {
-      continue;
-    }
-
-    paidOrderCount += 1;
-
-    for (const item of order.items) {
-      const itemGross = item.unitPriceAmount * item.quantity;
-      grossRevenue += itemGross;
-      platformCommission += Math.round(itemGross * getSellerCommissionRate(item.kind));
-    }
-  }
+  const productRevenue = (productAgg._sum.unitPriceAmount ?? 0) * (productAgg._sum.quantity ?? 0);
+  const ampasRevenue = (ampasAgg._sum.unitPriceAmount ?? 0) * (ampasAgg._sum.quantity ?? 0);
+  const grossRevenue = productRevenue + ampasRevenue;
+  const productCommission = Math.round(productRevenue * 0.05);
+  const ampasCommission = Math.round(ampasRevenue * 0.03);
+  const platformCommission = productCommission + ampasCommission;
 
   return {
     sellerId,
@@ -499,8 +514,8 @@ export async function getSellerFinanceSummaryDto(
       amount: grossRevenue - platformCommission,
       currency: "IDR",
     },
-    paidOrderCount,
-    pendingOrderCount,
-    fulfilledOrderCount,
+    paidOrderCount: paidCount,
+    pendingOrderCount: pendingCount,
+    fulfilledOrderCount: fulfilledCount,
   };
 }
