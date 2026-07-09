@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { AmpasCard } from "./ampas-card";
 import { AmpasFilters } from "./ampas-filters";
 import { Search } from "lucide-react";
@@ -26,12 +26,7 @@ export function AmpasShell({ listings }: AmpasShellProps) {
   const [selectedUsage, setSelectedUsage] = useState("Semua");
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
 
-  // Filtering Logic
-  const filteredListings = listings.filter((l) => {
-    // Only display active listings
-    if (l.status !== "active") {
-      return false;
-    }
+  const filteredListings = useMemo(() => listings.filter((l) => {
     const matchesSearch =
       l.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
       l.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -44,7 +39,7 @@ export function AmpasShell({ listings }: AmpasShellProps) {
       selectedUsage === "Semua" || l.usageTags.includes(selectedUsage as AmpasUsageTag);
 
     return matchesSearch && matchesCondition && matchesUsage;
-  });
+  }), [listings, searchQuery, selectedCondition, selectedUsage]);
 
   return (
     <div className="grid gap-8 lg:grid-cols-[260px_1fr] items-start animate-in fade-in duration-500">

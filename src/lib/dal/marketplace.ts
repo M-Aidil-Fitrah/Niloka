@@ -1,52 +1,45 @@
 import "server-only";
 
 import type {
-  AmpasCondition as ContractAmpasCondition,
   AmpasListing,
-  AmpasListingStatus as ContractAmpasListingStatus,
-  AmpasUsageTag as ContractAmpasUsageTag,
   Article,
   ArticleCategory as ContractArticleCategory,
   Bundle,
   BundleType as ContractBundleType,
   NilamPassport,
-  PassportValidationStatus as ContractPassportValidationStatus,
   Product,
   ProductCategory,
-  ProductForm as ContractProductForm,
-  ProductFunction as ContractProductFunction,
-  ProductStatus as ContractProductStatus,
-  ProductTag as ContractProductTag,
   ProductTargetMarket as ContractProductTargetMarket,
   Promo,
-  PromoStatus as ContractPromoStatus,
-  PromoType as ContractPromoType,
   Review,
   ReviewTag as ContractReviewTag,
   Seller,
-  SellerType as ContractSellerType,
-  SellerVerificationStatus as ContractSellerVerificationStatus,
 } from "@/lib/contracts";
 import {
-  AmpasCondition,
   AmpasListingStatus,
-  AmpasUsageTag,
   ArticleCategory,
   BundleType,
-  PassportValidationStatus,
   Prisma,
-  ProductForm,
-  ProductFunction,
   ProductStatus,
-  ProductTag,
   ProductTargetMarket,
   PromoStatus,
-  PromoType,
   ReviewTag,
-  SellerType,
-  SellerVerificationStatus,
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import {
+  fromPrismaAmpasCondition,
+  fromPrismaAmpasStatus,
+  fromPrismaAmpasUsageTag,
+  fromPrismaPassportStatus,
+  fromPrismaProductForm,
+  fromPrismaProductFunction,
+  fromPrismaProductTag,
+  fromPrismaProductStatus,
+  fromPrismaPromoStatus,
+  fromPrismaPromoType,
+  fromPrismaSellerType,
+  fromPrismaSellerVerificationStatus,
+} from "@/lib/prisma-mappers";
 
 type ProductWithGallery = Prisma.ProductGetPayload<{
   include: {
@@ -174,30 +167,6 @@ function toIsoString(date: Date): string {
   return date.toISOString();
 }
 
-function toContractSellerType(value: SellerType): ContractSellerType {
-  switch (value) {
-    case SellerType.UMKM:
-      return "umkm";
-    case SellerType.DISTILLER:
-      return "distiller";
-    case SellerType.COOPERATIVE:
-      return "cooperative";
-  }
-}
-
-function toContractSellerVerificationStatus(
-  value: SellerVerificationStatus,
-): ContractSellerVerificationStatus {
-  switch (value) {
-    case SellerVerificationStatus.PENDING:
-      return "pending";
-    case SellerVerificationStatus.VERIFIED:
-      return "verified";
-    case SellerVerificationStatus.REJECTED:
-      return "rejected";
-  }
-}
-
 function toContractProductTargetMarket(
   value: ProductTargetMarket,
 ): ContractProductTargetMarket {
@@ -206,132 +175,6 @@ function toContractProductTargetMarket(
       return "b2c";
     case ProductTargetMarket.B2B:
       return "b2b";
-  }
-}
-
-function toContractProductStatus(
-  value: ProductStatus,
-): ContractProductStatus {
-  switch (value) {
-    case ProductStatus.DRAFT:
-      return "draft";
-    case ProductStatus.PUBLISHED:
-      return "published";
-    case ProductStatus.ARCHIVED:
-      return "archived";
-  }
-}
-
-function toContractProductForm(value: ProductForm): ContractProductForm {
-  switch (value) {
-    case ProductForm.ESSENTIAL_OIL:
-      return "essential-oil";
-    case ProductForm.ROLL_ON:
-      return "roll-on";
-    case ProductForm.SOAP:
-      return "soap";
-    case ProductForm.DIFFUSER:
-      return "diffuser";
-    case ProductForm.PERFUME:
-      return "perfume";
-    case ProductForm.BODY_OIL:
-      return "body-oil";
-    case ProductForm.BUNDLE:
-      return "bundle";
-  }
-}
-
-function toContractProductFunction(
-  value: ProductFunction,
-): ContractProductFunction {
-  switch (value) {
-    case ProductFunction.RELAXATION:
-      return "relaxation";
-    case ProductFunction.FOCUS:
-      return "focus";
-    case ProductFunction.SLEEP_SUPPORT:
-      return "sleep-support";
-    case ProductFunction.SKIN_CARE:
-      return "skin-care";
-    case ProductFunction.HOME_FRAGRANCE:
-      return "home-fragrance";
-    case ProductFunction.GIFT:
-      return "gift";
-  }
-}
-
-function toContractProductTag(value: ProductTag): ContractProductTag {
-  switch (value) {
-    case ProductTag.BEST_SELLER:
-      return "best-seller";
-    case ProductTag.NEW_ARRIVAL:
-      return "new-arrival";
-    case ProductTag.NILAM_PASSPORT:
-      return "nilam-passport";
-    case ProductTag.AROMA_CALM:
-      return "aroma-calm";
-    case ProductTag.LIMITED_BATCH:
-      return "limited-batch";
-  }
-}
-
-function toContractPassportValidationStatus(
-  value: PassportValidationStatus,
-): ContractPassportValidationStatus {
-  switch (value) {
-    case PassportValidationStatus.DRAFT:
-      return "draft";
-    case PassportValidationStatus.PENDING_REVIEW:
-      return "pending-review";
-    case PassportValidationStatus.VALIDATED:
-      return "validated";
-  }
-}
-
-function toContractAmpasCondition(
-  value: AmpasCondition,
-): ContractAmpasCondition {
-  switch (value) {
-    case AmpasCondition.WET:
-      return "wet";
-    case AmpasCondition.DRY:
-      return "dry";
-    case AmpasCondition.MIXED:
-      return "mixed";
-  }
-}
-
-function toContractAmpasUsageTag(
-  value: AmpasUsageTag,
-): ContractAmpasUsageTag {
-  switch (value) {
-    case AmpasUsageTag.COMPOST:
-      return "compost";
-    case AmpasUsageTag.BRIQUETTE:
-      return "briquette";
-    case AmpasUsageTag.MUSHROOM_MEDIA:
-      return "mushroom-media";
-    case AmpasUsageTag.MULCH:
-      return "mulch";
-    case AmpasUsageTag.ANIMAL_FEED:
-      return "animal-feed";
-    case AmpasUsageTag.INDUSTRIAL_CELLULOSE:
-      return "industrial-cellulose";
-  }
-}
-
-function toContractAmpasListingStatus(
-  value: AmpasListingStatus,
-): ContractAmpasListingStatus {
-  switch (value) {
-    case AmpasListingStatus.DRAFT:
-      return "draft";
-    case AmpasListingStatus.ACTIVE:
-      return "active";
-    case AmpasListingStatus.SOLD:
-      return "sold";
-    case AmpasListingStatus.ARCHIVED:
-      return "archived";
   }
 }
 
@@ -347,30 +190,6 @@ function toContractReviewTag(value: ReviewTag): ContractReviewTag {
       return "good-packaging";
     case ReviewTag.REPEAT_ORDER:
       return "repeat-order";
-  }
-}
-
-function toContractPromoStatus(value: PromoStatus): ContractPromoStatus {
-  switch (value) {
-    case PromoStatus.ACTIVE:
-      return "active";
-    case PromoStatus.SCHEDULED:
-      return "scheduled";
-    case PromoStatus.EXPIRED:
-      return "expired";
-    case PromoStatus.DISABLED:
-      return "disabled";
-  }
-}
-
-function toContractPromoType(value: PromoType): ContractPromoType {
-  switch (value) {
-    case PromoType.PERCENTAGE:
-      return "percentage";
-    case PromoType.FIXED_AMOUNT:
-      return "fixed-amount";
-    case PromoType.FREE_SHIPPING:
-      return "free-shipping";
   }
 }
 
@@ -401,13 +220,13 @@ function mapSeller(row: SellerRow): Seller {
     id: row.id,
     slug: row.slug,
     displayName: row.displayName,
-    type: toContractSellerType(row.type),
+    type: fromPrismaSellerType(row.type),
     location: {
       province: row.locationProvince,
       city: row.locationCity,
       district: row.locationDistrict,
     },
-    verificationStatus: toContractSellerVerificationStatus(
+    verificationStatus: fromPrismaSellerVerificationStatus(
       row.verificationStatus,
     ),
     joinedAt: toIsoString(row.joinedAt),
@@ -440,9 +259,9 @@ function mapProduct(row: ProductWithGallery): Product {
     passportId: "",
     name: row.name,
     shortDescription: row.shortDescription,
-    form: toContractProductForm(row.form),
-    functions: row.functions.map(toContractProductFunction),
-    tags: row.tags.map(toContractProductTag),
+    form: fromPrismaProductForm(row.form),
+    functions: row.functions.map(fromPrismaProductFunction),
+    tags: row.tags.map(fromPrismaProductTag),
     price: {
       amount: row.priceAmount,
       currency: "IDR",
@@ -455,7 +274,7 @@ function mapProduct(row: ProductWithGallery): Product {
             currency: "IDR",
           },
     stock: row.stock,
-    status: toContractProductStatus(row.status),
+    status: fromPrismaProductStatus(row.status),
     image: {
       src: row.imageSrc,
       alt: row.imageAlt,
@@ -475,12 +294,12 @@ function mapPassport(row: PassportRow): NilamPassport {
     id: row.id,
     productId: row.productId,
     origin: row.origin,
-    productKind: toContractProductForm(row.productKind),
+    productKind: fromPrismaProductForm(row.productKind),
     aromaProfile: row.aromaProfile,
-    functions: row.functions.map(toContractProductFunction),
+    functions: row.functions.map(fromPrismaProductFunction),
     usage: row.usage,
     safetyNotes: row.safetyNotes,
-    validationStatus: toContractPassportValidationStatus(row.validationStatus),
+    validationStatus: fromPrismaPassportStatus(row.validationStatus),
     validatedBy: row.validatedBy ?? "",
     validatedAt: row.validatedAt ? toIsoString(row.validatedAt) : "",
     batchCode: row.batchCode ?? undefined,
@@ -494,7 +313,7 @@ function mapAmpasListing(row: AmpasListingRow): AmpasListing {
     id: row.id,
     slug: row.slug,
     sellerId: row.sellerId,
-    condition: toContractAmpasCondition(row.condition),
+    condition: fromPrismaAmpasCondition(row.condition),
     quantityKg: row.quantityKg,
     pricePerKg: {
       amount: row.pricePerKgAmount,
@@ -506,8 +325,8 @@ function mapAmpasListing(row: AmpasListingRow): AmpasListing {
       district: row.locationDistrict,
     },
     distillationProcess: row.distillationProcess,
-    usageTags: row.usageTags.map(toContractAmpasUsageTag),
-    status: toContractAmpasListingStatus(row.status),
+    usageTags: row.usageTags.map(fromPrismaAmpasUsageTag),
+    status: fromPrismaAmpasStatus(row.status),
     image: {
       src: row.imageSrc,
       alt: row.imageAlt,
@@ -555,8 +374,8 @@ function mapPromo(row: PromoWithProducts): Promo {
     sellerId: row.sellerId,
     title: row.title,
     code: row.code,
-    status: toContractPromoStatus(row.status),
-    type: toContractPromoType(row.type),
+    status: fromPrismaPromoStatus(row.status),
+    type: fromPrismaPromoType(row.type),
     value: row.value,
     startsAt: toIsoString(row.startsAt),
     endsAt: toIsoString(row.endsAt),
@@ -615,25 +434,22 @@ export async function getPublishedProductsDto(): Promise<Product[]> {
           sortOrder: "asc",
         },
       },
+      passport: {
+        select: {
+          id: true,
+        },
+      },
     },
     orderBy: {
       featuredRank: "asc",
     },
   });
 
-  const passports = await prisma.nilamPassport.findMany({
-    select: {
-      id: true,
-      productId: true,
-    },
-  });
-
   return rows.map((row) => {
     const product = mapProduct(row);
-    const passport = passports.find((item) => item.productId === row.id);
     return {
       ...product,
-      passportId: passport?.id ?? "",
+      passportId: row.passport?.id ?? "",
     };
   });
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useMemo, useCallback } from "react";
 import {
   SessionProvider,
   signIn,
@@ -43,18 +43,18 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
   const { data: session, status, update } = useSession();
   const sessionUser = session?.user;
 
-  const user: AuthUser | null =
-    sessionUser?.id && sessionUser.email
-      ? {
-          id: sessionUser.id,
-          name: sessionUser.name ?? "Pengguna NILOKA",
-          email: sessionUser.email,
-          role: sessionUser.role,
-          sellerId: sessionUser.sellerId ?? undefined,
-        }
-      : null;
+  const user: AuthUser | null = useMemo(() => {
+    if (!sessionUser?.id || !sessionUser.email) return null;
+    return {
+      id: sessionUser.id,
+      name: sessionUser.name ?? "Pengguna NILOKA",
+      email: sessionUser.email,
+      role: sessionUser.role,
+      sellerId: sessionUser.sellerId ?? undefined,
+    };
+  }, [sessionUser]);
 
-  const login = async (
+  const login = useCallback(async (
     email: string,
     password: string,
   ): Promise<AuthUser | null> => {
@@ -82,9 +82,9 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
       role: nextUser.role,
       sellerId: nextUser.sellerId ?? undefined,
     };
-  };
+  }, [update]);
 
-  const register = async (
+  const register = useCallback(async (
     name: string,
     email: string,
     password: string,
@@ -101,25 +101,25 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
 
     const loginResult = await login(email, password);
     return loginResult !== null;
-  };
+  }, [login]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await signOut({
       callbackUrl: "/",
       redirect: true,
     });
-  };
+  }, []);
+
+  const value = useMemo(() => ({
+    user,
+    isLoading: status === "loading",
+    login,
+    register,
+    logout,
+  }), [user, status, login, register, logout]);
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isLoading: status === "loading",
-        login,
-        register,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

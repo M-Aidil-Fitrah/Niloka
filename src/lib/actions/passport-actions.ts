@@ -5,13 +5,18 @@ import { requireSeller } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import {
   PassportValidationStatus,
-  ProductForm,
-  ProductFunction,
   AdminValidationTarget,
   AdminValidationStatus,
 } from "@/generated/prisma/client";
 import { z } from "zod";
 import type { NilamPassport } from "@/lib/contracts";
+import {
+  toPrismaProductForm,
+  fromPrismaProductForm,
+  toPrismaProductFunction,
+  fromPrismaProductFunction,
+  fromPrismaPassportStatus,
+} from "@/lib/prisma-mappers";
 
 const passportSaveSchema = z.object({
   id: z.string(),
@@ -35,92 +40,7 @@ const passportSaveSchema = z.object({
   gpsCoordinates: z.string().min(1, "Koordinat GPS wajib diisi"),
 });
 
-function toPrismaProductForm(form: string): ProductForm {
-  switch (form) {
-    case "essential-oil":
-      return ProductForm.ESSENTIAL_OIL;
-    case "roll-on":
-      return ProductForm.ROLL_ON;
-    case "soap":
-      return ProductForm.SOAP;
-    case "diffuser":
-      return ProductForm.DIFFUSER;
-    case "perfume":
-      return ProductForm.PERFUME;
-    case "body-oil":
-      return ProductForm.BODY_OIL;
-    case "bundle":
-      return ProductForm.BUNDLE;
-    default:
-      return ProductForm.ESSENTIAL_OIL;
-  }
-}
 
-function toPrismaProductFunction(func: string): ProductFunction {
-  switch (func) {
-    case "relaxation":
-      return ProductFunction.RELAXATION;
-    case "focus":
-      return ProductFunction.FOCUS;
-    case "sleep-support":
-      return ProductFunction.SLEEP_SUPPORT;
-    case "skin-care":
-      return ProductFunction.SKIN_CARE;
-    case "home-fragrance":
-      return ProductFunction.HOME_FRAGRANCE;
-    case "gift":
-      return ProductFunction.GIFT;
-    default:
-      return ProductFunction.RELAXATION;
-  }
-}
-
-function fromPrismaProductForm(form: ProductForm): "essential-oil" | "roll-on" | "soap" | "diffuser" | "perfume" | "body-oil" | "bundle" {
-  switch (form) {
-    case ProductForm.ESSENTIAL_OIL:
-      return "essential-oil";
-    case ProductForm.ROLL_ON:
-      return "roll-on";
-    case ProductForm.SOAP:
-      return "soap";
-    case ProductForm.DIFFUSER:
-      return "diffuser";
-    case ProductForm.PERFUME:
-      return "perfume";
-    case ProductForm.BODY_OIL:
-      return "body-oil";
-    case ProductForm.BUNDLE:
-      return "bundle";
-  }
-}
-
-function fromPrismaProductFunction(func: ProductFunction): "relaxation" | "focus" | "sleep-support" | "skin-care" | "home-fragrance" | "gift" {
-  switch (func) {
-    case ProductFunction.RELAXATION:
-      return "relaxation";
-    case ProductFunction.FOCUS:
-      return "focus";
-    case ProductFunction.SLEEP_SUPPORT:
-      return "sleep-support";
-    case ProductFunction.SKIN_CARE:
-      return "skin-care";
-    case ProductFunction.HOME_FRAGRANCE:
-      return "home-fragrance";
-    case ProductFunction.GIFT:
-      return "gift";
-  }
-}
-
-function fromPrismaPassportStatus(status: PassportValidationStatus): "draft" | "pending-review" | "validated" {
-  switch (status) {
-    case PassportValidationStatus.DRAFT:
-      return "draft";
-    case PassportValidationStatus.PENDING_REVIEW:
-      return "pending-review";
-    case PassportValidationStatus.VALIDATED:
-      return "validated";
-  }
-}
 
 export async function savePassportAction(
   input: unknown,
