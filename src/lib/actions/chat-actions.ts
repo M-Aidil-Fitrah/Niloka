@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { requireUser } from "@/lib/auth/session";
 import { ChatMessageSenderRole } from "@/generated/prisma/client";
@@ -145,9 +146,23 @@ export async function getThreadsAction(): Promise<ChatThread[]> {
   }
 }
 
+const threadIdSchema = z.object({
+  threadId: z.string().min(1),
+});
+
+function isThreadParticipant(
+  user: { id: string; sellerId: string | null },
+  thread: { buyerId: string | null; sellerId: string | null },
+): boolean {
+  return user.id === thread.buyerId || user.sellerId === thread.sellerId;
+}
+
 export async function getThreadAction(threadId: string): Promise<ChatThread | null> {
   try {
-    await requireUser();
+    const user = await requireUser();
+    const parsed = threadIdSchema.safeParse({ threadId });
+    if (!parsed.success) return null;
+
     const thread = await prisma.chatThread.findUnique({
       where: { id: threadId },
       include: {
@@ -175,6 +190,9 @@ export async function getThreadAction(threadId: string): Promise<ChatThread | nu
     });
 
     if (!thread) return null;
+
+    if (!isThreadParticipant(user, thread)) return null;
+
     return mapDbThread(thread as unknown as DbThread);
   } catch (error) {
     console.error("Failed to get chat thread:", error);
@@ -199,12 +217,22 @@ function getAutoReplyText(buyerMessage: string, sellerName: string): string {
   return `Halo! Terima kasih sudah menghubungi ${sellerName}. Pesan Anda telah kami terima, silakan tunggu sebentar ya Kak, admin kami akan segera membalas detailnya.`;
 }
 
+const sendMessageSchema = z.object({
+  threadId: z.string().min(1),
+  messageText: z.string().min(1, "Pesan tidak boleh kosong.").max(5000, "Pesan maksimal 5000 karakter."),
+  senderRole: z.enum(["buyer", "seller"]),
+});
+
 export async function sendMessageAction(
   threadId: string,
   messageText: string,
   senderRole: "buyer" | "seller",
 ): Promise<ChatMessage> {
   const user = await requireUser();
+  const parsed = sendMessageSchema.safeParse({ threadId, messageText, senderRole });
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message ?? "Data pesan tidak valid.");
+  }
   const messageId = `msg-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
 
   // Find the thread to get participant IDs
@@ -213,6 +241,7 @@ export async function sendMessageAction(
     include: {
       seller: {
         select: {
+          id: true,
           displayName: true,
         },
       },
@@ -221,6 +250,10 @@ export async function sendMessageAction(
 
   if (!thread) {
     throw new Error("Utas chat tidak ditemukan.");
+  }
+
+  if (!isThreadParticipant(user, thread)) {
+    throw new Error("Anda tidak memiliki akses ke utas chat ini.");
   }
 
   const prismaSenderRole = senderRole === "buyer" ? ChatMessageSenderRole.USER : ChatMessageSenderRole.ASSISTANT;
@@ -467,7 +500,18 @@ export async function getOrCreateThreadAction(
 
 export async function deleteThreadAction(threadId: string): Promise<void> {
   try {
-    await requireUser();
+    const user = await requireUser();
+    const parsed = threadIdSchema.safeParse({ threadId });
+    if (!parsed.success) throw new Error("ID utas tidak valid.");
+
+    const thread = await prisma.chatThread.findUnique({
+      where: { id: threadId },
+      select: { buyerId: true, sellerId: true },
+    });
+
+    if (!thread) throw new Error("Utas chat tidak ditemukan.");
+    if (!isThreadParticipant(user, thread)) throw new Error("Anda tidak memiliki akses ke utas chat ini.");
+
     await prisma.chatThread.delete({
       where: { id: threadId },
     });

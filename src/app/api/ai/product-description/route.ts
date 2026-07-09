@@ -6,6 +6,8 @@ import { checkProductDescriptionGuardrail } from "@/lib/ai/guardrails";
 import { normalizeProductDescription } from "@/lib/ai/normalizers";
 import { generateAiText } from "@/lib/ai/providers";
 import { buildProductDescriptionPrompt } from "@/lib/ai/prompts";
+import { getCurrentUser } from "@/lib/auth/session";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 function getMissingFields(input: ProductDescriptionRequest): string[] {
   const missingFields: string[] = [];
@@ -33,6 +35,20 @@ function getMissingFields(input: ProductDescriptionRequest): string[] {
 }
 
 export async function POST(request: Request) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const ip = request.headers.get("x-forwarded-for") ?? "unknown";
+  const rateCheck = checkRateLimit(`ai-desc:${user.id}:${ip}`, 10, 60_000);
+  if (!rateCheck.allowed) {
+    return Response.json(
+      { error: "Terlalu banyak permintaan. Silakan coba lagi dalam 1 menit." },
+      { status: 429 },
+    );
+  }
+
   const payload: ProductDescriptionRequest = await request.json();
   const missingFields = getMissingFields(payload);
 

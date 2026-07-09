@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
@@ -84,11 +85,20 @@ export async function getAllSellersAction(): Promise<Seller[]> {
   }));
 }
 
+const validationActionSchema = z.object({
+  id: z.string().min(1, "ID validasi diperlukan."),
+  notes: z.string().max(500, "Catatan maksimal 500 karakter.").default(""),
+});
+
 export async function approveValidationAction(
   id: string,
   notes: string,
 ): Promise<{ ok: boolean; message: string }> {
   const admin = await requireAdmin();
+  const parsed = validationActionSchema.safeParse({ id, notes });
+  if (!parsed.success) {
+    return { ok: false, message: parsed.error.issues[0]?.message ?? "Data tidak valid." };
+  }
 
   const item = await prisma.adminValidationItem.findUnique({
     where: { id },
@@ -206,6 +216,10 @@ export async function rejectValidationAction(
   notes: string,
 ): Promise<{ ok: boolean; message: string }> {
   const admin = await requireAdmin();
+  const parsed = validationActionSchema.safeParse({ id, notes });
+  if (!parsed.success) {
+    return { ok: false, message: parsed.error.issues[0]?.message ?? "Data tidak valid." };
+  }
 
   const item = await prisma.adminValidationItem.findUnique({
     where: { id },
