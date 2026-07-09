@@ -455,10 +455,35 @@ export async function getPublishedProductsDto(): Promise<Product[]> {
 }
 
 export async function getFeaturedProductsDto(limit: number): Promise<Product[]> {
-  const products = await getPublishedProductsDto();
-  return products
-    .sort((first, second) => first.featuredRank - second.featuredRank)
-    .slice(0, limit);
+  const rows = await prisma.product.findMany({
+    where: {
+      status: ProductStatus.PUBLISHED,
+    },
+    include: {
+      gallery: {
+        orderBy: {
+          sortOrder: "asc",
+        },
+      },
+      passport: {
+        select: {
+          id: true,
+        },
+      },
+    },
+    orderBy: {
+      featuredRank: "asc",
+    },
+    take: limit,
+  });
+
+  return rows.map((row) => {
+    const product = mapProduct(row);
+    return {
+      ...product,
+      passportId: row.passport?.id ?? "",
+    };
+  });
 }
 
 export async function getProductCategoriesDto(): Promise<ProductCategory[]> {
@@ -472,8 +497,13 @@ export async function getProductCategoriesDto(): Promise<ProductCategory[]> {
 }
 
 export async function getFeaturedProductCategoryDto(): Promise<ProductCategory | null> {
-  const [category] = await getProductCategoriesDto();
-  return category ?? null;
+  const row = await prisma.productCategory.findFirst({
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  return row ? mapProductCategory(row) : null;
 }
 
 export async function getProductBySlugDto(
@@ -490,6 +520,11 @@ export async function getProductBySlugDto(
           sortOrder: "asc",
         },
       },
+      passport: {
+        select: {
+          id: true,
+        },
+      },
     },
   });
 
@@ -497,19 +532,11 @@ export async function getProductBySlugDto(
     return null;
   }
 
-  const passport = await prisma.nilamPassport.findUnique({
-    where: {
-      productId: row.id,
-    },
-    select: {
-      id: true,
-    },
-  });
   const product = mapProduct(row);
 
   return {
     ...product,
-    passportId: passport?.id ?? "",
+    passportId: row.passport?.id ?? "",
   };
 }
 
@@ -536,8 +563,13 @@ export async function getPassportsDto(): Promise<NilamPassport[]> {
 }
 
 export async function getFeaturedPassportDto(): Promise<NilamPassport | null> {
-  const [passport] = await getPassportsDto();
-  return passport ?? null;
+  const row = await prisma.nilamPassport.findFirst({
+    orderBy: {
+      validatedAt: "desc",
+    },
+  });
+
+  return row ? mapPassport(row) : null;
 }
 
 export async function getSellersDto(): Promise<Seller[]> {
@@ -644,8 +676,16 @@ export async function getActiveAmpasListingsDto(): Promise<AmpasListing[]> {
 }
 
 export async function getFeaturedAmpasListingDto(): Promise<AmpasListing | null> {
-  const [listing] = await getActiveAmpasListingsDto();
-  return listing ?? null;
+  const row = await prisma.ampasListing.findFirst({
+    where: {
+      status: AmpasListingStatus.ACTIVE,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  return row ? mapAmpasListing(row) : null;
 }
 
 export async function getAmpasListingBySlugDto(
@@ -695,12 +735,42 @@ export async function getBundlesDto(): Promise<Bundle[]> {
 
 export async function getArticlesDto(): Promise<Article[]> {
   const rows = await prisma.article.findMany({
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      excerpt: true,
+      author: true,
+      authorRole: true,
+      publishedAt: true,
+      imageUrl: true,
+      category: true,
+      videoUrl: true,
+      videoDuration: true,
+      readTime: true,
+      tags: true,
+    },
     orderBy: {
       publishedAt: "desc",
     },
   });
 
-  return rows.map(mapArticle);
+  return rows.map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt,
+    content: "",
+    author: row.author,
+    authorRole: row.authorRole ?? undefined,
+    publishedAt: toIsoString(row.publishedAt),
+    imageUrl: row.imageUrl,
+    category: toContractArticleCategory(row.category),
+    videoUrl: row.videoUrl ?? undefined,
+    videoDuration: row.videoDuration ?? undefined,
+    readTime: row.readTime,
+    tags: row.tags,
+  }));
 }
 
 export async function getArticleBySlugDto(
