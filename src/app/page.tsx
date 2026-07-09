@@ -29,7 +29,7 @@ export default async function Home() {
 
   return (
     <LandingMotion>
-      <main className="min-h-screen overflow-hidden bg-cream-50 text-ink-900" id="top">
+      <main className="min-h-screen bg-cream-50 text-ink-900" id="top">
         <SiteNavbar />
 
         {/* Hero Section */}

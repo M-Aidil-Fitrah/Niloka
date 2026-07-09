@@ -1,23 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRightIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/styles";
 
+function getScrollPosition(): number {
+  const transform = document.documentElement.style.transform;
+  if (transform) {
+    const match = transform.match(/translateY\((-?\d+)px\)/);
+    if (match) return Math.abs(Number.parseInt(match[1], 10));
+  }
+  return window.scrollY;
+}
+
 export function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
+  const ticking = useRef(false);
 
   useEffect(() => {
     const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      if (ticking.current) return;
+      ticking.current = true;
+      requestAnimationFrame(() => {
+        if (getScrollPosition() > 300) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+        ticking.current = false;
+      });
     };
 
-    window.addEventListener("scroll", toggleVisibility);
-    // Trigger initially in case of refreshed scrolled state
+    window.addEventListener("scroll", toggleVisibility, { passive: true });
     toggleVisibility();
 
     return () => window.removeEventListener("scroll", toggleVisibility);

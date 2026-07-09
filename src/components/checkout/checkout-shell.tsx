@@ -422,18 +422,17 @@ export function CheckoutShell({ products, ampasListings, promos }: CheckoutShell
             Anda belum menambahkan produk nilam atsiri B2C atau listing ampas B2B ke dalam keranjang belanja.
           </p>
           <div className="mt-6 flex justify-center gap-3 flex-wrap">
-            <Link href="/products">
-              <Button className="h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all">
-                Beli Produk B2C
-              </Button>
+            <Link
+              href="/products"
+              className="touch-action:manipulation h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all inline-flex items-center justify-center gap-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+            >
+              Beli Produk B2C
             </Link>
-            <Link href="/ampas">
-              <Button
-                variant="secondary"
-                className="h-10 px-5 rounded-xl border-line text-xs font-bold hover:bg-cream-50 transition-all"
-              >
-                Bursa Ampas B2B
-              </Button>
+            <Link
+              href="/ampas"
+              className="touch-action:manipulation h-10 px-5 rounded-xl border border-line bg-white-soft text-brand-900 hover:bg-cream-50 text-xs font-bold transition-all inline-flex items-center justify-center gap-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+            >
+              Bursa Ampas B2B
             </Link>
             <button
               onClick={handleToggleHistory}

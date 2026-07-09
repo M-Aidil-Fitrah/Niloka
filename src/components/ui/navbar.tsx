@@ -107,19 +107,33 @@ export function SiteNavbar() {
             />
           </label>
 
-          <Link href="/chat" className="relative block">
-            <IconButton label="Buka chat" theme={isLight ? "light" : "dark"}>
-              <MessageSquare className="h-[18px] w-[18px]" />
-            </IconButton>
+          <Link
+            href="/chat"
+            aria-label="Buka chat"
+            className={cn(
+              "relative inline-flex size-10 items-center justify-center rounded-full border backdrop-blur transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 touch-action:manipulation",
+              isLight
+                ? "border-line/60 bg-cream-100/55 text-brand-950 hover:bg-cream-100 hover:border-brand-700/40"
+                : "border-white/30 bg-white/20 text-white-soft hover:bg-white/30"
+            )}
+          >
+            <MessageSquare className="h-[18px] w-[18px]" />
             {hasUnreadChats && (
               <span className="absolute top-0 right-0 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-brand-900 border border-white-soft animate-pulse" />
             )}
           </Link>
 
-          <Link href="/checkout" className="relative block">
-            <IconButton label="Buka keranjang" theme={isLight ? "light" : "dark"}>
-              <CartIcon />
-            </IconButton>
+          <Link
+            href="/checkout"
+            aria-label="Buka keranjang"
+            className={cn(
+              "relative inline-flex size-10 items-center justify-center rounded-full border backdrop-blur transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 touch-action:manipulation",
+              isLight
+                ? "border-line/60 bg-cream-100/55 text-brand-950 hover:bg-cream-100 hover:border-brand-700/40"
+                : "border-white/30 bg-white/20 text-white-soft hover:bg-white/30"
+            )}
+          >
+            <CartIcon />
             {totalCount > 0 && (
               <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-extrabold text-white-soft animate-in zoom-in duration-300">
                 {totalCount}

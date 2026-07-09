@@ -102,12 +102,11 @@ export function AmpasCard({ listing, viewMode }: AmpasCardProps) {
               Rp {(listing.pricePerKg.amount * listing.quantityKg).toLocaleString("id-ID")}
             </span>
           </div>
-          <Link href={`/ampas/${listing.slug}`} className="w-full md:w-auto">
-            <button
-              className="w-full md:w-auto h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200 cursor-pointer text-center"
-            >
-              Lihat Detail
-            </button>
+          <Link
+            href={`/ampas/${listing.slug}`}
+            className="touch-action:manipulation w-full md:w-auto h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200 text-center inline-flex items-center justify-center"
+          >
+            Lihat Detail
           </Link>
         </div>
       </div>
@@ -190,12 +189,11 @@ export function AmpasCard({ listing, viewMode }: AmpasCardProps) {
       </div>
 
       <div className="mt-5 pt-3 border-t border-line/40">
-        <Link href={`/ampas/${listing.slug}`} className="w-full">
-          <button
-            className="w-full h-10 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200 cursor-pointer text-center"
-          >
-            Lihat Detail
-          </button>
+        <Link
+          href={`/ampas/${listing.slug}`}
+          className="touch-action:manipulation w-full h-10 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all duration-200 text-center inline-flex items-center justify-center"
+        >
+          Lihat Detail
         </Link>
       </div>
     </article>
