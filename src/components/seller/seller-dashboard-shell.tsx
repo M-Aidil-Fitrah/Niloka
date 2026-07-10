@@ -21,6 +21,7 @@ type SellerDashboardShellProps = {
     pendingPassports: number;
     ratingAverage: number;
     totalReviews: number;
+    dailySales: { day: string; amount: number }[];
     recentTransactions: { id: string; productName: string; buyerName: string; amount: number; date: string; status: "success" | "pending" | "failed" }[];
     activityLog: { action: string; date: string; status: string }[];
   };
@@ -56,6 +57,7 @@ export function SellerDashboardShell({
             pendingPassports={finance.pendingPassports}
             ratingAverage={finance.ratingAverage}
             totalReviews={finance.totalReviews}
+            dailySales={finance.dailySales}
             recentTransactions={finance.recentTransactions}
           />
         );

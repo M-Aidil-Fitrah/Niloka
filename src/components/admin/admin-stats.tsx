@@ -3,29 +3,19 @@
 import { ClipboardCheck, Users, ShieldAlert, Award, TrendingUp } from "lucide-react";
 import { DashboardStatsCard } from "../dashboard/dashboard-layout";
 
+const DISTRIBUTION_COLORS = ["bg-brand-900", "bg-emerald-600", "bg-amber-600", "bg-blue-600"];
+
 type AdminStatsProps = {
   queueCount: number;
   sellerCount: number;
   productCount: number;
+  validationSummary: { day: string; approved: number; rejected: number }[];
+  distribution: { type: string; count: number }[];
 };
 
-export function AdminStats({ queueCount, sellerCount, productCount }: AdminStatsProps) {
-  // Mock weekly validation stats
-  const validationSummary = [
-    { day: "Senin", total: 4, approved: 3, rejected: 1 },
-    { day: "Selasa", total: 6, approved: 5, rejected: 1 },
-    { day: "Rabu", total: 3, approved: 3, rejected: 0 },
-    { day: "Kamis", total: 8, approved: 6, rejected: 2 },
-    { day: "Jumat", total: 5, approved: 4, rejected: 1 },
-    { day: "Sabtu", total: 2, approved: 2, rejected: 0 },
-    { day: "Minggu", total: 1, approved: 1, rejected: 0 },
-  ];
-
-  const distribution = [
-    { type: "Sertifikasi Mitra Baru", count: 12, percent: 40, color: "bg-brand-900" },
-    { type: "Listing Produk B2C", count: 18, percent: 50, color: "bg-emerald-600" },
-    { type: "Transparansi Nilam Passport", count: 8, percent: 10, color: "bg-amber-600" },
-  ];
+export function AdminStats({ queueCount, sellerCount, productCount, validationSummary, distribution }: AdminStatsProps) {
+  const maxVal = Math.max(1, ...validationSummary.map((d) => d.approved + d.rejected));
+  const totalDist = distribution.reduce((s, d) => s + d.count, 0);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -85,9 +75,8 @@ export function AdminStats({ queueCount, sellerCount, productCount }: AdminStats
           {/* Bar Chart Graphics */}
           <div className="flex items-end justify-between gap-2.5 pt-8 h-48 border-b border-line pb-2">
             {validationSummary.map((item) => {
-              const maxTotal = 8;
-              const approveHeight = (item.approved / maxTotal) * 100;
-              const rejectHeight = (item.rejected / maxTotal) * 100;
+              const approveHeight = (item.approved / maxVal) * 100;
+              const rejectHeight = (item.rejected / maxVal) * 100;
 
               return (
                 <div key={item.day} className="flex-1 flex flex-col items-center gap-2 group relative">
@@ -125,26 +114,34 @@ export function AdminStats({ queueCount, sellerCount, productCount }: AdminStats
           </div>
 
           <div className="space-y-4">
-            {distribution.map((dist) => (
-              <div key={dist.type} className="space-y-1.5">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="font-bold text-ink-700">{dist.type}</span>
-                  <span className="font-extrabold text-brand-950">{dist.count} Berkas</span>
+            {distribution.map((dist, idx) => {
+              const pct = totalDist > 0 ? Math.round((dist.count / totalDist) * 100) : 0;
+              return (
+                <div key={dist.type} className="space-y-1.5">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-bold text-ink-700">{dist.type}</span>
+                    <span className="font-extrabold text-brand-950">{dist.count} Berkas</span>
+                  </div>
+                  <div className="w-full bg-cream-100 rounded-full h-2">
+                    <div
+                      style={{ width: `${pct}%` }}
+                      className={`${DISTRIBUTION_COLORS[idx % DISTRIBUTION_COLORS.length]} h-2 rounded-full`}
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-cream-100 rounded-full h-2">
-                  <div
-                    style={{ width: `${dist.percent}%` }}
-                    className={`${dist.color} h-2 rounded-full`}
-                  />
-                </div>
-              </div>
-            ))}
+              );
+            })}
+            {distribution.length === 0 && (
+              <p className="text-xs text-ink-500 py-4 text-center">Belum ada data validasi.</p>
+            )}
           </div>
 
-          <div className="p-3 bg-cream-50/50 border border-line rounded-2xl flex gap-2 items-center text-[10px] text-ink-650 font-bold">
-            <TrendingUp className="h-4 w-4 text-brand-900 shrink-0" />
-            <span>Kinerja validasi meningkat +12% dibanding minggu lalu.</span>
-          </div>
+          {distribution.length > 0 && (
+            <div className="p-3 bg-cream-50/50 border border-line rounded-2xl flex gap-2 items-center text-[10px] text-ink-650 font-bold">
+              <TrendingUp className="h-4 w-4 text-brand-900 shrink-0" />
+              <span>{totalDist} total berkas validasi tercatat.</span>
+            </div>
+          )}
         </div>
       </div>
 
