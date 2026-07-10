@@ -18,6 +18,100 @@ type FulfillResult =
   | { ok: true }
   | { ok: false; error: string };
 
+export type SellerOrderDetail = Awaited<ReturnType<typeof getSellerOrderDetailAction>>;
+
+export async function getSellerOrderDetailAction(orderId: string) {
+  const user = await requireUser();
+  const sellerId = user.sellerId;
+  if (!sellerId) {
+    throw new Error("Akun ini bukan penjual.");
+  }
+
+  const row = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      items: { some: { sellerId } },
+    },
+    include: {
+      user: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      items: {
+        where: { sellerId },
+        include: {
+          product: { select: { name: true, sellerId: true } },
+          ampasListing: { select: { slug: true, sellerId: true } },
+        },
+      },
+      payments: { orderBy: { createdAt: "desc" } },
+      fulfillments: {
+        where: { sellerId },
+        include: { seller: { select: { displayName: true } } },
+        orderBy: { updatedAt: "desc" },
+      },
+    },
+  });
+
+  if (!row) {
+    return null;
+  }
+
+  const { user: buyer, ...orderData } = row;
+
+  return {
+    id: orderData.id,
+    status: orderData.status,
+    createdAt: orderData.createdAt.toISOString(),
+    updatedAt: orderData.updatedAt.toISOString(),
+    paymentExpiresAt: orderData.paymentExpiresAt?.toISOString() ?? "",
+    subtotalAmount: orderData.subtotalAmount,
+    platformFeeAmount: orderData.platformFeeAmount,
+    shippingEstimateAmount: orderData.shippingEstimateAmount,
+    discountAmount: orderData.discountAmount,
+    grandTotalAmount: orderData.grandTotalAmount,
+    promoCode: orderData.promoCode ?? "",
+    shipping: {
+      receiverName: orderData.receiverName ?? "",
+      receiverPhone: orderData.receiverPhone ?? "",
+      address: orderData.shippingAddress ?? "",
+      city: orderData.shippingCity ?? "",
+      province: orderData.shippingProvince ?? "",
+      courierCode: orderData.courierCode ?? "",
+      courierName: orderData.courierName ?? "",
+    },
+    buyer: {
+      name: buyer?.name ?? "Pembeli",
+      email: buyer?.email ?? "",
+    },
+    items: orderData.items.map((item) => ({
+      id: item.id,
+      name: item.product?.name ?? "Produk",
+      quantity: item.quantity,
+      unitPriceAmount: item.unitPriceAmount,
+      subtotalAmount: item.unitPriceAmount * item.quantity,
+    })),
+    payments: orderData.payments.map((p) => ({
+      id: p.id,
+      method: p.paymentMethod,
+      status: p.status,
+      amount: p.amount,
+      paidAt: p.paidAt?.toISOString() ?? "",
+    })),
+    fulfillments: orderData.fulfillments.map((f) => ({
+      id: f.id,
+      status: f.status,
+      trackingNumber: f.trackingNumber ?? "",
+      shippingNote: f.shippingNote ?? "",
+      shippedAt: f.shippedAt?.toISOString() ?? "",
+      deliveredAt: f.deliveredAt?.toISOString() ?? "",
+      updatedAt: f.updatedAt.toISOString(),
+    })),
+  };
+}
+
 export async function processOrderAction(
   orderId: string,
 ): Promise<FulfillResult> {
