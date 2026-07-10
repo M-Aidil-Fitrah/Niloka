@@ -114,7 +114,7 @@ export function DashboardSidebar({
               
               // Filter logic for grouping
               const menuUtama = navigation.filter(item => 
-                item.id === "overview" || item.id === "orders" || item.id === "products" || item.id === "ampas" || item.id === "passport" || item.id === "moderation"
+                item.id === "overview" || item.id === "orders" || item.id === "products" || item.id === "ampas" || item.id === "passport" || item.id === "moderation" || item.id === "sellers" || item.id === "users"
               );
               const manajemen = navigation.filter(item => 
                 item.id === "promos" || item.id === "logs"
