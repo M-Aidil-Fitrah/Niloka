@@ -3,7 +3,7 @@
 import { ClipboardCheck, Users, ShieldAlert, Award, TrendingUp } from "lucide-react";
 import { DashboardStatsCard } from "../dashboard/dashboard-layout";
 
-const DISTRIBUTION_COLORS = ["bg-brand-900", "bg-emerald-600", "bg-amber-600", "bg-blue-600"];
+const DISTRIBUTION_BAR_COLORS = ["bg-brand-900", "bg-emerald-600", "bg-amber-600", "bg-blue-600"];
 
 type AdminStatsProps = {
   queueCount: number;
@@ -125,7 +125,7 @@ export function AdminStats({ queueCount, sellerCount, productCount, validationSu
                   <div className="w-full bg-cream-100 rounded-full h-2">
                     <div
                       style={{ width: `${pct}%` }}
-                      className={`${DISTRIBUTION_COLORS[idx % DISTRIBUTION_COLORS.length]} h-2 rounded-full`}
+                      className={`${DISTRIBUTION_BAR_COLORS[idx % DISTRIBUTION_BAR_COLORS.length]} h-2 rounded-full`}
                     />
                   </div>
                 </div>
