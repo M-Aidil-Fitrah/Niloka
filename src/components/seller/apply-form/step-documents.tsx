@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Upload, Check, X } from "lucide-react";
 
 interface StepDocumentsProps {
@@ -6,8 +6,6 @@ interface StepDocumentsProps {
   setKtpFileName: (val: string) => void;
   nibFileName: string;
   setNibFileName: (val: string) => void;
-  triggerKtpUpload: () => void;
-  triggerNibUpload: () => void;
   errors: Record<string, string>;
 }
 
@@ -16,12 +14,29 @@ export function StepDocuments({
   setKtpFileName,
   nibFileName,
   setNibFileName,
-  triggerKtpUpload,
-  triggerNibUpload,
   errors
 }: StepDocumentsProps) {
+  const ktpRef = useRef<HTMLInputElement>(null);
+  const nibRef = useRef<HTMLInputElement>(null);
+
+  function handleFileSelect(
+    ref: React.RefObject<HTMLInputElement | null>,
+    setter: (name: string) => void,
+  ) {
+    const input = ref.current;
+    if (!input) return;
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (file) setter(file.name);
+    };
+    input.click();
+  }
+
   return (
     <div className="space-y-4 animate-fade-in">
+      <input ref={ktpRef} type="file" accept="image/jpeg,image/png" hidden />
+      <input ref={nibRef} type="file" accept="image/jpeg,image/png,application/pdf" hidden />
+
       <div>
         <h3 className="text-lg font-extrabold text-brand-950 font-accent">Unggah Dokumen Legalitas</h3>
         <p className="text-xs text-ink-600 font-semibold">Unggah dokumen pelengkap untuk validasi identitas.</p>
@@ -48,7 +63,7 @@ export function StepDocuments({
           </div>
         ) : (
           <div 
-            onClick={triggerKtpUpload}
+            onClick={() => handleFileSelect(ktpRef, setKtpFileName)}
             className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all hover:bg-cream-50/30 ${
               errors.ktp ? "border-red-500" : "border-line/50"
             }`}
@@ -84,7 +99,7 @@ export function StepDocuments({
           </div>
         ) : (
           <div 
-            onClick={triggerNibUpload}
+            onClick={() => handleFileSelect(nibRef, setNibFileName)}
             className="border-2 border-dashed border-line/50 rounded-2xl p-6 text-center cursor-pointer hover:bg-cream-50/30 transition-all"
           >
             <Upload className="h-6 w-6 text-ink-600 mx-auto mb-2" />

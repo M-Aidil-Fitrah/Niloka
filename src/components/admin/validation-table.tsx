@@ -30,7 +30,7 @@ export function ValidationTable({ items, sellers, onReviewClick }: ValidationTab
   const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
 
   const getSellerName = (sellerId: string) => {
-    return sellers.find((s) => s.id === sellerId)?.displayName || "Mitra Penyuling";
+    return sellers.find((s) => s.id === sellerId)?.displayName ?? "Tidak diketahui";
   };
 
   const getTargetBadge = (target: AdminValidationTarget) => {

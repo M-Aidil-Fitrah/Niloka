@@ -61,15 +61,15 @@ export function ReviewModal({ item, sellers, onClose, onApprove, onReject }: Rev
             <h5 className="text-[10px] font-extrabold text-ink-600 uppercase tracking-wider">Identitas Pengaju</h5>
             <div className="flex justify-between items-center text-xs">
               <span className="text-ink-650 font-medium">Nama Mitra</span>
-              <strong className="font-extrabold text-brand-950">{currentSeller?.displayName || "Mitra Penyuling"}</strong>
+              <strong className="font-extrabold text-brand-950">{currentSeller?.displayName ?? "Tidak diketahui"}</strong>
             </div>
             <div className="flex justify-between items-center text-xs">
               <span className="text-ink-650 font-medium">Jenis Usaha</span>
-              <strong className="font-bold text-brand-950 uppercase">{currentSeller?.type || "UMKM"}</strong>
+              <strong className="font-bold text-brand-950 uppercase">{currentSeller?.type ?? "Tidak diketahui"}</strong>
             </div>
             <div className="flex justify-between items-center text-xs">
               <span className="text-ink-650 font-medium">Lokasi Penyulingan</span>
-              <strong className="font-bold text-brand-950 text-right">{currentSeller?.location.city}, Aceh</strong>
+              <strong className="font-bold text-brand-950 text-right">{currentSeller ? `${currentSeller.location.city}, ${currentSeller.location.province}` : "Tidak diketahui"}</strong>
             </div>
           </div>
 
@@ -120,33 +120,14 @@ export function ReviewModal({ item, sellers, onClose, onApprove, onReject }: Rev
             )}
 
             {/* Supporting Inspection Documents */}
-            <div className="space-y-2 pt-1">
-              <label className="text-xs font-bold text-ink-700 block">Dokumen Penunjang & Sertifikasi</label>
-              <div className="grid grid-cols-2 gap-3">
-                <a
-                  href="#download-surat-tani"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    showToast("Mengunduh dokumen Izin Usaha Atsiri...", "success");
-                  }}
-                  className="flex items-center gap-2 p-2.5 rounded-xl border border-line bg-white-soft text-brand-950 hover:bg-cream-100/50 transition-all text-[11px] font-bold"
-                >
-                  <FileText className="h-4 w-4 text-brand-900 shrink-0" />
-                  <span className="truncate">IzinUsaha_ATSIRI.pdf</span>
-                </a>
-                <a
-                  href="#download-hasil-lab"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    showToast("Mengunduh lembar hasil Uji Lab GCMS...", "success");
-                  }}
-                  className="flex items-center gap-2 p-2.5 rounded-xl border border-line bg-white-soft text-brand-950 hover:bg-cream-100/50 transition-all text-[11px] font-bold"
-                >
-                  <FileText className="h-4 w-4 text-brand-900 shrink-0" />
-                  <span className="truncate">HasilLab_GCMS.pdf</span>
-                </a>
+            {currentSeller && (
+              <div className="space-y-2 pt-1">
+                <label className="text-xs font-bold text-ink-700 block">Dokumen Penunjang & Sertifikasi</label>
+                <div className="bg-cream-50/50 border border-line/45 rounded-2xl p-4 text-xs text-ink-600 font-medium">
+                  <p>Dokumen pendukung telah dilampirkan oleh pengaju saat pendaftaran.</p>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="space-y-1.5 pt-2">
               <label className="text-xs font-bold text-ink-700">Catatan/Pesan Pengaju</label>

@@ -79,9 +79,8 @@ export function StepBusinessInfo({
           className="block w-full px-4 py-2.5 bg-white border border-line/45 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-900/10 focus:border-brand-900 text-xs text-brand-950 font-semibold transition-all"
         >
           <option value="umkm">UMKM Mandiri</option>
-          <option value="koperasi">Koperasi Petani</option>
-          <option value="kelompok_tani">Kelompok Tani Nilam</option>
-          <option value="perusahaan">Perseroan Terbatas (PT/CV)</option>
+          <option value="distiller">Penyuling Minyak Atsiri</option>
+          <option value="cooperative">Koperasi Petani Nilam</option>
         </select>
       </div>
 

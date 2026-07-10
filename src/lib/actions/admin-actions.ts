@@ -11,6 +11,8 @@ import {
   PassportValidationStatus,
   UserRole,
   ProductTag,
+  ProductStatus,
+  AmpasListingStatus,
 } from "@/generated/prisma/client";
 import type { AdminValidationItem, Seller } from "@/lib/contracts";
 
@@ -188,6 +190,16 @@ export async function approveValidationAction(
           });
         }
       }
+    } else if (item.target === AdminValidationTarget.PRODUCT) {
+      await tx.product.update({
+        where: { id: item.targetId },
+        data: { status: ProductStatus.PUBLISHED },
+      });
+    } else if (item.target === AdminValidationTarget.AMPAS_LISTING) {
+      await tx.ampasListing.update({
+        where: { id: item.targetId },
+        data: { status: AmpasListingStatus.ACTIVE },
+      });
     }
 
     // 3. Write audit log
@@ -275,6 +287,16 @@ export async function rejectValidationAction(
           validationStatus: PassportValidationStatus.DRAFT,
         },
       });
+    } else if (item.target === AdminValidationTarget.PRODUCT) {
+      await tx.product.update({
+        where: { id: item.targetId },
+        data: { status: ProductStatus.ARCHIVED },
+      });
+    } else if (item.target === AdminValidationTarget.AMPAS_LISTING) {
+      await tx.ampasListing.update({
+        where: { id: item.targetId },
+        data: { status: AmpasListingStatus.ARCHIVED },
+      });
     }
 
     // 3. Write audit log
@@ -326,21 +348,43 @@ export async function getAuditLogsAction(): Promise<
 export async function getAdminDashboardStatsAction(): Promise<{
   validationSummary: { day: string; approved: number; rejected: number }[];
   distribution: { type: string; count: number }[];
+  todayQueued: number;
+  thisWeekSellers: number;
+  validatedPassports: number;
+  stalePassportCount: number;
 }> {
   await requireAdmin();
 
   const now = new Date();
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000);
 
-  const weekItems = await prisma.adminValidationItem.findMany({
-    where: {
-      submittedAt: { gte: weekAgo },
-    },
-    select: {
-      status: true,
-      submittedAt: true,
-    },
-  });
+  const [weekItems, todayQueued, thisWeekSellers, validatedPassports, stalePassportCount] = await Promise.all([
+    prisma.adminValidationItem.findMany({
+      where: { submittedAt: { gte: weekAgo } },
+      select: { status: true, submittedAt: true },
+    }),
+    prisma.adminValidationItem.count({
+      where: {
+        status: AdminValidationStatus.QUEUED,
+        submittedAt: { gte: todayStart },
+      },
+    }),
+    prisma.seller.count({
+      where: { joinedAt: { gte: weekAgo } },
+    }),
+    prisma.nilamPassport.count({
+      where: { validationStatus: PassportValidationStatus.VALIDATED },
+    }),
+    prisma.adminValidationItem.count({
+      where: {
+        target: AdminValidationTarget.NILAM_PASSPORT,
+        status: AdminValidationStatus.QUEUED,
+        submittedAt: { lte: twoDaysAgo },
+      },
+    }),
+  ]);
 
   const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const dayMap = new Map<string, { approved: number; rejected: number }>();
@@ -355,7 +399,6 @@ export async function getAdminDashboardStatsAction(): Promise<{
     else if (item.status === AdminValidationStatus.REJECTED) entry.rejected++;
   }
 
-  // Build distribution by target
   const targetCounts = await prisma.adminValidationItem.groupBy({
     by: ["target"],
     _count: { id: true },
@@ -379,5 +422,41 @@ export async function getAdminDashboardStatsAction(): Promise<{
     rejected: dayMap.get(day)!.rejected,
   }));
 
-  return { validationSummary, distribution };
+  return { validationSummary, distribution, todayQueued, thisWeekSellers, validatedPassports, stalePassportCount };
+}
+
+export async function getAllUsersAction(): Promise<
+  { id: string; name: string | null; email: string | null; role: string; sellerId: string | null; createdAt: string }[]
+> {
+  await requireAdmin();
+  const rows = await prisma.user.findMany({ orderBy: { createdAt: "desc" } });
+  return rows.map((u) => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    role: u.role,
+    sellerId: u.sellerId,
+    createdAt: u.createdAt.toISOString(),
+  }));
+}
+
+export async function getAllOrdersAction(): Promise<
+  { id: string; userName: string | null; status: string; grandTotal: number; itemCount: number; createdAt: string }[]
+> {
+  await requireAdmin();
+  const rows = await prisma.order.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      user: { select: { name: true } },
+      items: { select: { quantity: true } },
+    },
+  });
+  return rows.map((o) => ({
+    id: o.id,
+    userName: o.user?.name ?? "Pengguna",
+    status: o.status.toLowerCase(),
+    grandTotal: o.grandTotalAmount,
+    itemCount: o.items.reduce((sum, i) => sum + i.quantity, 0),
+    createdAt: o.createdAt.toISOString(),
+  }));
 }

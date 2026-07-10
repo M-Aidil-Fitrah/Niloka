@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LayoutDashboard, ClipboardCheck, FileText, CheckCircle2, XCircle } from "lucide-react";
+import { LayoutDashboard, ClipboardCheck, FileText, CheckCircle2, XCircle, User, Store, ShoppingBag } from "lucide-react";
 import { DashboardShell, DashboardSidebar, DashboardTopbar } from "../dashboard/dashboard-layout";
 import { AdminStats } from "./admin-stats";
 import { ValidationTable } from "./validation-table";
 import { ReviewModal } from "./review-modal";
 import type { AdminValidationItem, Seller } from "@/lib/contracts";
 import { useAuth } from "@/context/auth-context";
-import { approveValidationAction, rejectValidationAction, getAuditLogsAction, getAdminDashboardStatsAction } from "@/lib/actions/admin-actions";
+import { approveValidationAction, rejectValidationAction, getAuditLogsAction, getAdminDashboardStatsAction, getAllUsersAction, getAllOrdersAction } from "@/lib/actions/admin-actions";
 
 type AdminShellProps = {
   validationItems: AdminValidationItem[];
@@ -23,6 +23,12 @@ export function AdminShell({ validationItems: initialItems, sellers, productCoun
   const [auditLogs, setAuditLogs] = useState<{ id: string; userId: string | null; action: string; target: string; targetId: string; metadata: string; createdAt: string }[]>([]);
   const [validationSummary, setValidationSummary] = useState<{ day: string; approved: number; rejected: number }[]>([]);
   const [distribution, setDistribution] = useState<{ type: string; count: number }[]>([]);
+  const [todayQueued, setTodayQueued] = useState(0);
+  const [thisWeekSellers, setThisWeekSellers] = useState(0);
+  const [validatedPassports, setValidatedPassports] = useState(0);
+  const [stalePassportCount, setStalePassportCount] = useState(0);
+  const [users, setUsers] = useState<{ id: string; name: string | null; email: string | null; role: string; sellerId: string | null; createdAt: string }[]>([]);
+  const [orders, setOrders] = useState<{ id: string; userName: string | null; status: string; grandTotal: number; itemCount: number; createdAt: string }[]>([]);
   const { user } = useAuth();
 
   // Sync initial items
@@ -41,6 +47,9 @@ export function AdminShell({ validationItems: initialItems, sellers, productCoun
   const navigation = [
     { id: "overview", label: "Ringkasan Admin", icon: LayoutDashboard },
     { id: "moderation", label: "Antrean Moderasi", icon: ClipboardCheck, count: queuedCount },
+    { id: "sellers", label: "Manajemen Mitra", icon: Store },
+    { id: "users", label: "Pengguna", icon: User },
+    { id: "orders", label: "Pesanan", icon: ShoppingBag },
     { id: "logs", label: "Log Audit", icon: FileText },
   ];
 
@@ -50,20 +59,28 @@ export function AdminShell({ validationItems: initialItems, sellers, productCoun
       .then((stats) => {
         setValidationSummary(stats.validationSummary);
         setDistribution(stats.distribution);
+        setTodayQueued(stats.todayQueued);
+        setThisWeekSellers(stats.thisWeekSellers);
+        setValidatedPassports(stats.validatedPassports);
+        setStalePassportCount(stats.stalePassportCount);
       })
       .catch((err) => console.error("Failed to load admin stats", err));
   }, []);
 
-  // Fetch audit logs dynamically when tab changes to logs
+  // Fetch data dynamically based on active tab
   useEffect(() => {
     if (activeTab === "logs") {
       getAuditLogsAction()
-        .then((logs) => {
-          setAuditLogs(logs);
-        })
-        .catch((err) => {
-          console.error("Failed to load audit logs", err);
-        });
+        .then((logs) => setAuditLogs(logs))
+        .catch((err) => console.error("Failed to load audit logs", err));
+    } else if (activeTab === "users") {
+      getAllUsersAction()
+        .then(setUsers)
+        .catch((err) => console.error("Failed to load users", err));
+    } else if (activeTab === "orders") {
+      getAllOrdersAction()
+        .then(setOrders)
+        .catch((err) => console.error("Failed to load orders", err));
     }
   }, [activeTab]);
 
@@ -78,6 +95,10 @@ export function AdminShell({ validationItems: initialItems, sellers, productCoun
             productCount={productCount}
             validationSummary={validationSummary}
             distribution={distribution}
+            todayQueued={todayQueued}
+            thisWeekSellers={thisWeekSellers}
+            validatedPassports={validatedPassports}
+            stalePassportCount={stalePassportCount}
           />
         );
       case "moderation":
@@ -87,6 +108,142 @@ export function AdminShell({ validationItems: initialItems, sellers, productCoun
             sellers={sellers}
             onReviewClick={setSelectedItem}
           />
+        );
+      case "sellers":
+        return (
+          <div className="rounded-[28px] border border-line bg-white-soft p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-base font-extrabold text-brand-950">Manajemen Mitra</h3>
+              <p className="text-xs text-ink-600 mt-1">Daftar seluruh mitra penjual ({sellers.length})</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-line/60 text-ink-700 font-bold uppercase tracking-wider">
+                    <th className="p-3 font-bold">Nama</th>
+                    <th className="p-3 font-bold">Tipe</th>
+                    <th className="p-3 font-bold">Lokasi</th>
+                    <th className="p-3 font-bold">Status Verifikasi</th>
+                    <th className="p-3 font-bold">Rating</th>
+                    <th className="p-3 font-bold">Bergabung</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line/35 font-medium text-brand-950">
+                  {sellers.length === 0 ? (
+                    <tr><td colSpan={6} className="p-6 text-center text-ink-600 font-bold">Belum ada mitra terdaftar.</td></tr>
+                  ) : (
+                    sellers.map((s) => (
+                      <tr key={s.id} className="hover:bg-cream-50/20 transition-colors">
+                        <td className="p-3 font-extrabold">{s.displayName}</td>
+                        <td className="p-3 uppercase text-[10px]">{s.type}</td>
+                        <td className="p-3 text-ink-600">{s.location.city}, {s.location.province}</td>
+                        <td className="p-3">
+                          <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase ${
+                            s.verificationStatus === "verified" ? "bg-emerald-50 text-emerald-800 border border-emerald-200" :
+                            s.verificationStatus === "rejected" ? "bg-red-50 text-red-800 border border-red-200" :
+                            "bg-amber-50 text-amber-800 border border-amber-200"
+                          }`}>
+                            {s.verificationStatus === "verified" ? "Terverifikasi" : s.verificationStatus === "rejected" ? "Ditolak" : "Pending"}
+                          </span>
+                        </td>
+                        <td className="p-3">{s.ratingAverage.toFixed(1)}</td>
+                        <td className="p-3 text-ink-600">{new Date(s.joinedAt).toLocaleDateString("id-ID")}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      case "users":
+        return (
+          <div className="rounded-[28px] border border-line bg-white-soft p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-base font-extrabold text-brand-950">Pengguna Terdaftar</h3>
+              <p className="text-xs text-ink-600 mt-1">Daftar seluruh pengguna platform ({users.length})</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-line/60 text-ink-700 font-bold uppercase tracking-wider">
+                    <th className="p-3 font-bold">Nama</th>
+                    <th className="p-3 font-bold">Email</th>
+                    <th className="p-3 font-bold">Role</th>
+                    <th className="p-3 font-bold">Seller ID</th>
+                    <th className="p-3 font-bold">Daftar</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line/35 font-medium text-brand-950">
+                  {users.length === 0 ? (
+                    <tr><td colSpan={5} className="p-6 text-center text-ink-600 font-bold">Belum ada pengguna.</td></tr>
+                  ) : (
+                    users.map((u) => (
+                      <tr key={u.id} className="hover:bg-cream-50/20 transition-colors">
+                        <td className="p-3 font-extrabold">{u.name ?? "-"}</td>
+                        <td className="p-3 text-ink-600">{u.email ?? "-"}</td>
+                        <td className="p-3">
+                          <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase ${
+                            u.role === "ADMIN" ? "bg-purple-50 text-purple-800 border border-purple-200" :
+                            u.role === "SELLER" ? "bg-blue-50 text-blue-800 border border-blue-200" :
+                            "bg-cream-100 text-ink-700 border border-line"
+                          }`}>{u.role}</span>
+                        </td>
+                        <td className="p-3 text-[10px] text-ink-600">{u.sellerId ?? "-"}</td>
+                        <td className="p-3 text-ink-600">{new Date(u.createdAt).toLocaleDateString("id-ID")}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      case "orders":
+        return (
+          <div className="rounded-[28px] border border-line bg-white-soft p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-base font-extrabold text-brand-950">Pesanan</h3>
+              <p className="text-xs text-ink-600 mt-1">Daftar seluruh pesanan ({orders.length})</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-line/60 text-ink-700 font-bold uppercase tracking-wider">
+                    <th className="p-3 font-bold">ID Pesanan</th>
+                    <th className="p-3 font-bold">Pembeli</th>
+                    <th className="p-3 font-bold">Status</th>
+                    <th className="p-3 font-bold">Total</th>
+                    <th className="p-3 font-bold">Item</th>
+                    <th className="p-3 font-bold">Tanggal</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line/35 font-medium text-brand-950">
+                  {orders.length === 0 ? (
+                    <tr><td colSpan={6} className="p-6 text-center text-ink-600 font-bold">Belum ada pesanan.</td></tr>
+                  ) : (
+                    orders.map((o) => (
+                      <tr key={o.id} className="hover:bg-cream-50/20 transition-colors">
+                        <td className="p-3 font-mono text-[10px] font-bold">{o.id}</td>
+                        <td className="p-3 font-extrabold">{o.userName}</td>
+                        <td className="p-3">
+                          <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase ${
+                            o.status === "paid" ? "bg-emerald-50 text-emerald-800 border border-emerald-200" :
+                            o.status === "pending-payment" ? "bg-amber-50 text-amber-800 border border-amber-200" :
+                            o.status === "fulfilled" ? "bg-blue-50 text-blue-800 border border-blue-200" :
+                            "bg-cream-100 text-ink-700 border border-line"
+                          }`}>{o.status}</span>
+                        </td>
+                        <td className="p-3 font-extrabold">Rp {(o.grandTotal).toLocaleString("id-ID")}</td>
+                        <td className="p-3 text-ink-600">{o.itemCount}</td>
+                        <td className="p-3 text-ink-600">{new Date(o.createdAt).toLocaleDateString("id-ID")}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         );
       case "logs":
         return (
@@ -202,9 +359,9 @@ export function AdminShell({ validationItems: initialItems, sellers, productCoun
         <DashboardTopbar
           title={navigation.find((item) => item.id === activeTab)?.label || "Dashboard"}
           subtitle={getSubTitle()}
-          profileName={user?.name || "UPTD Atsiri Aceh"}
-          profileRole={user?.role === "admin" ? "Validator Resmi" : "Admin Staff"}
-          profileImage="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+          profileName={user?.name ?? "Admin"}
+          profileRole="Validator Resmi"
+          profileImage=""
           onMenuClick={() => setIsSidebarOpen(true)}
           backToUrl="/"
           backToLabel="Kembali ke Pasar"

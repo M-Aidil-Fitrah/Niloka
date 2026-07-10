@@ -11,9 +11,13 @@ type AdminStatsProps = {
   productCount: number;
   validationSummary: { day: string; approved: number; rejected: number }[];
   distribution: { type: string; count: number }[];
+  todayQueued: number;
+  thisWeekSellers: number;
+  validatedPassports: number;
+  stalePassportCount: number;
 };
 
-export function AdminStats({ queueCount, sellerCount, productCount, validationSummary, distribution }: AdminStatsProps) {
+export function AdminStats({ queueCount, sellerCount, productCount, validationSummary, distribution, todayQueued, thisWeekSellers, validatedPassports, stalePassportCount }: AdminStatsProps) {
   const maxVal = Math.max(1, ...validationSummary.map((d) => d.approved + d.rejected));
   const totalDist = distribution.reduce((s, d) => s + d.count, 0);
 
@@ -25,7 +29,7 @@ export function AdminStats({ queueCount, sellerCount, productCount, validationSu
           title="Antrean Validasi"
           value={`${queueCount} Pengajuan`}
           icon={ClipboardCheck}
-          trend={{ type: "up", label: "3 Perlu review hari ini" }}
+          trend={{ type: "up", label: `${todayQueued} Perlu review hari ini` }}
           sparkline="M0,10 Q25,25 50,5 T75,20 T100,10"
           theme="gold"
         />
@@ -33,7 +37,7 @@ export function AdminStats({ queueCount, sellerCount, productCount, validationSu
           title="Mitra Penjual"
           value={`${sellerCount} UMKM`}
           icon={Users}
-          trend={{ type: "up", label: "+1 Bergabung minggu ini" }}
+          trend={{ type: "up", label: `+${thisWeekSellers} Bergabung minggu ini` }}
           sparkline="M0,25 Q15,10 30,20 T60,5 T90,15"
           theme="brand"
         />
@@ -41,7 +45,7 @@ export function AdminStats({ queueCount, sellerCount, productCount, validationSu
           title="Produk Terdaftar"
           value={`${productCount} Item`}
           icon={Award}
-          trend={{ type: "up", label: "40+ Paspor tervalidasi" }}
+          trend={{ type: "up", label: `${validatedPassports} Paspor tervalidasi` }}
           sparkline="M0,15 Q20,10 40,25 T80,10 T100,5"
           theme="cream"
         />
@@ -159,14 +163,22 @@ export function AdminStats({ queueCount, sellerCount, productCount, validationSu
         <div className="rounded-[28px] border border-line bg-white-soft p-6 sm:p-8 space-y-3">
           <h3 className="text-sm font-extrabold text-brand-950">Pemberitahuan Sistem</h3>
           <div className="space-y-2">
-            <div className="flex gap-2.5 items-start text-xs font-semibold text-ink-650">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 mt-1.5 animate-pulse" />
-              <span>Ada 2 pengajuan validasi Nilam Passport dari Kabupaten Aceh Jaya yang tertunda lebih dari 48 jam.</span>
-            </div>
+            {stalePassportCount > 0 && (
+              <div className="flex gap-2.5 items-start text-xs font-semibold text-ink-650">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 mt-1.5 animate-pulse" />
+                <span>Ada {stalePassportCount} pengajuan validasi Nilam Passport yang tertunda lebih dari 48 jam.</span>
+              </div>
+            )}
             <div className="flex gap-2.5 items-start text-xs font-semibold text-ink-650">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
               <span>Sistem deteksi otomatis AI untuk monitoring klaim medis aktif di background.</span>
             </div>
+            {stalePassportCount === 0 && (
+              <div className="flex gap-2.5 items-start text-xs font-semibold text-ink-650">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0 mt-1.5" />
+                <span>Semua pengajuan validasi dalam batas waktu yang wajar.</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
