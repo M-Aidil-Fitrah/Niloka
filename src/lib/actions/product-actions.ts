@@ -5,6 +5,7 @@ import { requireSeller } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import {
   PassportValidationStatus,
+  ProductStatus,
 } from "@/generated/prisma/client";
 import { z } from "zod";
 import type { Product } from "@/lib/contracts";
@@ -319,5 +320,52 @@ export async function getSellerProductsAction(): Promise<Product[]> {
     featuredRank: row.featuredRank,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
+  }));
+}
+
+export type SearchPreviewItem = {
+  id: string;
+  slug: string;
+  name: string;
+  form: string;
+  price: { amount: number; currency: string };
+  image: { src: string; alt: string };
+};
+
+export async function searchProductPreviewAction(
+  query: string,
+): Promise<SearchPreviewItem[]> {
+  const q = query.trim();
+  if (q.length < 2) return [];
+
+  const rows = await prisma.product.findMany({
+    where: {
+      status: ProductStatus.PUBLISHED,
+      OR: [
+        { name: { contains: q, mode: "insensitive" } },
+        { shortDescription: { contains: q, mode: "insensitive" } },
+      ],
+    },
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      form: true,
+      priceAmount: true,
+      priceCurrency: true,
+      imageSrc: true,
+      imageAlt: true,
+    },
+    orderBy: { featuredRank: "asc" },
+    take: 6,
+  });
+
+  return rows.map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    form: fromPrismaProductForm(row.form),
+    price: { amount: row.priceAmount, currency: row.priceCurrency as "IDR" },
+    image: { src: row.imageSrc, alt: row.imageAlt },
   }));
 }
