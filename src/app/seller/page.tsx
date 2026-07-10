@@ -7,7 +7,7 @@ import { useAuth } from "@/context/auth-context";
 import { getSellerAmpasListingsAction } from "@/lib/actions/ampas-actions";
 import { getSellerProductsAction } from "@/lib/actions/product-actions";
 import { getSellerPromosAction } from "@/lib/actions/promo-actions";
-import { getSellerFinanceSummaryAction } from "@/lib/actions/checkout-actions";
+import { getSellerFinanceSummaryAction } from "@/lib/actions/seller-finance-actions";
 import { getSellerOrdersAction } from "@/lib/actions/seller-order-actions";
 import type { AmpasListing, Product, Promo, OrderTracking } from "@/lib/contracts";
 import { SellerDashboardSkeleton } from "@/components/ui/skeletons";
