@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Ticket, Copy, Check } from "lucide-react";
+import { CheckCircle, ShoppingCart, Ticket, Copy, Check } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
 import { MapPinIcon, StarIcon } from "@/components/ui/icons";
 import type { Product, Seller, Promo } from "@/lib/contracts";
@@ -26,7 +27,9 @@ const tagLabels: Record<string, string> = {
 
 export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) {
   const { addItem } = useCart();
+  const router = useRouter();
   const [isAdded, setIsAdded] = useState(false);
+  const [isBuyingNow, setIsBuyingNow] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const handleAddToCart = () => {
@@ -41,6 +44,20 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
     setTimeout(() => {
       setIsAdded(false);
     }, 2000);
+  };
+
+  const handleBuyNow = () => {
+    setIsBuyingNow(true);
+    addItem({
+      kind: "product",
+      productId: product.id,
+      ampasListingId: null,
+      quantity: 1,
+      unitPrice: product.price,
+    }, true);
+    setTimeout(() => {
+      router.push("/checkout");
+    }, 300);
   };
 
   const handleCopyCode = (code: string) => {
@@ -195,16 +212,26 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
       {/* Actions */}
       <div className="mt-8 flex flex-col gap-3 sm:flex-row relative">
         <Button
+          className="flex-1"
+          size="md"
+          disabled={isBuyingNow}
+          onClick={handleBuyNow}
+        >
+          <ShoppingCart className="h-4 w-4" />
+          {isBuyingNow ? "Memproses..." : "Beli Sekarang"}
+        </Button>
+        <Button
           className={`flex-1 transition-all duration-300 ${
             isAdded ? "bg-emerald-700 hover:bg-emerald-600" : ""
           }`}
           size="md"
+          variant="secondary"
           onClick={handleAddToCart}
         >
           {isAdded ? (
             <span className="flex items-center justify-center gap-1.5">
               <CheckCircle className="h-4 w-4" />
-              Berhasil Ditambahkan!
+              Ditambahkan!
             </span>
           ) : (
             "Masukkan Keranjang"

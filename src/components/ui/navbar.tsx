@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, MessageSquare, LogOut, Briefcase, Shield } from "lucide-react";
+import { Menu, X, MessageSquare, LogOut, Briefcase, Shield, Package } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { CartIcon, SearchIcon, UserIcon } from "@/components/ui/icons";
 import nilokaLogo from "@/public/assets/logo/logo.png";
@@ -39,7 +39,7 @@ export function SiteNavbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const isLight = pathname !== "/";
-  const { totalCount } = useCart();
+  const { totalCount, openCartDrawer } = useCart();
 
   const closeMenus = useCallback(() => {
     setIsMobileMenuOpen(false);
@@ -79,10 +79,7 @@ export function SiteNavbar() {
   }, []);
 
   return (
-    <header
-      className="site-nav page-shell fixed inset-x-0 z-50"
-      style={{ top: `calc(1.5rem + var(--safe-area-top))` }}
-    >
+    <header className="site-nav page-shell fixed inset-x-0 top-6 z-50">
       <div
         className={cn(
           "site-nav-surface grid min-h-16 grid-cols-[auto_1fr_auto] items-center gap-5 rounded-full border px-6 py-3 transition-all duration-300 sm:px-7",
@@ -166,11 +163,11 @@ export function SiteNavbar() {
             )}
           </Link>
 
-          <Link
-            href="/checkout"
+          <button
+            onClick={openCartDrawer}
             aria-label="Buka keranjang"
             className={cn(
-              "relative inline-flex size-10 items-center justify-center rounded-full border backdrop-blur transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500",
+              "relative inline-flex size-10 items-center justify-center rounded-full border backdrop-blur transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 cursor-pointer",
               isLight
                 ? "border-line/60 bg-cream-100/55 text-brand-950 hover:bg-cream-100 hover:border-brand-700/40"
                 : "border-white/30 bg-white/20 text-white-soft hover:bg-white/30"
@@ -183,7 +180,7 @@ export function SiteNavbar() {
                 {totalCount}
               </span>
             )}
-          </Link>
+          </button>
 
           <div className="relative">
             <IconButton
@@ -209,6 +206,15 @@ export function SiteNavbar() {
                     </div>
 
                     <div className="flex flex-col gap-1.5 text-xs font-bold">
+                      <Link
+                        href="/orders"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-cream-100/50 transition-all"
+                      >
+                        <Package className="h-4 w-4 text-brand-700" />
+                        Pesanan Saya
+                      </Link>
+
                       {user.role === "seller" && (
                         <Link
                           href="/seller"

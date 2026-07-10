@@ -38,7 +38,6 @@ export function Button({
   size = "md",
   type = "button",
   isLoading,
-  disabled,
   ...props
 }: ButtonProps) {
   return (
@@ -50,9 +49,9 @@ export function Button({
         className,
       )}
       type={type}
-      style={{ touchAction: "manipulation" }}
-      disabled={disabled || isLoading}
       {...props}
+      disabled={props.disabled || isLoading}
+      style={{ touchAction: "manipulation", ...props.style }}
     >
       {isLoading && (
         <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">

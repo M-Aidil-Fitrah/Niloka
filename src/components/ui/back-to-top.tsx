@@ -51,12 +51,11 @@ export function BackToTop() {
       onClick={scrollToTop}
       type="button"
       className={cn(
-        "fixed right-6 z-40 flex size-11 items-center justify-center rounded-full border border-white-soft/30 bg-brand-950/80 text-white-soft shadow-lg backdrop-blur transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 cursor-pointer",
+        "fixed bottom-[84px] right-6 z-40 flex size-11 items-center justify-center rounded-full border border-white-soft/30 bg-brand-950/80 text-white-soft shadow-lg backdrop-blur transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 cursor-pointer",
         isVisible 
           ? "opacity-100 translate-y-0 pointer-events-auto" 
           : "opacity-0 translate-y-4 pointer-events-none"
       )}
-      style={{ bottom: `calc(5.25rem + var(--safe-area-bottom))` }}
     >
       <ArrowRightIcon className="-rotate-90" />
     </button>

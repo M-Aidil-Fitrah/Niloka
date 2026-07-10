@@ -1,754 +1,340 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
-import { CartItemsList } from "./cart-items-list";
 import { ShippingForm } from "./shipping-form";
-import { OrderSummaryCard } from "./order-summary-card";
-import { PaymentCoreModal } from "./payment-core-modal";
 import {
-  Calendar,
-  Printer,
-  Receipt,
+  AlertCircle,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   RefreshCw,
-  ShieldCheck,
-  ShoppingCart,
+  ShoppingBag,
 } from "lucide-react";
 import type {
   AmpasListing,
   CartItem,
-  Money,
   PaymentInstruction,
   PaymentStatus,
   Product,
   Promo,
   PromoValidationResult,
 } from "@/lib/contracts";
-import { checkoutAction, fetchOrderHistoryAction } from "@/lib/actions/checkout-actions";
+import { checkoutAction } from "@/lib/actions/checkout-actions";
+import { cn } from "@/lib/styles";
 
 type CheckoutShellProps = {
   products: Product[];
   ampasListings: AmpasListing[];
   promos: Promo[];
+  selectedIds: string[];
 };
 
-type OrderHistoryItem = {
-  orderId: string;
-  date: string;
-  items: {
-    name: string;
-    quantity: number;
-    unitPrice: number;
-    kind: string;
-  }[];
-  shippingAddress: {
-    receiverName: string;
-    phone: string;
-    address: string;
-    city: string;
-    province: string;
-  };
-  courier: string;
-  paymentMethod: string;
-  subtotal: number;
-  platformFee: number;
-  shippingFee: number;
-  discount: number;
-  grandTotal: number;
+const courierRates: Record<string, { name: string; amount: number }> = {
+  jne: { name: "JNE Regular", amount: 15000 },
+  jnt: { name: "J&T Express", amount: 18000 },
+  sicepat: { name: "SiCepat Halu", amount: 12000 },
+  gosend: { name: "GoSend Instant", amount: 25000 },
 };
 
-function validatePromoCodeFromDb(
-  codeInput: string,
-  items: CartItem[],
-  promos: Promo[],
-  shippingFee: number,
-): PromoValidationResult {
-  const code = codeInput.trim().toUpperCase();
+type PayMethod = "bca" | "mandiri" | "bni" | "gopay" | "qris";
 
-  if (!code) {
-    return {
-      status: "empty",
-      promo: null,
-      discountAmount: 0,
-      eligibleSubtotal: 0,
-      message: "Masukkan kode promo terlebih dahulu.",
-    };
-  }
+const PAY_METHODS: { id: PayMethod; label: string; icon: string; desc: string }[] = [
+  { id: "bca", label: "BCA Virtual Account", icon: "BCA", desc: "Transfer via mobile/ATM/Internet Banking BCA" },
+  { id: "mandiri", label: "Mandiri Virtual Account", icon: "Mandiri", desc: "Transfer via Livin'/ATM Mandiri" },
+  { id: "bni", label: "BNI Virtual Account", icon: "BNI", desc: "Transfer via mobile/ATM BNI" },
+  { id: "gopay", label: "GoPay", icon: "GoPay", desc: "Bayar via aplikasi Gojek" },
+  { id: "qris", label: "QRIS", icon: "QRIS", desc: "Scan pakai e-wallet/mobile banking" },
+];
 
-  const promo = promos.find((item) => item.code.toUpperCase() === code);
-
-  if (!promo) {
-    return {
-      status: "not-found",
-      promo: null,
-      discountAmount: 0,
-      eligibleSubtotal: 0,
-      message: "Kode promo tidak ditemukan.",
-    };
-  }
-
+function validatePromo(items: CartItem[], promos: Promo[], code: string, sf: number): PromoValidationResult {
+  const c = code.trim().toUpperCase();
+  if (!c) return { status: "empty", promo: null, discountAmount: 0, eligibleSubtotal: 0, message: "" };
+  const promo = promos.find((p) => p.code.toUpperCase() === c);
+  if (!promo) return { status: "not-found", promo: null, discountAmount: 0, eligibleSubtotal: 0, message: "Kode promo tidak ditemukan." };
   const now = new Date();
-  const startsAt = new Date(promo.startsAt);
-  const endsAt = new Date(promo.endsAt);
-
-  if (promo.status !== "active" || now < startsAt || now > endsAt) {
-    return {
-      status: promo.status === "scheduled" ? "scheduled" : "expired",
-      promo: null,
-      discountAmount: 0,
-      eligibleSubtotal: 0,
-      message: "Promo belum aktif atau sudah berakhir.",
-    };
-  }
-
-  if (promo.usageLimit > 0 && promo.usedCount >= promo.usageLimit) {
-    return {
-      status: "usage-limit-reached",
-      promo: null,
-      discountAmount: 0,
-      eligibleSubtotal: 0,
-      message: "Kuota promo sudah habis.",
-    };
-  }
-
-  const eligibleSubtotal = items.reduce((total, item) => {
-    const isEligible =
-      promo.productIds.length === 0 ||
-      (item.productId ? promo.productIds.includes(item.productId) : false);
-
-    return isEligible ? total + item.unitPrice.amount * item.quantity : total;
+  if (promo.status !== "active" || now < new Date(promo.startsAt) || now > new Date(promo.endsAt))
+    return { status: "expired", promo: null, discountAmount: 0, eligibleSubtotal: 0, message: "Promo sudah berakhir." };
+  if (promo.usageLimit > 0 && promo.usedCount >= promo.usageLimit)
+    return { status: "usage-limit-reached", promo: null, discountAmount: 0, eligibleSubtotal: 0, message: "Kuota promo habis." };
+  const eligible = items.reduce((t, item) => {
+    const ok = promo.productIds.length === 0 || (item.productId ? promo.productIds.includes(item.productId) : false);
+    return ok ? t + item.unitPrice.amount * item.quantity : t;
   }, 0);
-
-  if (eligibleSubtotal <= 0) {
-    return {
-      status: "no-eligible-items",
-      promo: null,
-      discountAmount: 0,
-      eligibleSubtotal,
-      message: "Promo tidak berlaku untuk item di keranjang ini.",
-    };
-  }
-
-  if (eligibleSubtotal < promo.minSubtotal.amount) {
-    return {
-      status: "minimum-subtotal-not-met",
-      promo: null,
-      discountAmount: 0,
-      eligibleSubtotal,
-      message: `Minimal belanja Rp ${promo.minSubtotal.amount.toLocaleString("id-ID")}.`,
-    };
-  }
-
-  const discountAmount =
-    promo.type === "percentage"
-      ? Math.floor((eligibleSubtotal * promo.value) / 100)
-      : promo.type === "fixed-amount"
-        ? Math.min(eligibleSubtotal, promo.value)
-        : shippingFee;
-
-  return {
-    status: "valid",
-    promo,
-    discountAmount,
-    eligibleSubtotal,
-    message: "Promo berhasil diterapkan.",
-  };
+  if (eligible <= 0) return { status: "no-eligible-items", promo: null, discountAmount: 0, eligibleSubtotal: 0, message: "Promo tidak berlaku." };
+  if (eligible < promo.minSubtotal.amount) return { status: "minimum-subtotal-not-met", promo: null, discountAmount: 0, eligibleSubtotal: eligible, message: `Min. Rp ${promo.minSubtotal.amount.toLocaleString("id-ID")}.` };
+  const d = promo.type === "percentage" ? Math.floor((eligible * promo.value) / 100) : promo.type === "fixed-amount" ? Math.min(eligible, promo.value) : sf;
+  return { status: "valid", promo, discountAmount: d, eligibleSubtotal: eligible, message: "Promo diterapkan!" };
 }
 
-export function CheckoutShell({ products, ampasListings, promos }: CheckoutShellProps) {
-  const { items, updateQuantity, removeItem, clearCart } = useCart();
+export function CheckoutShell({ products, ampasListings, promos, selectedIds }: CheckoutShellProps) {
+  const router = useRouter();
+  const { items, clearCart, refreshCart } = useCart();
 
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [receiverName, setReceiverName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [province, setProvince] = useState("");
   const [courier, setCourier] = useState("jne");
-  const [paymentMethod, setPaymentMethod] = useState("qris");
+  const [payMethod, setPayMethod] = useState<PayMethod>("bca");
 
-  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
-  const [isCreatingPayment, setIsCreatingPayment] = useState(false);
-  const [isCheckingPayment, setIsCheckingPayment] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [payError, setPayError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [generatedOrderId, setGeneratedOrderId] = useState("");
-  const [paymentInstruction, setPaymentInstruction] = useState<PaymentInstruction | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("pending");
+  const [orderId, setOrderId] = useState("");
+  const [payment, setPayment] = useState<PaymentInstruction | null>(null);
+  const [pStatus, setPStatus] = useState<PaymentStatus>("pending");
+  const [polling, setPolling] = useState(false);
 
-  const [promoCodeInput, setPromoCodeInput] = useState("");
+  const [promoCode, setPromoCode] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<Promo | null>(null);
-  const [promoError, setPromoError] = useState("");
+  const [promoErr, setPromoErr] = useState("");
+  const [promoOk, setPromoOk] = useState("");
 
-  const [ordersHistory, setOrdersHistory] = useState<OrderHistoryItem[]>([]);
-  const [showHistory, setShowHistory] = useState(false);
+  // Sync cart on mount — fixes stale data bug
+  useEffect(() => { refreshCart(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const [invoiceItems, setInvoiceItems] = useState<
-    (CartItem & {
-      name: string;
-      imageSrc: string;
-      imageAlt: string;
-      wholesaleEnabled?: boolean;
-      wholesaleMinQtyKg?: number;
-      wholesalePricePerKg?: Money | null;
-      normalPricePerKg?: Money | null;
-    })[]
-  >([]);
-  const [invoiceSubtotal, setInvoiceSubtotal] = useState(0);
-  const [invoiceShippingFee, setInvoiceShippingFee] = useState(0);
-  const [invoicePlatformFee, setInvoicePlatformFee] = useState(0);
-  const [invoiceDiscount, setInvoiceDiscount] = useState(0);
-  const [invoiceGrandTotal, setInvoiceGrandTotal] = useState(0);
+  const displayItems = useMemo(() => items.filter((i) => selectedIds.length === 0 || selectedIds.includes(i.id)), [items, selectedIds]);
 
-  const courierRates: Record<string, number> = {
-    jne: 15000,
-    jnt: 18000,
-    sicepat: 12000,
-    gosend: 25000,
-  };
-
-  const courierNames: Record<string, string> = {
-    jne: "JNE Regular",
-    jnt: "J&T Express",
-    sicepat: "SiCepat Halu",
-    gosend: "GoSend Instant",
-  };
-
-  const resolvedItems = useMemo(
-    () =>
-      items.map((item) => {
-        if (item.kind === "product") {
-          const prod = products.find((product) => product.id === item.productId);
-          return {
-            ...item,
-            name: prod?.name || "Produk Nilam",
-            imageSrc:
-              prod?.image.src ||
-              "https://images.unsplash.com/photo-1540555700478-4be289fbecef",
-            imageAlt: prod?.image.alt || "Produk",
-            wholesaleEnabled: false,
-            wholesaleMinQtyKg: 0,
-            wholesalePricePerKg: null,
-            normalPricePerKg: prod?.price || item.unitPrice,
-          };
-        }
-
-        const ampas = ampasListings.find((listing) => listing.id === item.ampasListingId);
-        return {
-          ...item,
-          name: ampas
-            ? ampas.slug
-                .split("-")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ")
-            : "Ampas Nilam B2B",
-          imageSrc:
-            ampas?.image.src ||
-            "https://images.unsplash.com/photo-1515377905703-c4788e51af15",
-          imageAlt: ampas?.image.alt || "Ampas Nilam",
-          wholesaleEnabled: ampas?.wholesaleEnabled || false,
-          wholesaleMinQtyKg: ampas?.wholesaleMinQtyKg || 0,
-          wholesalePricePerKg: ampas?.wholesalePricePerKg || null,
-          normalPricePerKg: ampas?.pricePerKg || item.unitPrice,
-        };
-      }),
-    [ampasListings, items, products],
-  );
-
-  const subtotal = resolvedItems.reduce(
-    (acc, item) => acc + item.unitPrice.amount * item.quantity,
-    0,
-  );
-  const platformFee = subtotal > 0 ? 2000 : 0;
-  const shippingFee = subtotal > 0 ? courierRates[courier] : 0;
-  const appliedPromoResult = appliedPromo
-    ? validatePromoCodeFromDb(appliedPromo.code, items, promos, shippingFee)
-    : null;
-  const discountAmount =
-    appliedPromoResult?.status === "valid" ? appliedPromoResult.discountAmount : 0;
-  const grandTotal = Math.max(0, subtotal + platformFee + shippingFee - discountAmount);
-  const isFormValid = receiverName && phone && address && city && province;
-
-  const loadOrderHistory = useCallback(async () => {
-    try {
-      const data = await fetchOrderHistoryAction();
-      setOrdersHistory(data);
-    } catch (error) {
-      console.error("Failed to load order history", error);
+  const resolved = useMemo(() => displayItems.map((item) => {
+    if (item.kind === "product") {
+      const p = products.find((x) => x.id === item.productId);
+      return { ...item, name: p?.name || "Produk", imageSrc: p?.image.src || "", imageAlt: p?.image.alt || "" };
     }
-  }, []);
+    const a = ampasListings.find((x) => x.id === item.ampasListingId);
+    return { ...item, name: a?.slug?.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") || "Ampas", imageSrc: a?.image.src || "", imageAlt: a?.image.alt || "" };
+  }), [displayItems, products, ampasListings]);
 
-  const completePaidOrder = useCallback(async () => {
-    setIsPaymentOpen(false);
-    setIsSuccess(true);
-    clearCart();
-    await loadOrderHistory();
-  }, [clearCart, loadOrderHistory]);
+  const subtotal = resolved.reduce((a: number, i: typeof resolved[number]) => a + i.unitPrice.amount * i.quantity, 0);
+  const sf = subtotal > 0 ? (courierRates[courier]?.amount ?? 0) : 0;
 
-  const checkPaymentStatus = useCallback(
-    async (orderId = generatedOrderId) => {
-      if (!orderId) return;
-
-      setIsCheckingPayment(true);
-      setPayError("");
-
-      try {
-        const response = await fetch(`/api/payments/${orderId}/status`, {
-          cache: "no-store",
-        });
-        const payload = (await response.json()) as {
-          paymentStatus?: PaymentStatus;
-          payment?: PaymentInstruction | null;
-          message?: string;
-        };
-
-        if (!response.ok) {
-          setPayError(payload.message || "Gagal mengecek status pembayaran.");
-          return;
-        }
-
-        if (payload.payment) {
-          setPaymentInstruction(payload.payment);
-        }
-
-        if (payload.paymentStatus) {
-          setPaymentStatus(payload.paymentStatus);
-        }
-
-        if (payload.paymentStatus === "paid") {
-          await completePaidOrder();
-        } else if (payload.paymentStatus === "failed" || payload.paymentStatus === "expired") {
-          setPayError("Pembayaran sudah berstatus final. Silakan buat pesanan baru bila diperlukan.");
-        }
-      } catch (error) {
-        console.error(error);
-        setPayError("Koneksi server gagal saat mengecek status pembayaran.");
-      } finally {
-        setIsCheckingPayment(false);
-      }
-    },
-    [completePaidOrder, generatedOrderId],
-  );
-
-  useEffect(() => {
-    if (!isPaymentOpen || !generatedOrderId || paymentStatus !== "pending") return;
-
-    const intervalId = window.setInterval(() => {
-      void checkPaymentStatus(generatedOrderId);
-    }, 4000);
-
-    return () => window.clearInterval(intervalId);
-  }, [checkPaymentStatus, generatedOrderId, isPaymentOpen, paymentStatus]);
+  const promoResult = appliedPromo ? validatePromo(displayItems, promos, appliedPromo.code, sf) : null;
+  const disc = promoResult?.status === "valid" ? promoResult.discountAmount : 0;
+  const shippingValid = receiverName.trim().length >= 3 && phone.trim().length >= 4 && address.trim().length >= 10 && city.trim().length >= 3 && province.trim().length >= 3;
 
   const handleApplyPromo = () => {
-    setPromoError("");
-    const result = validatePromoCodeFromDb(promoCodeInput, items, promos, shippingFee);
-
-    if (result.status === "valid" && result.promo) {
-      setAppliedPromo(result.promo);
-    } else {
-      setAppliedPromo(null);
-      setPromoError(result.message);
-    }
-
-    setPromoCodeInput("");
+    setPromoErr(""); setPromoOk("");
+    const r = validatePromo(displayItems, promos, promoCode, sf);
+    if (r.status === "valid" && r.promo) { setAppliedPromo(r.promo); setPromoOk(r.message); setPromoCode(""); }
+    else { setAppliedPromo(null); setPromoErr(r.message); setPromoCode(""); }
   };
 
-  const handleRemovePromo = () => {
-    setAppliedPromo(null);
-    setPromoError("");
-  };
-
-  const handlePayClick = async () => {
-    if (!isFormValid || isCreatingPayment) return;
-
-    setIsCreatingPayment(true);
-    setPayError("");
-    setPaymentStatus("pending");
-
-    setInvoiceSubtotal(subtotal);
-    setInvoiceShippingFee(shippingFee);
-    setInvoicePlatformFee(platformFee);
-    setInvoiceDiscount(discountAmount);
-    setInvoiceGrandTotal(grandTotal);
-    setInvoiceItems(resolvedItems);
-
+  const checkPayment = useCallback(async (oid: string) => {
     try {
-      const response = await checkoutAction({
-        receiverName,
-        phone,
-        address,
-        city,
-        province,
-        courierCode: courier,
-        paymentMethod,
-        promoCode: appliedPromo?.code ?? "",
-      });
+      const res = await fetch(`/api/payments/${oid}/status`, { cache: "no-store" });
+      const data = await res.json() as { paymentStatus?: PaymentStatus; payment?: PaymentInstruction | null };
+      if (data.payment) setPayment(data.payment);
+      if (data.paymentStatus === "paid") { setPStatus("paid"); clearCart(); router.push(`/orders/${oid}`); return true; }
+      if (data.paymentStatus === "failed" || data.paymentStatus === "expired") { setPStatus(data.paymentStatus); setPayError("Pembayaran gagal/kedaluwarsa."); setPolling(false); }
+    } catch {}
+    return false;
+  }, [clearCart, router]);
 
-      if (response.ok && response.orderId && response.payment) {
-        setGeneratedOrderId(response.orderId);
-        setPaymentInstruction(response.payment);
-        setPaymentStatus(response.payment.status);
-        setIsPaymentOpen(true);
-      } else {
-        setPayError(response.message || "Gagal memproses transaksi.");
-      }
-    } catch (error) {
-      console.error(error);
-      setPayError("Koneksi server gagal.");
-    } finally {
-      setIsCreatingPayment(false);
-    }
+  useEffect(() => {
+    if (!polling || !orderId || pStatus !== "pending") return;
+    const id = setInterval(() => checkPayment(orderId), 3000);
+    return () => clearInterval(id);
+  }, [polling, orderId, pStatus, checkPayment]);
+
+  const handlePay = async () => {
+    if (!shippingValid || isCreating) return;
+    setIsCreating(true); setPayError("");
+    try {
+      const res = await checkoutAction({ receiverName, phone, address, city, province, courierCode: courier, paymentMethod: payMethod, promoCode: appliedPromo?.code ?? "" });
+      if (res.ok && res.orderId && res.payment) { setOrderId(res.orderId); setPayment(res.payment); setPStatus("pending"); setStep(3); setPolling(true); }
+      else setPayError(res.message || "Gagal memproses.");
+    } catch { setPayError("Server error."); }
+    finally { setIsCreating(false); }
   };
 
-  const handleToggleHistory = () => {
-    if (!showHistory && ordersHistory.length === 0) {
-      void loadOrderHistory();
-    }
+  const handleCheckStatus = async () => { if (orderId) checkPayment(orderId); };
 
-    setShowHistory((current) => !current);
-  };
-
-  if (items.length === 0 && !isSuccess) {
+  if (displayItems.length === 0 && step === 1) {
     return (
-      <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in duration-500">
-        <div className="rounded-[32px] border border-line bg-white-soft py-16 text-center shadow-sm">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-cream-100 text-brand-900">
-            <ShoppingCart className="h-6 w-6" />
-          </div>
-          <h3 className="mt-5 text-xl font-bold text-brand-950">Keranjang Anda Kosong</h3>
-          <p className="mt-2 text-xs text-ink-600 px-6 max-w-md mx-auto leading-relaxed">
-            Anda belum menambahkan produk nilam atsiri B2C atau listing ampas B2B ke dalam keranjang belanja.
-          </p>
-          <div className="mt-6 flex justify-center gap-3 flex-wrap">
-            <Link
-              href="/products"
-              className="h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold transition-all inline-flex items-center justify-center gap-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
-              style={{ touchAction: "manipulation" }}
-            >
-              Beli Produk B2C
-            </Link>
-            <Link
-              href="/ampas"
-              className="h-10 px-5 rounded-xl border border-line bg-white-soft text-brand-900 hover:bg-cream-50 text-xs font-bold transition-all inline-flex items-center justify-center gap-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
-              style={{ touchAction: "manipulation" }}
-            >
-              Bursa Ampas B2B
-            </Link>
-            <button
-              onClick={handleToggleHistory}
-              className="h-10 px-5 rounded-xl border border-brand-900/20 text-brand-900 text-xs font-bold hover:bg-brand-50 transition-all cursor-pointer"
-              type="button"
-            >
-              {showHistory ? "Sembunyikan Pesanan" : "Pesanan Saya"}
-            </button>
-          </div>
-        </div>
-
-        {showHistory && ordersHistory.length > 0 && (
-          <div className="rounded-[32px] border border-line bg-white-soft p-6 space-y-6 shadow-sm animate-in slide-in-from-bottom duration-300">
-            <div className="flex justify-between items-center border-b border-line/60 pb-3">
-              <div className="flex items-center gap-2">
-                <Receipt className="h-5 w-5 text-brand-900" />
-                <h4 className="text-base font-extrabold text-brand-950">Pesanan Saya</h4>
-              </div>
-            </div>
-
-            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
-              {ordersHistory.map((order) => (
-                <div
-                  key={order.orderId}
-                  className="rounded-2xl border border-line/60 bg-white p-4 space-y-3 text-xs hover:border-brand-900/30 transition-colors"
-                >
-                  <div className="flex justify-between items-start flex-wrap gap-2">
-                    <div>
-                      <span className="font-mono font-bold text-brand-950 text-sm block">
-                        {order.orderId}
-                      </span>
-                      <span className="text-[10px] text-ink-600 flex items-center gap-1 mt-0.5">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(order.date).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                    <span className="inline-block bg-emerald-100 text-emerald-800 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full">
-                      DB-backed
-                    </span>
-                  </div>
-
-                  <div className="border-t border-line/40 pt-2 space-y-1">
-                    {order.items.map((item, idx) => (
-                      <div key={`${order.orderId}-${item.kind}-${idx}`} className="flex justify-between text-ink-700">
-                        <span>
-                          {item.name} <span className="text-[10px] text-ink-600">x{item.quantity}</span>
-                        </span>
-                        <span className="font-semibold text-brand-950">
-                          Rp {(item.unitPrice * item.quantity).toLocaleString("id-ID")}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="border-t border-line/45 pt-2 flex justify-between items-center font-bold text-brand-950">
-                    <span>Total Pembayaran:</span>
-                    <span>Rp {order.grandTotal.toLocaleString("id-ID")}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (isSuccess) {
-    return (
-      <div className="max-w-2xl mx-auto animate-in fade-in duration-500 print:p-0 print:border-0">
-        <div className="rounded-[32px] border border-line bg-white-soft p-6 sm:p-8 space-y-6 shadow-xl print:shadow-none print:border-none print:p-0">
-          <div className="text-center print:hidden">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-800">
-              <ShieldCheck className="h-7 w-7" />
-            </div>
-            <h3 className="mt-4 text-2xl font-bold text-brand-950 font-serif-accent italic">
-              Transaksi Berhasil!
-            </h3>
-            <p className="mt-1 text-xs text-ink-600">
-              Pembayaran Anda telah diverifikasi melalui Midtrans Core.
-            </p>
-          </div>
-
-          <hr className="border-line/60 print:hidden" />
-
-          <div className="flex justify-between items-start text-xs border-b border-line pb-4 flex-wrap gap-2">
-            <div>
-              <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-widest">
-                Order ID
-              </span>
-              <span className="font-mono font-bold text-brand-950 text-sm">{generatedOrderId}</span>
-            </div>
-            <div className="text-right">
-              <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-widest">
-                Status Pembayaran
-              </span>
-              <span className="inline-block bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full mt-0.5">
-                Paid / Lunas
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-widest">
-              Rincian Barang
-            </span>
-            <div className="divide-y divide-line/60 border border-line rounded-2xl overflow-hidden bg-white px-4">
-              {invoiceItems.map((item) => {
-                const isWholesaleActive = !!(
-                  item.wholesaleEnabled &&
-                  item.wholesaleMinQtyKg &&
-                  item.wholesalePricePerKg &&
-                  item.quantity >= item.wholesaleMinQtyKg
-                );
-                const savings =
-                  isWholesaleActive && item.normalPricePerKg
-                    ? (item.normalPricePerKg.amount - item.unitPrice.amount) * item.quantity
-                    : 0;
-
-                return (
-                  <div key={item.id} className="py-3.5 flex flex-col justify-center text-xs gap-1.5">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <span className="font-bold text-brand-950">{item.name}</span>
-                        <span className="text-[10px] text-ink-600 block">
-                          Qty: {item.quantity} x Rp {item.unitPrice.amount.toLocaleString("id-ID")}
-                        </span>
-                      </div>
-                      <span className="font-bold text-brand-950">
-                        Rp {(item.unitPrice.amount * item.quantity).toLocaleString("id-ID")}
-                      </span>
-                    </div>
-                    {isWholesaleActive && (
-                      <div className="rounded-xl border border-emerald-250 bg-emerald-50/50 px-3 py-2 text-[10px] text-emerald-800 flex justify-between items-center font-semibold">
-                        <span className="flex items-center gap-1.5 font-bold">
-                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          Harga Grosir Diterapkan
-                        </span>
-                        <span>Hemat Rp {savings.toLocaleString("id-ID")}</span>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 text-xs pt-2">
-            <div>
-              <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-widest">
-                Penerima
-              </span>
-              <span className="font-bold text-brand-950 block mt-0.5">{receiverName}</span>
-              <span className="text-ink-700">{phone}</span>
-            </div>
-            <div>
-              <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-widest">
-                Alamat Pengiriman
-              </span>
-              <p className="text-ink-700 block mt-0.5 leading-relaxed">
-                {address}, {city}, {province}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 text-xs border-t border-line/60 pt-4">
-            <div>
-              <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-widest">
-                Metode Pengiriman
-              </span>
-              <span className="font-bold text-brand-950 block mt-0.5">{courierNames[courier]}</span>
-            </div>
-            <div>
-              <span className="text-ink-600 block text-[9px] font-bold uppercase tracking-widest">
-                Metode Pembayaran
-              </span>
-              <span className="font-bold text-brand-950 block mt-0.5 uppercase">
-                {paymentMethod} (Midtrans Core)
-              </span>
-            </div>
-          </div>
-
-          <hr className="border-line/60" />
-
-          <div className="space-y-2.5 text-xs pt-2">
-            <div className="flex justify-between items-center text-ink-600">
-              <span>Subtotal Pembelian:</span>
-              <span className="font-bold text-brand-950">
-                Rp {invoiceSubtotal.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-ink-600">
-              <span>Biaya Platform:</span>
-              <span className="font-semibold text-brand-950">
-                Rp {invoicePlatformFee.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-ink-600">
-              <span>Biaya Pengiriman:</span>
-              <span className="font-semibold text-brand-950">
-                Rp {invoiceShippingFee.toLocaleString("id-ID")}
-              </span>
-            </div>
-            {invoiceDiscount > 0 && (
-              <div className="flex justify-between items-center text-emerald-700 font-bold">
-                <span>Diskon Promo:</span>
-                <span>-Rp {invoiceDiscount.toLocaleString("id-ID")}</span>
-              </div>
-            )}
-            <div className="flex justify-between items-center pt-3 border-t border-line/60">
-              <span className="font-bold text-brand-950 text-sm">Grand Total:</span>
-              <span className="text-lg font-extrabold text-brand-950">
-                Rp {invoiceGrandTotal.toLocaleString("id-ID")}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex gap-3 justify-end pt-4 border-t border-line/60 print:hidden">
-            <button
-              onClick={() => window.print()}
-              className="h-11 px-5 rounded-2xl border border-line bg-cream-50 hover:bg-cream-100 text-brand-950 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
-              type="button"
-            >
-              <Printer className="h-4 w-4" />
-              Cetak Invoice
-            </button>
-            <Button
-              onClick={() => setIsSuccess(false)}
-              className="h-11 px-6 rounded-2xl bg-brand-900 hover:bg-brand-800 text-white-soft text-xs font-bold flex items-center gap-1.5 cursor-pointer"
-            >
-              <RefreshCw className="h-4 w-4" />
-              Belanja Lagi
-            </Button>
-          </div>
+      <div className="max-w-lg mx-auto text-center py-16 space-y-4 animate-in fade-in duration-300">
+        <ShoppingBag className="h-10 w-10 mx-auto text-ink-600/30" />
+        <p className="text-sm font-bold text-ink-600">Keranjang belanja kosong</p>
+        <div className="flex justify-center gap-3">
+          <Link href="/products" className="h-10 px-5 rounded-xl bg-brand-900 text-white-soft text-xs font-bold inline-flex items-center">Produk B2C</Link>
+          <Link href="/ampas" className="h-10 px-5 rounded-xl border text-xs font-bold inline-flex items-center">Ampas B2B</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_360px] items-start animate-in fade-in duration-300">
-      <div className="space-y-6">
-        <CartItemsList
-          resolvedItems={resolvedItems}
-          updateQuantity={updateQuantity}
-          removeItem={removeItem}
-        />
-
-        <ShippingForm
-          receiverName={receiverName}
-          setReceiverName={setReceiverName}
-          phone={phone}
-          setPhone={setPhone}
-          address={address}
-          setAddress={setAddress}
-          city={city}
-          setCity={setCity}
-          province={province}
-          setProvince={setProvince}
-          courier={courier}
-          setCourier={setCourier}
-          paymentMethod={paymentMethod}
-          setPaymentMethod={setPaymentMethod}
-        />
+    <div className="max-w-2xl mx-auto space-y-4 animate-in fade-in duration-300">
+      {/* Progress */}
+      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider">
+        {([1,2,3] as const).map((s) => (
+          <div key={s} className="flex items-center gap-1.5">
+            <div className={cn("size-6 rounded-full flex items-center justify-center text-[9px] font-extrabold", step === s ? "bg-brand-950 text-white" : step > s ? "bg-emerald-100 text-emerald-700" : "bg-cream-100 text-ink-600")}>
+              {step > s ? <CheckCircle2 className="h-3 w-3" /> : s}
+            </div>
+            <span className={cn("hidden sm:inline", step === s ? "text-brand-950" : "text-ink-600")}>{s === 1 ? "Ringkasan" : s === 2 ? "Bayar" : "Menunggu"}</span>
+            {s < 3 && <span className="text-line/60 mx-0.5">/</span>}
+          </div>
+        ))}
       </div>
 
-      <aside className="space-y-6 lg:sticky lg:top-28">
-        <OrderSummaryCard
-          subtotal={subtotal}
-          platformFee={platformFee}
-          shippingFee={shippingFee}
-          discountAmount={discountAmount}
-          grandTotal={grandTotal}
-          isFormValid={!!isFormValid && !isCreatingPayment}
-          promoCodeInput={promoCodeInput}
-          onPromoCodeInputChange={setPromoCodeInput}
-          appliedPromo={appliedPromo}
-          availablePromos={promos}
-          onApplyPromo={handleApplyPromo}
-          onRemovePromo={handleRemovePromo}
-          promoError={payError || promoError}
-          onPayClick={handlePayClick}
-          onPromoSelect={(code) => {
-            setPromoError("");
-            const result = validatePromoCodeFromDb(code, items, promos, shippingFee);
-            if (result.status === "valid" && result.promo) {
-              setAppliedPromo(result.promo);
-              setPromoCodeInput("");
-            } else {
-              setAppliedPromo(null);
-              setPromoError(result.message);
-              setPromoCodeInput(code);
-            }
-          }}
-        />
-      </aside>
+      {/* Step 1 — Ringkasan */}
+      {step === 1 && (
+        <div className="rounded-2xl border border-line bg-white-soft p-4 sm:p-5 shadow-sm space-y-4">
+          <h3 className="text-sm font-extrabold text-brand-950">Alamat &amp; Kurir</h3>
+          <ShippingForm {...{ receiverName, setReceiverName, phone, setPhone, address, setAddress, city, setCity, province, setProvince, courier, setCourier }} />
 
-      {isPaymentOpen && paymentInstruction && (
-        <PaymentCoreModal
-          orderId={generatedOrderId}
-          payment={paymentInstruction}
-          paymentStatus={paymentStatus}
-          isChecking={isCheckingPayment}
-          payError={payError}
-          onClose={() => setIsPaymentOpen(false)}
-          onCheckStatus={() => void checkPaymentStatus(generatedOrderId)}
-        />
+          <div className="border-t border-line/60 pt-4 space-y-2">
+            <h4 className="text-xs font-extrabold text-brand-950 flex items-center gap-1.5"><ShoppingBag className="h-3.5 w-3.5" /> Barang ({resolved.length})</h4>
+            <div className="divide-y divide-line/40">
+              {resolved.map((item: typeof resolved[number]) => (
+                <div key={item.id} className="flex gap-2.5 py-2 text-xs items-center">
+                  <div className="relative h-10 w-10 shrink-0 rounded-lg border overflow-hidden bg-cream-100">
+                    {item.imageSrc && <Image src={item.imageSrc} alt={item.imageAlt} fill className="object-cover" sizes="40px" />}
+                  </div>
+                  <div className="min-w-0 flex-1"><p className="font-bold text-brand-950 truncate">{item.name}</p><p className="text-ink-600">x{item.quantity}</p></div>
+                  <p className="font-bold text-brand-950 shrink-0">Rp {(item.unitPrice.amount * item.quantity).toLocaleString("id-ID")}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-line/60 pt-3 space-y-1.5 text-xs">
+            <div className="flex justify-between text-ink-600"><span>Subtotal</span><span className="font-bold text-brand-950">Rp {subtotal.toLocaleString("id-ID")}</span></div>
+            <div className="flex justify-between text-ink-600"><span>Biaya Platform</span><span className="font-bold text-brand-950">*(dihitung saat bayar)</span></div>
+            <div className="flex justify-between text-ink-600"><span>{courierRates[courier]?.name || "Kurir"}</span><span className="font-bold text-brand-950">{sf > 0 ? `Rp ${sf.toLocaleString("id-ID")}` : "—"}</span></div>
+            {disc > 0 && <div className="flex justify-between text-emerald-700 font-bold"><span>Diskon</span><span>-Rp {disc.toLocaleString("id-ID")}</span></div>}
+          </div>
+
+          <Button onClick={() => setStep(2)} disabled={!shippingValid} className="w-full h-11 rounded-2xl bg-brand-950 hover:bg-brand-900 text-white-soft text-xs font-bold">
+            Lanjut ke Pembayaran <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
+      {/* Step 2 — Bayar */}
+      {step === 2 && (
+        <div className="space-y-3">
+          <div className="rounded-2xl border border-line bg-white-soft p-4 shadow-sm">
+            <div className="flex items-start justify-between text-xs">
+              <div>
+                <p className="font-bold text-brand-950">{receiverName} — {phone}</p>
+                <p className="text-ink-600">{address}, {city}, {province}</p>
+                <p className="text-ink-600">{courierRates[courier]?.name}</p>
+              </div>
+              <button onClick={() => setStep(1)} className="text-[10px] font-bold text-brand-900 underline cursor-pointer shrink-0" type="button">Ubah</button>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-line bg-white-soft p-4 shadow-sm">
+            <h4 className="text-xs font-extrabold text-brand-950 mb-3">Metode Pembayaran</h4>
+            <div className="space-y-2">
+              {PAY_METHODS.map((m) => (
+                <label key={m.id} className={cn("flex items-center gap-3 rounded-xl border p-3 text-xs cursor-pointer transition-all", payMethod === m.id ? "border-brand-900 bg-brand-100/20 ring-2 ring-brand-900/20" : "border-line hover:border-brand-900/30 bg-cream-50")}>
+                  <input type="radio" name="payMethod" value={m.id} checked={payMethod === m.id} onChange={() => setPayMethod(m.id)} className="accent-brand-900" />
+                  <GetIcon method={m.id} />
+                  <div className="min-w-0 flex-1"><p className="font-bold text-brand-950">{m.label}</p><p className="text-[10px] text-ink-600">{m.desc}</p></div>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-line bg-white-soft p-4 shadow-sm">
+            <h4 className="text-xs font-extrabold text-brand-950 mb-2">Promo</h4>
+            {appliedPromo ? (
+              <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-2.5 text-xs"><span className="font-bold text-emerald-800">{appliedPromo.code} — -Rp {disc.toLocaleString("id-ID")}</span><button onClick={() => { setAppliedPromo(null); setPromoOk(""); }} className="text-[10px] font-bold text-red-600 underline cursor-pointer" type="button">Hapus</button></div>
+            ) : (
+              <div className="flex gap-2"><input type="text" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} placeholder="Kode promo" className="flex-1 h-9 rounded-xl border bg-cream-50 px-3 text-xs font-semibold outline-none focus:ring-2 focus:ring-brand-900/30" /><Button onClick={handleApplyPromo} className="h-9 px-3 rounded-xl bg-brand-900 text-white text-xs font-bold">Pakai</Button></div>
+            )}
+            {promoErr && <p className="text-[10px] text-red-600 font-semibold mt-1">{promoErr}</p>}
+            {promoOk && <p className="text-[10px] text-emerald-700 font-semibold mt-1">{promoOk}</p>}
+            {!appliedPromo && promos.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {promos.slice(0, 4).map((p) => (
+                  <button key={p.code} onClick={() => { const r = validatePromo(displayItems, promos, p.code, sf); if (r.status === "valid" && r.promo) { setAppliedPromo(r.promo); setPromoOk(r.message); } else setPromoErr(r.message); }} className="rounded-lg border bg-cream-50 px-2 py-1 text-[9px] font-bold text-brand-900 hover:bg-cream-100 cursor-pointer" type="button">{p.code}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-line bg-white-soft p-4 shadow-sm space-y-1.5 text-xs">
+            <div className="flex justify-between text-ink-600"><span>Subtotal</span><span className="font-bold text-brand-950">Rp {subtotal.toLocaleString("id-ID")}</span></div>
+            <div className="flex justify-between text-ink-600"><span>Biaya Platform</span><span className="font-bold text-brand-950">(berdasarkan metode bayar)</span></div>
+            <div className="flex justify-between text-ink-600"><span>{courierRates[courier]?.name || "Kurir"}</span><span className="font-bold text-brand-950">{sf > 0 ? `Rp ${sf.toLocaleString("id-ID")}` : "—"}</span></div>
+            {disc > 0 && <div className="flex justify-between text-emerald-700 font-bold"><span>Diskon</span><span>-Rp {disc.toLocaleString("id-ID")}</span></div>}
+          </div>
+
+          {payError && <p className="text-[10px] text-red-600 font-semibold flex items-center gap-1"><AlertCircle className="h-3 w-3" />{payError}</p>}
+
+          <div className="flex gap-3">
+            <button onClick={() => setStep(1)} className="h-12 px-5 rounded-2xl border border-line text-xs font-bold text-brand-950 hover:bg-cream-100 transition-colors cursor-pointer flex items-center gap-1.5" type="button"><ChevronLeft className="h-4 w-4" /> Kembali</button>
+            <Button onClick={handlePay} disabled={isCreating || !shippingValid} className="flex-1 h-12 rounded-2xl bg-brand-950 hover:bg-brand-900 text-white text-sm font-bold">
+              {isCreating ? "Memproses..." : `Bayar Rp ${(subtotal + sf - disc).toLocaleString("id-ID")}`}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3 — Menunggu */}
+      {step === 3 && payment && (
+        <div className="rounded-2xl border border-line bg-white-soft p-5 shadow-sm space-y-4 animate-in fade-in duration-300">
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="text-sm font-extrabold text-brand-950">{payment.title}</h3>
+              <p className="text-[10px] text-ink-600">{payment.description}</p>
+            </div>
+            <div className="text-right text-[10px]"><p className="font-mono font-bold text-brand-950">{orderId}</p><p className="text-ink-600">Rp {payment.amount.amount.toLocaleString("id-ID")}</p></div>
+          </div>
+
+          {(payment.method === "virtual-account") && payment.vaNumber && (
+            <div className="rounded-xl border-2 border-dashed border-brand-900/20 bg-white p-4 text-center space-y-2">
+              <p className="text-[9px] font-bold uppercase tracking-wider text-ink-600">Nomor Virtual Account</p>
+              <p className="text-2xl font-extrabold tracking-widest text-brand-950 font-mono">{payment.vaNumber}</p>
+              <button onClick={() => navigator.clipboard.writeText(payment.vaNumber)} className="text-[10px] font-bold text-brand-900 underline cursor-pointer" type="button">Salin</button>
+            </div>
+          )}
+
+          {(payment.method === "ewallet" || payment.method === "qris") && (
+            <div className="text-center space-y-3">
+              {payment.qrUrl && (
+                <div className="mx-auto w-36 h-36 rounded-xl border overflow-hidden bg-white p-2">
+                  <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(payment.qrUrl)}`} alt="QR" width={144} height={144} className="rounded-lg" unoptimized />
+                </div>
+              )}
+              {payment.deeplinkUrl && (
+                <a href={payment.deeplinkUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center gap-2 rounded-2xl bg-brand-950 text-white-soft text-xs font-bold px-6">Buka Gojek</a>
+              )}
+            </div>
+          )}
+
+          <div className="flex items-center justify-between rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-700">
+            <div className="flex items-center gap-2">
+              <RefreshCw className={cn("h-4 w-4", polling && "animate-spin")} />
+              <span className="font-bold">Menunggu pembayaran...</span>
+            </div>
+            <button onClick={handleCheckStatus} className="text-[10px] font-bold text-brand-900 underline cursor-pointer" type="button">Cek Status</button>
+          </div>
+
+          <button onClick={() => { setStep(2); setPolling(false); }} className="w-full h-10 rounded-2xl border border-line text-xs font-bold text-brand-950 hover:bg-cream-100 transition-colors flex items-center justify-center gap-1.5 cursor-pointer" type="button"><ChevronLeft className="h-4 w-4" /> Ganti Metode Pembayaran</button>
+
+          {payError && <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-[11px] font-semibold text-red-700"><AlertCircle className="h-4 w-4 shrink-0" /><span>{payError}</span></div>}
+        </div>
       )}
     </div>
   );
+}
+
+function GetIcon({ method }: { method: string }) {
+  const cls = "h-6 w-6 shrink-0";
+  switch (method) {
+    case "bca": return <svg className={cls} viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#003E6B"/><text x="24" y="30" fill="white" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Arial">BCA</text></svg>;
+    case "mandiri": return <svg className={cls} viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#002157"/><text x="24" y="28" fill="white" fontSize="8" fontWeight="bold" textAnchor="middle" fontFamily="Arial">MANDIRI</text></svg>;
+    case "bni": return <svg className={cls} viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#002C6C"/><text x="24" y="28" fill="white" fontSize="14" fontWeight="bold" textAnchor="middle" fontFamily="Arial">BNI</text></svg>;
+    case "gopay": return <svg className={cls} viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#00AA13"/><circle cx="24" cy="24" r="14" fill="white"/><text x="24" y="28" fill="#00AA13" fontSize="16" fontWeight="bold" textAnchor="middle" fontFamily="Arial">G</text></svg>;
+    case "qris": return <svg className={cls} viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#F5F5F5" stroke="#DDD"/><rect x="10" y="10" width="12" height="12" rx="2" stroke="#333" strokeWidth="2"/><rect x="26" y="10" width="12" height="12" rx="2" stroke="#333" strokeWidth="2"/><rect x="10" y="26" width="12" height="12" rx="2" stroke="#333" strokeWidth="2"/><rect x="26" y="26" width="12" height="12" rx="2" stroke="#333" strokeWidth="2"/></svg>;
+  }
 }

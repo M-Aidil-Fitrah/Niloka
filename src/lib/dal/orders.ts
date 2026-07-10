@@ -198,6 +198,7 @@ function mapPayment(payment: OrderWithRelations["payments"][number]): OrderPayme
     qrString: payment.qrString ?? "",
     qrUrl: payment.qrUrl ?? "",
     deeplinkUrl: payment.deeplinkUrl ?? "",
+    snapToken: payment.snapToken ?? "",
     paidAt: toOptionalIsoString(payment.paidAt),
     expiredAt: toOptionalIsoString(payment.expiredAt),
     lastStatusSyncedAt: toOptionalIsoString(payment.lastStatusSyncedAt),

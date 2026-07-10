@@ -291,6 +291,7 @@ export type OrderPayment = {
   qrString: string;
   qrUrl: string;
   deeplinkUrl: string;
+  snapToken: string;
   paidAt: string;
   expiredAt: string;
   lastStatusSyncedAt: string;
@@ -300,7 +301,7 @@ export type OrderPayment = {
 
 export type PaymentInstruction = {
   method: PaymentMethod;
-  status: "pending";
+  status: "pending" | "paid" | "failed" | "expired";
   amount: Money;
   title: string;
   description: string;
@@ -308,6 +309,8 @@ export type PaymentInstruction = {
   qrUrl: string;
   vaNumber: string;
   deeplinkUrl: string;
+  snapToken?: string;
+  snapRedirectUrl?: string;
   expiresAt: string;
 };
 

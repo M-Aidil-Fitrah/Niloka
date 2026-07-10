@@ -11,7 +11,6 @@ import { requireUser } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
-// Lazy load CheckoutShell with SSR enabled
 const CheckoutShell = nextDynamic(
   () => import("@/components/checkout/checkout-shell").then((m) => m.CheckoutShell),
   {
@@ -21,26 +20,31 @@ const CheckoutShell = nextDynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Keranjang & Checkout - NILOKA",
-  description: "Kelola keranjang belanja produk nilam dan ajukan pembayaran aman melalui Midtrans Core.",
+  title: "Checkout - NILOKA",
+  description: "Lengkapi alamat, pilih kurir, dan bayar aman melalui Midtrans Core.",
 };
 
-export default async function CheckoutPage() {
+type CheckoutPageProps = {
+  searchParams: Promise<{ selected?: string }>;
+};
+
+export default async function CheckoutPage({ searchParams }: CheckoutPageProps) {
   await requireUser();
-  const [products, listings, promos] = await Promise.all([
+  const [products, listings, promos, sp] = await Promise.all([
     getPublishedProductsDto(),
     getActiveAmpasListingsDto(),
     getPublicPromoSuggestionsDto(),
+    searchParams,
   ]);
 
   return (
     <SectionShell
       eyebrow="Transaksi Niloka"
-      title="Keranjang & Checkout"
-      description="Tinjau daftar belanjaan Anda, lengkapi alamat pengiriman, dan lanjutkan pembayaran custom Midtrans Core."
+      title="Checkout"
+      description="Lengkapi data pengiriman dan lakukan pembayaran aman melalui Midtrans Core."
     >
       <div className="mt-8">
-        <CheckoutShell products={products} ampasListings={listings} promos={promos} />
+        <CheckoutShell products={products} ampasListings={listings} promos={promos} selectedIds={sp.selected?.split(",").filter(Boolean) ?? []} />
       </div>
     </SectionShell>
   );

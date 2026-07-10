@@ -1,4 +1,17 @@
-import { AlertCircle, Clock, Copy, QrCode, RefreshCw, ShieldCheck, X } from "lucide-react";
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Copy,
+  ExternalLink,
+  RefreshCw,
+  ShieldCheck,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { PaymentInstruction, PaymentStatus } from "@/lib/contracts";
 
@@ -7,9 +20,11 @@ type PaymentCoreModalProps = {
   payment: PaymentInstruction;
   paymentStatus: PaymentStatus;
   isChecking: boolean;
+  isConfirming: boolean;
   payError: string;
   onClose: () => void;
   onCheckStatus: () => void;
+  onConfirm: () => void;
 };
 
 function getStatusLabel(status: PaymentStatus): string {
@@ -25,16 +40,50 @@ function getStatusLabel(status: PaymentStatus): string {
   }
 }
 
+function useCopyToClipboard(resetMs = 2000) {
+  const [copied, setCopied] = useState(false);
+
+  const copy = useCallback(
+    async (text: string) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), resetMs);
+      } catch {}
+    },
+    [resetMs],
+  );
+
+  return { copied, copy };
+}
+
+const QR_CODE_PLACEHOLDER =
+  "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=";
+
 export function PaymentCoreModal({
   orderId,
   payment,
   paymentStatus,
   isChecking,
+  isConfirming,
   payError,
   onClose,
   onCheckStatus,
+  onConfirm,
 }: PaymentCoreModalProps) {
   const isFinal = paymentStatus !== "pending";
+  const { copied, copy } = useCopyToClipboard();
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (!payment.expiresAt) return;
+    const interval = setInterval(() => setNow(Date.now()), 10000);
+    return () => clearInterval(interval);
+  }, [payment.expiresAt]);
+
+  const minutesLeft = payment.expiresAt
+    ? Math.max(0, Math.floor((new Date(payment.expiresAt).getTime() - now) / 60000))
+    : 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-950/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
@@ -45,7 +94,7 @@ export function PaymentCoreModal({
             <div>
               <span className="block text-sm font-extrabold">NILOKA Payment Gate</span>
               <span className="block text-[9px] font-bold uppercase tracking-widest text-white-soft/70">
-                Midtrans Core
+                Midtrans Core - {payment.method === "virtual-account" ? "BCA Virtual Account" : "GoPay"}
               </span>
             </div>
           </div>
@@ -77,62 +126,134 @@ export function PaymentCoreModal({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-line bg-cream-50 p-4 text-center">
-            <span className="text-[10px] font-black uppercase tracking-wider text-brand-800">
-              {payment.title}
-            </span>
-            <p className="mt-2 text-xs font-semibold leading-relaxed text-ink-700">
-              {payment.description}
-            </p>
+          {minutesLeft > 0 && (
+            <div className="flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs text-amber-700">
+              <Clock className="h-4 w-4 shrink-0" />
+              <span className="font-bold">Sisa waktu: {minutesLeft} menit</span>
+            </div>
+          )}
 
-            {payment.method === "qris" && (
-              <div className="mx-auto mt-4 flex h-40 w-40 flex-col items-center justify-center rounded-2xl border border-brand-900/20 bg-white text-brand-950">
-                <QrCode className="h-16 w-16" />
-                <span className="mt-3 max-w-32 truncate font-mono text-[9px] font-bold">
-                  {payment.qrString}
+          {payment.method === "virtual-account" && payment.vaNumber && (
+            <div className="rounded-2xl border border-line bg-cream-50 p-5 text-center space-y-4">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-ink-600">
+                  BCA Virtual Account
                 </span>
+                <p className="text-xs text-ink-600">
+                  Bayar melalui mobile banking, ATM, atau internet banking BCA.
+                </p>
               </div>
-            )}
-
-            {payment.method === "virtual-account" && (
-              <div className="mt-4 rounded-2xl border border-line bg-white p-3 text-left">
-                <span className="block text-[9px] font-bold uppercase tracking-wider text-ink-600">
-                  Nomor Virtual Account
-                </span>
-                <div className="mt-1 flex items-center justify-between gap-2">
-                  <span className="font-mono text-lg font-black text-brand-950">
+              <div className="relative">
+                <div className="rounded-xl border-2 border-dashed border-brand-900/30 bg-white px-5 py-4">
+                  <span className="block text-[10px] font-bold uppercase tracking-wider text-ink-500 mb-1">
+                    Nomor Virtual Account
+                  </span>
+                  <span className="block text-2xl font-extrabold tracking-widest text-brand-950 font-mono">
                     {payment.vaNumber}
                   </span>
-                  <button
-                    className="rounded-xl border border-line bg-cream-50 p-2 text-brand-900 hover:bg-cream-100"
-                    onClick={() => navigator.clipboard.writeText(payment.vaNumber)}
-                    type="button"
-                    aria-label="Salin nomor virtual account"
-                  >
-                    <Copy className="h-4 w-4" />
-                  </button>
                 </div>
+                <button
+                  onClick={() => copy(payment.vaNumber)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl border border-line bg-white p-2.5 hover:bg-cream-100 transition-colors cursor-pointer"
+                  aria-label="Salin nomor VA"
+                  type="button"
+                >
+                  {copied ? (
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  ) : (
+                    <Copy className="h-4 w-4 text-ink-600" />
+                  )}
+                </button>
               </div>
-            )}
+              <div className="rounded-xl border border-line bg-white p-4 text-left text-xs space-y-2">
+                <p className="font-bold text-brand-950 text-[10px] uppercase tracking-wider">
+                  Cara Pembayaran:
+                </p>
+                <ol className="list-decimal list-inside space-y-1 text-ink-700">
+                  <li>Buka mobile banking BCA / ATM / internet banking BCA.</li>
+                  <li>Pilih menu &quot;Transfer&quot; → &quot;Virtual Account&quot;.</li>
+                  <li>Masukkan nomor Virtual Account di atas.</li>
+                  <li>Konfirmasi nominal pembayaran dan ikuti instruksi.</li>
+                  <li>Setelah transfer berhasil, status akan diperbarui otomatis.</li>
+                </ol>
+              </div>
+            </div>
+          )}
 
-            {payment.method === "ewallet" && (
-              <a
-                className="mt-4 inline-flex h-10 items-center justify-center rounded-xl bg-brand-950 px-5 text-xs font-bold text-white-soft hover:bg-brand-900"
-                href={payment.deeplinkUrl}
-              >
-                Buka Pembayaran E-wallet
-              </a>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between rounded-2xl border border-line bg-white p-3 text-xs">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-brand-800" />
-              <div>
-                <span className="block font-extrabold text-brand-950">
-                  {getStatusLabel(paymentStatus)}
+          {payment.method === "ewallet" && (
+            <div className="rounded-2xl border border-line bg-cream-50 p-5 text-center space-y-4">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-ink-600">
+                  GoPay
                 </span>
-                <span className="text-[10px] font-semibold text-ink-600">
+                <p className="text-xs text-ink-600">
+                  Bayar melalui aplikasi Gojek menggunakan GoPay.
+                </p>
+              </div>
+
+              {payment.qrUrl && (
+                <div className="mx-auto flex flex-col items-center gap-2">
+                  <div className="rounded-xl border border-line bg-white p-3 shadow-sm">
+                    <Image
+                      src={`${QR_CODE_PLACEHOLDER}${encodeURIComponent(payment.qrUrl)}`}
+                      alt="QR Code GoPay"
+                      width={180}
+                      height={180}
+                      className="rounded-lg"
+                      unoptimized
+                    />
+                  </div>
+                  <p className="text-[10px] font-bold text-ink-600">
+                    Scan QR Code di atas menggunakan aplikasi Gojek
+                  </p>
+                </div>
+              )}
+
+              {payment.deeplinkUrl && (
+                <a
+                  href={payment.deeplinkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl bg-brand-950 px-5 text-xs font-bold text-white-soft hover:bg-brand-900 transition-colors"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Buka Gojek
+                </a>
+              )}
+
+              {!payment.qrUrl && !payment.deeplinkUrl && (
+                <div className="rounded-xl border border-line bg-white p-4 text-xs text-ink-600">
+                  Instruksi pembayaran GoPay sedang diproses. Silakan cek status secara berkala.
+                </div>
+              )}
+            </div>
+          )}
+
+          {!isFinal && (
+            <Button
+              className="h-11 w-full rounded-2xl bg-emerald-600 font-extrabold text-white shadow-sm hover:bg-emerald-700"
+              disabled={isConfirming}
+              onClick={onConfirm}
+            >
+              {isConfirming ? (
+                <>
+                  <RefreshCw className="mr-1.5 h-4 w-4 animate-spin" /> Mengonfirmasi...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="mr-1.5 h-4 w-4" />
+                  Saya sudah bayar (konfirmasi manual)
+                </>
+              )}
+            </Button>
+          )}
+
+          <div className="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700">
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 shrink-0" />
+              <div>
+                <span className="block font-extrabold">{getStatusLabel(paymentStatus)}</span>
+                <span className="text-[10px] font-semibold opacity-80">
                   Polling status otomatis setiap beberapa detik.
                 </span>
               </div>
@@ -143,7 +264,7 @@ export function PaymentCoreModal({
               onClick={onCheckStatus}
               type="button"
             >
-              <RefreshCw className="mr-1 h-3.5 w-3.5" />
+              <RefreshCw className={`mr-1 h-3.5 w-3.5 ${isChecking ? "animate-spin" : ""}`} />
               Cek
             </Button>
           </div>
@@ -157,7 +278,7 @@ export function PaymentCoreModal({
         </div>
 
         <div className="border-t border-line bg-cream-50 p-3.5 text-center text-[10px] font-semibold text-ink-600">
-          Secret Midtrans diproses di server. Browser hanya menerima instruksi pembayaran.
+          Transaksi diproses melalui Midtrans Core API. Data pembayaran aman di server.
         </div>
       </div>
     </div>
