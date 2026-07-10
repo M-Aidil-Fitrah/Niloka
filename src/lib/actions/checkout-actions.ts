@@ -10,6 +10,7 @@ import {
   PromoStatus,
 } from "@/generated/prisma/client";
 import type { CartItem, PaymentInstruction } from "@/lib/contracts";
+import { courierRates } from "@/lib/constants/courier";
 import { revalidatePath } from "next/cache";
 import { createCorePayment, getChannelFromMethod, calculatePlatformFee } from "@/lib/services/payment-service";
 import { getSellerFinanceSummaryDto } from "@/lib/dal/orders";
@@ -42,13 +43,6 @@ type CheckoutResult = {
   orderId?: string;
   message?: string;
   payment?: PaymentInstruction;
-};
-
-const courierRates: Record<string, { name: string; amount: number }> = {
-  jne: { name: "JNE Regular", amount: 15000 },
-  jnt: { name: "J&T Express", amount: 18000 },
-  sicepat: { name: "SiCepat Halu", amount: 12000 },
-  gosend: { name: "GoSend Instant", amount: 25000 },
 };
 
 // Helper to convert Prisma CartItem to domain CartItem contract

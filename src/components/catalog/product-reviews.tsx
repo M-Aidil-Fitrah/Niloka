@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { StarIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import type { Review, ReviewTag } from "@/lib/contracts";
@@ -240,9 +239,7 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
       {/* Reviews list */}
       {reviewsList.length > 0 ? (
         <div className="divide-y divide-line/60">
-          {reviewsList.map((reviewItem) => {
-            const review = reviewItem as Review & { photo?: string };
-            return (
+          {reviewsList.map((review) => (
               <div key={review.id} className="py-5 first:pt-0 last:pb-0 space-y-3">
                 <div className="flex items-center justify-between gap-4">
                   <div>
@@ -286,22 +283,8 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
 
                 {/* Review Text Body */}
                 <p className="text-sm leading-relaxed text-ink-800 font-medium">{review.body}</p>
-
-                {/* Render attached photo if any */}
-                {"photo" in review && review.photo && (
-                  <div className="relative h-20 w-20 overflow-hidden rounded-xl border border-line/45 bg-cream-100 shadow-sm transition-transform hover:scale-105 duration-200">
-                    <Image
-                      src={review.photo as string}
-                      alt="Ulasan Foto"
-                      className="object-cover"
-                      fill
-                      sizes="80px"
-                    />
-                  </div>
-                )}
               </div>
-            );
-          })}
+            ))}
         </div>
       ) : (
         <div className="py-8 text-center bg-cream-50/20 border border-dashed border-line/80 rounded-2xl">

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, AlertTriangle } from "lucide-react";
 import type { AmpasListing, AmpasUsageTag } from "@/lib/contracts";
-import { showToast } from "../dashboard/dashboard-layout";
+import { showToast } from "@/lib/toast";
 import { AmpasTable } from "./ampas/ampas-table";
 import { AmpasDrawer } from "./ampas/ampas-drawer";
 import { useAuth } from "@/context/auth-context";

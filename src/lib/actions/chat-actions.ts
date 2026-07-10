@@ -518,5 +518,6 @@ export async function deleteThreadAction(threadId: string): Promise<void> {
     revalidatePath("/chat");
   } catch (error) {
     console.error("Failed to delete chat thread:", error);
+    throw error;
   }
 }

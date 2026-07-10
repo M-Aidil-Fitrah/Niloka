@@ -25,6 +25,7 @@ import type {
   PromoValidationResult,
 } from "@/lib/contracts";
 import { checkoutAction } from "@/lib/actions/checkout-actions";
+import { courierRates } from "@/lib/constants/courier";
 import { cn } from "@/lib/styles";
 
 type CheckoutShellProps = {
@@ -32,13 +33,6 @@ type CheckoutShellProps = {
   ampasListings: AmpasListing[];
   promos: Promo[];
   selectedIds: string[];
-};
-
-const courierRates: Record<string, { name: string; amount: number }> = {
-  jne: { name: "JNE Regular", amount: 15000 },
-  jnt: { name: "J&T Express", amount: 18000 },
-  sicepat: { name: "SiCepat Halu", amount: 12000 },
-  gosend: { name: "GoSend Instant", amount: 25000 },
 };
 
 type PayMethod = "bca" | "mandiri" | "bni" | "gopay" | "qris";
@@ -131,7 +125,9 @@ export function CheckoutShell({ products, ampasListings, promos, selectedIds }: 
       if (data.payment) setPayment(data.payment);
       if (data.paymentStatus === "paid") { setPStatus("paid"); clearCart(); router.push(`/orders/${oid}`); return true; }
       if (data.paymentStatus === "failed" || data.paymentStatus === "expired") { setPStatus(data.paymentStatus); setPayError("Pembayaran gagal/kedaluwarsa."); setPolling(false); }
-    } catch {}
+    } catch (err) {
+      console.error("Payment check polling failed:", err);
+    }
     return false;
   }, [clearCart, router]);
 

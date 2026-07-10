@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { Product } from "@/lib/contracts";
-import { showToast } from "@/components/dashboard/dashboard-layout";
+import { showToast } from "@/lib/toast";
 import { ProductTable } from "./product/product-table";
 import { ProductDrawer } from "./product/product-drawer";
 import { useAuth } from "@/context/auth-context";

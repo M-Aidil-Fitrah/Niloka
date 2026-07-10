@@ -1,7 +1,8 @@
 "use client";
 
 import { TrendingUp, ShoppingBag, Award, Clock, ArrowRight, AlertCircle } from "lucide-react";
-import { DashboardStatsCard, showToast } from "../dashboard/dashboard-layout";
+import { DashboardStatsCard } from "../dashboard/dashboard-layout";
+import { showToast } from "@/lib/toast";
 import { formatRupiah } from "@/lib/formatters";
 import type { Product } from "@/lib/contracts";
 
