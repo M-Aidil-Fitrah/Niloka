@@ -31,7 +31,6 @@ type AuthContextType = {
   user: AuthUser | null;
   isLoading: boolean;
   isLoggingIn: boolean;
-  isRegistering: boolean;
   login: (email: string, password: string) => Promise<AuthResult>;
   register: (
     name: string,
@@ -122,7 +121,6 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
     user,
     isLoading: status === "loading",
     isLoggingIn: status !== "authenticated" && status !== "loading",
-    isRegistering: status !== "authenticated" && status !== "loading",
     login,
     register,
     logout,

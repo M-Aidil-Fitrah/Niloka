@@ -17,6 +17,7 @@ type SellerDashboardShellProps = {
   ampasListings: AmpasListing[];
   promos: Promo[];
   orders: OrderTracking[];
+  onRefreshOrders?: () => Promise<void>;
   finance: {
     grossRevenue: number;
     productCount: number;
@@ -34,6 +35,7 @@ export function SellerDashboardShell({
   ampasListings,
   promos,
   orders,
+  onRefreshOrders,
   finance,
 }: SellerDashboardShellProps) {
   const [activeTab, setActiveTab] = useState("overview");
@@ -66,7 +68,7 @@ export function SellerDashboardShell({
           />
         );
       case "orders":
-        return <OrderManagement orders={orders} />;
+        return <OrderManagement orders={orders} onRefresh={onRefreshOrders} />;
       case "products":
         return <ProductManagement products={products} />;
       case "ampas":

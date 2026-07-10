@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   Package,
   Search,
@@ -28,6 +28,7 @@ import type { OrderTracking, OrderFulfillmentStatus } from "@/lib/contracts";
 
 type Props = {
   orders: OrderTracking[];
+  onRefresh?: () => Promise<void>;
 };
 
 type FilterTab = "all" | "ready" | "shipped" | "delivered";
@@ -82,7 +83,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export function OrderManagement({ orders }: Props) {
+export function OrderManagement({ orders, onRefresh }: Props) {
   const [filter, setFilter] = useState<FilterTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [shipModal, setShipModal] = useState<{ open: boolean; orderId: string }>({
@@ -95,7 +96,7 @@ export function OrderManagement({ orders }: Props) {
   const [orderDetails, setOrderDetails] = useState<Record<string, SellerOrderDetail>>({});
   const [loadingDetails, setLoadingDetails] = useState<Set<string>>(new Set());
 
-  const toggleExpand = useCallback(async (orderId: string) => {
+  const toggleExpand = async (orderId: string) => {
     setExpandedOrders((prev) => {
       const next = new Set(prev);
       if (next.has(orderId)) {
@@ -123,7 +124,7 @@ export function OrderManagement({ orders }: Props) {
         });
       }
     }
-  }, [orderDetails, loadingDetails]);
+  };
 
   const filteredOrders = orders.filter((order) => {
     const status = getFulfillmentStatus(order);
@@ -143,6 +144,7 @@ export function OrderManagement({ orders }: Props) {
     setActionLoading(null);
     if (res.ok) {
       showToast("Pesanan sedang diproses.", "success");
+      await onRefresh?.();
     } else {
       showToast(res.error ?? "Gagal memproses.", "error");
     }
@@ -160,6 +162,7 @@ export function OrderManagement({ orders }: Props) {
     setTrackingInput("");
     if (res.ok) {
       showToast("Pesanan berhasil dikirim.", "success");
+      await onRefresh?.();
     } else {
       showToast(res.error ?? "Gagal mengirim.", "error");
     }
