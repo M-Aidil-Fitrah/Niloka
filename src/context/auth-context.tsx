@@ -72,7 +72,12 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
       return { ok: false, error: result?.error === "CredentialsSignin" ? "Email atau kata sandi salah." : "Gagal masuk. Silakan coba lagi." };
     }
 
-    const nextSession = await update();
+    let nextSession = await update();
+    for (let i = 0; i < 5 && !nextSession?.user?.id; i++) {
+      await new Promise((r) => setTimeout(r, 200));
+      nextSession = await update();
+    }
+
     const nextUser = nextSession?.user;
 
     if (!nextUser?.id || !nextUser.email) {
