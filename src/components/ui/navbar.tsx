@@ -12,6 +12,9 @@ import { cn } from "@/lib/styles";
 import { useCart } from "@/context/cart-context";
 import { ChatService } from "@/lib/services/chat-service";
 import { useAuth } from "@/context/auth-context";
+import { searchProductPreviewAction } from "@/lib/actions/product-actions";
+import type { SearchPreviewItem } from "@/lib/actions/product-actions";
+import { formatRupiah } from "@/lib/formatters";
 
 type NavItem = {
   label: string;
@@ -35,8 +38,13 @@ export function SiteNavbar() {
   const { user, logout } = useAuth();
   const searchRef = useRef<HTMLInputElement>(null);
   const mobileSearchRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchPreviewItem[]>([]);
+  const [showSearchPreview, setShowSearchPreview] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   const isLight = pathname !== "/";
   const { totalCount, openCartDrawer } = useCart();
@@ -49,13 +57,14 @@ export function SiteNavbar() {
   const handleSearch = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      const value = searchRef.current?.value ?? mobileSearchRef.current?.value ?? "";
-      if (value.trim()) {
-        router.push(`/products?search=${encodeURIComponent(value.trim())}`);
+      const value = searchValue.trim();
+      if (value) {
+        setShowSearchPreview(false);
+        router.push(`/products?search=${encodeURIComponent(value)}`);
         closeMenus();
       }
     },
-    [router, closeMenus],
+    [router, closeMenus, searchValue],
   );
 
   useEffect(() => {
@@ -72,10 +81,48 @@ export function SiteNavbar() {
       if (e.key === "Escape") {
         setIsMobileMenuOpen(false);
         setIsUserMenuOpen(false);
+        setShowSearchPreview(false);
       }
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    const trimmed = searchValue.trim();
+    if (trimmed.length < 2) {
+      const id = setTimeout(() => {
+        setSearchResults([]);
+        setShowSearchPreview(false);
+      }, 0);
+      return () => clearTimeout(id);
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const results = await searchProductPreviewAction(trimmed);
+        setSearchResults(results);
+        setShowSearchPreview(results.length > 0);
+      } catch {
+        setSearchResults([]);
+        setShowSearchPreview(false);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchValue]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setShowSearchPreview(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -123,28 +170,72 @@ export function SiteNavbar() {
         </nav>
 
         <div className="col-start-3 flex items-center justify-end gap-2">
-          <form
-            onSubmit={handleSearch}
-            className={cn(
-              "hidden h-10 w-[min(28vw,360px)] items-center gap-2 rounded-full px-4 text-sm font-semibold shadow-sm md:flex transition-all duration-300",
-              isLight
-                ? "bg-cream-100/70 border border-line/30 text-brand-950"
-                : "bg-white-soft text-ink-600"
-            )}
-          >
-            <SearchIcon className="text-brand-700" />
-            <label htmlFor="nav-search-desktop" className="sr-only">Cari produk</label>
-            <input
-              ref={searchRef}
-              id="nav-search-desktop"
+          <div ref={searchContainerRef} className="relative hidden md:block">
+            <form
+              onSubmit={handleSearch}
               className={cn(
-                "w-full bg-transparent text-sm font-semibold outline-none",
-                isLight ? "placeholder:text-ink-600/70" : "placeholder:text-ink-600"
+                "flex h-10 w-[min(28vw,360px)] items-center gap-2 rounded-full px-4 text-sm font-semibold shadow-sm transition-all duration-300",
+                isLight
+                  ? "bg-cream-100/70 border border-line/30 text-brand-950"
+                  : "bg-white-soft text-ink-600"
               )}
-              placeholder="Search product..."
-              type="search"
-            />
-          </form>
+            >
+              <SearchIcon className="text-brand-700 shrink-0" />
+              <label htmlFor="nav-search-desktop" className="sr-only">Cari produk</label>
+              <input
+                ref={searchRef}
+                id="nav-search-desktop"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                onFocus={() => { if (searchResults.length > 0) setShowSearchPreview(true); }}
+                className={cn(
+                  "w-full bg-transparent text-sm font-semibold outline-none",
+                  isLight ? "placeholder:text-ink-600/70" : "placeholder:text-ink-600"
+                )}
+                placeholder="Search product..."
+                type="search"
+              />
+            </form>
+
+            {showSearchPreview && (
+              <div className="absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-2xl border border-line bg-white-soft shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="max-h-[360px] overflow-y-auto divide-y divide-line/40">
+                  {searchResults.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/products/${item.slug}`}
+                      onClick={() => { setShowSearchPreview(false); setSearchValue(""); closeMenus(); }}
+                      className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-cream-50"
+                    >
+                      <div className="relative size-10 shrink-0 overflow-hidden rounded-xl bg-cream-50">
+                        <Image src={item.image.src} alt={item.image.alt} fill className="object-cover" sizes="40px" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-bold text-brand-950">{item.name}</p>
+                        <p className="text-[11px] text-ink-600 capitalize">{item.form.replace("-", " ")}</p>
+                      </div>
+                      <span className="shrink-0 text-sm font-extrabold text-brand-900">
+                        {formatRupiah(item.price.amount)}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+                <Link
+                  href={`/products?search=${encodeURIComponent(searchValue)}`}
+                  onClick={() => { setShowSearchPreview(false); closeMenus(); }}
+                  className="block border-t border-line/40 px-4 py-2.5 text-center text-xs font-bold text-brand-700 transition-colors hover:bg-cream-50"
+                >
+                  Lihat semua hasil &ldquo;{searchValue}&rdquo;
+                </Link>
+              </div>
+            )}
+
+            {isSearching && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <div className="size-4 animate-spin rounded-full border-2 border-brand-700 border-t-transparent" />
+              </div>
+            )}
+          </div>
 
           <Link
             href="/chat"
@@ -324,11 +415,13 @@ export function SiteNavbar() {
 
           <div className="pt-3 border-t border-line/45 md:hidden">
             <form onSubmit={handleSearch} className="flex h-10 w-full items-center gap-2 rounded-full bg-cream-100/70 border border-line/30 px-4 text-xs font-semibold text-brand-950">
-              <SearchIcon className="text-brand-700" />
+              <SearchIcon className="text-brand-700 shrink-0" />
               <label htmlFor="nav-search-mobile" className="sr-only">Cari produk</label>
               <input
                 ref={mobileSearchRef}
                 id="nav-search-mobile"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
                 className="w-full bg-transparent text-xs font-semibold outline-none placeholder:text-ink-600/70"
                 placeholder="Cari produk..."
                 type="search"

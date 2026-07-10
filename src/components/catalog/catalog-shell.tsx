@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Grid, List } from "lucide-react";
+import { Grid, List, Search, X } from "lucide-react";
 import type {
   Product,
   ProductCategory,
@@ -26,6 +26,7 @@ type CatalogShellProps = {
   products: Product[];
   categories: ProductCategory[];
   promos: Promo[];
+  initialSearchQuery?: string;
 };
 
 const PRODUCTS_PER_PAGE = 8;
@@ -37,8 +38,9 @@ const sortLabels: Record<SortOption, string> = {
   newest: "Terbaru",
 };
 
-export function CatalogShell({ products, categories, promos }: CatalogShellProps) {
+export function CatalogShell({ products, categories, promos, initialSearchQuery = "" }: CatalogShellProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedForms, setSelectedForms] = useState<ProductForm[]>([]);
   const [selectedFunctions, setSelectedFunctions] = useState<ProductFunction[]>([]);
@@ -48,6 +50,7 @@ export function CatalogShell({ products, categories, promos }: CatalogShellProps
   const [currentPage, setCurrentPage] = useState(1);
 
   function handleResetFilters() {
+    setSearchQuery("");
     setSelectedCategories([]);
     setSelectedForms([]);
     setSelectedFunctions([]);
@@ -87,18 +90,24 @@ export function CatalogShell({ products, categories, promos }: CatalogShellProps
     return map;
   }, [products, promosBySeller]);
 
-  const filtered = useMemo(() => products.filter((product) => {
-    if (selectedCategories.length > 0 && !selectedCategories.includes(product.categoryId)) {
-      return false;
-    }
-    if (selectedForms.length > 0 && !selectedForms.includes(product.form)) {
-      return false;
-    }
-    if (selectedFunctions.length > 0 && !product.functions.some((f) => selectedFunctions.includes(f))) {
-      return false;
-    }
-    return true;
-  }), [products, selectedCategories, selectedForms, selectedFunctions]);
+  const filtered = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    return products.filter((product) => {
+      if (selectedCategories.length > 0 && !selectedCategories.includes(product.categoryId)) {
+        return false;
+      }
+      if (selectedForms.length > 0 && !selectedForms.includes(product.form)) {
+        return false;
+      }
+      if (selectedFunctions.length > 0 && !product.functions.some((f) => selectedFunctions.includes(f))) {
+        return false;
+      }
+      if (q && !product.name.toLowerCase().includes(q) && !product.shortDescription.toLowerCase().includes(q)) {
+        return false;
+      }
+      return true;
+    });
+  }, [products, selectedCategories, selectedForms, selectedFunctions, searchQuery]);
 
   const sorted = useMemo(() => [...filtered].sort((a, b) => {
     switch (sort) {
@@ -122,6 +131,7 @@ export function CatalogShell({ products, categories, promos }: CatalogShellProps
   );
 
   const hasActiveFilters =
+    searchQuery.trim().length > 0 ||
     selectedCategories.length > 0 ||
     selectedForms.length > 0 ||
     selectedFunctions.length > 0;
@@ -185,6 +195,27 @@ export function CatalogShell({ products, categories, promos }: CatalogShellProps
 
       {/* Main content */}
       <div className="flex-1 min-w-0">
+        {/* Search bar */}
+        <div className="relative mb-5">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-600" />
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+            placeholder="Cari produk berdasarkan nama atau deskripsi..."
+            className="w-full rounded-full border border-line bg-white-soft py-2.5 pl-11 pr-10 text-sm font-medium text-brand-950 outline-none placeholder:text-ink-600/70 focus:border-brand-700 focus:ring-2 focus:ring-brand-700/10 transition-all"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => { setSearchQuery(""); setCurrentPage(1); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center size-6 rounded-full text-ink-600 hover:text-brand-900 hover:bg-cream-100 transition-all cursor-pointer"
+              aria-label="Hapus pencarian"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
         {/* Toolbar */}
         <div className="mb-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -354,7 +385,7 @@ export function CatalogShell({ products, categories, promos }: CatalogShellProps
         ) : (
           <div className="flex flex-col items-center justify-center rounded-[28px] border border-line bg-white-soft py-20 text-center">
             <p className="text-lg font-semibold text-brand-950">Tidak ada produk ditemukan</p>
-            <p className="mt-2 text-sm text-ink-600">Coba ubah filter untuk menemukan produk yang Anda cari.</p>
+            <p className="mt-2 text-sm text-ink-600">{searchQuery ? `Pencarian "${searchQuery}" tidak menghasilkan produk.` : "Coba ubah filter untuk menemukan produk yang Anda cari."}</p>
             {hasActiveFilters && (
               <Button className="mt-5" variant="secondary" onClick={handleResetFilters}>
                 Reset Filter

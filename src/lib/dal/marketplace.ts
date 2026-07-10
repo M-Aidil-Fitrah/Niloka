@@ -423,11 +423,23 @@ function mapArticle(row: ArticleRow): Article {
   };
 }
 
-export async function getPublishedProductsDto(): Promise<Product[]> {
+export async function getPublishedProductsDto(params?: {
+  searchQuery?: string;
+}): Promise<Product[]> {
+  const where: Prisma.ProductWhereInput = {
+    status: ProductStatus.PUBLISHED,
+  };
+
+  if (params?.searchQuery) {
+    const q = params.searchQuery.trim();
+    where.OR = [
+      { name: { contains: q, mode: "insensitive" } },
+      { shortDescription: { contains: q, mode: "insensitive" } },
+    ];
+  }
+
   const rows = await prisma.product.findMany({
-    where: {
-      status: ProductStatus.PUBLISHED,
-    },
+    where,
     include: {
       gallery: {
         orderBy: {

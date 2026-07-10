@@ -24,9 +24,14 @@ export const metadata: Metadata = {
   description: "Jelajahi produk turunan minyak nilam Aceh berkualitas tinggi, mulai dari minyak atsiri murni, roll-on aromaterapi, sabun artisan, hingga lilin wangi alami.",
 };
 
-export default async function ProductsPage() {
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>;
+}) {
+  const { search } = await searchParams;
   const [products, categories, promos] = await Promise.all([
-    getPublishedProductsDto(),
+    getPublishedProductsDto({ searchQuery: search }),
     getProductCategoriesDto(),
     getPublicPromoSuggestionsDto(),
   ]);
@@ -42,6 +47,7 @@ export default async function ProductsPage() {
           products={products}
           categories={categories}
           promos={promos}
+          initialSearchQuery={search ?? ""}
         />
       </div>
     </SectionShell>
