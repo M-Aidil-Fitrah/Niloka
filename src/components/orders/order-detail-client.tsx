@@ -37,7 +37,9 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
         if (data.payment) setPayment(data.payment);
         if (data.paymentStatus === "paid") { setPStatus("paid"); setPolling(false); }
         if (data.paymentStatus === "failed" || data.paymentStatus === "expired") { setPStatus(data.paymentStatus); setPolling(false); }
-      } catch {}
+      } catch (err) {
+        console.error("Payment status polling failed:", err);
+      }
     }, 5000);
     return () => clearInterval(id);
   }, [polling, order.id]);

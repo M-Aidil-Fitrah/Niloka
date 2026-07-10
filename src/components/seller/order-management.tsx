@@ -233,8 +233,11 @@ export function OrderManagement({ orders, onRefresh }: Props) {
                 key={order.id}
                 className="rounded-2xl border border-line bg-white-soft shadow-sm overflow-hidden"
               >
-                <button
+                <div
+                  role="button"
+                  tabIndex={0}
                   onClick={() => toggleExpand(order.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleExpand(order.id); } }}
                   className="w-full text-left p-4 sm:p-5 space-y-3 cursor-pointer hover:bg-cream-50/50 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -327,7 +330,7 @@ export function OrderManagement({ orders, onRefresh }: Props) {
                       )}
                     </div>
                   </div>
-                </button>
+                </div>
 
                 {isExpanded && (
                   <div className="border-t border-line/40 bg-cream-50/50 px-4 sm:px-5 py-4 space-y-4 text-xs animate-in slide-in-from-top-2 duration-200">

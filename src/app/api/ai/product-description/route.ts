@@ -105,21 +105,31 @@ export async function POST(request: Request) {
     );
   }
 
-  const mockMarkdown = [
-    `**${payload.productName}** menghadirkan karakter nilam Aceh dari ${payload.origin} dengan profil aroma ${payload.aromaProfile}.`,
-    "",
-    "Produk ini cocok untuk pengguna yang mencari pengalaman natural, transparan, dan mudah dipahami melalui data Nilam Passport.",
-    "",
-    "- Dibuat untuk kebutuhan yang sesuai dengan fungsi produk yang dipilih.",
-    "- Informasi asal bahan dan catatan keamanan tetap perlu diverifikasi sebelum publikasi.",
-    "- Tidak memuat klaim sertifikasi resmi atau klaim medis.",
-  ].join("\n");
-  const result = await generateAiText(
-    buildProductDescriptionPrompt(payload),
-    mockMarkdown,
-  );
+  try {
+    const result = await generateAiText(buildProductDescriptionPrompt(payload));
 
-  return Response.json(
-    normalizeProductDescription(payload, result.text, result.providerUsed),
-  );
+    return Response.json(
+      normalizeProductDescription(payload, result.text, result.providerUsed),
+    );
+  } catch {
+    return Response.json(
+      {
+        providerUsed: "mock",
+        shortDescription: "",
+        fullDescriptionMarkdown: "",
+        suggestedTags: [],
+        suggestedFunctions: [],
+        passportDraftSuggestion: {
+          origin: payload.origin,
+          aromaProfile: [],
+          functions: [],
+          usage: "",
+          safetyNotes: payload.safetyNotes,
+        },
+        safetyNotice: payload.safetyNotes,
+        missingFields: ["Layanan AI sedang tidak tersedia."],
+      } satisfies ProductDescriptionResponse,
+      { status: 503 },
+    );
+  }
 }

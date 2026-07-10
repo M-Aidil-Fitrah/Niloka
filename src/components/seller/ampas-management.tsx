@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, AlertTriangle } from "lucide-react";
 import type { AmpasListing, AmpasUsageTag } from "@/lib/contracts";
-import { showToast } from "../dashboard/dashboard-layout";
+import { showToast } from "@/lib/toast";
 import { AmpasTable } from "./ampas/ampas-table";
 import { AmpasDrawer } from "./ampas/ampas-drawer";
 import { useAuth } from "@/context/auth-context";
@@ -76,7 +76,7 @@ export function AmpasManagement({ ampasListings: initialListings }: AmpasManagem
       distillationProcess: "Penyulingan uap stainless steel suhu 110 derajat selama 8 jam.",
       usageTags: ["compost", "briquette"],
       status: "draft",
-      image: { src: "https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?q=80&w=400&auto=format&fit=crop", alt: "Ampas Nilam" },
+      image: { src: "", alt: "Ampas Nilam" },
       disclaimer: "Platform NILOKA tidak memverifikasi kandungan kimia residue.",
       distillationDate: new Date().toISOString().split("T")[0],
       shippingOption: "both",

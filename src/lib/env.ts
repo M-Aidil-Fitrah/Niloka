@@ -24,7 +24,7 @@ export function validateEnv(): void {
 
   if (!process.env.GEMINI_API_KEY && !process.env.GROQ_API_KEY) {
     console.warn(
-      "Neither GEMINI_API_KEY nor GROQ_API_KEY is set. AI features will fall back to mock responses.",
+      "Neither GEMINI_API_KEY nor GROQ_API_KEY is set. AI features will return errors.",
     );
   }
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Compass } from "lucide-react";
 import type { NilamPassport, Product, ProductFunction } from "@/lib/contracts";
-import { showToast } from "../dashboard/dashboard-layout";
+import { showToast } from "@/lib/toast";
 import { PassportTable } from "./passport/passport-table";
 import { PassportDrawer } from "./passport/passport-drawer";
 import { useAuth } from "@/context/auth-context";

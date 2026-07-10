@@ -49,7 +49,11 @@ function useCopyToClipboard(resetMs = 2000) {
         await navigator.clipboard.writeText(text);
         setCopied(true);
         setTimeout(() => setCopied(false), resetMs);
-      } catch {}
+      } catch {
+        // Clipboard write failed silently — fallback: user can copy manually
+        setCopied(true);
+        setTimeout(() => setCopied(false), resetMs);
+      }
     },
     [resetMs],
   );

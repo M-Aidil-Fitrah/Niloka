@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { StarIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
 import type { Review, ReviewTag } from "@/lib/contracts";
 import { submitReviewAction } from "@/lib/actions/review-actions";
 
@@ -13,25 +11,6 @@ type ProductReviewsProps = {
   productId: string;
   sellerId: string;
 };
-
-// Preset photos that users can choose to mock "uploading a photo"
-const PHOTO_PRESETS = [
-  {
-    id: "preset-1",
-    label: "Aroma Terapi",
-    src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108",
-  },
-  {
-    id: "preset-2",
-    label: "Kemasan Rapi",
-    src: "https://images.unsplash.com/photo-1540555700478-4be289fbecef",
-  },
-  {
-    id: "preset-3",
-    label: "Bahan Organik",
-    src: "https://images.unsplash.com/photo-1515377905703-c4788e51af15",
-  },
-];
 
 const AVAILABLE_TAGS: { key: ReviewTag; label: string }[] = [
   { key: "authentic-aroma", label: "✨ Aroma Autentik" },
@@ -52,7 +31,6 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
   const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [body, setBody] = useState("");
   const [selectedTags, setSelectedTags] = useState<ReviewTag[]>([]);
-  const [selectedPhotoSrc, setSelectedPhotoSrc] = useState<string | null>(null);
 
   const ratingAverage =
     reviewsList.length > 0
@@ -81,10 +59,7 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
       });
 
       if (result.ok && result.review) {
-        const newReview = {
-          ...result.review,
-          photo: selectedPhotoSrc || undefined,
-        };
+        const newReview = { ...result.review };
         setReviewsList((prev) => [newReview, ...prev]);
 
         // Reset Form State
@@ -92,7 +67,6 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
         setRating(5);
         setBody("");
         setSelectedTags([]);
-        setSelectedPhotoSrc(null);
         setIsFormOpen(false);
       } else {
         alert(result.message);
@@ -228,32 +202,6 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
               </div>
             </div>
 
-            {/* Photo Preset Selector */}
-            <div className="space-y-1 sm:col-span-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-ink-600 block">Lampirkan Foto Ulasan (Opsional)</span>
-              <div className="flex gap-3 mt-1.5">
-                {PHOTO_PRESETS.map((preset) => {
-                  const isSelected = selectedPhotoSrc === preset.src;
-                  return (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      onClick={() => setSelectedPhotoSrc(isSelected ? null : preset.src)}
-                      className={`relative h-14 w-14 rounded-xl overflow-hidden border-2 transition-all ${
-                        isSelected ? "border-brand-900 ring-2 ring-brand-700/30 scale-95" : "border-line/60 opacity-70 hover:opacity-100"
-                      }`}
-                    >
-                      <Image src={preset.src} alt={preset.label} fill className="object-cover" sizes="56px" />
-                      {isSelected && (
-                        <div className="absolute inset-0 bg-brand-950/45 flex items-center justify-center text-white-soft animate-in zoom-in duration-200">
-                          <Check className="h-4 w-4" />
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
 
             {/* Body */}
             <div className="space-y-1 sm:col-span-2">
@@ -291,9 +239,7 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
       {/* Reviews list */}
       {reviewsList.length > 0 ? (
         <div className="divide-y divide-line/60">
-          {reviewsList.map((reviewItem) => {
-            const review = reviewItem as Review & { photo?: string };
-            return (
+          {reviewsList.map((review) => (
               <div key={review.id} className="py-5 first:pt-0 last:pb-0 space-y-3">
                 <div className="flex items-center justify-between gap-4">
                   <div>
@@ -337,22 +283,8 @@ export function ProductReviews({ reviews: initialReviews, productId, sellerId }:
 
                 {/* Review Text Body */}
                 <p className="text-sm leading-relaxed text-ink-800 font-medium">{review.body}</p>
-
-                {/* Render attached photo if any */}
-                {"photo" in review && review.photo && (
-                  <div className="relative h-20 w-20 overflow-hidden rounded-xl border border-line/45 bg-cream-100 shadow-sm transition-transform hover:scale-105 duration-200">
-                    <Image
-                      src={review.photo as string}
-                      alt="Ulasan Foto"
-                      className="object-cover"
-                      fill
-                      sizes="80px"
-                    />
-                  </div>
-                )}
               </div>
-            );
-          })}
+            ))}
         </div>
       ) : (
         <div className="py-8 text-center bg-cream-50/20 border border-dashed border-line/80 rounded-2xl">

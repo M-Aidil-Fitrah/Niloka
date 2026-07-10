@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Sparkles, Wand2, Check } from "lucide-react";
 import type { Product } from "@/lib/contracts";
-import { showToast } from "@/components/dashboard/dashboard-layout";
+import { showToast } from "@/lib/toast";
 
 type AIDescriptionGeneratorProps = {
   activeProduct: Partial<Product>;

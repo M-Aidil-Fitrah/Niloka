@@ -148,7 +148,7 @@ export function SellerDashboardShell({
           subtitle={getSubTitle()}
           profileName={user?.name || "Aceh Aroma Co."}
           profileRole={user?.sellerType ? `Mitra ${user.sellerType.toUpperCase()}` : "Penyuling Mitra"}
-          profileImage="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+          profileImage={undefined}
           onMenuClick={() => setIsSidebarOpen(true)}
           chatHref="/chat?mode=seller"
           backToUrl="/"

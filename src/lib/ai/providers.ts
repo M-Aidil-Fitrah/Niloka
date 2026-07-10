@@ -143,7 +143,7 @@ async function generateWithGroq(prompt: string): Promise<string> {
   return text;
 }
 
-export async function generateAiText(prompt: string, mockText: string): Promise<GenerateTextResult> {
+export async function generateAiText(prompt: string): Promise<GenerateTextResult> {
   try {
     return {
       text: await generateWithGemini(prompt),
@@ -156,10 +156,7 @@ export async function generateAiText(prompt: string, mockText: string): Promise<
         providerUsed: "groq",
       };
     } catch {
-      return {
-        text: mockText,
-        providerUsed: "mock",
-      };
+      throw new Error("Layanan AI sedang tidak tersedia. Silakan periksa konfigurasi API key.");
     }
   }
 }

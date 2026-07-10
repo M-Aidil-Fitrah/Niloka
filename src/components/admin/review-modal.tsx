@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Check, X, Award, FileText, Compass } from "lucide-react";
 import type { AdminValidationItem, Seller } from "@/lib/contracts";
-import { showToast } from "../dashboard/dashboard-layout";
+import { showToast } from "@/lib/toast";
 
 type ReviewModalProps = {
   item: AdminValidationItem | null;

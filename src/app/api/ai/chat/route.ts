@@ -57,23 +57,22 @@ export async function POST(request: Request) {
   ]);
   const prompt = buildChatPrompt(messages, nilokaContext);
   const suggestions = buildProductSuggestions(products, lastMessage.content);
-  const mockText = [
-    "Berikut rekomendasi dari data NILOKA saat ini:",
-    "",
-    "| Produk | Cocok untuk | Catatan |",
-    "| --- | --- | --- |",
-    ...suggestions.map(
-      (item) => `| **${item.name}** | ${item.reason} | Lihat detail produk untuk Nilam Passport dan harga terbaru. |`,
-    ),
-    "",
-    "Nilam Passport membantu memahami asal-usul dan karakteristik produk nilam.",
-  ].join("\n");
-  const result = await generateAiText(prompt, mockText);
 
-  return Response.json({
-    answerMarkdown: result.text,
-    providerUsed: result.providerUsed,
-    suggestions,
-    refused: false,
-  } satisfies ChatResponse);
+  try {
+    const result = await generateAiText(prompt);
+
+    return Response.json({
+      answerMarkdown: result.text,
+      providerUsed: result.providerUsed,
+      suggestions,
+      refused: false,
+    } satisfies ChatResponse);
+  } catch {
+    return Response.json({
+      answerMarkdown: "Maaf, layanan AI sedang tidak tersedia. Silakan coba lagi nanti.",
+      providerUsed: "mock",
+      suggestions: [],
+      refused: true,
+    } satisfies ChatResponse);
+  }
 }

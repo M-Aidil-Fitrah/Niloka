@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { Product } from "@/lib/contracts";
-import { showToast } from "@/components/dashboard/dashboard-layout";
+import { showToast } from "@/lib/toast";
 import { ProductTable } from "./product/product-table";
 import { ProductDrawer } from "./product/product-drawer";
 import { useAuth } from "@/context/auth-context";
@@ -61,7 +61,7 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
       form: "essential-oil",
       functions: ["relaxation"],
       tags: ["new-arrival"],
-      image: { src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=400&auto=format&fit=crop", alt: "Product Cover" },
+      image: { src: "", alt: "Product Cover" },
       gallery: [],
     });
     setIsEditing(true);

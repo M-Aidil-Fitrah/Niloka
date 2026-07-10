@@ -68,12 +68,23 @@ export function SiteNavbar() {
   );
 
   useEffect(() => {
-    const unsubscribe = ChatService.subscribe((threads) => {
-      const hasUnread = threads.some((t) => t.unread || t.unreadCount > 0);
-      setHasUnreadChats(hasUnread);
-    });
-
-    return unsubscribe;
+    const checkUnread = async () => {
+      try {
+        const threads = await ChatService.getThreads();
+        const hasUnread = threads.some((t) => t.unread || t.unreadCount > 0);
+        setHasUnreadChats(hasUnread);
+      } catch {
+        // Silently fail — badge just won't show
+      }
+    };
+    checkUnread();
+    const id = setInterval(checkUnread, 30000);
+    const onFocus = () => checkUnread();
+    window.addEventListener("focus", onFocus);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener("focus", onFocus);
+    };
   }, []);
 
   useEffect(() => {

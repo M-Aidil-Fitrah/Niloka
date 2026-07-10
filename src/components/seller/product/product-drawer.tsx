@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import type { Product, ProductForm } from "@/lib/contracts";
-import { showToast } from "@/components/dashboard/dashboard-layout";
 import { AIDescriptionGenerator } from "./ai-description-generator";
 
 type ProductDrawerProps = {
@@ -138,18 +137,24 @@ export function ProductDrawer({
               <div className="grid grid-cols-4 gap-3">
                 {/* Cover slot */}
                 <div className="relative aspect-square border-2 border-dashed border-brand-900/30 rounded-xl overflow-hidden bg-cream-50/50 flex flex-col items-center justify-center p-1">
-                  <Image
-                    src={activeProduct.image?.src || "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=400&auto=format&fit=crop"}
-                    alt="Cover preview"
-                    fill
-                    className="object-cover"
-                  />
+                  {activeProduct.image?.src ? (
+                    <Image
+                      src={activeProduct.image.src}
+                      alt="Cover preview"
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full w-full">
+                      <span className="text-xs font-bold text-ink-600/50">+</span>
+                      <span className="text-[8px] font-bold text-ink-600/40">Cover</span>
+                    </div>
+                  )}
                   <span className="absolute bottom-1 left-1 right-1 bg-brand-900/80 text-[8px] font-extrabold text-white-soft text-center py-0.5 rounded uppercase">
                     Cover
                   </span>
                 </div>
 
-                {/* Additional Gallery slots (Mocked) */}
                 {[1, 2, 3].map((num) => {
                   const hasImage = activeProduct.gallery && activeProduct.gallery[num - 1];
                   return (
@@ -159,14 +164,8 @@ export function ProductDrawer({
                         const currentGallery = [...(activeProduct.gallery || [])];
                         if (currentGallery[num - 1]) {
                           currentGallery.splice(num - 1, 1);
-                        } else {
-                          currentGallery.push({
-                            src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=400&auto=format&fit=crop",
-                            alt: `Gallery ${num}`
-                          });
+                          setActiveProduct({ ...activeProduct, gallery: currentGallery });
                         }
-                        setActiveProduct({ ...activeProduct, gallery: currentGallery });
-                        showToast(`Mock: Foto tambahan ${num} diperbarui!`, "success");
                       }}
                       className="relative aspect-square border-2 border-dashed border-line hover:border-brand-900/40 rounded-xl overflow-hidden bg-cream-50/20 flex flex-col items-center justify-center p-1 cursor-pointer transition-all"
                     >

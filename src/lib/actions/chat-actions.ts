@@ -89,7 +89,7 @@ function mapDbThread(thread: DbThread): ChatThread {
     sellerCity: thread.seller?.locationCity || "Aceh",
     buyerId: thread.buyerId || "",
     buyerName: thread.buyer?.name || "Pengguna Niloka",
-    buyerAvatar: thread.buyer?.image || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop",
+    buyerAvatar: thread.buyer?.image ?? "",
     buyerUsername: thread.buyer?.email?.split("@")[0] || "penggunaniloka",
     lastMessage,
     updatedAt: thread.updatedAt.toISOString(),
@@ -518,5 +518,6 @@ export async function deleteThreadAction(threadId: string): Promise<void> {
     revalidatePath("/chat");
   } catch (error) {
     console.error("Failed to delete chat thread:", error);
+    throw error;
   }
 }
