@@ -5,58 +5,17 @@ import { DashboardStatsCard, showToast } from "../dashboard/dashboard-layout";
 import { formatRupiah } from "@/lib/formatters";
 import type { Product } from "@/lib/contracts";
 
-type Transaction = {
-  id: string;
-  productName: string;
-  buyerName: string;
-  amount: number;
-  date: string;
-  status: "success" | "pending" | "failed";
-};
-
-const recentTransactions: Transaction[] = [
-  {
-    id: "TRX-0982",
-    productName: "Essential Oil Nilam Super",
-    buyerName: "Aroma Therapy Lab",
-    amount: 1450000,
-    date: "6 Juli 2026",
-    status: "success",
-  },
-  {
-    id: "TRX-0981",
-    productName: "Lilin Aromaterapi Nilam & Lavender",
-    buyerName: "Cut Nyak Meutia",
-    amount: 320000,
-    date: "5 Juli 2026",
-    status: "success",
-  },
-  {
-    id: "TRX-0980",
-    productName: "Ampas Nilam Kering",
-    buyerName: "Pupuk Organik Makmur",
-    amount: 2500000,
-    date: "4 Juli 2026",
-    status: "success",
-  },
-  {
-    id: "TRX-0979",
-    productName: "Parfum Nilam Aceh Premium",
-    buyerName: "Tengku Iskandar",
-    amount: 850000,
-    date: "2 Juli 2026",
-    status: "success",
-  },
-];
-
 type SellerStatsProps = {
   products?: Product[];
   totalSales: number;
   totalProducts: number;
   pendingPassports: number;
+  ratingAverage: number;
+  totalReviews: number;
+  recentTransactions: { id: string; productName: string; buyerName: string; amount: number; date: string; status: "success" | "pending" | "failed" }[];
 };
 
-export function SellerStats({ products = [], totalSales, totalProducts, pendingPassports }: SellerStatsProps) {
+export function SellerStats({ products = [], totalSales, totalProducts, pendingPassports, ratingAverage, totalReviews, recentTransactions }: SellerStatsProps) {
   const lowStockProducts = products.filter((p) => p.stock <= 3);
 
   return (
@@ -95,9 +54,9 @@ export function SellerStats({ products = [], totalSales, totalProducts, pendingP
         />
         <DashboardStatsCard
           title="Rating Kepuasan"
-          value="98.4%"
+          value={totalReviews > 0 ? `${(ratingAverage * 20).toFixed(1)}%` : "—"}
           icon={Award}
-          trend={{ type: "up", label: "Dari 84 ulasan" }}
+          trend={{ type: totalReviews > 0 ? "up" : "down", label: totalReviews > 0 ? `Dari ${totalReviews} ulasan` : "Belum ada ulasan" }}
           sparkline="M0,5 Q25,25 50,5 T75,20 T100,10"
           theme="gold"
         />
@@ -183,24 +142,28 @@ export function SellerStats({ products = [], totalSales, totalProducts, pendingP
           </div>
 
           <div className="mt-4 flex-1 space-y-4">
-            {recentTransactions.map((trx) => (
-              <div key={trx.id} className="flex justify-between items-center gap-3 text-xs pb-3.5 border-b border-line/30 last:border-b-0 last:pb-0">
-                <div className="space-y-0.5 min-w-0">
-                  <span className="font-extrabold text-brand-950 block truncate">{trx.productName}</span>
-                  <div className="flex items-center gap-1.5 text-[10px] text-ink-600">
-                    <span className="font-bold">{trx.id}</span>
-                    <span>•</span>
-                    <span>{trx.buyerName}</span>
+            {recentTransactions.length === 0 ? (
+              <p className="text-xs text-ink-500 py-8 text-center">Belum ada transaksi.</p>
+            ) : (
+              recentTransactions.map((trx) => (
+                <div key={trx.id} className="flex justify-between items-center gap-3 text-xs pb-3.5 border-b border-line/30 last:border-b-0 last:pb-0">
+                  <div className="space-y-0.5 min-w-0">
+                    <span className="font-extrabold text-brand-950 block truncate">{trx.productName}</span>
+                    <div className="flex items-center gap-1.5 text-[10px] text-ink-600">
+                      <span className="font-bold">{trx.id.slice(0, 12)}</span>
+                      <span>•</span>
+                      <span>{trx.buyerName}</span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="font-extrabold text-brand-950 block">{formatRupiah(trx.amount)}</span>
+                    <span className="text-[9px] font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-200/50 px-2 py-0.5 rounded-md block mt-1 text-center">
+                      {trx.status === "success" ? "Sukses" : trx.status === "pending" ? "Menunggu" : "Gagal"}
+                    </span>
                   </div>
                 </div>
-                <div className="text-right shrink-0">
-                  <span className="font-extrabold text-brand-950 block">{formatRupiah(trx.amount)}</span>
-                  <span className="text-[9px] font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-200/50 px-2 py-0.5 rounded-md block mt-1 text-center">
-                    Sukses
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           <button className="w-full mt-6 py-2.5 bg-cream-100 hover:bg-cream-200 border border-line text-brand-950 font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer">

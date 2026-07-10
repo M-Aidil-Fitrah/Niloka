@@ -15,12 +15,22 @@ type SellerDashboardShellProps = {
   products: Product[];
   ampasListings: AmpasListing[];
   promos: Promo[];
+  finance: {
+    grossRevenue: number;
+    productCount: number;
+    pendingPassports: number;
+    ratingAverage: number;
+    totalReviews: number;
+    recentTransactions: { id: string; productName: string; buyerName: string; amount: number; date: string; status: "success" | "pending" | "failed" }[];
+    activityLog: { action: string; date: string; status: string }[];
+  };
 };
 
 export function SellerDashboardShell({
   products,
   ampasListings,
   promos,
+  finance,
 }: SellerDashboardShellProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -41,9 +51,12 @@ export function SellerDashboardShell({
         return (
           <SellerStats
             products={products}
-            totalSales={16350000}
+            totalSales={finance.grossRevenue}
             totalProducts={products.length}
-            pendingPassports={1}
+            pendingPassports={finance.pendingPassports}
+            ratingAverage={finance.ratingAverage}
+            totalReviews={finance.totalReviews}
+            recentTransactions={finance.recentTransactions}
           />
         );
       case "products":
@@ -62,24 +75,23 @@ export function SellerDashboardShell({
               <p className="text-xs text-ink-600 mt-1">Lacak jejak perubahan data, stok, dan pengajuan verifikasi toko Anda</p>
             </div>
             <div className="space-y-4">
-              {[
-                { date: "6 Juli 2026, 15:10", action: "Mengubah harga produk 'Roll-on Nilam Relief'", status: "Sukses" },
-                { date: "6 Juli 2026, 12:45", action: "Mengajukan draft 'Nilam Passport' baru untuk verifikasi UPTD", status: "Menunggu Review" },
-                { date: "5 Juli 2026, 17:30", action: "Membuat Voucher Promosi baru 'NILOKASUMMER'", status: "Sukses" },
-                { date: "4 Juli 2026, 09:12", action: "Menambahkan Listing Ampas Nilam Kering 500 Kg", status: "Sukses" },
-              ].map((log, idx) => (
-                <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-line/35 last:border-b-0 last:pb-0 text-xs">
-                  <div className="space-y-0.5">
-                    <span className="font-extrabold text-brand-950 block">{log.action}</span>
-                    <span className="text-[10px] text-ink-500 font-semibold">{log.date}</span>
+              {finance.activityLog.length === 0 ? (
+                <p className="text-xs text-ink-500 py-4 text-center">Belum ada aktivitas yang tercatat.</p>
+              ) : (
+                finance.activityLog.map((log, idx) => (
+                  <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-line/35 last:border-b-0 last:pb-0 text-xs">
+                    <div className="space-y-0.5">
+                      <span className="font-extrabold text-brand-950 block">{log.action}</span>
+                      <span className="text-[10px] text-ink-500 font-semibold">{log.date}</span>
+                    </div>
+                    <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded ${
+                      log.status === "Sukses" ? "text-emerald-800 bg-emerald-50" : "text-red-600 bg-red-50"
+                    }`}>
+                      {log.status}
+                    </span>
                   </div>
-                  <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded ${
-                    log.status === "Sukses" ? "text-emerald-800 bg-emerald-50" : "text-blue-800 bg-blue-50"
-                  }`}>
-                    {log.status}
-                  </span>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         );

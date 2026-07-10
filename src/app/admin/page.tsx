@@ -22,6 +22,7 @@ export default function AdminPage() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [validationItems, setValidationItems] = useState<AdminValidationItem[]>([]);
   const [sellers, setSellers] = useState<Seller[]>([]);
+  const [productCount, setProductCount] = useState(0);
 
   useEffect(() => {
     if (!isLoading) {
@@ -30,9 +31,7 @@ export default function AdminPage() {
       } else if (user.role !== "admin") {
         router.replace("/");
       } else {
-        setTimeout(() => {
-          setIsAuthorized(true);
-        }, 0);
+        setTimeout(() => setIsAuthorized(true), 0);
       }
     }
   }, [user, isLoading, router]);
@@ -40,20 +39,17 @@ export default function AdminPage() {
   useEffect(() => {
     if (isAuthorized) {
       getAdminValidationItemsAction()
-        .then((items) => {
-          setValidationItems(items);
-        })
-        .catch((err) => {
-          console.error("Failed to load validation items", err);
-        });
+        .then(setValidationItems)
+        .catch((err) => console.error("Failed to load validation items", err));
 
       getAllSellersAction()
-        .then((s) => {
-          setSellers(s);
-        })
-        .catch((err) => {
-          console.error("Failed to load sellers", err);
-        });
+        .then(setSellers)
+        .catch((err) => console.error("Failed to load sellers", err));
+
+      fetch("/api/admin/product-count")
+        .then((res) => res.json())
+        .then((data) => setProductCount(data.count ?? 0))
+        .catch(() => setProductCount(0));
     }
   }, [isAuthorized]);
 
@@ -62,6 +58,6 @@ export default function AdminPage() {
   }
 
   return (
-    <AdminShell validationItems={validationItems} sellers={sellers} />
+    <AdminShell validationItems={validationItems} sellers={sellers} productCount={productCount} />
   );
 }

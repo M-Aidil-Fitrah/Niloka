@@ -7,6 +7,7 @@ import { useAuth } from "@/context/auth-context";
 import { getSellerAmpasListingsAction } from "@/lib/actions/ampas-actions";
 import { getSellerProductsAction } from "@/lib/actions/product-actions";
 import { getSellerPromosAction } from "@/lib/actions/promo-actions";
+import { getSellerFinanceSummaryAction } from "@/lib/actions/checkout-actions";
 import type { AmpasListing, Product, Promo } from "@/lib/contracts";
 import { SellerDashboardSkeleton } from "@/components/ui/skeletons";
 
@@ -18,6 +19,16 @@ const SellerDashboardShell = dynamic(
   }
 );
 
+type SellerFinanceData = {
+  grossRevenue: number;
+  productCount: number;
+  pendingPassports: number;
+  ratingAverage: number;
+  totalReviews: number;
+  recentTransactions: { id: string; productName: string; buyerName: string; amount: number; date: string; status: "success" | "pending" | "failed" }[];
+  activityLog: { action: string; date: string; status: string }[];
+};
+
 export default function SellerPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
@@ -25,6 +36,7 @@ export default function SellerPage() {
   const [ampasListings, setAmpasListings] = useState<AmpasListing[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [promos, setPromos] = useState<Promo[]>([]);
+  const [finance, setFinance] = useState<SellerFinanceData | null>(null);
 
   useEffect(() => {
     if (!isLoading) {
@@ -33,41 +45,28 @@ export default function SellerPage() {
       } else if (user.role !== "seller") {
         router.replace("/");
       } else {
-        setTimeout(() => {
-          setIsAuthorized(true);
-        }, 0);
+        setTimeout(() => setIsAuthorized(true), 0);
       }
     }
   }, [user, isLoading, router]);
 
   useEffect(() => {
     if (isAuthorized && user?.sellerId) {
-      // Fetch ampas listings
       getSellerAmpasListingsAction()
-        .then((data) => {
-          setAmpasListings(data);
-        })
-        .catch((err) => {
-          console.error("Failed to load seller ampas listings", err);
-        });
+        .then(setAmpasListings)
+        .catch((err) => console.error("Failed to load seller ampas listings", err));
 
-      // Fetch products
       getSellerProductsAction()
-        .then((data) => {
-          setProducts(data);
-        })
-        .catch((err) => {
-          console.error("Failed to load seller products", err);
-        });
+        .then(setProducts)
+        .catch((err) => console.error("Failed to load seller products", err));
 
-      // Fetch promos
       getSellerPromosAction()
-        .then((data) => {
-          setPromos(data);
-        })
-        .catch((err) => {
-          console.error("Failed to load seller promos", err);
-        });
+        .then(setPromos)
+        .catch((err) => console.error("Failed to load seller promos", err));
+
+      getSellerFinanceSummaryAction()
+        .then(setFinance)
+        .catch((err) => console.error("Failed to load seller finance", err));
     }
   }, [isAuthorized, user]);
 
@@ -80,6 +79,7 @@ export default function SellerPage() {
       products={products}
       ampasListings={ampasListings}
       promos={promos}
+      finance={finance ?? { grossRevenue: 0, productCount: products.length, pendingPassports: 0, ratingAverage: 0, totalReviews: 0, recentTransactions: [], activityLog: [] }}
     />
   );
 }

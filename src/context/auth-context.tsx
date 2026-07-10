@@ -107,10 +107,6 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
     }
 
     const loginResult = await login(email, password);
-    if (!loginResult.ok) {
-      return { ok: true, user: loginResult.user, error: undefined };
-    }
-
     return loginResult;
   }, [login]);
 

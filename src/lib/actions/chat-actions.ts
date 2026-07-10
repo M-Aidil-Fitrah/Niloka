@@ -139,7 +139,7 @@ export async function getThreadsAction(): Promise<ChatThread[]> {
       },
     });
 
-    return (threads as unknown as DbThread[]).map(mapDbThread);
+    return (threads as DbThread[]).map(mapDbThread);
   } catch (error) {
     console.error("Failed to get chat threads:", error);
     return [];
@@ -193,7 +193,7 @@ export async function getThreadAction(threadId: string): Promise<ChatThread | nu
 
     if (!isThreadParticipant(user, thread)) return null;
 
-    return mapDbThread(thread as unknown as DbThread);
+    return mapDbThread(thread as DbThread);
   } catch (error) {
     console.error("Failed to get chat thread:", error);
     return null;
@@ -435,7 +435,7 @@ export async function getOrCreateThreadAction(
           .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
           .join(" "),
         price: listing.pricePerKgAmount,
-        imageSrc: listing.imageSrc || "/images/placeholder-ampas.jpg",
+        imageSrc: listing.imageSrc || "",
         kind: "ampas-listing",
         slug: listing.slug,
       };
@@ -495,7 +495,7 @@ export async function getOrCreateThreadAction(
   }
 
   revalidatePath("/chat");
-  return mapDbThread(thread as unknown as DbThread);
+  return mapDbThread(thread as DbThread);
 }
 
 export async function deleteThreadAction(threadId: string): Promise<void> {

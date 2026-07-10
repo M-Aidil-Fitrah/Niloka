@@ -13,9 +13,10 @@ import { approveValidationAction, rejectValidationAction, getAuditLogsAction } f
 type AdminShellProps = {
   validationItems: AdminValidationItem[];
   sellers: Seller[];
+  productCount?: number;
 };
 
-export function AdminShell({ validationItems: initialItems, sellers }: AdminShellProps) {
+export function AdminShell({ validationItems: initialItems, sellers, productCount = 0 }: AdminShellProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [validationItems, setValidationItems] = useState<AdminValidationItem[]>(initialItems);
@@ -62,7 +63,7 @@ export function AdminShell({ validationItems: initialItems, sellers }: AdminShel
           <AdminStats
             queueCount={queuedCount}
             sellerCount={sellers.length}
-            productCount={42}
+            productCount={productCount}
           />
         );
       case "moderation":

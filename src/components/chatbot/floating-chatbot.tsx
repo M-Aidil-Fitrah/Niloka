@@ -93,6 +93,11 @@ export function FloatingChatbot() {
         },
         method: "POST",
       });
+
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}`);
+      }
+
       const data: ChatResponse = await response.json();
       setLastResponse(data);
       setMessages((current) => [
