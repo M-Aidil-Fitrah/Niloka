@@ -8,7 +8,8 @@ import { getSellerAmpasListingsAction } from "@/lib/actions/ampas-actions";
 import { getSellerProductsAction } from "@/lib/actions/product-actions";
 import { getSellerPromosAction } from "@/lib/actions/promo-actions";
 import { getSellerFinanceSummaryAction } from "@/lib/actions/checkout-actions";
-import type { AmpasListing, Product, Promo } from "@/lib/contracts";
+import { getSellerOrdersAction } from "@/lib/actions/seller-order-actions";
+import type { AmpasListing, Product, Promo, OrderTracking } from "@/lib/contracts";
 import { SellerDashboardSkeleton } from "@/components/ui/skeletons";
 
 const SellerDashboardShell = dynamic(
@@ -37,6 +38,7 @@ export default function SellerPage() {
   const [ampasListings, setAmpasListings] = useState<AmpasListing[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [promos, setPromos] = useState<Promo[]>([]);
+  const [orders, setOrders] = useState<OrderTracking[]>([]);
   const [finance, setFinance] = useState<SellerFinanceData | null>(null);
 
   useEffect(() => {
@@ -68,6 +70,10 @@ export default function SellerPage() {
       getSellerFinanceSummaryAction()
         .then(setFinance)
         .catch((err) => console.error("Failed to load seller finance", err));
+
+      getSellerOrdersAction()
+        .then(setOrders)
+        .catch((err) => console.error("Failed to load seller orders", err));
     }
   }, [isAuthorized, user]);
 
@@ -80,6 +86,7 @@ export default function SellerPage() {
       products={products}
       ampasListings={ampasListings}
       promos={promos}
+      orders={orders}
       finance={finance ?? { grossRevenue: 0, productCount: products.length, pendingPassports: 0, ratingAverage: 0, totalReviews: 0, dailySales: [], recentTransactions: [], activityLog: [] }}
     />
   );

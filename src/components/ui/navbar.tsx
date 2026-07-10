@@ -297,14 +297,16 @@ export function SiteNavbar() {
                     </div>
 
                     <div className="flex flex-col gap-1.5 text-xs font-bold">
-                      <Link
-                        href="/orders"
-                        onClick={() => setIsUserMenuOpen(false)}
-                        className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-cream-100/50 transition-all"
-                      >
-                        <Package className="h-4 w-4 text-brand-700" />
-                        Pesanan Saya
-                      </Link>
+                      {user.role === "buyer" && (
+                        <Link
+                          href="/orders"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-cream-100/50 transition-all"
+                        >
+                          <Package className="h-4 w-4 text-brand-700" />
+                          Pesanan Saya
+                        </Link>
+                      )}
 
                       {user.role === "seller" && (
                         <Link
