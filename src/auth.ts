@@ -93,6 +93,8 @@ export const authOptions: NextAuthOptions = {
     session({ session, token }) {
       if (session.user) {
         session.user.id = token.id ?? "";
+        session.user.name = token.name ?? null;
+        session.user.email = token.email ?? null;
         session.user.role = token.role ?? "buyer";
         session.user.sellerId = token.sellerId;
       }

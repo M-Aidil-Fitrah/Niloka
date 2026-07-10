@@ -1,20 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { LayoutDashboard, ShoppingBag, Leaf, ShieldCheck, Tag, FileText } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Leaf, ShieldCheck, Tag, FileText, Package } from "lucide-react";
 import { DashboardShell, DashboardSidebar, DashboardTopbar } from "../dashboard/dashboard-layout";
 import { SellerStats } from "./seller-stats";
 import { ProductManagement } from "./product-management";
 import { AmpasManagement } from "./ampas-management";
 import { PassportManagement } from "./passport-management";
 import { PromoManagement } from "./promo-management";
-import type { Product, AmpasListing, Promo } from "@/lib/contracts";
+import { OrderManagement } from "./order-management";
+import type { Product, AmpasListing, Promo, OrderTracking } from "@/lib/contracts";
 import { useAuth } from "@/context/auth-context";
 
 type SellerDashboardShellProps = {
   products: Product[];
   ampasListings: AmpasListing[];
   promos: Promo[];
+  orders: OrderTracking[];
+  onRefreshOrders?: () => Promise<void>;
   finance: {
     grossRevenue: number;
     productCount: number;
@@ -31,6 +34,8 @@ export function SellerDashboardShell({
   products,
   ampasListings,
   promos,
+  orders,
+  onRefreshOrders,
   finance,
 }: SellerDashboardShellProps) {
   const [activeTab, setActiveTab] = useState("overview");
@@ -39,6 +44,7 @@ export function SellerDashboardShell({
 
   const navigation = [
     { id: "overview", label: "Ringkasan Toko", icon: LayoutDashboard },
+    { id: "orders", label: "Pesanan", icon: Package, count: orders.filter((o) => o.paymentStatus === "paid" || o.paymentStatus === "pending").length },
     { id: "products", label: "Katalog Produk", icon: ShoppingBag, count: products.length },
     { id: "ampas", label: "Ampas Nilam", icon: Leaf, count: ampasListings.length },
     { id: "passport", label: "Nilam Passport", icon: ShieldCheck },
@@ -61,6 +67,8 @@ export function SellerDashboardShell({
             recentTransactions={finance.recentTransactions}
           />
         );
+      case "orders":
+        return <OrderManagement orders={orders} onRefresh={onRefreshOrders} />;
       case "products":
         return <ProductManagement products={products} />;
       case "ampas":
@@ -106,6 +114,8 @@ export function SellerDashboardShell({
     switch (activeTab) {
       case "overview":
         return "Ikhtisar lengkap penjualan dan aktivitas tokomu";
+      case "orders":
+        return "Pantau dan proses pesanan dari pembeli";
       case "products":
         return "Atur informasi deskripsi, stok, serta harga coret produk retail";
       case "ampas":

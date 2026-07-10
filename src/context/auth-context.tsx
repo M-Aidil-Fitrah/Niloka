@@ -31,7 +31,6 @@ type AuthContextType = {
   user: AuthUser | null;
   isLoading: boolean;
   isLoggingIn: boolean;
-  isRegistering: boolean;
   login: (email: string, password: string) => Promise<AuthResult>;
   register: (
     name: string,
@@ -48,11 +47,11 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
   const sessionUser = session?.user;
 
   const user: AuthUser | null = useMemo(() => {
-    if (!sessionUser?.id || !sessionUser.email) return null;
+    if (!sessionUser?.id) return null;
     return {
       id: sessionUser.id,
       name: sessionUser.name ?? "Pengguna NILOKA",
-      email: sessionUser.email,
+      email: sessionUser.email ?? "",
       role: sessionUser.role,
       sellerId: sessionUser.sellerId ?? undefined,
     };
@@ -72,16 +71,12 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
       return { ok: false, error: result?.error === "CredentialsSignin" ? "Email atau kata sandi salah." : "Gagal masuk. Silakan coba lagi." };
     }
 
-    let nextSession = await update();
-    for (let i = 0; i < 5 && !nextSession?.user?.id; i++) {
-      await new Promise((r) => setTimeout(r, 200));
-      nextSession = await update();
-    }
-
+    await new Promise((r) => setTimeout(r, 500));
+    const nextSession = await update();
     const nextUser = nextSession?.user;
 
-    if (!nextUser?.id || !nextUser.email) {
-      return { ok: false, error: "Gagal memuat data pengguna." };
+    if (!nextUser?.id) {
+      return { ok: false, error: "Gagal memuat data pengguna. Silakan coba lagi." };
     }
 
     return {
@@ -89,7 +84,7 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
       user: {
         id: nextUser.id,
         name: nextUser.name ?? "Pengguna NILOKA",
-        email: nextUser.email,
+        email: nextUser.email ?? "",
         role: nextUser.role,
         sellerId: nextUser.sellerId ?? undefined,
       },
@@ -126,7 +121,6 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
     user,
     isLoading: status === "loading",
     isLoggingIn: status !== "authenticated" && status !== "loading",
-    isRegistering: status !== "authenticated" && status !== "loading",
     login,
     register,
     logout,
