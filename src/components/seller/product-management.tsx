@@ -61,7 +61,7 @@ export function ProductManagement({ products: initialProducts }: ProductManageme
       form: "essential-oil",
       functions: ["relaxation"],
       tags: ["new-arrival"],
-      image: { src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=400&auto=format&fit=crop", alt: "Product Cover" },
+      image: { src: "", alt: "Product Cover" },
       gallery: [],
     });
     setIsEditing(true);

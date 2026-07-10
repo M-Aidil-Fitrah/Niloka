@@ -788,8 +788,8 @@ export async function getCartItemsDetailAction(
       name,
       imageSrc:
         item.kind === "PRODUCT"
-          ? (item.product?.imageSrc ?? "https://images.unsplash.com/photo-1540555700478-4be289fbecef")
-          : (item.ampasListing?.imageSrc ?? "https://images.unsplash.com/photo-1540555700478-4be289fbecef"),
+          ? (item.product?.imageSrc ?? "")
+          : (item.ampasListing?.imageSrc ?? ""),
       imageAlt:
         item.kind === "PRODUCT"
           ? (item.product?.imageAlt ?? "Produk")

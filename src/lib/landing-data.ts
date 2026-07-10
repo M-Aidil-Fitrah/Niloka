@@ -138,8 +138,7 @@ export async function getLandingPageData(): Promise<LandingPageData> {
       label: "Artikel & Berita",
       description:
         "Temukan panduan praktis pengolahan limbah nilam dan budidaya tani sirkular.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=80",
+      imageUrl: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3e%3crect fill='%23e5e7eb' width='700' height='700'/%3e%3c/svg%3e",
       imageAlt: "Produk kosmetik dan aromaterapi di atas meja.",
       href: "/artikel",
     },

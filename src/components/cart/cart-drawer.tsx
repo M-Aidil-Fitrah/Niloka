@@ -155,7 +155,7 @@ export function CartDrawer() {
                           <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(item.id)} className="h-4 w-4 rounded border-line accent-brand-900 focus:ring-gold-500" />
                         </div>
                         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-line/40 bg-cream-100">
-                          <Image src={detail?.imageSrc || "https://images.unsplash.com/photo-1540555700478-4be289fbecef"} alt={detail?.imageAlt || "Produk"} className="object-cover" fill sizes="64px" />
+                          {detail?.imageSrc ? <Image src={detail.imageSrc} alt={detail.imageAlt || "Produk"} className="object-cover" fill sizes="64px" /> : <div className="h-full w-full bg-cream-100" />}
                         </div>
                         <div className="flex-1 min-w-0">
                           <span className="text-[9px] font-extrabold text-gold-600 uppercase tracking-wider">{item.kind === "product" ? "Produk Nilam" : "Ampas Nilam"}</span>
