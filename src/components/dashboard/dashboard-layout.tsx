@@ -187,7 +187,7 @@ type DashboardTopbarProps = {
   subtitle: string;
   profileName: string;
   profileRole: string;
-  profileImage: string;
+  profileImage?: string;
   onMenuClick?: () => void;
   backToUrl?: string;
   backToLabel?: string;
@@ -199,7 +199,7 @@ export function DashboardTopbar({
   subtitle,
   profileName,
   profileRole,
-  profileImage,
+  profileImage = "",
   onMenuClick,
   backToUrl = "/",
   backToLabel = "Kembali ke Pasar",
@@ -283,14 +283,20 @@ export function DashboardTopbar({
             aria-haspopup="true"
             aria-expanded={isDropdownOpen}
           >
-            <div className="relative h-7.5 w-7.5 rounded-full overflow-hidden border border-brand-950/15 bg-cream-100 shadow-sm">
-              <Image
-                src={profileImage}
-                alt={profileName}
-                fill
-                className="object-cover"
-                sizes="30px"
-              />
+            <div className="relative h-7.5 w-7.5 rounded-full overflow-hidden border border-brand-950/15 bg-brand-900 shadow-sm flex items-center justify-center">
+              {profileImage ? (
+                <Image
+                  src={profileImage}
+                  alt={profileName}
+                  fill
+                  className="object-cover"
+                  sizes="30px"
+                />
+              ) : (
+                <span className="text-[10px] font-extrabold text-white-soft">
+                  {profileName.charAt(0).toUpperCase()}
+                </span>
+              )}
             </div>
             <div className="hidden md:flex flex-col text-left">
               <span className="font-extrabold text-brand-950 text-[11px] leading-tight block">

@@ -159,15 +159,6 @@ export default function ApplySellerPage() {
     }
   };
 
-  // Mock File Uploads
-  const triggerKtpUpload = () => {
-    setKtpFileName("ktp_terverifikasi.jpg");
-  };
-
-  const triggerNibUpload = () => {
-    setNibFileName("nib_legalitas_usaha.pdf");
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-cream-50 flex items-center justify-center">
@@ -288,8 +279,6 @@ export default function ApplySellerPage() {
                     setKtpFileName={setKtpFileName}
                     nibFileName={nibFileName}
                     setNibFileName={setNibFileName}
-                    triggerKtpUpload={triggerKtpUpload}
-                    triggerNibUpload={triggerNibUpload}
                     errors={errors}
                   />
                 )}
