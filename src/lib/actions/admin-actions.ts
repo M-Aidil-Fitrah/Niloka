@@ -322,3 +322,62 @@ export async function getAuditLogsAction(): Promise<
     createdAt: log.createdAt.toISOString(),
   }));
 }
+
+export async function getAdminDashboardStatsAction(): Promise<{
+  validationSummary: { day: string; approved: number; rejected: number }[];
+  distribution: { type: string; count: number }[];
+}> {
+  await requireAdmin();
+
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const weekItems = await prisma.adminValidationItem.findMany({
+    where: {
+      submittedAt: { gte: weekAgo },
+    },
+    select: {
+      status: true,
+      submittedAt: true,
+    },
+  });
+
+  const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const dayMap = new Map<string, { approved: number; rejected: number }>();
+  for (const name of dayNames) {
+    dayMap.set(name, { approved: 0, rejected: 0 });
+  }
+
+  for (const item of weekItems) {
+    const dayName = dayNames[item.submittedAt.getDay()];
+    const entry = dayMap.get(dayName)!;
+    if (item.status === AdminValidationStatus.APPROVED) entry.approved++;
+    else if (item.status === AdminValidationStatus.REJECTED) entry.rejected++;
+  }
+
+  // Build distribution by target
+  const targetCounts = await prisma.adminValidationItem.groupBy({
+    by: ["target"],
+    _count: { id: true },
+  });
+
+  const targetLabels: Record<string, string> = {
+    SELLER: "Sertifikasi Mitra Baru",
+    PRODUCT: "Listing Produk B2C",
+    NILAM_PASSPORT: "Transparansi Nilam Passport",
+    AMPAS_LISTING: "Listing Ampas B2B",
+  };
+
+  const distribution = targetCounts.map((t) => ({
+    type: targetLabels[t.target] ?? t.target,
+    count: t._count.id,
+  }));
+
+  const validationSummary = dayNames.map((day) => ({
+    day,
+    approved: dayMap.get(day)!.approved,
+    rejected: dayMap.get(day)!.rejected,
+  }));
+
+  return { validationSummary, distribution };
+}

@@ -25,6 +25,7 @@ type SellerFinanceData = {
   pendingPassports: number;
   ratingAverage: number;
   totalReviews: number;
+  dailySales: { day: string; amount: number }[];
   recentTransactions: { id: string; productName: string; buyerName: string; amount: number; date: string; status: "success" | "pending" | "failed" }[];
   activityLog: { action: string; date: string; status: string }[];
 };
@@ -79,7 +80,7 @@ export default function SellerPage() {
       products={products}
       ampasListings={ampasListings}
       promos={promos}
-      finance={finance ?? { grossRevenue: 0, productCount: products.length, pendingPassports: 0, ratingAverage: 0, totalReviews: 0, recentTransactions: [], activityLog: [] }}
+      finance={finance ?? { grossRevenue: 0, productCount: products.length, pendingPassports: 0, ratingAverage: 0, totalReviews: 0, dailySales: [], recentTransactions: [], activityLog: [] }}
     />
   );
 }

@@ -12,10 +12,11 @@ type SellerStatsProps = {
   pendingPassports: number;
   ratingAverage: number;
   totalReviews: number;
+  dailySales: { day: string; amount: number }[];
   recentTransactions: { id: string; productName: string; buyerName: string; amount: number; date: string; status: "success" | "pending" | "failed" }[];
 };
 
-export function SellerStats({ products = [], totalSales, totalProducts, pendingPassports, ratingAverage, totalReviews, recentTransactions }: SellerStatsProps) {
+export function SellerStats({ products = [], totalSales, totalProducts, pendingPassports, ratingAverage, totalReviews, dailySales, recentTransactions }: SellerStatsProps) {
   const lowStockProducts = products.filter((p) => p.stock <= 3);
 
   return (
@@ -91,46 +92,32 @@ export function SellerStats({ products = [], totalSales, totalProducts, pendingP
             </div>
           </div>
 
-          {/* Simple Vector Mock Chart */}
-          <div className="h-56 w-full mt-6 relative flex items-end">
-            {/* Background Grid Lines */}
-            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
-              <div className="border-b border-ink-900 w-full" />
-              <div className="border-b border-ink-900 w-full" />
-              <div className="border-b border-ink-900 w-full" />
-              <div className="border-b border-ink-900 w-full" />
-            </div>
-
-            {/* SVG Plot */}
-            <svg className="w-full h-full absolute inset-0 text-brand-900" viewBox="0 0 500 200" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="var(--brand-900)" stopOpacity="0.15" />
-                  <stop offset="100%" stopColor="var(--brand-900)" stopOpacity="0.0" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M0,180 C50,150 100,160 150,110 C200,60 250,90 300,50 C350,10 400,60 450,30 L500,45 L500,200 L0,200 Z"
-                fill="url(#chartGrad)"
-              />
-              <path
-                d="M0,180 C50,150 100,160 150,110 C200,60 250,90 300,50 C350,10 400,60 450,30 L500,45"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-              />
-              {/* Highlight Nodes */}
-              <circle cx="150" cy="110" r="5" className="fill-gold-500 stroke-2 stroke-white-soft" />
-              <circle cx="300" cy="50" r="5" className="fill-gold-500 stroke-2 stroke-white-soft" />
-              <circle cx="450" cy="30" r="5" className="fill-gold-500 stroke-2 stroke-white-soft" />
-            </svg>
-
-            {/* Labels */}
-            <div className="absolute bottom-2 left-2 text-[9px] font-bold text-ink-600">Minggu 1</div>
-            <div className="absolute bottom-2 left-1/3 text-[9px] font-bold text-ink-600">Minggu 2</div>
-            <div className="absolute bottom-2 left-2/3 text-[9px] font-bold text-ink-600">Minggu 3</div>
-            <div className="absolute bottom-2 right-2 text-[9px] font-bold text-ink-600">Hari Ini</div>
+          {/* Data-driven Sales Chart */}
+          <div className="h-56 w-full mt-6 flex items-end gap-1.5">
+            {dailySales.length === 0 ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <p className="text-xs text-ink-500">Belum ada data penjualan.</p>
+              </div>
+            ) : (
+              (() => {
+                const maxAmount = Math.max(1, ...dailySales.map((d) => d.amount));
+                return dailySales.map((d, i) => {
+                  const heightPct = (d.amount / maxAmount) * 100;
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1 h-full justify-end group relative">
+                      <div className="absolute bottom-full mb-1 bg-brand-950 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        Rp{d.amount.toLocaleString("id-ID")}
+                      </div>
+                      <div
+                        style={{ height: `${heightPct}%` }}
+                        className="w-full max-w-[32px] rounded-t bg-brand-900/80 hover:bg-brand-900 transition-colors cursor-pointer"
+                      />
+                      <span className="text-[7px] font-bold text-ink-600 truncate w-full text-center">{d.day}</span>
+                    </div>
+                  );
+                });
+              })()
+            )}
           </div>
         </div>
 

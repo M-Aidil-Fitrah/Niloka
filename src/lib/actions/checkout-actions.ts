@@ -645,11 +645,12 @@ export async function getSellerFinanceSummaryAction(): Promise<{
   totalReviews: number;
   recentTransactions: { id: string; productName: string; buyerName: string; amount: number; date: string; status: "success" | "pending" | "failed" }[];
   activityLog: { action: string; date: string; status: string }[];
+  dailySales: { day: string; amount: number }[];
 }> {
   const seller = await requireSeller();
   if (!seller.sellerId) throw new Error("Not a seller");
 
-  const [finance, products, passports, orders, auditLogs, sellerProfile] = await Promise.all([
+  const [finance, products, passports, orders, auditLogs, sellerProfile, sellerOrders] = await Promise.all([
     getSellerFinanceSummaryDto(seller.sellerId),
     prisma.product.findMany({
       where: { sellerId: seller.sellerId },
@@ -688,6 +689,17 @@ export async function getSellerFinanceSummaryAction(): Promise<{
       where: { id: seller.sellerId },
       select: { ratingAverage: true, totalReviews: true },
     }),
+    prisma.order.findMany({
+      where: {
+        items: { some: { sellerId: seller.sellerId } },
+        status: { in: ["PAID", "FULFILLED"] },
+      },
+      select: {
+        grandTotalAmount: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "asc" },
+    }),
   ] as const);
 
   return {
@@ -706,6 +718,15 @@ export async function getSellerFinanceSummaryAction(): Promise<{
       date: o.createdAt.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
       status: o.status === "PAID" || o.status === "FULFILLED" ? "success" as const : "pending" as const,
     })),
+    // Aggregate daily sales for chart
+    dailySales: (() => {
+      const dayTotals = new Map<string, number>();
+      for (const o of sellerOrders) {
+        const key = o.createdAt.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+        dayTotals.set(key, (dayTotals.get(key) ?? 0) + o.grandTotalAmount);
+      }
+      return Array.from(dayTotals.entries()).slice(-14).map(([day, amount]) => ({ day, amount }));
+    })(),
     activityLog: auditLogs.map((log) => ({
       action: log.action.replace(/_/g, " "),
       date: log.createdAt.toLocaleDateString("id-ID", {

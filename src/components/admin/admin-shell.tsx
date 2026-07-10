@@ -8,7 +8,7 @@ import { ValidationTable } from "./validation-table";
 import { ReviewModal } from "./review-modal";
 import type { AdminValidationItem, Seller } from "@/lib/contracts";
 import { useAuth } from "@/context/auth-context";
-import { approveValidationAction, rejectValidationAction, getAuditLogsAction } from "@/lib/actions/admin-actions";
+import { approveValidationAction, rejectValidationAction, getAuditLogsAction, getAdminDashboardStatsAction } from "@/lib/actions/admin-actions";
 
 type AdminShellProps = {
   validationItems: AdminValidationItem[];
@@ -21,6 +21,8 @@ export function AdminShell({ validationItems: initialItems, sellers, productCoun
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [validationItems, setValidationItems] = useState<AdminValidationItem[]>(initialItems);
   const [auditLogs, setAuditLogs] = useState<{ id: string; userId: string | null; action: string; target: string; targetId: string; metadata: string; createdAt: string }[]>([]);
+  const [validationSummary, setValidationSummary] = useState<{ day: string; approved: number; rejected: number }[]>([]);
+  const [distribution, setDistribution] = useState<{ type: string; count: number }[]>([]);
   const { user } = useAuth();
 
   // Sync initial items
@@ -41,6 +43,16 @@ export function AdminShell({ validationItems: initialItems, sellers, productCoun
     { id: "moderation", label: "Antrean Moderasi", icon: ClipboardCheck, count: queuedCount },
     { id: "logs", label: "Log Audit", icon: FileText },
   ];
+
+  // Fetch dashboard stats on mount
+  useEffect(() => {
+    getAdminDashboardStatsAction()
+      .then((stats) => {
+        setValidationSummary(stats.validationSummary);
+        setDistribution(stats.distribution);
+      })
+      .catch((err) => console.error("Failed to load admin stats", err));
+  }, []);
 
   // Fetch audit logs dynamically when tab changes to logs
   useEffect(() => {
@@ -64,6 +76,8 @@ export function AdminShell({ validationItems: initialItems, sellers, productCoun
             queueCount={queuedCount}
             sellerCount={sellers.length}
             productCount={productCount}
+            validationSummary={validationSummary}
+            distribution={distribution}
           />
         );
       case "moderation":
