@@ -311,7 +311,7 @@ export type CartItemScalarWhereWithAggregatesInput = {
 }
 
 export type CartItemCreateInput = {
-  id: string
+  id?: string
   kind: $Enums.CartItemKind
   quantity: number
   unitPriceAmount: number
@@ -322,7 +322,7 @@ export type CartItemCreateInput = {
 }
 
 export type CartItemUncheckedCreateInput = {
-  id: string
+  id?: string
   cartId: string
   kind: $Enums.CartItemKind
   productId?: string | null
@@ -355,7 +355,7 @@ export type CartItemUncheckedUpdateInput = {
 }
 
 export type CartItemCreateManyInput = {
-  id: string
+  id?: string
   cartId: string
   kind: $Enums.CartItemKind
   productId?: string | null
@@ -568,7 +568,7 @@ export type EnumCartItemKindFieldUpdateOperationsInput = {
 }
 
 export type CartItemCreateWithoutProductInput = {
-  id: string
+  id?: string
   kind: $Enums.CartItemKind
   quantity: number
   unitPriceAmount: number
@@ -578,7 +578,7 @@ export type CartItemCreateWithoutProductInput = {
 }
 
 export type CartItemUncheckedCreateWithoutProductInput = {
-  id: string
+  id?: string
   cartId: string
   kind: $Enums.CartItemKind
   ampasListingId?: string | null
@@ -628,7 +628,7 @@ export type CartItemScalarWhereInput = {
 }
 
 export type CartItemCreateWithoutAmpasListingInput = {
-  id: string
+  id?: string
   kind: $Enums.CartItemKind
   quantity: number
   unitPriceAmount: number
@@ -638,7 +638,7 @@ export type CartItemCreateWithoutAmpasListingInput = {
 }
 
 export type CartItemUncheckedCreateWithoutAmpasListingInput = {
-  id: string
+  id?: string
   cartId: string
   kind: $Enums.CartItemKind
   productId?: string | null
@@ -674,7 +674,7 @@ export type CartItemUpdateManyWithWhereWithoutAmpasListingInput = {
 }
 
 export type CartItemCreateWithoutCartInput = {
-  id: string
+  id?: string
   kind: $Enums.CartItemKind
   quantity: number
   unitPriceAmount: number
@@ -684,7 +684,7 @@ export type CartItemCreateWithoutCartInput = {
 }
 
 export type CartItemUncheckedCreateWithoutCartInput = {
-  id: string
+  id?: string
   kind: $Enums.CartItemKind
   productId?: string | null
   ampasListingId?: string | null
@@ -720,7 +720,7 @@ export type CartItemUpdateManyWithWhereWithoutCartInput = {
 }
 
 export type CartItemCreateManyProductInput = {
-  id: string
+  id?: string
   cartId: string
   kind: $Enums.CartItemKind
   ampasListingId?: string | null
@@ -760,7 +760,7 @@ export type CartItemUncheckedUpdateManyWithoutProductInput = {
 }
 
 export type CartItemCreateManyAmpasListingInput = {
-  id: string
+  id?: string
   cartId: string
   kind: $Enums.CartItemKind
   productId?: string | null
@@ -800,7 +800,7 @@ export type CartItemUncheckedUpdateManyWithoutAmpasListingInput = {
 }
 
 export type CartItemCreateManyCartInput = {
-  id: string
+  id?: string
   kind: $Enums.CartItemKind
   productId?: string | null
   ampasListingId?: string | null

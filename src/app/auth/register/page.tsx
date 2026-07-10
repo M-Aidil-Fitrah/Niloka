@@ -125,7 +125,11 @@ export default function RegisterPage() {
 
   const validatePassword = (val: string) => {
     if (!val) return "";
-    return val.length >= 6 ? "" : "Kata sandi minimal 6 karakter";
+    if (val.length < 8) return "Kata sandi minimal 8 karakter";
+    if (!/[A-Z]/.test(val)) return "Kata sandi harus mengandung huruf kapital";
+    if (!/[a-z]/.test(val)) return "Kata sandi harus mengandung huruf kecil";
+    if (!/[0-9]/.test(val)) return "Kata sandi harus mengandung angka";
+    return "";
   };
 
   const validateConfirmPassword = (val: string, pass: string) => {

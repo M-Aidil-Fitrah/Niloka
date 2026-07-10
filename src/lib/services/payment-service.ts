@@ -50,7 +50,9 @@ function getCoreApiUrl(): string {
 }
 
 async function midtransCharge(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
-  const serverKey = process.env.MIDTRANS_SERVER_KEY!;
+  const serverKey = process.env.MIDTRANS_SERVER_KEY;
+  if (!serverKey) throw new Error("MIDTRANS_SERVER_KEY is not configured");
+
   const auth = Buffer.from(serverKey + ":").toString("base64");
   const res = await fetch(`${getCoreApiUrl()}/charge`, {
     method: "POST",

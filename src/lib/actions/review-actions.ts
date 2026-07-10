@@ -101,7 +101,7 @@ export async function submitReviewAction(input: unknown): Promise<{ ok: boolean;
         sellerId: newReview.sellerId,
         authorName: newReview.authorName,
         rating: newReview.rating,
-        tags: data.tags as ContractReviewTag[], // Cast specific tags array to correct types
+        tags: data.tags as ContractReviewTag[],
         body: newReview.body,
         createdAt: newReview.createdAt.toISOString(),
       },

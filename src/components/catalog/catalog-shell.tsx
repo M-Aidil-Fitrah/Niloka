@@ -288,7 +288,7 @@ export function CatalogShell({ products, categories, promos }: CatalogShellProps
                     className="group flex flex-col sm:flex-row gap-4.5 rounded-[24px] border border-line bg-white-soft p-4 hover:border-brand-700/40 hover:ring-2 hover:ring-gold-500/20 hover:shadow-md transition-all duration-200"
                   >
                     {/* Image side */}
-                    <div className="relative aspect-[4/5] sm:aspect-square w-full sm:w-28 h-48 sm:h-auto rounded-[18px] overflow-hidden bg-cream-50 shrink-0">
+                    <div className="relative aspect-[4/5] sm:aspect-square w-full sm:w-28 rounded-[18px] overflow-hidden bg-cream-50 shrink-0">
                       <Image
                         src={product.image.src}
                         alt={product.image.alt}

@@ -1,16 +1,18 @@
 "use server";
 
 import { z } from "zod";
-import { requireUser } from "@/lib/auth/session";
+import { requireSeller, requireUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import {
   CartItemKind,
   OrderFulfillmentStatus,
+  PassportValidationStatus,
   PromoStatus,
 } from "@/generated/prisma/client";
 import type { CartItem, PaymentInstruction } from "@/lib/contracts";
 import { revalidatePath } from "next/cache";
 import { createCorePayment, getChannelFromMethod, calculatePlatformFee } from "@/lib/services/payment-service";
+import { getSellerFinanceSummaryDto } from "@/lib/dal/orders";
 
 const checkoutInputSchema = z.object({
   receiverName: z.string().trim().min(3, "Nama penerima minimal 3 karakter."),
@@ -222,11 +224,8 @@ export async function addToCartAction(item: Omit<CartItem, "id">): Promise<{ ok:
       }
     });
   } else {
-    // Generate manual id since CartItem.id doesn't default to cuid in schema
-    const id = `cart-item-${crypto.randomUUID()}`;
     await prisma.cartItem.create({
       data: {
-        id,
         cartId: cart.id,
         kind: kindEnum,
         productId: item.productId,
@@ -445,7 +444,7 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
     subtotal + platformFee + shippingEstimate - discount.amount,
   );
   const paymentExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  const orderId = `ORD-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const orderId = `ORD-${Date.now().toString(36)}-${crypto.randomUUID().slice(0, 8)}`;
 
   try {
     let paymentInstruction: PaymentInstruction | undefined;
@@ -636,6 +635,86 @@ export async function confirmPaymentAction(
     console.error("Confirm payment failed:", error);
     return { ok: false, message: "Gagal mengonfirmasi pembayaran." };
   }
+}
+
+export async function getSellerFinanceSummaryAction(): Promise<{
+  grossRevenue: number;
+  productCount: number;
+  pendingPassports: number;
+  ratingAverage: number;
+  totalReviews: number;
+  recentTransactions: { id: string; productName: string; buyerName: string; amount: number; date: string; status: "success" | "pending" | "failed" }[];
+  activityLog: { action: string; date: string; status: string }[];
+}> {
+  const seller = await requireSeller();
+  if (!seller.sellerId) throw new Error("Not a seller");
+
+  const [finance, products, passports, orders, auditLogs, sellerProfile] = await Promise.all([
+    getSellerFinanceSummaryDto(seller.sellerId),
+    prisma.product.findMany({
+      where: { sellerId: seller.sellerId },
+      select: { id: true },
+    }),
+    prisma.nilamPassport.count({
+      where: {
+        product: { sellerId: seller.sellerId },
+        validationStatus: PassportValidationStatus.DRAFT,
+      },
+    }),
+    prisma.order.findMany({
+      where: {
+        items: { some: { sellerId: seller.sellerId } },
+        status: { in: ["PAID", "FULFILLED"] },
+      },
+      include: {
+        items: {
+          where: { sellerId: seller.sellerId },
+          include: {
+            product: { select: { name: true } },
+            ampasListing: { select: { slug: true } },
+          },
+        },
+        user: { select: { name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+    prisma.auditLog.findMany({
+      where: { userId: seller.id },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    }),
+    prisma.seller.findUnique({
+      where: { id: seller.sellerId },
+      select: { ratingAverage: true, totalReviews: true },
+    }),
+  ] as const);
+
+  return {
+    grossRevenue: finance.grossRevenue.amount,
+    productCount: products.length,
+    pendingPassports: passports,
+    ratingAverage: sellerProfile?.ratingAverage ?? 0,
+    totalReviews: sellerProfile?.totalReviews ?? 0,
+    recentTransactions: orders.map((o) => ({
+      id: o.id,
+      productName: o.items[0]?.product?.name
+        ?? o.items[0]?.ampasListing?.slug?.split("-").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+        ?? "Produk Nilam",
+      buyerName: o.user?.name ?? "Pembeli",
+      amount: o.grandTotalAmount,
+      date: o.createdAt.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+      status: o.status === "PAID" || o.status === "FULFILLED" ? "success" as const : "pending" as const,
+    })),
+    activityLog: auditLogs.map((log) => ({
+      action: log.action.replace(/_/g, " "),
+      date: log.createdAt.toLocaleDateString("id-ID", {
+        day: "numeric", month: "long", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+      }),
+      status: log.action.includes("DELETE") || log.action.includes("REJECT") ? "Gagal" : "Sukses",
+    })),
+  };
 }
 
 export async function getCartItemsDetailAction(

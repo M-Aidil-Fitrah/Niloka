@@ -2,11 +2,27 @@ import "server-only";
 
 const rateMap = new Map<string, { count: number; resetAt: number }>();
 
+const CLEANUP_INTERVAL_MS = 60_000;
+let lastCleanup = Date.now();
+
+function cleanupExpiredEntries(): void {
+  const now = Date.now();
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
+  lastCleanup = now;
+  for (const [key, entry] of rateMap) {
+    if (now > entry.resetAt) {
+      rateMap.delete(key);
+    }
+  }
+}
+
 export function checkRateLimit(
   key: string,
   maxRequests: number,
   windowMs: number,
 ): { allowed: boolean; remaining: number } {
+  cleanupExpiredEntries();
+
   const now = Date.now();
   const entry = rateMap.get(key);
 

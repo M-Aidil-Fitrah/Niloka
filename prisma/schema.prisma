@@ -528,7 +528,7 @@ model Cart {
 }
 
 model CartItem {
-  id                String        @id
+  id                String        @id @default(cuid())
   cartId            String        @map("cart_id")
   kind              CartItemKind
   productId         String?       @map("product_id")

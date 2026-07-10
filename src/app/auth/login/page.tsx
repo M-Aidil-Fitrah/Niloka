@@ -118,7 +118,7 @@ export default function LoginPage() {
 
   const validatePassword = (val: string) => {
     if (!val) return "";
-    return val.length >= 6 ? "" : "Kata sandi minimal 6 karakter";
+    return val.length >= 1 ? "" : "Kata sandi wajib diisi";
   };
 
   // Derive validation errors dynamically
