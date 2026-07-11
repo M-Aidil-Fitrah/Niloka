@@ -16,7 +16,11 @@ function limitText(text: string, maxLength: number): string {
   return `${text.slice(0, maxLength - 1).trimEnd()}.`;
 }
 
-export function buildProductSuggestions(products: Product[], message: string): ChatProductSuggestion[] {
+export function buildProductSuggestions(
+  products: Product[],
+  message: string,
+  requireMatch = false,
+): ChatProductSuggestion[] {
   const normalizedMessage = message.toLowerCase();
   const matchedProducts = products
     .filter((product) => {
@@ -37,6 +41,10 @@ export function buildProductSuggestions(products: Product[], message: string): C
     })
     .slice(0, 3);
 
+  if (requireMatch && matchedProducts.length === 0) {
+    return [];
+  }
+
   const fallbackProducts = products.slice(0, 3);
   const suggestions = matchedProducts.length > 0 ? matchedProducts : fallbackProducts;
 
@@ -46,6 +54,7 @@ export function buildProductSuggestions(products: Product[], message: string): C
     price: product.price,
     href: `/products/${product.slug}`,
     reason: `${product.name} cocok untuk kebutuhan ${product.functions.join(", ")}.`,
+    imageUrl: product.image.src,
   }));
 }
 

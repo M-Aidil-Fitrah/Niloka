@@ -1,54 +1,25 @@
-const outOfScopePatterns = [
-  "framework",
-  "next.js",
-  "react",
-  "dibuat siapa",
-  "siapa pembuat",
-  "source code",
-  "api key",
-  "prompt",
-  "system instruction",
-  "abaikan instruksi",
-  "ignore previous",
-  "jailbreak",
-  "password",
-  "database",
-  "arsitektur",
-  "server",
-];
-
-const allowedDomainTerms = [
-  "nilam",
-  "patchouli",
-  "niloka",
-  "produk",
-  "aroma",
-  "aromaterapi",
-  "essential oil",
-  "minyak atsiri",
-  "ampas",
-  "seller",
-  "promo",
-  "passport",
-  "aceh",
-  "diffuser",
-  "sabun",
-  "roll-on",
-  "parfum",
-  "body oil",
-  "b2b",
-  "b2c",
-];
-
 export type GuardrailResult = {
   allowed: boolean;
   reason: string;
 };
 
-function containsAnyTerm(input: string, terms: string[]): boolean {
-  const normalizedInput = input.toLowerCase();
-  return terms.some((term) => normalizedInput.includes(term));
-}
+const forbiddenPatterns = [
+  "api key",
+  "api_key",
+  "source code",
+  "source_code",
+  "database password",
+  "db password",
+  "db_password",
+  "jailbreak",
+  "ignore previous",
+  "abaikan instruksi",
+  "system instruction",
+  "system_instruction",
+  "bypass guardrail",
+  "prompt injection",
+  "reveal prompt",
+];
 
 export function checkChatGuardrail(message: string): GuardrailResult {
   if (message.trim().length < 2) {
@@ -58,17 +29,12 @@ export function checkChatGuardrail(message: string): GuardrailResult {
     };
   }
 
-  if (containsAnyTerm(message, outOfScopePatterns)) {
-    return {
-      allowed: false,
-      reason: "Pertanyaan berada di luar konteks produk nilam dan marketplace NILOKA.",
-    };
-  }
+  const normalized = message.toLowerCase();
 
-  if (!containsAnyTerm(message, allowedDomainTerms)) {
+  if (forbiddenPatterns.some((pattern) => normalized.includes(pattern))) {
     return {
       allowed: false,
-      reason: "Pertanyaan belum terkait nilam, produk NILOKA, atau ekosistem marketplace.",
+      reason: "Pertanyaan Anda mengandung instruksi/topik yang dibatasi demi keamanan sistem NILOKA.",
     };
   }
 
@@ -79,7 +45,10 @@ export function checkChatGuardrail(message: string): GuardrailResult {
 }
 
 export function checkProductDescriptionGuardrail(input: string): GuardrailResult {
-  if (containsAnyTerm(input, outOfScopePatterns)) {
+  const normalized = input.toLowerCase();
+  const dangerousPatterns = ["source code", "database", "api key"];
+  
+  if (dangerousPatterns.some((pattern) => normalized.includes(pattern))) {
     return {
       allowed: false,
       reason: "Input mengandung konteks teknis/internal yang tidak boleh dipakai untuk deskripsi produk.",

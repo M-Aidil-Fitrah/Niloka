@@ -381,7 +381,22 @@ export type ChatProductSuggestion = {
   price: Money;
   href: string;
   reason: string;
+  imageUrl?: string;
 };
+
+export type ChatIntent =
+  | "greeting"
+  | "product_search"
+  | "product_detail"
+  | "passport_info"
+  | "ampas_info"
+  | "promo_info"
+  | "seller_info"
+  | "article_info"
+  | "order_help"
+  | "review_info"
+  | "bundle_info"
+  | "general_niloka";
 
 export type ChatRequest = {
   messages: ChatMessage[];
@@ -392,6 +407,8 @@ export type ChatResponse = {
   providerUsed: AiProvider;
   suggestions: ChatProductSuggestion[];
   refused: boolean;
+  intent?: ChatIntent;
+  errorCode?: string;
 };
 
 export type ProductDescriptionTone = "premium" | "educational" | "concise";
