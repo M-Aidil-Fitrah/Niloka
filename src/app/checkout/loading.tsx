@@ -1,19 +1,13 @@
+import { CheckoutSkeleton } from "@/components/ui/skeletons";
+
 export default function CheckoutLoading() {
   return (
-    <div className="min-h-screen bg-cream-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="animate-pulse">
-          <div className="h-8 w-32 bg-cream-200 rounded mb-8" />
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <div className="h-12 bg-cream-200 rounded-lg" />
-              <div className="h-12 bg-cream-200 rounded-lg" />
-              <div className="h-12 bg-cream-200 rounded-lg" />
-            </div>
-            <div className="h-64 bg-cream-200 rounded-2xl" />
-          </div>
-        </div>
+    <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mb-8 space-y-3">
+        <div className="h-4 w-24 rounded-full bg-gold-500/30 animate-pulse" />
+        <div className="h-9 w-56 rounded-xl bg-cream-100/80 animate-pulse" />
       </div>
+      <CheckoutSkeleton />
     </div>
   );
 }
