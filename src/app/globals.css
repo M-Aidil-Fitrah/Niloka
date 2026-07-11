@@ -110,6 +110,17 @@ body {
   color: var(--brand-950);
 }
 
+.niloka-markdown a {
+  color: var(--gold-600);
+  font-weight: 800;
+  text-decoration: underline;
+  transition: color 150ms ease;
+}
+
+.niloka-markdown a:hover {
+  color: var(--brand-700);
+}
+
 .font-accent {
   font-family: var(--font-serif-accent), Georgia, serif;
 }

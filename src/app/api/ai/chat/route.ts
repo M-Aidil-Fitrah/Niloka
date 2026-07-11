@@ -1,6 +1,7 @@
 import type { ChatRequest, ChatResponse } from "@/lib/contracts";
-import { buildNilokaContext } from "@/lib/ai/context";
+import { buildContextForIntent } from "@/lib/ai/context";
 import { checkChatGuardrail } from "@/lib/ai/guardrails";
+import { classifyIntent } from "@/lib/ai/intent-classifier";
 import { buildProductSuggestions } from "@/lib/ai/normalizers";
 import { generateAiText } from "@/lib/ai/providers";
 import { buildChatPrompt } from "@/lib/ai/prompts";
@@ -10,31 +11,43 @@ import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   const user = await getCurrentUser();
-  if (!user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
 
   const ip = request.headers.get("x-forwarded-for") ?? "unknown";
-  const rateCheck = checkRateLimit(`ai-chat:${user.id}:${ip}`, 20, 60_000);
+  
+  // Tiered rate limit: 30/min for logged-in, 10/min for guests
+  const limit = user ? 30 : 10;
+  const rateLimitKey = user ? `ai-chat:${user.id}:${ip}` : `ai-chat:guest:${ip}`;
+  const rateCheck = checkRateLimit(rateLimitKey, limit, 60_000);
+  
   if (!rateCheck.allowed) {
     return Response.json(
-      { error: "Terlalu banyak permintaan. Silakan coba lagi dalam 1 menit." },
+      { 
+        error: `Batas pesan habis. Pengguna ${user ? "terdaftar" : "tamu"} dibatasi maksimal ${limit} pesan per menit. Silakan coba lagi dalam 1 menit.`,
+        errorCode: "RATE_LIMIT_EXCEEDED"
+      },
       { status: 429 },
     );
   }
-  const payload: ChatRequest = await request.json();
-  const messages = payload.messages.slice(-8);
+
+  let payload: ChatRequest;
+  try {
+    payload = await request.json();
+  } catch {
+    return Response.json(
+      { error: "Payload request tidak valid.", errorCode: "INVALID_PAYLOAD" },
+      { status: 400 },
+    );
+  }
+
+  const messages = payload.messages.slice(-10); // Keep last 10 messages for context
   const lastMessage = messages[messages.length - 1];
 
   if (!lastMessage || lastMessage.role !== "user" || lastMessage.content.length > 900) {
     return Response.json(
       {
-        answerMarkdown:
-          "Maaf, pertanyaan terlalu panjang atau belum valid. Coba tanyakan tentang produk nilam, Nilam Passport, Ampas Nilam, atau promo NILOKA.",
-        providerUsed: "mock",
-        suggestions: [],
-        refused: true,
-      } satisfies ChatResponse,
+        error: "Pertanyaan terlalu panjang atau tidak valid (maksimal 900 karakter).",
+        errorCode: "INVALID_MESSAGE_LENGTH"
+      },
       { status: 400 },
     );
   }
@@ -43,20 +56,26 @@ export async function POST(request: Request) {
 
   if (!guardrail.allowed) {
     return Response.json({
-      answerMarkdown:
-        "Maaf, aku hanya bisa membantu pertanyaan seputar **nilam Aceh**, produk di marketplace **NILOKA**, Nilam Passport, Ampas Nilam B2B, promo, dan rekomendasi produk. Coba tanya misalnya: _produk nilam apa yang cocok untuk relaksasi?_",
+      answerMarkdown: guardrail.reason,
       providerUsed: "mock",
       suggestions: [],
       refused: true,
+      errorCode: "GUARDRAIL_BLOCKED"
     } satisfies ChatResponse);
   }
 
-  const [products, nilokaContext] = await Promise.all([
-    getPublishedProductsDto({ limit: 24 }),
-    buildNilokaContext(),
+  // Classify User Intent
+  const intent = classifyIntent(lastMessage.content);
+
+  // Modular context fetching from database (RAG)
+  const [products, dynamicContext] = await Promise.all([
+    getPublishedProductsDto({ limit: 40 }),
+    buildContextForIntent(intent, lastMessage.content),
   ]);
-  const prompt = buildChatPrompt(messages, nilokaContext);
-  const suggestions = buildProductSuggestions(products, lastMessage.content);
+
+  const isProductIntent = intent === "product_search" || intent === "product_detail";
+  const prompt = buildChatPrompt(messages, dynamicContext, intent);
+  const suggestions = buildProductSuggestions(products, lastMessage.content, !isProductIntent);
 
   try {
     const result = await generateAiText(prompt);
@@ -66,13 +85,15 @@ export async function POST(request: Request) {
       providerUsed: result.providerUsed,
       suggestions,
       refused: false,
+      intent
     } satisfies ChatResponse);
   } catch {
     return Response.json({
-      answerMarkdown: "Maaf, layanan AI sedang tidak tersedia. Silakan coba lagi nanti.",
+      answerMarkdown: "Maaf, layanan AI sedang sibuk. Silakan coba sesaat lagi.",
       providerUsed: "mock",
       suggestions: [],
       refused: true,
+      errorCode: "PROVIDER_FAILURE"
     } satisfies ChatResponse);
   }
 }
