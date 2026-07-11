@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
-import { requireUser } from "@/lib/auth/session";
+import { getCurrentUser, requireUser } from "@/lib/auth/session";
 import { ChatMessageSenderRole } from "@/generated/prisma/client";
 import { revalidatePath } from "next/cache";
 import type { ChatThread, ChatMessage, MessageProductContext } from "@/lib/services/chat-service";
@@ -101,7 +101,10 @@ function mapDbThread(thread: DbThread): ChatThread {
 
 export async function getThreadsAction(): Promise<ChatThread[]> {
   try {
-    const user = await requireUser();
+    const user = await getCurrentUser();
+    if (!user) {
+      return [];
+    }
     
     let whereClause: { sellerId?: string; buyerId?: string } = {};
     if (user.sellerId) {
@@ -159,7 +162,10 @@ function isThreadParticipant(
 
 export async function getThreadAction(threadId: string): Promise<ChatThread | null> {
   try {
-    const user = await requireUser();
+    const user = await getCurrentUser();
+    if (!user) {
+      return null;
+    }
     const parsed = threadIdSchema.safeParse({ threadId });
     if (!parsed.success) return null;
 
