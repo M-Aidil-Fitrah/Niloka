@@ -89,7 +89,9 @@ function mapAmpasListing(row: AmpasListingRow): AmpasListing {
   };
 }
 
-export async function getActiveAmpasListingsDto(): Promise<AmpasListing[]> {
+export async function getActiveAmpasListingsDto(params?: {
+  limit?: number;
+}): Promise<AmpasListing[]> {
   const rows = await prisma.ampasListing.findMany({
     where: {
       status: AmpasListingStatus.ACTIVE,
@@ -97,6 +99,7 @@ export async function getActiveAmpasListingsDto(): Promise<AmpasListing[]> {
     orderBy: {
       updatedAt: "desc",
     },
+    take: params?.limit ?? 80,
   });
 
   return rows.map(mapAmpasListing);

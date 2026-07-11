@@ -7,6 +7,11 @@ import { z } from "zod";
 import { getAmpasListingsBySellerIdDto } from "@/lib/dal/marketplace";
 import type { AmpasListing } from "@/lib/contracts";
 import {
+  AdminValidationStatus,
+  AdminValidationTarget,
+  AmpasListingStatus,
+} from "@/generated/prisma/client";
+import {
   toPrismaAmpasCondition,
   toPrismaAmpasUsageTag,
   toPrismaAmpasStatus,
@@ -83,7 +88,7 @@ export async function saveAmpasListingAction(
 
   const existing = await prisma.ampasListing.findUnique({
     where: { id: data.id },
-    select: { sellerId: true, slug: true },
+    select: { sellerId: true, slug: true, status: true },
   });
 
   if (existing && existing.sellerId !== seller.sellerId) {
@@ -96,7 +101,11 @@ export async function saveAmpasListingAction(
   const slug = `ampas-${data.condition}-${generateSlug(data.location.city)}-${data.id.replace("ampas-", "")}`.replace(/^-+|-+$/g, "");
 
   const mappedCondition = toPrismaAmpasCondition(data.condition);
-  const mappedStatus = toPrismaAmpasStatus(data.status);
+  const requestedStatus = toPrismaAmpasStatus(data.status);
+  const needsAdminValidation =
+    requestedStatus === AmpasListingStatus.ACTIVE &&
+    existing?.status !== AmpasListingStatus.ACTIVE;
+  const mappedStatus = needsAdminValidation ? AmpasListingStatus.DRAFT : requestedStatus;
   const mappedUsageTags = data.usageTags.map(toPrismaAmpasUsageTag);
   const parsedDistillationDate = data.distillationDate
     ? new Date(data.distillationDate)
@@ -151,6 +160,26 @@ export async function saveAmpasListingAction(
       },
     });
 
+    if (needsAdminValidation) {
+      await tx.adminValidationItem.upsert({
+        where: { id: `validation-ampas-${data.id}` },
+        create: {
+          id: `validation-ampas-${data.id}`,
+          target: AdminValidationTarget.AMPAS_LISTING,
+          targetId: data.id,
+          status: AdminValidationStatus.QUEUED,
+          submittedBy: data.sellerId,
+          submittedAt: new Date(),
+          notes: `Pengajuan publikasi listing ampas ${slug}`,
+        },
+        update: {
+          status: AdminValidationStatus.QUEUED,
+          submittedAt: new Date(),
+          notes: `Pengajuan publikasi listing ampas ${slug}`,
+        },
+      });
+    }
+
     // Write audit log
     await tx.auditLog.create({
       data: {
@@ -160,7 +189,8 @@ export async function saveAmpasListingAction(
         targetId: data.id,
         metadata: JSON.stringify({
           slug,
-          status: data.status,
+          requestedStatus: data.status,
+          savedStatus: mappedStatus,
           quantityKg: data.quantityKg,
         }),
       },

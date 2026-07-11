@@ -18,9 +18,32 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "NILOKA",
+  metadataBase: new URL("https://niloka.my.id"),
+  title: {
+    default: "NILOKA",
+    template: "%s | NILOKA",
+  },
   description:
     "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
+  applicationName: "NILOKA",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: "https://niloka.my.id",
+    siteName: "NILOKA",
+    title: "NILOKA",
+    description:
+      "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
+  },
+  twitter: {
+    card: "summary",
+    title: "NILOKA",
+    description:
+      "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
+  },
 };
 
 export const viewport: Viewport = {

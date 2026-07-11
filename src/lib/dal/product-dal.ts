@@ -65,6 +65,7 @@ function mapProduct(row: ProductWithGallery): Product {
 
 export async function getPublishedProductsDto(params?: {
   searchQuery?: string;
+  limit?: number;
 }): Promise<Product[]> {
   const where: Prisma.ProductWhereInput = {
     status: ProductStatus.PUBLISHED,
@@ -95,6 +96,7 @@ export async function getPublishedProductsDto(params?: {
     orderBy: {
       featuredRank: "asc",
     },
+    take: params?.limit ?? 120,
   });
 
   return rows.map((row) => {

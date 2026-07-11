@@ -8,33 +8,18 @@ import type { SellerFinanceSummary } from "@/lib/contracts";
 export async function getSellerFinanceSummaryDto(
   sellerId: string,
 ): Promise<SellerFinanceSummary> {
-  const [productAgg, ampasAgg, paidCount, pendingCount, fulfilledCount] = await Promise.all([
-    prisma.orderItem.aggregate({
+  const [paidItems, paidCount, pendingCount, fulfilledCount] = await Promise.all([
+    prisma.orderItem.findMany({
       where: {
         sellerId,
-        kind: CartItemKind.PRODUCT,
         order: {
           status: {
             in: [PrismaOrderStatus.PAID, PrismaOrderStatus.FULFILLED],
           },
         },
       },
-      _sum: {
-        unitPriceAmount: true,
-        quantity: true,
-      },
-    }),
-    prisma.orderItem.aggregate({
-      where: {
-        sellerId,
-        kind: CartItemKind.AMPAS_LISTING,
-        order: {
-          status: {
-            in: [PrismaOrderStatus.PAID, PrismaOrderStatus.FULFILLED],
-          },
-        },
-      },
-      _sum: {
+      select: {
+        kind: true,
         unitPriceAmount: true,
         quantity: true,
       },
@@ -59,8 +44,12 @@ export async function getSellerFinanceSummaryDto(
     }),
   ]);
 
-  const productRevenue = (productAgg._sum.unitPriceAmount ?? 0) * (productAgg._sum.quantity ?? 0);
-  const ampasRevenue = (ampasAgg._sum.unitPriceAmount ?? 0) * (ampasAgg._sum.quantity ?? 0);
+  const productRevenue = paidItems
+    .filter((item) => item.kind === CartItemKind.PRODUCT)
+    .reduce((total, item) => total + item.unitPriceAmount * item.quantity, 0);
+  const ampasRevenue = paidItems
+    .filter((item) => item.kind === CartItemKind.AMPAS_LISTING)
+    .reduce((total, item) => total + item.unitPriceAmount * item.quantity, 0);
   const grossRevenue = productRevenue + ampasRevenue;
   const productCommission = Math.round(productRevenue * 0.05);
   const ampasCommission = Math.round(ampasRevenue * 0.03);

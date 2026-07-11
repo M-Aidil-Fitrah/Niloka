@@ -70,17 +70,22 @@ async function calculateDiscount(input: {
   subtotal: number;
   shippingEstimate: number;
   productIds: string[];
-}): Promise<{ amount: number; code: string }> {
+}): Promise<{ amount: number; code: string; promoId: string }> {
   const code = input.promoCode.trim().toUpperCase();
 
   if (!code) {
-    return { amount: 0, code: "" };
+    return { amount: 0, code: "", promoId: "" };
   }
+
+  const now = new Date();
 
   const promo = await prisma.promo.findFirst({
     where: {
       code,
       status: PromoStatus.ACTIVE,
+      startsAt: { lte: now },
+      endsAt: { gte: now },
+      usedCount: { lt: prisma.promo.fields.usageLimit },
     },
     include: {
       products: {
@@ -92,7 +97,7 @@ async function calculateDiscount(input: {
   });
 
   if (!promo || input.subtotal < promo.minSubtotalAmount) {
-    return { amount: 0, code: "" };
+    return { amount: 0, code: "", promoId: "" };
   }
 
   const eligibleProductIds = promo.products.map((item) => item.productId);
@@ -101,7 +106,7 @@ async function calculateDiscount(input: {
     input.productIds.some((productId) => eligibleProductIds.includes(productId));
 
   if (!hasEligibleProduct) {
-    return { amount: 0, code: "" };
+    return { amount: 0, code: "", promoId: "" };
   }
 
   switch (promo.type) {
@@ -109,16 +114,19 @@ async function calculateDiscount(input: {
       return {
         amount: Math.floor((input.subtotal * promo.value) / 100),
         code,
+        promoId: promo.id,
       };
     case "FIXED_AMOUNT":
       return {
         amount: Math.min(input.subtotal, promo.value),
         code,
+        promoId: promo.id,
       };
     case "FREE_SHIPPING":
       return {
         amount: input.shippingEstimate,
         code,
+        promoId: promo.id,
       };
   }
 }
@@ -496,6 +504,25 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
         expiresAt: paymentExpiresAt,
       });
 
+      if (discount.promoId) {
+        const promoUsage = await tx.promo.updateMany({
+          where: {
+            id: discount.promoId,
+            status: PromoStatus.ACTIVE,
+            startsAt: { lte: new Date() },
+            endsAt: { gte: new Date() },
+            usedCount: { lt: tx.promo.fields.usageLimit },
+          },
+          data: {
+            usedCount: { increment: 1 },
+          },
+        });
+
+        if (promoUsage.count !== 1) {
+          throw new Error("Promo sudah tidak tersedia.");
+        }
+      }
+
       await tx.cartItem.deleteMany({
         where: { cartId: cart.id }
       });
@@ -549,7 +576,8 @@ export async function fetchOrderHistoryAction(): Promise<OrderHistoryItem[]> {
       },
       payments: true,
     },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
+    take: 50,
   });
 
   return orders.map((order) => ({

@@ -303,6 +303,7 @@ export async function getBuyerOrdersDto(userId: string): Promise<OrderTracking[]
     orderBy: {
       createdAt: "desc",
     },
+    take: 50,
   });
 
   return rows.map(mapOrder);
@@ -412,6 +413,7 @@ export async function getSellerOrdersDto(
     orderBy: {
       createdAt: "desc",
     },
+    take: 100,
   });
 
   return rows.map(mapOrder);

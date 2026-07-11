@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { requireSeller } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import {
+  AdminValidationStatus,
+  AdminValidationTarget,
   PassportValidationStatus,
   ProductStatus,
 } from "@/generated/prisma/client";
@@ -96,7 +98,7 @@ export async function saveProductAction(
 
   const existing = await prisma.product.findUnique({
     where: { id: data.id },
-    select: { sellerId: true, slug: true },
+    select: { sellerId: true, slug: true, status: true },
   });
 
   if (existing && existing.sellerId !== seller.sellerId) {
@@ -110,7 +112,11 @@ export async function saveProductAction(
   const slug = `${generateSlug(data.name)}-${data.id.replace("product-", "").replace("prod-", "").slice(0, 6)}`;
 
   const mappedForm = toPrismaProductForm(data.form);
-  const mappedStatus = toPrismaProductStatus(data.status);
+  const requestedStatus = toPrismaProductStatus(data.status);
+  const needsAdminValidation =
+    requestedStatus === ProductStatus.PUBLISHED &&
+    existing?.status !== ProductStatus.PUBLISHED;
+  const mappedStatus = needsAdminValidation ? ProductStatus.DRAFT : requestedStatus;
   const mappedFunctions = data.functions.map(toPrismaProductFunction);
   const mappedTags = data.tags.map(toPrismaProductTag);
 
@@ -190,6 +196,26 @@ export async function saveProductAction(
       });
     }
 
+    if (needsAdminValidation) {
+      await tx.adminValidationItem.upsert({
+        where: { id: `validation-product-${data.id}` },
+        create: {
+          id: `validation-product-${data.id}`,
+          target: AdminValidationTarget.PRODUCT,
+          targetId: data.id,
+          status: AdminValidationStatus.QUEUED,
+          submittedBy: data.sellerId,
+          submittedAt: new Date(),
+          notes: `Pengajuan publikasi produk ${data.name}`,
+        },
+        update: {
+          status: AdminValidationStatus.QUEUED,
+          submittedAt: new Date(),
+          notes: `Pengajuan publikasi produk ${data.name}`,
+        },
+      });
+    }
+
     // 4. Write audit log
     await tx.auditLog.create({
       data: {
@@ -199,7 +225,8 @@ export async function saveProductAction(
         targetId: data.id,
         metadata: JSON.stringify({
           slug,
-          status: data.status,
+          requestedStatus: data.status,
+          savedStatus: mappedStatus,
           stock: data.stock,
         }),
       },
