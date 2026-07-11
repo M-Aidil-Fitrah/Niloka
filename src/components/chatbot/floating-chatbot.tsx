@@ -3,207 +3,205 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { Bot, RotateCcw, Send, Sparkles, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Bot, RotateCcw, Send, X } from "lucide-react";
 import type { ChatMessage, ChatResponse } from "@/lib/contracts";
 import { formatRupiah } from "@/lib/formatters";
 
 const MarkdownMessage = dynamic(
-  () => import("@/components/chatbot/markdown-message").then((module) => module.MarkdownMessage),
-  {
-    ssr: false,
-  },
+  () => import("@/components/chatbot/markdown-message").then((m) => m.MarkdownMessage),
+  { ssr: false },
 );
 
-// Hidden only in checkout and authentication pages
-const hiddenPrefixes = ["/checkout", "/auth"];
+// ─── Config ───────────────────────────────────────────────────────────────────
 
-function shouldHideChatbot(pathname: string): boolean {
-  return hiddenPrefixes.some((prefix) => pathname.startsWith(prefix));
+const HIDDEN_PREFIXES = ["/checkout", "/auth"];
+
+function shouldHideChatbot(pathname: string) {
+  return HIDDEN_PREFIXES.some((p) => pathname.startsWith(p));
 }
 
-function createMessage(role: ChatMessage["role"], content: string): ChatMessage {
+// ─── Message helpers ──────────────────────────────────────────────────────────
+
+type TimestampedMessage = ChatMessage & { sentAt: number };
+
+function createMessage(role: ChatMessage["role"], content: string): TimestampedMessage {
   return {
-    id: `chat-${role}-${Date.now()}-${content.length}-${Math.random().toString(36).substr(2, 9)}`,
+    id: `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     role,
     content,
+    sentAt: Date.now(),
   };
 }
 
+function formatTime(ts: number): string {
+  return new Date(ts).toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+// ─── Greeting & starter questions ─────────────────────────────────────────────
+
 function getDynamicGreeting(path: string): string {
-  if (path === "/products") {
-    return "Halo! Aku **NILOKA Assistant**. Sedang mencari produk nilam terbaik? Tanyakan padaku rekomendasi minyak nilam, diffuser, sabun, atau produk lainnya sesuai kebutuhanmu!";
-  }
-  if (path.startsWith("/products/")) {
-    return "Halo! Aku **NILOKA Assistant**. Sedang melihat detail produk ini? Kamu bisa menanyakan profil aroma, manfaat, cara penggunaan, atau mengecek transparansi **Nilam Passport** produk ini.";
-  }
-  if (path.startsWith("/ampas")) {
-    return "Halo! Aku **NILOKA Assistant**. Tertarik dengan **Ampas Nilam B2B**? Tanyakan ketersediaan ampas aktif, harga per kg, lokasi pengiriman, atau cara memanfaatkannya menjadi briket/kompos!";
-  }
-  if (path.startsWith("/artikel")) {
-    return "Halo! Aku **NILOKA Assistant**. Sedang membaca edukasi nilam? Kamu bisa menanyakan detail artikel, cara penyulingan nilam, atau pemanfaatan limbah nilam lainnya.";
-  }
-  if (path.startsWith("/admin")) {
-    return "Halo **Admin NILOKA**! Aku siap membantumu. Tanyakan statistik produk, informasi validasi seller, atau cara kerja sistem administrasi NILOKA.";
-  }
-  if (path.startsWith("/seller")) {
-    return "Halo **Mitra Seller NILOKA**! Butuh bantuan mengelola toko? Tanyakan cara membuat promo baru, mengelola ampas B2B, atau menggunakan AI Co-pilot untuk menulis deskripsi produk.";
-  }
-  return "Halo! Aku **NILOKA Assistant**. Aku bisa membantumu mencari produk nilam terbaik, mengecek **Nilam Passport**, mencari listing ampas B2B, mengecek promo, atau menjawab FAQ seputar cara belanja di NILOKA.";
+  if (path === "/products" || path.startsWith("/products/"))
+    return "Sedang cari produk nilam? Tanyakan rekomendasi, manfaat, atau bahan baku langsung dari penyuling Aceh.";
+  if (path.startsWith("/ampas"))
+    return "Tertarik Ampas Nilam B2B? Tanyakan ketersediaan, harga per kg, atau opsi pengiriman ke lokasi kamu.";
+  if (path.startsWith("/artikel"))
+    return "Ada pertanyaan tentang artikel yang sedang kamu baca? Atau ingin tahu lebih soal dunia nilam Aceh?";
+  if (path.startsWith("/admin"))
+    return "Halo Admin. Ada yang bisa dibantu terkait operasional atau data platform?";
+  if (path.startsWith("/seller"))
+    return "Butuh bantuan kelola toko? Tanyakan cara buat promo, daftarkan ampas B2B, atau gunakan AI untuk deskripsi produk.";
+  return "Halo! Aku NILOKA Assistant — bisa bantu soal produk nilam, Nilam Passport, ampas B2B, atau cara belanja di platform ini.";
 }
 
 function getStarterQuestions(path: string): string[] {
-  if (path === "/products" || path.startsWith("/products/")) {
-    return [
-      "Rekomendasi minyak nilam untuk relaksasi?",
-      "Bagaimana cara membaca Nilam Passport?",
-      "Ada promo produk apa hari ini?"
-    ];
-  }
-  if (path.startsWith("/ampas")) {
-    return [
-      "Berapa harga ampas nilam per kg?",
-      "Ampas nilam kering bisa dipakai untuk apa?",
-      "Bagaimana pengiriman ampas nilam B2B?"
-    ];
-  }
-  if (path.startsWith("/artikel")) {
-    return [
-      "Bagaimana proses distilasi daun nilam?",
-      "Apa manfaat pupuk organik ampas nilam?",
-      "Bagaimana cara budidaya nilam?"
-    ];
-  }
-  if (path.startsWith("/seller") || path.startsWith("/admin")) {
-    return [
-      "Bagaimana cara mendaftar jadi seller?",
-      "Apa itu Nilam Passport?",
-      "Bagaimana cara membuat promo toko?"
-    ];
-  }
-  return [
-    "Produk apa yang cocok untuk relaksasi?",
-    "Apa itu Nilam Passport?",
-    "Ada ampas nilam aktif?"
-  ];
+  if (path === "/products" || path.startsWith("/products/"))
+    return ["Nilam untuk relaksasi?", "Cara baca Nilam Passport?", "Promo hari ini?"];
+  if (path.startsWith("/ampas"))
+    return ["Harga ampas per kg?", "Ampas bisa dipakai untuk?", "Cara kirim B2B?"];
+  if (path.startsWith("/artikel"))
+    return ["Cara distilasi nilam?", "Manfaat ampas nilam?", "Budidaya nilam?"];
+  if (path.startsWith("/seller") || path.startsWith("/admin"))
+    return ["Daftar jadi seller?", "Apa itu Nilam Passport?", "Cara buat promo?"];
+  return ["Produk untuk relaksasi?", "Apa itu Nilam Passport?", "Cek ampas nilam aktif?"];
 }
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export function FloatingChatbot() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<TimestampedMessage[]>([]);
   const [lastResponse, setLastResponse] = useState<ChatResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Initialize messages state with dynamic greeting
+  // null = idle, "waiting" = loading before first token, string = streaming content
+  const [streamState, setStreamState] = useState<null | "waiting" | string>(null);
+  // timestamp when assistant starts responding (for streaming bubble)
+  const [streamStartedAt, setStreamStartedAt] = useState<number>(0);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const isLoading = streamState !== null;
+
+  const resetGreeting = useCallback(() => {
+    setMessages([createMessage("assistant", getDynamicGreeting(pathname))]);
+    setLastResponse(null);
+    setStreamState(null);
+  }, [pathname]);
+
   useEffect(() => {
     setMessages([createMessage("assistant", getDynamicGreeting(pathname))]);
   }, []);
 
-  // Update dynamic greeting on pathname change if user has not typed anything yet
   useEffect(() => {
-    if (messages.length <= 1) {
-      setMessages([createMessage("assistant", getDynamicGreeting(pathname))]);
-    }
+    if (messages.length <= 1) resetGreeting();
   }, [pathname]);
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setIsOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({
-      top: scrollRef.current.scrollHeight,
-      behavior: "smooth",
-    });
-  }, [messages, isLoading]);
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [messages, streamState]);
 
-  if (shouldHideChatbot(pathname)) {
-    return null;
-  }
+  // Auto-resize textarea
+  useEffect(() => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    ta.style.height = "auto";
+    ta.style.height = `${Math.min(ta.scrollHeight, 112)}px`;
+  }, [input]);
+
+  if (shouldHideChatbot(pathname)) return null;
 
   async function sendMessage(messageText: string) {
     const trimmed = messageText.trim();
+    if (!trimmed || isLoading) return;
 
-    if (!trimmed || isLoading) {
-      return;
-    }
-
-    const nextMessages = [...messages, createMessage("user", trimmed)];
-    
-    // Limit to keeping max 20 messages in client state (10 user, 10 assistant)
-    const slicedMessages = nextMessages.slice(-20);
-    setMessages(slicedMessages);
+    const nextMessages = [...messages, createMessage("user", trimmed)].slice(-20);
+    setMessages(nextMessages);
     setInput("");
-    setIsLoading(true);
+    setStreamState("waiting"); // show typing indicator
+    setStreamStartedAt(Date.now());
+    setLastResponse(null);
 
     try {
       const response = await fetch("/api/ai/chat", {
-        body: JSON.stringify({
-          messages: slicedMessages,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: nextMessages }),
       });
 
       if (!response.ok) {
-        let errorMessage = "Maaf, asisten NILOKA sedang tidak bisa merespons. Coba lagi sebentar.";
+        let msg = "Asisten tidak bisa merespons. Coba lagi sebentar.";
         try {
-          const errData = await response.json();
-          if (errData) {
-            if (typeof errData.error === "string") {
-              errorMessage = errData.error;
-            } else if (typeof errData.answerMarkdown === "string") {
-              errorMessage = errData.answerMarkdown;
-            }
-          }
-        } catch {
-          // ignore JSON parsing errors
-        }
-        throw new Error(errorMessage);
+          const err = await response.json();
+          if (typeof err.error === "string") msg = err.error;
+          else if (typeof err.answerMarkdown === "string") msg = err.answerMarkdown;
+        } catch { /* ignore */ }
+        throw new Error(msg);
       }
 
-      const data: ChatResponse = await response.json();
-      setLastResponse(data);
-      setMessages((current) => [
-        ...current.slice(-19), // Keep room for the assistant response
-        createMessage("assistant", data.answerMarkdown),
-      ]);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Maaf, asisten NILOKA sedang tidak bisa merespons. Coba lagi sebentar.";
-      setMessages((current) => [
-        ...current.slice(-19),
-        createMessage(
-          "assistant",
-          errorMessage,
-        ),
-      ]);
-    } finally {
-      setIsLoading(false);
+      if (!response.body) throw new Error("Tidak ada respons.");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = "";
+      let finalMeta: ChatResponse | null = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const nullIdx = chunk.indexOf("\x00");
+
+        if (nullIdx !== -1) {
+          accumulated += chunk.slice(0, nullIdx);
+          setStreamState(accumulated); // switch from "waiting" to streaming text
+          try { finalMeta = JSON.parse(chunk.slice(nullIdx + 1)) as ChatResponse; } catch { /* ignore */ }
+        } else {
+          accumulated += chunk;
+          // Only switch away from "waiting" when we have actual text
+          if (accumulated.length > 0) setStreamState(accumulated);
+        }
+      }
+
+      const finalText = accumulated || "Tidak ada respons yang diterima.";
+      if (finalMeta) setLastResponse({ ...finalMeta, answerMarkdown: finalText });
+      setStreamState(null);
+
+      const assistantMsg = createMessage("assistant", finalText);
+      // Use the streamStartedAt as the timestamp for assistant message
+      assistantMsg.sentAt = streamStartedAt;
+      setMessages((cur) => [...cur.slice(-19), assistantMsg]);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Asisten tidak bisa merespons. Coba lagi.";
+      setStreamState(null);
+      setMessages((cur) => [...cur.slice(-19), createMessage("assistant", msg)]);
     }
   }
 
   const starterQuestions = getStarterQuestions(pathname);
+  const isStreaming = typeof streamState === "string" && streamState !== "waiting";
+  const isWaiting = streamState === "waiting";
 
   return (
     <>
+      {/* Toggle button */}
       <button
         aria-label={isOpen ? "Tutup Chatbot NILOKA" : "Buka Chatbot NILOKA"}
-        className="fixed bottom-5 right-5 z-50 flex h-13 w-13 items-center justify-center rounded-full border border-white/30 bg-brand-950 text-white-soft shadow-2xl transition hover:bg-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
-        style={{ touchAction: "manipulation" }}
-        onClick={() => setIsOpen((current) => !current)}
         type="button"
+        onClick={() => setIsOpen((v) => !v)}
+        className="fixed bottom-5 right-5 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-brand-950 text-white shadow-lg ring-1 ring-white/10 transition-all hover:bg-brand-800 active:scale-95"
       >
         {isOpen ? <X className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
       </button>
@@ -211,144 +209,180 @@ export function FloatingChatbot() {
       {isOpen && (
         <section
           aria-label="Chatbot NILOKA"
-          className="fixed inset-x-3 bottom-20 z-50 flex max-h-[78svh] flex-col overflow-hidden rounded-[28px] border border-line bg-white-soft shadow-2xl sm:inset-x-auto sm:right-5 sm:w-[420px]"
+          className="fixed inset-x-3 bottom-20 z-50 flex max-h-[80svh] flex-col overflow-hidden rounded-2xl border border-line shadow-2xl sm:inset-x-auto sm:right-5 sm:w-[400px]"
+          style={{ background: "var(--cream-50)" }}
         >
-          <header className="border-b border-line bg-brand-950 p-4 text-white-soft">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white-soft/12">
-                  <Sparkles className="h-4 w-4" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-extrabold">NILOKA Assistant</h2>
-                  <p className="text-[11px] font-medium text-white-soft/70">
-                    Asisten AI Resmi Nilam & Marketplace
-                  </p>
-                </div>
+          {/* Header — warm brand tone, not plain white */}
+          <header className="flex shrink-0 items-center justify-between gap-3 border-b border-line bg-brand-950 px-4 py-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 text-white">
+                <Bot className="h-3.5 w-3.5" />
               </div>
-              <div className="flex items-center gap-1">
-                <button
-                  aria-label="Reset percakapan"
-                  className="rounded-full p-2 text-white-soft/80 transition hover:bg-white-soft/10 hover:text-white-soft"
-                  onClick={() => {
-                    setMessages([createMessage("assistant", getDynamicGreeting(pathname))]);
-                    setLastResponse(null);
-                  }}
-                  title="Mulai Ulang Chat"
-                  type="button"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                </button>
-                <button
-                  aria-label="Tutup chatbot"
-                  className="rounded-full p-2 text-white-soft/80 transition hover:bg-white-soft/10 hover:text-white-soft"
-                  onClick={() => setIsOpen(false)}
-                  type="button"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+              <div>
+                <p className="text-[13px] font-bold leading-tight text-white">NILOKA Assistant</p>
+                <p className="text-[10px] text-white/60">Nilam &amp; Marketplace</p>
               </div>
+            </div>
+            <div className="flex items-center gap-0.5">
+              <button
+                type="button"
+                aria-label="Reset percakapan"
+                title="Mulai ulang"
+                onClick={resetGreeting}
+                className="rounded-lg p-1.5 text-white/60 transition hover:bg-white/10 hover:text-white"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                aria-label="Tutup chatbot"
+                onClick={() => setIsOpen(false)}
+                className="rounded-lg p-1.5 text-white/60 transition hover:bg-white/10 hover:text-white"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
             </div>
           </header>
 
-          <div className="flex gap-2 overflow-x-auto border-b border-line bg-cream-50 px-4 py-3 scrollbar-none">
-            {starterQuestions.map((question) => (
+          {/* Starter questions — fixed height, never shrinks, horizontal scroll */}
+          <div className="flex shrink-0 gap-2 overflow-x-auto border-b border-line bg-cream-100 px-4 py-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {starterQuestions.map((q) => (
               <button
-                className="shrink-0 rounded-full border border-line bg-white-soft px-3 py-1.5 text-[11px] font-bold text-brand-900 hover:bg-cream-100 transition"
-                key={question}
-                onClick={() => sendMessage(question)}
+                key={q}
                 type="button"
+                disabled={isLoading}
+                onClick={() => sendMessage(q)}
+                className="shrink-0 whitespace-nowrap rounded-full border border-line bg-white px-3 py-1 text-[11px] font-medium text-ink-700 transition hover:border-brand-700 hover:text-brand-950 disabled:pointer-events-none disabled:opacity-40"
               >
-                {question}
+                {q}
               </button>
             ))}
           </div>
 
-          <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4" ref={scrollRef}>
-            {messages.map((message) => (
-              <div
-                className={
-                  message.role === "user"
-                    ? "ml-auto max-w-[86%] rounded-2xl bg-brand-900 px-4 py-2.5 text-sm font-medium text-white-soft shadow-sm"
-                    : "mr-auto max-w-[92%] rounded-2xl border border-line bg-cream-50 px-4 py-2.5 text-sm leading-6 text-brand-950 shadow-sm"
-                }
-                key={message.id}
-              >
-                <div className="overflow-x-auto">
-                  <MarkdownMessage content={message.content} />
+          {/* Messages */}
+          <div
+            ref={scrollRef}
+            className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4"
+          >
+            {messages.map((msg) =>
+              msg.role === "user" ? (
+                <div key={msg.id} className="flex flex-col items-end gap-0.5">
+                  <div className="max-w-[82%] rounded-2xl rounded-tr-sm bg-brand-950 px-3.5 py-2.5 text-[13px] leading-relaxed text-white">
+                    {msg.content}
+                  </div>
+                  <time className="px-1 text-[10px] text-ink-600/70">
+                    {formatTime(msg.sentAt)}
+                  </time>
                 </div>
-              </div>
-            ))}
-            
-            {isLoading && (
-              <div className="mr-auto flex items-center gap-1.5 rounded-2xl border border-line bg-cream-50 px-4 py-3 shadow-sm">
-                <span className="text-xs font-bold text-ink-600">Menyusun jawaban NILOKA</span>
-                <span className="flex gap-1 items-center justify-center pt-1">
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-700" style={{ animationDelay: "0ms" }}></span>
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-700" style={{ animationDelay: "150ms" }}></span>
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-700" style={{ animationDelay: "300ms" }}></span>
-                </span>
+              ) : (
+                <div key={msg.id} className="flex flex-col items-start gap-0.5">
+                  <div className="max-w-[90%] rounded-2xl rounded-tl-sm border border-line bg-white px-3.5 py-2.5 text-[13px] leading-relaxed text-brand-950">
+                    <div className="overflow-x-auto">
+                      <MarkdownMessage content={msg.content} />
+                    </div>
+                  </div>
+                  <time className="px-1 text-[10px] text-ink-600/70">
+                    {formatTime(msg.sentAt)}
+                  </time>
+                </div>
+              )
+            )}
+
+            {/* Typing indicator — visible while waiting for first token */}
+            {isWaiting && (
+              <div className="flex flex-col items-start gap-1">
+                <div className="rounded-2xl rounded-tl-sm border border-line bg-white px-3.5 py-3">
+                  <div className="flex items-center gap-2">
+                    <span className="flex gap-1">
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-700" style={{ animationDelay: "0ms" }} />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-700" style={{ animationDelay: "150ms" }} />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-700" style={{ animationDelay: "300ms" }} />
+                    </span>
+                    <span className="text-[11px] text-ink-600">NILOKA Assistant sedang mengetik…</span>
+                  </div>
+                </div>
+                <time className="px-1 text-[10px] text-ink-600/70">
+                  {formatTime(streamStartedAt)}
+                </time>
               </div>
             )}
 
+            {/* Streaming bubble — shown token by token */}
+            {isStreaming && (
+              <div className="flex flex-col items-start gap-0.5">
+                <div className="max-w-[90%] rounded-2xl rounded-tl-sm border border-line bg-white px-3.5 py-2.5 text-[13px] leading-relaxed text-brand-950">
+                  <div className="overflow-x-auto">
+                    <MarkdownMessage content={streamState} />
+                  </div>
+                  <span aria-hidden className="mt-0.5 inline-block h-3 w-0.5 animate-pulse rounded-full bg-brand-700 align-middle" />
+                </div>
+                <time className="px-1 text-[10px] text-ink-600/70">
+                  {formatTime(streamStartedAt)}
+                </time>
+              </div>
+            )}
+
+            {/* Product suggestions */}
             {lastResponse && lastResponse.suggestions.length > 0 && !isLoading && (
-              <div className="grid gap-2 mt-2">
-                <p className="text-[11px] font-bold text-brand-950/60 uppercase tracking-wider px-1">Rekomendasi Produk:</p>
-                {lastResponse.suggestions.map((suggestion) => (
+              <div className="space-y-1.5">
+                <p className="px-1 text-[10px] font-semibold uppercase tracking-widest text-ink-600">
+                  Rekomendasi
+                </p>
+                {lastResponse.suggestions.map((s) => (
                   <Link
-                    className="rounded-2xl border border-line bg-white p-2.5 text-xs transition hover:border-brand-700 hover:shadow-md flex gap-3 items-center"
-                    href={suggestion.href}
-                    key={suggestion.productId}
+                    key={s.productId}
+                    href={s.href}
                     onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-2.5 rounded-xl border border-line bg-white p-2.5 transition hover:border-brand-700"
                   >
-                    {suggestion.imageUrl && (
+                    {s.imageUrl && (
                       <img
-                        alt={suggestion.name}
-                        className="h-10 w-10 shrink-0 rounded-lg object-cover border border-line bg-cream-50"
-                        src={suggestion.imageUrl}
+                        src={s.imageUrl}
+                        alt={s.name}
+                        className="h-9 w-9 shrink-0 rounded-lg border border-line object-cover"
                       />
                     )}
-                    <div className="flex-1 min-w-0">
-                      <span className="block font-extrabold text-brand-950 truncate">
-                        {suggestion.name}
-                      </span>
-                      <span className="block text-[10px] text-ink-500 line-clamp-1">
-                        {suggestion.reason}
-                      </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[12px] font-semibold text-brand-950">{s.name}</p>
+                      <p className="line-clamp-1 text-[10px] text-ink-600">{s.reason}</p>
                     </div>
-                    <span className="shrink-0 font-bold text-brand-900 bg-brand-50 px-2 py-1 rounded-lg text-[11px]">
-                      {formatRupiah(suggestion.price.amount)}
-                    </span>
+                    <p className="shrink-0 text-[11px] font-bold text-brand-900">
+                      {formatRupiah(s.price.amount)}
+                    </p>
                   </Link>
                 ))}
               </div>
             )}
           </div>
 
+          {/* Input area — warm cream background, not plain white */}
           <form
-            className="flex items-end gap-2 border-t border-line bg-white-soft p-3"
-            onSubmit={(event) => {
-              event.preventDefault();
-              sendMessage(input);
-            }}
+            onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
+            className="flex shrink-0 items-end gap-2 border-t border-line bg-cream-100 p-3"
           >
-            <label className="sr-only" htmlFor="niloka-chat-input">
-              Tulis pertanyaan untuk chatbot NILOKA
-            </label>
+            <label className="sr-only" htmlFor="niloka-chat-input">Tulis pesan</label>
             <textarea
-              className="max-h-28 min-h-11 flex-1 resize-none rounded-2xl border border-line bg-cream-50 px-3 py-2 text-sm font-medium text-brand-950 outline-none focus:border-brand-700"
+              ref={textareaRef}
               id="niloka-chat-input"
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="Tanya produk, passport, promo..."
               value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage(input);
+                }
+              }}
+              placeholder="Tulis pesan… (Enter kirim, Shift+Enter baris baru)"
+              className="max-h-28 w-full flex-1 resize-none overflow-hidden rounded-xl border border-line bg-white px-3 py-2 text-[13px] text-brand-950 placeholder:text-ink-600/50 outline-none transition focus:border-brand-700 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              rows={1}
             />
             <button
-              aria-label="Kirim pesan"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-950 text-white-soft transition hover:bg-brand-900 disabled:opacity-40"
-              disabled={isLoading || !input.trim()}
               type="submit"
+              aria-label="Kirim pesan"
+              disabled={isLoading || !input.trim()}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-950 text-white transition hover:bg-brand-800 disabled:opacity-30"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-3.5 w-3.5" />
             </button>
           </form>
         </section>
