@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/db/prisma";
 import { requireUser } from "@/lib/auth/session";
-import { ReviewTag } from "@/generated/prisma/client";
+import { OrderStatus, ReviewTag } from "@/generated/prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import type { Review, ReviewTag as ContractReviewTag } from "@/lib/contracts";
@@ -10,10 +10,10 @@ import type { Review, ReviewTag as ContractReviewTag } from "@/lib/contracts";
 const reviewSchema = z.object({
   productId: z.string().min(1, "Product ID wajib diisi"),
   sellerId: z.string().min(1, "Seller ID wajib diisi"),
-  authorName: z.string().min(1, "Nama penulis wajib diisi"),
+  authorName: z.string().optional().default(""),
   rating: z.number().int().min(1).max(5, "Rating harus di antara 1 dan 5"),
-  tags: z.array(z.string()),
-  body: z.string().min(1, "Isi ulasan wajib diisi"),
+  tags: z.array(z.string()).max(5, "Tag ulasan terlalu banyak."),
+  body: z.string().trim().min(10, "Isi ulasan minimal 10 karakter."),
 });
 
 function toPrismaReviewTag(tag: string): ReviewTag {
@@ -33,7 +33,9 @@ function toPrismaReviewTag(tag: string): ReviewTag {
   }
 }
 
-export async function submitReviewAction(input: unknown): Promise<{ ok: boolean; message: string; review?: Review }> {
+export async function submitReviewAction(
+  input: z.input<typeof reviewSchema>,
+): Promise<{ ok: boolean; message: string; review?: Review }> {
   try {
     const user = await requireUser();
     const validated = reviewSchema.safeParse(input);
@@ -46,6 +48,47 @@ export async function submitReviewAction(input: unknown): Promise<{ ok: boolean;
 
     const data = validated.data;
     const reviewId = `review-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const product = await prisma.product.findUnique({
+      where: { id: data.productId },
+      select: { id: true, slug: true, sellerId: true },
+    });
+
+    if (!product || product.sellerId !== data.sellerId) {
+      return { ok: false, message: "Produk tidak valid untuk ulasan ini." };
+    }
+
+    const purchasedItem = await prisma.orderItem.findFirst({
+      where: {
+        productId: product.id,
+        order: {
+          userId: user.id,
+          status: { in: [OrderStatus.PAID, OrderStatus.FULFILLED] },
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!purchasedItem) {
+      return {
+        ok: false,
+        message: "Ulasan hanya bisa dikirim setelah Anda membeli produk ini.",
+      };
+    }
+
+    const existingReview = await prisma.review.findFirst({
+      where: {
+        productId: product.id,
+        userId: user.id,
+      },
+      select: { id: true },
+    });
+
+    if (existingReview) {
+      return {
+        ok: false,
+        message: "Anda sudah mengirim ulasan untuk produk ini.",
+      };
+    }
 
     // Convert contract tags to prisma tags
     const prismaTags = data.tags.map(toPrismaReviewTag);
@@ -54,9 +97,9 @@ export async function submitReviewAction(input: unknown): Promise<{ ok: boolean;
       data: {
         id: reviewId,
         productId: data.productId,
-        sellerId: data.sellerId,
+        sellerId: product.sellerId,
         userId: user.id,
-        authorName: data.authorName,
+        authorName: user.name ?? "Pembeli NILOKA",
         rating: data.rating,
         tags: prismaTags,
         body: data.body,
@@ -64,33 +107,23 @@ export async function submitReviewAction(input: unknown): Promise<{ ok: boolean;
     });
 
     // Recalculate average rating and total reviews for the seller
-    const allSellerReviews = await prisma.review.findMany({
-      where: { sellerId: data.sellerId },
-      select: { rating: true },
+    const sellerReviewStats = await prisma.review.aggregate({
+      where: { sellerId: product.sellerId },
+      _avg: { rating: true },
+      _count: { rating: true },
     });
-    const totalReviews = allSellerReviews.length;
-    const ratingAverage = totalReviews > 0
-      ? allSellerReviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / totalReviews
-      : 0;
 
     await prisma.seller.update({
-      where: { id: data.sellerId },
+      where: { id: product.sellerId },
       data: {
-        ratingAverage,
-        totalReviews,
+        ratingAverage: sellerReviewStats._avg.rating ?? 0,
+        totalReviews: sellerReviewStats._count.rating,
       },
     });
 
     // Revalidate paths
     revalidatePath(`/products`);
-    // Find the product slug to revalidate product detail page
-    const product = await prisma.product.findUnique({
-      where: { id: data.productId },
-      select: { slug: true },
-    });
-    if (product) {
-      revalidatePath(`/products/${product.slug}`);
-    }
+    revalidatePath(`/products/${product.slug}`);
 
     return {
       ok: true,

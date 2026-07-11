@@ -10,11 +10,11 @@ import {
 export async function buildNilokaContext(): Promise<string> {
   const [publishedProducts, passportsData, ampasListings, sellersData, promosData] =
     await Promise.all([
-      getPublishedProductsDto(),
+      getPublishedProductsDto({ limit: 24 }),
       getPassportsDto(),
-      getActiveAmpasListingsDto(),
+      getActiveAmpasListingsDto({ limit: 12 }),
       getSellersDto(),
-      getPublicPromoSuggestionsDto(),
+      getPublicPromoSuggestionsDto({ limit: 8 }),
     ]);
 
   const products = publishedProducts

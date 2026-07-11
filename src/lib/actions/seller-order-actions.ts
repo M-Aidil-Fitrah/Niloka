@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { OrderFulfillmentStatus } from "@/generated/prisma/client";
+import { OrderFulfillmentStatus, OrderStatus } from "@/generated/prisma/client";
 import { requireUser } from "@/lib/auth/session";
 import { getSellerOrdersDto } from "@/lib/dal/orders";
 import { prisma } from "@/lib/db/prisma";
@@ -126,15 +126,34 @@ export async function processOrderAction(
       where: { id: orderId },
       select: {
         id: true,
+        status: true,
         items: {
           where: { sellerId },
           select: { id: true },
+        },
+        fulfillments: {
+          where: { sellerId },
+          select: { status: true },
+          take: 1,
         },
       },
     });
 
     if (!order || order.items.length === 0) {
       return { ok: false, error: "Pesanan tidak ditemukan atau tidak mengandung barang Anda." };
+    }
+
+    if (order.status !== OrderStatus.PAID && order.status !== OrderStatus.FULFILLED) {
+      return { ok: false, error: "Pesanan belum dibayar, belum bisa diproses." };
+    }
+
+    const currentStatus = order.fulfillments[0]?.status;
+    if (
+      currentStatus === OrderFulfillmentStatus.SHIPPED ||
+      currentStatus === OrderFulfillmentStatus.DELIVERED ||
+      currentStatus === OrderFulfillmentStatus.CANCELLED
+    ) {
+      return { ok: false, error: "Status pengiriman saat ini tidak bisa diproses ulang." };
     }
 
     await prisma.orderFulfillment.upsert({
@@ -174,15 +193,39 @@ export async function shipOrderAction(
       where: { id: orderId },
       select: {
         id: true,
+        status: true,
         items: {
           where: { sellerId },
           select: { id: true },
+        },
+        fulfillments: {
+          where: { sellerId },
+          select: { status: true },
+          take: 1,
         },
       },
     });
 
     if (!order || order.items.length === 0) {
       return { ok: false, error: "Pesanan tidak ditemukan atau tidak mengandung barang Anda." };
+    }
+
+    if (order.status !== OrderStatus.PAID && order.status !== OrderStatus.FULFILLED) {
+      return { ok: false, error: "Pesanan belum dibayar, belum bisa dikirim." };
+    }
+
+    const normalizedTrackingNumber = trackingNumber.trim();
+    if (normalizedTrackingNumber.length < 3) {
+      return { ok: false, error: "Nomor resi wajib diisi." };
+    }
+
+    const currentStatus = order.fulfillments[0]?.status;
+    if (
+      currentStatus !== OrderFulfillmentStatus.READY_TO_PROCESS &&
+      currentStatus !== OrderFulfillmentStatus.PROCESSING &&
+      currentStatus !== OrderFulfillmentStatus.SHIPPED
+    ) {
+      return { ok: false, error: "Pesanan harus diproses terlebih dahulu sebelum dikirim." };
     }
 
     await prisma.orderFulfillment.upsert({
@@ -193,12 +236,12 @@ export async function shipOrderAction(
         orderId,
         sellerId,
         status: OrderFulfillmentStatus.SHIPPED,
-        trackingNumber,
+        trackingNumber: normalizedTrackingNumber,
         shippedAt: new Date(),
       },
       update: {
         status: OrderFulfillmentStatus.SHIPPED,
-        trackingNumber,
+        trackingNumber: normalizedTrackingNumber,
         shippedAt: new Date(),
       },
     });

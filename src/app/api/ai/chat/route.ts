@@ -52,7 +52,7 @@ export async function POST(request: Request) {
   }
 
   const [products, nilokaContext] = await Promise.all([
-    getPublishedProductsDto(),
+    getPublishedProductsDto({ limit: 24 }),
     buildNilokaContext(),
   ]);
   const prompt = buildChatPrompt(messages, nilokaContext);

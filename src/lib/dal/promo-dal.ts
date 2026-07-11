@@ -65,10 +65,16 @@ export async function getPromosForSellerDto(
   return rows.map(mapPromo);
 }
 
-export async function getPublicPromoSuggestionsDto(): Promise<Promo[]> {
+export async function getPublicPromoSuggestionsDto(params?: {
+  limit?: number;
+}): Promise<Promo[]> {
+  const now = new Date();
   const rows = await prisma.promo.findMany({
     where: {
       status: PromoStatus.ACTIVE,
+      startsAt: { lte: now },
+      endsAt: { gte: now },
+      usedCount: { lt: prisma.promo.fields.usageLimit },
     },
     include: {
       products: {
@@ -80,6 +86,7 @@ export async function getPublicPromoSuggestionsDto(): Promise<Promo[]> {
     orderBy: {
       startsAt: "desc",
     },
+    take: params?.limit ?? 20,
   });
 
   return rows.map(mapPromo);

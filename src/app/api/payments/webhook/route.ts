@@ -44,7 +44,14 @@ function mapMidtransStatus(
     };
   }
 
-  if (ts === "deny" || ts === "cancel" || ts === "expire") {
+  if (ts === "expire") {
+    return {
+      paymentStatus: PaymentStatus.EXPIRED,
+      orderStatus: OrderStatus.PENDING_PAYMENT,
+    };
+  }
+
+  if (ts === "deny" || ts === "cancel") {
     return {
       paymentStatus: PaymentStatus.FAILED,
       orderStatus: OrderStatus.PENDING_PAYMENT,
@@ -85,13 +92,51 @@ export async function POST(request: NextRequest) {
       return Response.json({ ok: false, message: "Unknown transaction status" }, { status: 400 });
     }
 
+    const orderExists = await prisma.order.findUnique({
+      where: { id: order_id },
+      select: { id: true },
+    });
+
+    if (!orderExists) {
+      return Response.json({ ok: false, message: "Order not found" }, { status: 404 });
+    }
+
     await prisma.$transaction(async (tx) => {
+      const existingOrder = await tx.order.findUnique({
+        where: { id: order_id },
+        select: {
+          status: true,
+          payments: {
+            select: { status: true },
+            take: 1,
+          },
+        },
+      });
+
+      if (!existingOrder) {
+        return;
+      }
+
+      const isAlreadyPaid =
+        existingOrder.status === OrderStatus.PAID ||
+        existingOrder.status === OrderStatus.FULFILLED ||
+        existingOrder.payments.some((payment) => payment.status === PaymentStatus.PAID);
+      const effectivePaymentStatus =
+        isAlreadyPaid && statuses.paymentStatus !== PaymentStatus.PAID
+          ? PaymentStatus.PAID
+          : statuses.paymentStatus;
+      const effectiveOrderStatus =
+        isAlreadyPaid && statuses.orderStatus !== OrderStatus.PAID
+          ? existingOrder.status
+          : statuses.orderStatus;
+
       await tx.payment.updateMany({
         where: { orderId: order_id },
         data: {
+          transactionId: notification.transaction_id,
           transactionStatus: transaction_status,
           fraudStatus: fraud_status,
-          status: statuses.paymentStatus,
+          status: effectivePaymentStatus,
           rawNotification: notification,
           lastStatusSyncedAt: new Date(),
         },
@@ -99,10 +144,10 @@ export async function POST(request: NextRequest) {
 
       await tx.order.update({
         where: { id: order_id },
-        data: { status: statuses.orderStatus },
+        data: { status: effectiveOrderStatus },
       });
 
-      if (statuses.paymentStatus === PaymentStatus.PAID) {
+      if (effectivePaymentStatus === PaymentStatus.PAID) {
         await tx.payment.updateMany({
           where: { orderId: order_id },
           data: { paidAt: new Date() },

@@ -455,6 +455,8 @@ model Review {
   user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([productId])
+  @@index([sellerId])
+  @@unique([productId, userId])
   @@map("reviews")
 }
 
@@ -476,6 +478,8 @@ model Promo {
   seller              Seller         @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   products            PromoProduct[]
 
+  @@index([status, startsAt, endsAt])
+  @@index([sellerId])
   @@map("promos")
 }
 
@@ -524,6 +528,7 @@ model Cart {
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   items     CartItem[]
 
+  @@index([userId])
   @@map("carts")
 }
 
@@ -541,6 +546,8 @@ model CartItem {
   product           Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
   ampasListing      AmpasListing? @relation(fields: [ampasListingId], references: [id], onDelete: SetNull)
 
+  @@index([cartId, kind, productId])
+  @@index([cartId, kind, ampasListingId])
   @@map("cart_items")
 }
 
@@ -576,6 +583,7 @@ model Order {
   fulfillments             OrderFulfillment[]
 
   @@index([userId])
+  @@index([status, createdAt])
   @@map("orders")
 }
 
@@ -595,6 +603,7 @@ model OrderItem {
   ampasListing      AmpasListing? @relation(fields: [ampasListingId], references: [id], onDelete: SetNull)
 
   @@index([sellerId])
+  @@index([orderId])
   @@map("order_items")
 }
 

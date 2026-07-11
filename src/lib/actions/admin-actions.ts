@@ -49,6 +49,7 @@ export async function getAdminValidationItemsAction(): Promise<AdminValidationIt
     orderBy: {
       submittedAt: "desc",
     },
+    take: 100,
   });
 
   return rows.map((row) => ({
@@ -69,6 +70,7 @@ export async function getAllSellersAction(): Promise<Seller[]> {
     orderBy: {
       joinedAt: "desc",
     },
+    take: 100,
   });
 
   return rows.map((row) => ({
@@ -429,7 +431,10 @@ export async function getAllUsersAction(): Promise<
   { id: string; name: string | null; email: string | null; role: string; sellerId: string | null; createdAt: string }[]
 > {
   await requireAdmin();
-  const rows = await prisma.user.findMany({ orderBy: { createdAt: "desc" } });
+  const rows = await prisma.user.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 100,
+  });
   return rows.map((u) => ({
     id: u.id,
     name: u.name,
@@ -446,6 +451,7 @@ export async function getAllOrdersAction(): Promise<
   await requireAdmin();
   const rows = await prisma.order.findMany({
     orderBy: { createdAt: "desc" },
+    take: 100,
     include: {
       user: { select: { name: true } },
       items: { select: { quantity: true } },

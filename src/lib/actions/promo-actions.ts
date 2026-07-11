@@ -16,19 +16,38 @@ const promoSaveSchema = z.object({
   id: z.string(),
   sellerId: z.string(),
   title: z.string().min(3, "Judul promo wajib diisi (minimal 3 karakter)"),
-  code: z.string().min(3, "Kode kupon wajib diisi (minimal 3 karakter)"),
+  code: z.string().trim().min(3, "Kode kupon wajib diisi (minimal 3 karakter)").max(24, "Kode kupon maksimal 24 karakter"),
   status: z.enum(["active", "scheduled", "expired", "disabled"]),
   type: z.enum(["percentage", "fixed-amount", "free-shipping"]),
-  value: z.number().min(0, "Nilai promo tidak boleh negatif"),
+  value: z.number().int().min(0, "Nilai promo tidak boleh negatif"),
   startsAt: z.string().min(1, "Tanggal mulai wajib diisi"),
   endsAt: z.string().min(1, "Tanggal berakhir wajib diisi"),
   minSubtotal: z.object({
-    amount: z.number().min(0, "Minimal subtotal tidak boleh negatif"),
+    amount: z.number().int().min(0, "Minimal subtotal tidak boleh negatif"),
     currency: z.literal("IDR"),
   }),
-  usageLimit: z.number().min(1, "Limit pemakaian minimal 1"),
-  usedCount: z.number().optional().default(0),
+  usageLimit: z.number().int().min(1, "Limit pemakaian minimal 1"),
+  usedCount: z.number().int().min(0).optional().default(0),
   productIds: z.array(z.string()).optional().default([]),
+}).superRefine((value, ctx) => {
+  const startsAt = new Date(value.startsAt);
+  const endsAt = new Date(value.endsAt);
+
+  if (Number.isNaN(startsAt.getTime())) {
+    ctx.addIssue({ code: "custom", path: ["startsAt"], message: "Tanggal mulai tidak valid." });
+  }
+
+  if (Number.isNaN(endsAt.getTime())) {
+    ctx.addIssue({ code: "custom", path: ["endsAt"], message: "Tanggal berakhir tidak valid." });
+  }
+
+  if (!Number.isNaN(startsAt.getTime()) && !Number.isNaN(endsAt.getTime()) && endsAt <= startsAt) {
+    ctx.addIssue({ code: "custom", path: ["endsAt"], message: "Tanggal berakhir harus setelah tanggal mulai." });
+  }
+
+  if (value.type === "percentage" && value.value > 100) {
+    ctx.addIssue({ code: "custom", path: ["value"], message: "Promo persentase maksimal 100%." });
+  }
 });
 
 export type PromoActionResult =
@@ -50,7 +69,11 @@ export async function savePromoAction(
     };
   }
 
-  const data = validated.data;
+  const data = {
+    ...validated.data,
+    code: validated.data.code.toUpperCase(),
+    productIds: [...new Set(validated.data.productIds)],
+  };
 
   // Prevent spoofing other sellerIds
   if (data.sellerId !== seller.sellerId) {
@@ -87,6 +110,25 @@ export async function savePromoAction(
 
   const mappedStatus = toPrismaPromoStatus(data.status);
   const mappedType = toPrismaPromoType(data.type);
+
+  if (data.productIds.length > 0) {
+    const ownedProducts = await prisma.product.findMany({
+      where: {
+        id: { in: data.productIds },
+        sellerId: seller.sellerId,
+      },
+      select: { id: true },
+    });
+    const ownedProductIds = new Set(ownedProducts.map((product) => product.id));
+    const hasForeignProduct = data.productIds.some((productId) => !ownedProductIds.has(productId));
+
+    if (hasForeignProduct) {
+      return {
+        ok: false,
+        message: "Promo hanya boleh dikaitkan ke produk milik toko Anda.",
+      };
+    }
+  }
 
   await prisma.$transaction(async (tx) => {
     // 1. Upsert promo
