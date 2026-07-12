@@ -113,7 +113,7 @@ NILOKA memakai pola backend-for-frontend di dalam Next.js App Router.
 - Endpoint integrasi atau boundary publik memakai Route Handlers di `src/app/api`.
 - Auth helper berada di `src/lib/auth/session.ts`.
 - Prisma client dan secret hanya boleh dipakai di modul server-only.
-- Runtime mock tidak dipakai sebagai fallback untuk fitur yang sudah dimigrasi ke database.
+- Data contoh statis tidak dipakai sebagai fallback untuk fitur yang sudah dimigrasi ke database.
 
 Alur sederhana:
 
@@ -245,9 +245,18 @@ NEXTAUTH_URL="http://localhost:3000"
 UPLOAD_MAX_IMAGE_BYTES="2097152"
 UPLOAD_PUBLIC_PREFIX="/uploads"
 
+# AI primary: Gemini
 GEMINI_API_KEY=""
-GEMINI_MODEL="gemini-1.5-flash"
+GEMINI_TEXT_MODEL="gemini-3.1-flash-lite"
+GEMINI_VISION_MODEL="gemini-3.5-flash"
+
+# AI fallback: Groq
 GROQ_API_KEY=""
+GROQ_TEXT_MODEL="llama-3.3-70b-versatile"
+GROQ_VISION_MODEL="llama-3.2-11b-vision-preview"
+
+# Legacy optional fallback, sementara
+GEMINI_MODEL=""
 GROQ_FALLBACK_MODEL=""
 
 MIDTRANS_SERVER_KEY=""
@@ -463,20 +472,25 @@ Provider AI berada di `src/lib/ai`.
 Environment:
 
 - `GEMINI_API_KEY`
-- `GEMINI_MODEL`
+- `GEMINI_TEXT_MODEL`
+- `GEMINI_VISION_MODEL`
 - `GROQ_API_KEY`
+- `GROQ_TEXT_MODEL`
+- `GROQ_VISION_MODEL`
+- `GEMINI_MODEL` (legacy optional)
 - `GROQ_FALLBACK_MODEL`
 
 Route AI:
 
 - `/api/ai/chat`
 - `/api/ai/product-description`
+- `/api/diagnose`
 
 Prinsip:
 
 - API key tidak boleh masuk client bundle.
 - Input harus melewati guardrail dan validasi.
-- Rekomendasi atau konteks produk dibaca dari DAL, bukan runtime mock.
+- Rekomendasi atau konteks produk dibaca dari DAL, bukan data contoh statis.
 
 ## Payment
 
@@ -529,7 +543,7 @@ Ringkasan:
 - Jangan commit otomatis kecuali diminta eksplisit.
 - Jangan melakukan destructive git operation tanpa instruksi eksplisit.
 - Jika mengubah kode Next.js, baca dokumentasi Next lokal yang relevan di `node_modules/next/dist/docs/`.
-- Runtime mock yang sudah digantikan DB tidak boleh dipertahankan sebagai fallback fitur tersebut.
+- Data contoh statis yang sudah digantikan DB tidak boleh dipertahankan sebagai fallback fitur tersebut.
 
 ## Dokumentasi Internal
 

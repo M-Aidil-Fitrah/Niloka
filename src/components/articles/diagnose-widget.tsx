@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sparkles, Upload, Loader2, AlertCircle, Check } from "lucide-react";
 import type { DiagnoseResult } from "@/lib/ai/plant-diagnose";
 
@@ -35,6 +35,12 @@ const CATEGORIES: Category[] = [
 ];
 
 const EMPTY_CONDITIONS = { daun: [], batang: [], tanaman: [] };
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+type DiagnoseErrorResponse = {
+  error?: string;
+};
 
 function ConfidenceBar({ value }: { value: number }) {
   const color =
@@ -78,11 +84,38 @@ export function DiagnoseWidget() {
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const selected = e.target.files?.[0] ?? null;
-    setFile(selected);
     setResult(null);
     setError(null);
-    setPreview(selected ? URL.createObjectURL(selected) : null);
+
+    if (!selected) {
+      setFile(null);
+      setPreview(null);
+      return;
+    }
+
+    if (!ALLOWED_IMAGE_TYPES.has(selected.type)) {
+      setFile(null);
+      setPreview(null);
+      setError("Format gambar tidak didukung. Gunakan JPG, PNG, atau WebP.");
+      return;
+    }
+
+    if (selected.size > MAX_IMAGE_BYTES) {
+      setFile(null);
+      setPreview(null);
+      setError("Ukuran gambar maksimal 2 MB.");
+      return;
+    }
+
+    setFile(selected);
+    setPreview(URL.createObjectURL(selected));
   }
+
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
 
   async function handleSubmit() {
     if (!file) {
@@ -102,11 +135,18 @@ export function DiagnoseWidget() {
         method: "POST",
         body: formData,
       });
-      if (!res.ok) throw new Error("Analisis gagal");
+      if (!res.ok) {
+        const errorData = (await res.json().catch(() => null)) as DiagnoseErrorResponse | null;
+        throw new Error(errorData?.error ?? "Analisis gagal");
+      }
       const data = await res.json();
       setResult(data);
-    } catch {
-      setError("Terjadi kesalahan saat menganalisis gambar. Coba lagi.");
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Terjadi kesalahan saat menganalisis gambar. Coba lagi.",
+      );
     } finally {
       setLoading(false);
     }

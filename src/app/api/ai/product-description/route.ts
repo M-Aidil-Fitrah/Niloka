@@ -1,13 +1,45 @@
 import type {
   ProductDescriptionRequest,
-  ProductDescriptionResponse,
 } from "@/lib/contracts";
+import { z } from "zod";
 import { checkProductDescriptionGuardrail } from "@/lib/ai/guardrails";
 import { normalizeProductDescription } from "@/lib/ai/normalizers";
-import { generateAiText } from "@/lib/ai/providers";
+import {
+  AiProviderError,
+  generateAiText,
+  getSafeAiErrorMessage,
+} from "@/lib/ai/providers";
 import { buildProductDescriptionPrompt } from "@/lib/ai/prompts";
 import { getCurrentUser } from "@/lib/auth/session";
 import { checkRateLimit } from "@/lib/rate-limit";
+
+const productDescriptionSchema = z.object({
+  productName: z.string(),
+  form: z.enum([
+    "essential-oil",
+    "roll-on",
+    "soap",
+    "diffuser",
+    "perfume",
+    "body-oil",
+    "bundle",
+  ]),
+  origin: z.string(),
+  aromaProfile: z.string(),
+  functions: z.array(
+    z.enum([
+      "relaxation",
+      "focus",
+      "sleep-support",
+      "skin-care",
+      "home-fragrance",
+      "gift",
+    ]),
+  ),
+  safetyNotes: z.string(),
+  targetAudience: z.string(),
+  tone: z.enum(["premium", "educational", "concise"]).default("premium"),
+});
 
 function getMissingFields(input: ProductDescriptionRequest): string[] {
   const missingFields: string[] = [];
@@ -49,27 +81,25 @@ export async function POST(request: Request) {
     );
   }
 
-  const payload: ProductDescriptionRequest = await request.json();
+  let payload: ProductDescriptionRequest;
+  try {
+    payload = productDescriptionSchema.parse(await request.json());
+  } catch {
+    return Response.json(
+      { error: "Payload request tidak valid.", errorCode: "INVALID_PAYLOAD" },
+      { status: 400 },
+    );
+  }
+
   const missingFields = getMissingFields(payload);
 
   if (missingFields.length > 0) {
     return Response.json(
       {
-        providerUsed: "mock",
-        shortDescription: "",
-        fullDescriptionMarkdown: "",
-        suggestedTags: [],
-        suggestedFunctions: [],
-        passportDraftSuggestion: {
-          origin: payload.origin,
-          aromaProfile: [],
-          functions: [],
-          usage: "",
-          safetyNotes: payload.safetyNotes,
-        },
-        safetyNotice: payload.safetyNotes,
+        error: `Lengkapi data berikut sebelum memakai AI: ${missingFields.join(", ")}.`,
+        errorCode: "MISSING_REQUIRED_FIELDS",
         missingFields,
-      } satisfies ProductDescriptionResponse,
+      },
       { status: 400 },
     );
   }
@@ -86,21 +116,9 @@ export async function POST(request: Request) {
   if (!guardrail.allowed) {
     return Response.json(
       {
-        providerUsed: "mock",
-        shortDescription: "",
-        fullDescriptionMarkdown: "",
-        suggestedTags: [],
-        suggestedFunctions: [],
-        passportDraftSuggestion: {
-          origin: payload.origin,
-          aromaProfile: [],
-          functions: [],
-          usage: "",
-          safetyNotes: payload.safetyNotes,
-        },
-        safetyNotice: payload.safetyNotes,
-        missingFields: [guardrail.reason],
-      } satisfies ProductDescriptionResponse,
+        error: guardrail.reason,
+        errorCode: "GUARDRAIL_BLOCKED",
+      },
       { status: 400 },
     );
   }
@@ -111,24 +129,22 @@ export async function POST(request: Request) {
     return Response.json(
       normalizeProductDescription(payload, result.text, result.providerUsed),
     );
-  } catch {
+  } catch (error) {
+    if (error instanceof AiProviderError) {
+      return Response.json(
+        {
+          error: getSafeAiErrorMessage(error),
+          errorCode: error.code,
+        },
+        { status: 503 },
+      );
+    }
+
     return Response.json(
       {
-        providerUsed: "mock",
-        shortDescription: "",
-        fullDescriptionMarkdown: "",
-        suggestedTags: [],
-        suggestedFunctions: [],
-        passportDraftSuggestion: {
-          origin: payload.origin,
-          aromaProfile: [],
-          functions: [],
-          usage: "",
-          safetyNotes: payload.safetyNotes,
-        },
-        safetyNotice: payload.safetyNotes,
-        missingFields: ["Layanan AI sedang tidak tersedia."],
-      } satisfies ProductDescriptionResponse,
+        error: "Layanan AI sedang tidak tersedia. Silakan coba beberapa saat lagi.",
+        errorCode: "AI_FALLBACK_FAILED",
+      },
       { status: 503 },
     );
   }
