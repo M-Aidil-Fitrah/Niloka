@@ -2,11 +2,13 @@
 
 import React, { createContext, useContext, useMemo, useCallback } from "react";
 import {
+  getSession,
   SessionProvider,
   signIn,
   signOut,
   useSession,
 } from "next-auth/react";
+import type { Session } from "next-auth";
 import { registerBuyerAction } from "@/lib/actions/auth-actions";
 
 export type UserRole = "buyer" | "seller" | "admin";
@@ -42,20 +44,48 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function AuthBridge({ children }: { children: React.ReactNode }) {
-  const { data: session, status, update } = useSession();
+function mapSessionUser(session: Session | null | undefined): AuthUser | null {
   const sessionUser = session?.user;
 
+  if (!sessionUser?.id) return null;
+
+  return {
+    id: sessionUser.id,
+    name: sessionUser.name ?? "Pengguna NILOKA",
+    email: sessionUser.email ?? "",
+    role: sessionUser.role,
+    sellerId: sessionUser.sellerId ?? undefined,
+  };
+}
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function getFreshSessionUser(): Promise<AuthUser | null> {
+  const retryDelays = [0, 150, 300, 600];
+
+  for (const delay of retryDelays) {
+    if (delay > 0) {
+      await sleep(delay);
+    }
+
+    const user = mapSessionUser(await getSession());
+
+    if (user) {
+      return user;
+    }
+  }
+
+  return null;
+}
+
+function AuthBridge({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
+
   const user: AuthUser | null = useMemo(() => {
-    if (!sessionUser?.id) return null;
-    return {
-      id: sessionUser.id,
-      name: sessionUser.name ?? "Pengguna NILOKA",
-      email: sessionUser.email ?? "",
-      role: sessionUser.role,
-      sellerId: sessionUser.sellerId ?? undefined,
-    };
-  }, [sessionUser]);
+    return mapSessionUser(session);
+  }, [session]);
 
   const login = useCallback(async (
     email: string,
@@ -71,25 +101,17 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
       return { ok: false, error: result?.error === "CredentialsSignin" ? "Email atau kata sandi salah." : "Gagal masuk. Silakan coba lagi." };
     }
 
-    await new Promise((r) => setTimeout(r, 500));
-    const nextSession = await update();
-    const nextUser = nextSession?.user;
+    const nextUser = await getFreshSessionUser();
 
-    if (!nextUser?.id) {
+    if (!nextUser) {
       return { ok: false, error: "Gagal memuat data pengguna. Silakan coba lagi." };
     }
 
     return {
       ok: true,
-      user: {
-        id: nextUser.id,
-        name: nextUser.name ?? "Pengguna NILOKA",
-        email: nextUser.email ?? "",
-        role: nextUser.role,
-        sellerId: nextUser.sellerId ?? undefined,
-      },
+      user: nextUser,
     };
-  }, [update]);
+  }, []);
 
   const register = useCallback(async (
     name: string,
