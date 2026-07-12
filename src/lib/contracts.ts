@@ -365,7 +365,7 @@ export type AdminValidationItem = {
   notes: string;
 };
 
-export type AiProvider = "gemini" | "groq" | "mock";
+export type AiProvider = "gemini" | "groq";
 
 export type ChatRole = "user" | "assistant";
 
@@ -404,7 +404,7 @@ export type ChatRequest = {
 
 export type ChatResponse = {
   answerMarkdown: string;
-  providerUsed: AiProvider;
+  providerUsed?: AiProvider;
   suggestions: ChatProductSuggestion[];
   refused: boolean;
   intent?: ChatIntent;

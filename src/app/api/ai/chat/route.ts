@@ -3,7 +3,11 @@ import { buildContextForIntent } from "@/lib/ai/context";
 import { checkChatGuardrail } from "@/lib/ai/guardrails";
 import { classifyIntent } from "@/lib/ai/intent-classifier";
 import { buildProductSuggestions } from "@/lib/ai/normalizers";
-import { streamAiText } from "@/lib/ai/providers";
+import {
+  AiProviderError,
+  getSafeAiErrorMessage,
+  streamAiText,
+} from "@/lib/ai/providers";
 import { buildChatPrompt } from "@/lib/ai/prompts";
 import { getPublishedProductsDto } from "@/lib/dal/marketplace";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -58,7 +62,6 @@ export async function POST(request: Request) {
     // Guardrail blocked — stream the refusal message as a sentinel so the client can parse it
     const refusal: ChatResponse = {
       answerMarkdown: guardrail.reason,
-      providerUsed: "mock",
       suggestions: [],
       refused: true,
       errorCode: "GUARDRAIL_BLOCKED",
@@ -122,13 +125,23 @@ export async function POST(request: Request) {
         "X-Accel-Buffering": "no",
       },
     });
-  } catch {
-    return Response.json({
-      answerMarkdown: "Maaf, layanan AI sedang sibuk. Silakan coba sesaat lagi.",
-      providerUsed: "mock",
-      suggestions: [],
-      refused: true,
-      errorCode: "PROVIDER_FAILURE",
-    } satisfies ChatResponse);
+  } catch (error) {
+    if (error instanceof AiProviderError) {
+      return Response.json(
+        {
+          error: getSafeAiErrorMessage(error),
+          errorCode: error.code,
+        },
+        { status: 503 },
+      );
+    }
+
+    return Response.json(
+      {
+        error: "Layanan AI sedang tidak tersedia. Silakan coba beberapa saat lagi.",
+        errorCode: "AI_FALLBACK_FAILED",
+      },
+      { status: 503 },
+    );
   }
 }

@@ -1,5 +1,12 @@
 import type { AiProvider } from "@/lib/contracts";
 
+export type AiErrorCode =
+  | "AI_PROVIDER_UNCONFIGURED"
+  | "AI_PRIMARY_FAILED"
+  | "AI_FALLBACK_FAILED"
+  | "AI_MODEL_UNAVAILABLE"
+  | "AI_RESPONSE_INVALID";
+
 type GenerateTextResult = {
   text: string;
   providerUsed: AiProvider;
@@ -9,6 +16,8 @@ type StreamTextResult = {
   stream: ReadableStream<string>;
   providerUsed: AiProvider;
 };
+
+type VisionTextResult = GenerateTextResult;
 
 type GeminiPart = {
   text?: string;
@@ -51,6 +60,80 @@ type GroqStreamChunk = {
 
 const AI_TIMEOUT_MS = 20_000;
 
+export class AiProviderError extends Error {
+  constructor(
+    public code: AiErrorCode,
+    message: string,
+    public details: {
+      provider?: AiProvider;
+      model?: string;
+      status?: number;
+      cause?: unknown;
+    } = {},
+  ) {
+    super(message);
+    this.name = "AiProviderError";
+  }
+}
+
+export function getSafeAiErrorMessage(error: unknown): string {
+  if (error instanceof AiProviderError) {
+    switch (error.code) {
+      case "AI_PROVIDER_UNCONFIGURED":
+        return "Layanan AI belum dikonfigurasi. Periksa API key dan model pada environment.";
+      case "AI_MODEL_UNAVAILABLE":
+        return `Model AI ${error.details.model ?? ""} tidak tersedia pada provider ${error.details.provider ?? "AI"}. Periksa konfigurasi model fallback.`;
+      case "AI_RESPONSE_INVALID":
+        return "Layanan AI mengembalikan format respons yang tidak valid. Silakan coba lagi.";
+      case "AI_PRIMARY_FAILED":
+      case "AI_FALLBACK_FAILED":
+      default:
+        return "Layanan AI sedang tidak tersedia. Silakan coba beberapa saat lagi.";
+    }
+  }
+
+  return "Layanan AI sedang tidak tersedia. Silakan coba beberapa saat lagi.";
+}
+
+function logAiProviderError(context: string, error: unknown): void {
+  if (error instanceof AiProviderError) {
+    console.error(`[AI:${context}]`, {
+      code: error.code,
+      message: error.message,
+      provider: error.details.provider,
+      model: error.details.model,
+      status: error.details.status,
+      cause:
+        error.details.cause instanceof Error
+          ? error.details.cause.message
+          : error.details.cause,
+    });
+    return;
+  }
+
+  console.error(`[AI:${context}]`, error);
+}
+
+function getGeminiTextModel(): string {
+  return process.env.GEMINI_TEXT_MODEL || process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
+}
+
+function getGeminiVisionModel(): string {
+  return process.env.GEMINI_VISION_MODEL || process.env.GEMINI_MODEL || "gemini-3.5-flash";
+}
+
+function getGroqTextModel(): string {
+  return process.env.GROQ_TEXT_MODEL || process.env.GROQ_FALLBACK_MODEL || "llama-3.3-70b-versatile";
+}
+
+function getGroqVisionModel(): string {
+  return process.env.GROQ_VISION_MODEL || "llama-3.2-11b-vision-preview";
+}
+
+function isUnavailableStatus(status: number): boolean {
+  return status === 400 || status === 404 || status === 410;
+}
+
 async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
@@ -77,10 +160,14 @@ function getGroqText(data: GroqResponse): string {
 
 async function generateWithGemini(prompt: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
-  const model = process.env.GEMINI_MODEL;
+  const model = getGeminiTextModel();
 
-  if (!apiKey || !model) {
-    throw new Error("Gemini provider is not configured.");
+  if (!apiKey) {
+    throw new AiProviderError(
+      "AI_PROVIDER_UNCONFIGURED",
+      "Gemini text provider is not configured.",
+      { provider: "gemini", model },
+    );
   }
 
   const response = await fetchWithTimeout(
@@ -105,14 +192,21 @@ async function generateWithGemini(prompt: string): Promise<string> {
   );
 
   if (!response.ok) {
-    throw new Error("Gemini request failed.");
+    throw new AiProviderError(
+      isUnavailableStatus(response.status) ? "AI_MODEL_UNAVAILABLE" : "AI_PRIMARY_FAILED",
+      "Gemini text request failed.",
+      { provider: "gemini", model, status: response.status },
+    );
   }
 
   const data: GeminiResponse = await response.json();
   const text = getGeminiText(data);
 
   if (!text) {
-    throw new Error("Gemini returned empty response.");
+    throw new AiProviderError("AI_RESPONSE_INVALID", "Gemini returned empty response.", {
+      provider: "gemini",
+      model,
+    });
   }
 
   return text;
@@ -120,10 +214,14 @@ async function generateWithGemini(prompt: string): Promise<string> {
 
 async function generateWithGroq(prompt: string): Promise<string> {
   const apiKey = process.env.GROQ_API_KEY;
-  const model = process.env.GROQ_FALLBACK_MODEL;
+  const model = getGroqTextModel();
 
-  if (!apiKey || !model) {
-    throw new Error("Groq fallback is not configured.");
+  if (!apiKey) {
+    throw new AiProviderError(
+      "AI_PROVIDER_UNCONFIGURED",
+      "Groq text fallback is not configured.",
+      { provider: "groq", model },
+    );
   }
 
   const response = await fetchWithTimeout("https://api.groq.com/openai/v1/chat/completions", {
@@ -141,14 +239,21 @@ async function generateWithGroq(prompt: string): Promise<string> {
   });
 
   if (!response.ok) {
-    throw new Error("Groq request failed.");
+    throw new AiProviderError(
+      isUnavailableStatus(response.status) ? "AI_MODEL_UNAVAILABLE" : "AI_FALLBACK_FAILED",
+      "Groq text request failed.",
+      { provider: "groq", model, status: response.status },
+    );
   }
 
   const data: GroqResponse = await response.json();
   const text = getGroqText(data);
 
   if (!text) {
-    throw new Error("Groq returned empty response.");
+    throw new AiProviderError("AI_RESPONSE_INVALID", "Groq returned empty response.", {
+      provider: "groq",
+      model,
+    });
   }
 
   return text;
@@ -158,10 +263,14 @@ async function generateWithGroq(prompt: string): Promise<string> {
 
 async function streamWithGemini(prompt: string): Promise<ReadableStream<string>> {
   const apiKey = process.env.GEMINI_API_KEY;
-  const model = process.env.GEMINI_MODEL;
+  const model = getGeminiTextModel();
 
-  if (!apiKey || !model) {
-    throw new Error("Gemini provider is not configured.");
+  if (!apiKey) {
+    throw new AiProviderError(
+      "AI_PROVIDER_UNCONFIGURED",
+      "Gemini stream provider is not configured.",
+      { provider: "gemini", model },
+    );
   }
 
   const response = await fetchWithTimeout(
@@ -177,7 +286,11 @@ async function streamWithGemini(prompt: string): Promise<ReadableStream<string>>
   );
 
   if (!response.ok || !response.body) {
-    throw new Error("Gemini stream request failed.");
+    throw new AiProviderError(
+      isUnavailableStatus(response.status) ? "AI_MODEL_UNAVAILABLE" : "AI_PRIMARY_FAILED",
+      "Gemini stream request failed.",
+      { provider: "gemini", model, status: response.status },
+    );
   }
 
   const reader = response.body.getReader();
@@ -217,10 +330,14 @@ async function streamWithGemini(prompt: string): Promise<ReadableStream<string>>
 
 async function streamWithGroq(prompt: string): Promise<ReadableStream<string>> {
   const apiKey = process.env.GROQ_API_KEY;
-  const model = process.env.GROQ_FALLBACK_MODEL;
+  const model = getGroqTextModel();
 
-  if (!apiKey || !model) {
-    throw new Error("Groq fallback is not configured.");
+  if (!apiKey) {
+    throw new AiProviderError(
+      "AI_PROVIDER_UNCONFIGURED",
+      "Groq stream fallback is not configured.",
+      { provider: "groq", model },
+    );
   }
 
   const response = await fetchWithTimeout("https://api.groq.com/openai/v1/chat/completions", {
@@ -239,7 +356,11 @@ async function streamWithGroq(prompt: string): Promise<ReadableStream<string>> {
   });
 
   if (!response.ok || !response.body) {
-    throw new Error("Groq stream request failed.");
+    throw new AiProviderError(
+      isUnavailableStatus(response.status) ? "AI_MODEL_UNAVAILABLE" : "AI_FALLBACK_FAILED",
+      "Groq stream request failed.",
+      { provider: "groq", model, status: response.status },
+    );
   }
 
   const reader = response.body.getReader();
@@ -276,16 +397,148 @@ async function streamWithGroq(prompt: string): Promise<ReadableStream<string>> {
   });
 }
 
+// ─── Vision ───────────────────────────────────────────────────────────────────
+
+async function generateVisionWithGemini(
+  prompt: string,
+  imageBase64: string,
+  mimeType: string,
+): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const model = getGeminiVisionModel();
+
+  if (!apiKey) {
+    throw new AiProviderError(
+      "AI_PROVIDER_UNCONFIGURED",
+      "Gemini vision provider is not configured.",
+      { provider: "gemini", model },
+    );
+  }
+
+  const response = await fetchWithTimeout(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+    {
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [
+              { text: prompt },
+              { inlineData: { data: imageBase64, mimeType } },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.2,
+          topP: 0.8,
+          maxOutputTokens: 900,
+          responseMimeType: "application/json",
+        },
+      }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+    },
+  );
+
+  if (!response.ok) {
+    throw new AiProviderError(
+      isUnavailableStatus(response.status) ? "AI_MODEL_UNAVAILABLE" : "AI_PRIMARY_FAILED",
+      "Gemini vision request failed.",
+      { provider: "gemini", model, status: response.status },
+    );
+  }
+
+  const data: GeminiResponse = await response.json();
+  const text = getGeminiText(data);
+
+  if (!text) {
+    throw new AiProviderError("AI_RESPONSE_INVALID", "Gemini vision returned empty response.", {
+      provider: "gemini",
+      model,
+    });
+  }
+
+  return text;
+}
+
+async function generateVisionWithGroq(
+  prompt: string,
+  imageBase64: string,
+  mimeType: string,
+): Promise<string> {
+  const apiKey = process.env.GROQ_API_KEY;
+  const model = getGroqVisionModel();
+
+  if (!apiKey) {
+    throw new AiProviderError(
+      "AI_PROVIDER_UNCONFIGURED",
+      "Groq vision fallback is not configured.",
+      { provider: "groq", model },
+    );
+  }
+
+  const response = await fetchWithTimeout("https://api.groq.com/openai/v1/chat/completions", {
+    body: JSON.stringify({
+      model,
+      temperature: 0.2,
+      max_completion_tokens: 900,
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            {
+              type: "image_url",
+              image_url: { url: `data:${mimeType};base64,${imageBase64}` },
+            },
+          ],
+        },
+      ],
+    }),
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new AiProviderError(
+      isUnavailableStatus(response.status) ? "AI_MODEL_UNAVAILABLE" : "AI_FALLBACK_FAILED",
+      "Groq vision request failed.",
+      { provider: "groq", model, status: response.status },
+    );
+  }
+
+  const data: GroqResponse = await response.json();
+  const text = getGroqText(data);
+
+  if (!text) {
+    throw new AiProviderError("AI_RESPONSE_INVALID", "Groq vision returned empty response.", {
+      provider: "groq",
+      model,
+    });
+  }
+
+  return text;
+}
+
 // ─── Exports ───────────────────────────────────────────────────────────────────
 
 export async function generateAiText(prompt: string): Promise<GenerateTextResult> {
   try {
     return { text: await generateWithGemini(prompt), providerUsed: "gemini" };
-  } catch {
+  } catch (primaryError) {
+    logAiProviderError("text-primary", primaryError);
     try {
       return { text: await generateWithGroq(prompt), providerUsed: "groq" };
-    } catch {
-      throw new Error("Layanan AI sedang tidak tersedia. Silakan periksa konfigurasi API key.");
+    } catch (fallbackError) {
+      logAiProviderError("text-fallback", fallbackError);
+      if (fallbackError instanceof AiProviderError) throw fallbackError;
+      throw new AiProviderError("AI_FALLBACK_FAILED", "Text AI fallback failed.", {
+        cause: fallbackError,
+      });
     }
   }
 }
@@ -293,11 +546,43 @@ export async function generateAiText(prompt: string): Promise<GenerateTextResult
 export async function streamAiText(prompt: string): Promise<StreamTextResult> {
   try {
     return { stream: await streamWithGemini(prompt), providerUsed: "gemini" };
-  } catch {
+  } catch (primaryError) {
+    logAiProviderError("stream-primary", primaryError);
     try {
       return { stream: await streamWithGroq(prompt), providerUsed: "groq" };
-    } catch {
-      throw new Error("Layanan AI sedang tidak tersedia. Silakan periksa konfigurasi API key.");
+    } catch (fallbackError) {
+      logAiProviderError("stream-fallback", fallbackError);
+      if (fallbackError instanceof AiProviderError) throw fallbackError;
+      throw new AiProviderError("AI_FALLBACK_FAILED", "Streaming AI fallback failed.", {
+        cause: fallbackError,
+      });
+    }
+  }
+}
+
+export async function generateAiVisionText(
+  prompt: string,
+  imageBase64: string,
+  mimeType: string,
+): Promise<VisionTextResult> {
+  try {
+    return {
+      text: await generateVisionWithGemini(prompt, imageBase64, mimeType),
+      providerUsed: "gemini",
+    };
+  } catch (primaryError) {
+    logAiProviderError("vision-primary", primaryError);
+    try {
+      return {
+        text: await generateVisionWithGroq(prompt, imageBase64, mimeType),
+        providerUsed: "groq",
+      };
+    } catch (fallbackError) {
+      logAiProviderError("vision-fallback", fallbackError);
+      if (fallbackError instanceof AiProviderError) throw fallbackError;
+      throw new AiProviderError("AI_FALLBACK_FAILED", "Vision AI fallback failed.", {
+        cause: fallbackError,
+      });
     }
   }
 }

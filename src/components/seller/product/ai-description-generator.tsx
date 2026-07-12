@@ -10,6 +10,11 @@ type AIDescriptionGeneratorProps = {
   setActiveProduct: React.Dispatch<React.SetStateAction<Partial<Product> | null>>;
 };
 
+type AiDescriptionError = {
+  error?: string;
+  missingFields?: string[];
+};
+
 export function AIDescriptionGenerator({ activeProduct, setActiveProduct }: AIDescriptionGeneratorProps) {
   const [aiAroma, setAiAroma] = useState("");
   const [aiOrigin, setAiOrigin] = useState("Gayo Lues, Aceh");
@@ -33,16 +38,23 @@ export function AIDescriptionGenerator({ activeProduct, setActiveProduct }: AIDe
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           productName: activeProduct.name,
+          form: activeProduct.form ?? "essential-oil",
           origin: aiOrigin,
           aromaProfile: aiAroma || "Woody, Earthy, Sweet",
           functions: activeProduct.functions || ["relaxation"],
           safetyNotes: aiSafety,
           targetAudience: aiAudience,
+          tone: "premium",
         }),
       });
 
       if (!res.ok) {
-        throw new Error("Gagal memanggil asisten AI.");
+        const errorData = (await res.json().catch(() => null)) as AiDescriptionError | null;
+        throw new Error(
+          errorData?.error ??
+            errorData?.missingFields?.[0] ??
+            "Gagal memanggil asisten AI.",
+        );
       }
 
       const data = await res.json();
@@ -53,8 +65,10 @@ export function AIDescriptionGenerator({ activeProduct, setActiveProduct }: AIDe
       }
     } catch (err: unknown) {
       console.error(err);
-      setAiFeedback("Gagal membuat deskripsi.");
-      showToast("Gagal membuat deskripsi AI.", "error");
+      const message =
+        err instanceof Error ? err.message : "Gagal membuat deskripsi AI.";
+      setAiFeedback(message);
+      showToast(message, "error");
     } finally {
       setIsGenerating(false);
     }

@@ -1,4 +1,5 @@
-import { geminiFlashModel } from "./gemini-client";
+import type { AiProvider } from "@/lib/contracts";
+import { AiProviderError, generateAiVisionText } from "./providers";
 
 const DISEASE_CRITERIA = `
 Kamu adalah asisten identifikasi penyakit dan hama tanaman nilam (Pogostemon cablin).
@@ -37,6 +38,7 @@ export type DiagnoseResult = {
   penyebab: string;
   alasan: string;
   rekomendasi: string[];
+  providerUsed: AiProvider;
 };
 
 type SelectedConditions = {
@@ -60,40 +62,95 @@ function formatConditions(conditions: SelectedConditions): string {
   return `Info tambahan (bukan patokan utama): ${parts.join(". ")}.`;
 }
 
+const ALLOWED_DIAGNOSES = [
+  "Budok",
+  "Bercak Daun",
+  "Mosaik Nilam",
+  "Busuk Akar & Pangkal Batang",
+  "Sehat",
+] as const;
+
+function cleanAiJson(text: string): string {
+  return text.replace(/```json|```/g, "").trim();
+}
+
+function isAllowedDiagnosis(value: unknown): value is (typeof ALLOWED_DIAGNOSES)[number] {
+  return (
+    typeof value === "string" &&
+    (ALLOWED_DIAGNOSES as readonly string[]).includes(value)
+  );
+}
+
+function normalizeDiagnoseResult(
+  value: unknown,
+  providerUsed: AiProvider,
+): DiagnoseResult {
+  if (!value || typeof value !== "object") {
+    throw new AiProviderError(
+      "AI_RESPONSE_INVALID",
+      "Vision AI response is not an object.",
+      { provider: providerUsed },
+    );
+  }
+
+  const result = value as Partial<DiagnoseResult>;
+  const recommendations = Array.isArray(result.rekomendasi)
+    ? result.rekomendasi.filter((item): item is string => typeof item === "string")
+    : [];
+
+  if (
+    !isAllowedDiagnosis(result.diagnosis) ||
+    typeof result.confidence !== "number" ||
+    !Number.isInteger(result.confidence) ||
+    result.confidence < 0 ||
+    result.confidence > 100 ||
+    !(
+      result.kemungkinanTambahan === null ||
+      isAllowedDiagnosis(result.kemungkinanTambahan)
+    ) ||
+    typeof result.penyebab !== "string" ||
+    typeof result.alasan !== "string" ||
+    recommendations.length < 2 ||
+    recommendations.length > 4
+  ) {
+    throw new AiProviderError(
+      "AI_RESPONSE_INVALID",
+      "Vision AI response failed diagnose schema validation.",
+      { provider: providerUsed },
+    );
+  }
+
+  return {
+    diagnosis: result.diagnosis,
+    confidence: result.confidence,
+    kemungkinanTambahan: result.kemungkinanTambahan,
+    penyebab: result.penyebab,
+    alasan: result.alasan,
+    rekomendasi: recommendations,
+    providerUsed,
+  };
+}
+
 export async function diagnosePlantImage(
   imageBase64: string,
   mimeType: string,
   conditions: SelectedConditions,
 ): Promise<DiagnoseResult> {
-  if (process.env.MOCK_AI === "true") {
-    await new Promise((r) => setTimeout(r, 1500));
-    return {
-      diagnosis: "Bercak Daun",
-      confidence: 88,
-      kemungkinanTambahan: null,
-      penyebab: "Jamur Cercospora sp/Alternaria sp",
-      alasan: "Ini mock response untuk testing UI, bukan hasil AI asli.",
-      rekomendasi: [
-        "Ini data mock untuk testing UI.",
-        "Ganti MOCK_AI=false setelah quota Gemini API aktif.",
-      ],
-    };
-  }
-
   const conditionsText = formatConditions(conditions);
   const prompt = `${DISEASE_CRITERIA}\n\n${conditionsText}`;
+  const result = await generateAiVisionText(prompt, imageBase64, mimeType);
+  const cleaned = cleanAiJson(result.text);
 
-  const result = await geminiFlashModel.generateContent([
-    prompt,
-    { inlineData: { data: imageBase64, mimeType } },
-  ]);
-
-  const text = result.response.text();
-  const cleaned = text.replace(/```json|```/g, "").trim();
-
+  let parsed: unknown;
   try {
-    return JSON.parse(cleaned) as DiagnoseResult;
+    parsed = JSON.parse(cleaned);
   } catch {
-    throw new Error("Gagal parsing hasil analisis AI");
+    throw new AiProviderError(
+      "AI_RESPONSE_INVALID",
+      "Vision AI response could not be parsed as JSON.",
+      { provider: result.providerUsed },
+    );
   }
+
+  return normalizeDiagnoseResult(parsed, result.providerUsed);
 }
