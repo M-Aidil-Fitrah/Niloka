@@ -4,7 +4,15 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, MessageSquare, LogOut, Briefcase, Shield, Package } from "lucide-react";
+import {
+  Menu,
+  X,
+  MessageSquare,
+  LogOut,
+  Briefcase,
+  Shield,
+  Package,
+} from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { CartIcon, SearchIcon, UserIcon } from "@/components/ui/icons";
 import nilokaLogo from "@/public/assets/logo/logo.png";
@@ -24,7 +32,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   { label: "Shop", href: "/products" },
   { label: "Bundles", href: "/bundles" },
-  { label: "Berita & Artikel", href: "/artikel" },
+  { label: "Nilam Insight", href: "/artikel" },
   { label: "Nilam Passport", href: "/passport" },
   { label: "Ampas Nilam", href: "/ampas" },
 ];
@@ -128,7 +136,10 @@ export function SiteNavbar() {
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target as Node)
+      ) {
         setShowSearchPreview(false);
       }
     }
@@ -143,7 +154,7 @@ export function SiteNavbar() {
           "site-nav-surface grid min-h-16 grid-cols-[auto_1fr_auto] items-center gap-5 rounded-full border px-6 py-3 transition-all duration-300 sm:px-7",
           isLight
             ? "border-line/45 bg-white-soft/85 text-brand-950 shadow-md backdrop-blur-md"
-            : "border-transparent bg-transparent text-white-soft"
+            : "border-transparent bg-transparent text-white-soft",
         )}
       >
         <Link aria-label="NILOKA home" className="flex items-center" href="/">
@@ -151,7 +162,7 @@ export function SiteNavbar() {
             alt="NILOKA"
             className={cn(
               "h-auto w-28 sm:w-32 transition-all duration-300",
-              !isLight && "brightness-0 invert"
+              !isLight && "brightness-0 invert",
             )}
             priority
             width={128}
@@ -169,10 +180,14 @@ export function SiteNavbar() {
             <Link
               href={item.href}
               key={item.href}
-              aria-current={pathname === item.href || pathname.startsWith(item.href + "/") ? "page" : undefined}
+              aria-current={
+                pathname === item.href || pathname.startsWith(item.href + "/")
+                  ? "page"
+                  : undefined
+              }
               className={cn(
                 "transition-colors duration-200",
-                isLight ? "hover:text-brand-700" : "hover:text-gold-500"
+                isLight ? "hover:text-brand-700" : "hover:text-gold-500",
               )}
             >
               {item.label}
@@ -188,20 +203,26 @@ export function SiteNavbar() {
                 "flex h-10 w-[min(28vw,360px)] items-center gap-2 rounded-full px-4 text-sm font-semibold shadow-sm transition-all duration-300",
                 isLight
                   ? "bg-cream-100/70 border border-line/30 text-brand-950"
-                  : "bg-white-soft text-ink-600"
+                  : "bg-white-soft text-ink-600",
               )}
             >
               <SearchIcon className="text-brand-700 shrink-0" />
-              <label htmlFor="nav-search-desktop" className="sr-only">Cari produk</label>
+              <label htmlFor="nav-search-desktop" className="sr-only">
+                Cari produk
+              </label>
               <input
                 ref={searchRef}
                 id="nav-search-desktop"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                onFocus={() => { if (searchResults.length > 0) setShowSearchPreview(true); }}
+                onFocus={() => {
+                  if (searchResults.length > 0) setShowSearchPreview(true);
+                }}
                 className={cn(
                   "w-full bg-transparent text-sm font-semibold outline-none",
-                  isLight ? "placeholder:text-ink-600/70" : "placeholder:text-ink-600"
+                  isLight
+                    ? "placeholder:text-ink-600/70"
+                    : "placeholder:text-ink-600",
                 )}
                 placeholder="Search product..."
                 type="search"
@@ -210,20 +231,34 @@ export function SiteNavbar() {
 
             {showSearchPreview && (
               <div className="absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-2xl border border-line bg-white-soft shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="max-h-[360px] overflow-y-auto divide-y divide-line/40">
+                <div className="max-h-90 overflow-y-auto divide-y divide-line/40">
                   {searchResults.map((item) => (
                     <Link
                       key={item.id}
                       href={`/products/${item.slug}`}
-                      onClick={() => { setShowSearchPreview(false); setSearchValue(""); closeMenus(); }}
+                      onClick={() => {
+                        setShowSearchPreview(false);
+                        setSearchValue("");
+                        closeMenus();
+                      }}
                       className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-cream-50"
                     >
                       <div className="relative size-10 shrink-0 overflow-hidden rounded-xl bg-cream-50">
-                        <Image src={item.image.src} alt={item.image.alt} fill className="object-cover" sizes="40px" />
+                        <Image
+                          src={item.image.src}
+                          alt={item.image.alt}
+                          fill
+                          className="object-cover"
+                          sizes="40px"
+                        />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-bold text-brand-950">{item.name}</p>
-                        <p className="text-[11px] text-ink-600 capitalize">{item.form.replace("-", " ")}</p>
+                        <p className="truncate text-sm font-bold text-brand-950">
+                          {item.name}
+                        </p>
+                        <p className="text-[11px] text-ink-600 capitalize">
+                          {item.form.replace("-", " ")}
+                        </p>
                       </div>
                       <span className="shrink-0 text-sm font-extrabold text-brand-900">
                         {formatRupiah(item.price.amount)}
@@ -233,7 +268,10 @@ export function SiteNavbar() {
                 </div>
                 <Link
                   href={`/products?search=${encodeURIComponent(searchValue)}`}
-                  onClick={() => { setShowSearchPreview(false); closeMenus(); }}
+                  onClick={() => {
+                    setShowSearchPreview(false);
+                    closeMenus();
+                  }}
                   className="block border-t border-line/40 px-4 py-2.5 text-center text-xs font-bold text-brand-700 transition-colors hover:bg-cream-50"
                 >
                   Lihat semua hasil &ldquo;{searchValue}&rdquo;
@@ -255,7 +293,7 @@ export function SiteNavbar() {
               "relative inline-flex size-10 items-center justify-center rounded-full border backdrop-blur transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500",
               isLight
                 ? "border-line/60 bg-cream-100/55 text-brand-950 hover:bg-cream-100 hover:border-brand-700/40"
-                : "border-white/30 bg-white/20 text-white-soft hover:bg-white/30"
+                : "border-white/30 bg-white/20 text-white-soft hover:bg-white/30",
             )}
             style={{ touchAction: "manipulation" }}
           >
@@ -272,7 +310,7 @@ export function SiteNavbar() {
               "relative inline-flex size-10 items-center justify-center rounded-full border backdrop-blur transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 cursor-pointer",
               isLight
                 ? "border-line/60 bg-cream-100/55 text-brand-950 hover:bg-cream-100 hover:border-brand-700/40"
-                : "border-white/30 bg-white/20 text-white-soft hover:bg-white/30"
+                : "border-white/30 bg-white/20 text-white-soft hover:bg-white/30",
             )}
             style={{ touchAction: "manipulation" }}
           >
@@ -296,15 +334,27 @@ export function SiteNavbar() {
             </IconButton>
 
             {isUserMenuOpen && (
-              <div id="user-menu-dropdown" ref={userMenuRef} className="absolute right-0 mt-3 w-64 rounded-3xl border border-line bg-white text-brand-950 p-4 shadow-xl animate-in slide-in-from-top-2 duration-200 z-50">
+              <div
+                id="user-menu-dropdown"
+                ref={userMenuRef}
+                className="absolute right-0 mt-3 w-64 rounded-3xl border border-line bg-white text-brand-950 p-4 shadow-xl animate-in slide-in-from-top-2 duration-200 z-50"
+              >
                 {user ? (
                   <div className="space-y-3">
                     <div className="border-b border-line/40 pb-3">
                       <p className="text-xs font-extrabold text-gold-700 uppercase tracking-wider">
-                        {user.role === "admin" ? "Administrator" : user.role === "seller" ? "Penjual (Seller)" : "Pembeli"}
+                        {user.role === "admin"
+                          ? "Administrator"
+                          : user.role === "seller"
+                            ? "Penjual (Seller)"
+                            : "Pembeli"}
                       </p>
-                      <p className="text-sm font-bold truncate mt-0.5">{user.name}</p>
-                      <p className="text-[10px] text-ink-600 truncate mt-0.5">{user.email}</p>
+                      <p className="text-sm font-bold truncate mt-0.5">
+                        {user.name}
+                      </p>
+                      <p className="text-[10px] text-ink-600 truncate mt-0.5">
+                        {user.email}
+                      </p>
                     </div>
 
                     <div className="flex flex-col gap-1.5 text-xs font-bold">
@@ -397,19 +447,27 @@ export function SiteNavbar() {
               "lg:hidden flex items-center justify-center h-10 w-10 rounded-full border transition-all cursor-pointer",
               isLight
                 ? "border-line/45 bg-cream-100/70 text-brand-950 hover:bg-cream-200"
-                : "border-white-soft/20 bg-white-soft/10 text-white-soft hover:bg-white-soft/20"
+                : "border-white-soft/20 bg-white-soft/10 text-white-soft hover:bg-white-soft/20",
             )}
             aria-label={isMobileMenuOpen ? "Tutup menu" : "Buka menu"}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu-panel"
           >
-            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isMobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
 
       {isMobileMenuOpen && (
-        <div id="mobile-menu-panel" ref={mobileMenuRef} className="mt-2.5 lg:hidden rounded-3xl border border-line/60 bg-white-soft/95 backdrop-blur-md p-4 sm:p-5 shadow-lg space-y-4 animate-in slide-in-from-top-4 duration-200">
+        <div
+          id="mobile-menu-panel"
+          ref={mobileMenuRef}
+          className="mt-2.5 lg:hidden rounded-3xl border border-line/60 bg-white-soft/95 backdrop-blur-md p-4 sm:p-5 shadow-lg space-y-4 animate-in slide-in-from-top-4 duration-200"
+        >
           <nav className="flex flex-col gap-2.5 text-sm font-bold text-brand-950">
             {navItems.map((item) => (
               <Link
@@ -418,7 +476,7 @@ export function SiteNavbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={cn(
                   "px-4 py-2.5 rounded-xl hover:bg-cream-100/50 transition-all duration-200",
-                  pathname === item.href && "bg-cream-100 text-brand-900"
+                  pathname === item.href && "bg-cream-100 text-brand-900",
                 )}
               >
                 {item.label}
@@ -427,9 +485,14 @@ export function SiteNavbar() {
           </nav>
 
           <div className="pt-3 border-t border-line/45 md:hidden">
-            <form onSubmit={handleSearch} className="flex h-10 w-full items-center gap-2 rounded-full bg-cream-100/70 border border-line/30 px-4 text-xs font-semibold text-brand-950">
+            <form
+              onSubmit={handleSearch}
+              className="flex h-10 w-full items-center gap-2 rounded-full bg-cream-100/70 border border-line/30 px-4 text-xs font-semibold text-brand-950"
+            >
               <SearchIcon className="text-brand-700 shrink-0" />
-              <label htmlFor="nav-search-mobile" className="sr-only">Cari produk</label>
+              <label htmlFor="nav-search-mobile" className="sr-only">
+                Cari produk
+              </label>
               <input
                 ref={mobileSearchRef}
                 id="nav-search-mobile"

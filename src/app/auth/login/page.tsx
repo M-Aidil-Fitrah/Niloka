@@ -187,7 +187,7 @@ export default function LoginPage() {
             Minyak Nilam Aceh Terbaik
           </h1>
           <p className="text-xs text-white-soft/75 leading-relaxed font-medium">
-            Masuk untuk mengakses pasar atsiri terkurasi dengan transparansi penelusuran bahan langsung dari penyuling lokal.
+            Masuk untuk mengakses pasar atsiri dengan transparansi penelusuran bahan langsung dari penyuling lokal.
           </p>
         </div>
 

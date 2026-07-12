@@ -20,11 +20,6 @@ export function BestSellersSection({ products }: BestSellersSectionProps) {
             <span className="font-accent italic text-brand-700"> NILOKA</span>.
           </h2>
         </div>
-        <p className="section-copy">
-          Produk turunan nilam Aceh disiapkan dengan card stabil, harga
-          jelas, badge kecil, dan action belanja yang siap dipakai untuk
-          katalog penuh.
-        </p>
       </div>
 
       <div className="product-grid grid gap-3 md:grid-cols-2 xl:grid-cols-4">

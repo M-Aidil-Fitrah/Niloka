@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: "%s | NILOKA",
   },
   description:
-    "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
+    "Marketplace produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
   applicationName: "NILOKA",
   alternates: {
     canonical: "/",
@@ -36,13 +36,13 @@ export const metadata: Metadata = {
     siteName: "NILOKA",
     title: "NILOKA",
     description:
-      "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
+      "Marketplace produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
   },
   twitter: {
     card: "summary",
     title: "NILOKA",
     description:
-      "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
+      "Marketplace produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
   },
   // PWA — Apple Web App support
   appleWebApp: {
