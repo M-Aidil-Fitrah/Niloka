@@ -18,7 +18,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://niloka.my.id"),
+  metadataBase: new URL("https://niloka.store"),
   title: {
     default: "NILOKA",
     template: "%s | NILOKA",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://niloka.my.id",
+    url: "https://niloka.store",
     siteName: "NILOKA",
     title: "NILOKA",
     description:

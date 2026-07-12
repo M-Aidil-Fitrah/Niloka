@@ -33,14 +33,13 @@ export default function OfflinePage() {
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          {/* Reload — use onClick in a client island only if needed; href is simpler */}
-          <a
+          <Link
             href="/"
             className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white-soft text-sm font-bold transition-colors shadow-sm"
           >
             <RefreshCw className="h-3.5 w-3.5" aria-hidden />
             Muat Ulang
-          </a>
+          </Link>
           <Link
             href="/products"
             className="inline-flex items-center gap-2 h-10 px-5 rounded-xl border border-line bg-white hover:bg-cream-100 text-brand-950 text-sm font-bold transition-colors"

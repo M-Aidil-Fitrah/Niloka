@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -25,16 +26,18 @@ function shouldHideChatbot(pathname: string) {
 
 type TimestampedMessage = ChatMessage & { sentAt: number };
 
-function createMessage(role: ChatMessage["role"], content: string): TimestampedMessage {
+function createMessage(role: ChatMessage["role"], content: string, sentAt: number): TimestampedMessage {
   return {
-    id: `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    id: `${role}-${sentAt}-${Math.random().toString(36).slice(2, 8)}`,
     role,
     content,
-    sentAt: Date.now(),
+    sentAt,
   };
 }
 
 function formatTime(ts: number): string {
+  if (ts <= 0) return "";
+
   return new Date(ts).toLocaleTimeString("id-ID", {
     hour: "2-digit",
     minute: "2-digit",
@@ -87,20 +90,23 @@ export function FloatingChatbot() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const isLoading = streamState !== null;
+  const displayMessages: TimestampedMessage[] =
+    messages.length > 0
+      ? messages
+      : [
+          {
+            id: `assistant-greeting-${pathname}`,
+            role: "assistant",
+            content: getDynamicGreeting(pathname),
+            sentAt: 0,
+          },
+        ];
 
   const resetGreeting = useCallback(() => {
-    setMessages([createMessage("assistant", getDynamicGreeting(pathname))]);
+    setMessages([]);
     setLastResponse(null);
     setStreamState(null);
-  }, [pathname]);
-
-  useEffect(() => {
-    setMessages([createMessage("assistant", getDynamicGreeting(pathname))]);
   }, []);
-
-  useEffect(() => {
-    if (messages.length <= 1) resetGreeting();
-  }, [pathname]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setIsOpen(false); };
@@ -120,17 +126,18 @@ export function FloatingChatbot() {
     ta.style.height = `${Math.min(ta.scrollHeight, 112)}px`;
   }, [input]);
 
-  if (shouldHideChatbot(pathname)) return null;
-
-  async function sendMessage(messageText: string) {
+  const sendMessage = useCallback(async (messageText: string) => {
     const trimmed = messageText.trim();
     if (!trimmed || isLoading) return;
 
     const requestTime = Date.now();
-    const userMsg = createMessage("user", trimmed);
-    userMsg.sentAt = requestTime;
+    const userMsg = createMessage("user", trimmed, requestTime);
 
-    const nextMessages = [...messages, userMsg].slice(-20);
+    const currentMessages =
+      messages.length > 0
+        ? messages
+        : [createMessage("assistant", getDynamicGreeting(pathname), requestTime)];
+    const nextMessages = [...currentMessages, userMsg].slice(-20);
     setMessages(nextMessages);
     setInput("");
     setStreamState("waiting"); // show typing indicator
@@ -183,22 +190,21 @@ export function FloatingChatbot() {
       if (finalMeta) setLastResponse({ ...finalMeta, answerMarkdown: finalText });
       setStreamState(null);
 
-      const assistantMsg = createMessage("assistant", finalText);
-      // Use the requestTime as the timestamp for assistant message
-      assistantMsg.sentAt = requestTime;
+      const assistantMsg = createMessage("assistant", finalText, requestTime);
       setMessages((cur) => [...cur.slice(-19), assistantMsg]);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Asisten tidak bisa merespons. Coba lagi.";
       setStreamState(null);
-      const assistantErrorMsg = createMessage("assistant", msg);
-      assistantErrorMsg.sentAt = requestTime;
+      const assistantErrorMsg = createMessage("assistant", msg, requestTime);
       setMessages((cur) => [...cur.slice(-19), assistantErrorMsg]);
     }
-  }
+  }, [isLoading, messages, pathname]);
 
   const starterQuestions = getStarterQuestions(pathname);
   const isStreaming = typeof streamState === "string" && streamState !== "waiting";
   const isWaiting = streamState === "waiting";
+
+  if (shouldHideChatbot(pathname)) return null;
 
   return (
     <>
@@ -270,15 +276,17 @@ export function FloatingChatbot() {
             ref={scrollRef}
             className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4"
           >
-            {messages.map((msg) =>
+            {displayMessages.map((msg) =>
               msg.role === "user" ? (
                 <div key={msg.id} className="flex flex-col items-end gap-0.5">
                   <div className="max-w-[82%] rounded-2xl rounded-tr-sm bg-brand-950 px-3.5 py-2.5 text-[13px] leading-relaxed text-white">
                     {msg.content}
                   </div>
-                  <time className="px-1 text-[10px] text-ink-600/70">
-                    {formatTime(msg.sentAt)}
-                  </time>
+                  {msg.sentAt > 0 && (
+                    <time className="px-1 text-[10px] text-ink-600/70">
+                      {formatTime(msg.sentAt)}
+                    </time>
+                  )}
                 </div>
               ) : (
                 <div key={msg.id} className="flex flex-col items-start gap-0.5">
@@ -287,9 +295,11 @@ export function FloatingChatbot() {
                       <MarkdownMessage content={msg.content} />
                     </div>
                   </div>
-                  <time className="px-1 text-[10px] text-ink-600/70">
-                    {formatTime(msg.sentAt)}
-                  </time>
+                  {msg.sentAt > 0 && (
+                    <time className="px-1 text-[10px] text-ink-600/70">
+                      {formatTime(msg.sentAt)}
+                    </time>
+                  )}
                 </div>
               )
             )}
@@ -342,9 +352,11 @@ export function FloatingChatbot() {
                     className="flex items-center gap-2.5 rounded-xl border border-line bg-white p-2.5 transition hover:border-brand-700"
                   >
                     {s.imageUrl && (
-                      <img
+                      <Image
                         src={s.imageUrl}
                         alt={s.name}
+                        width={36}
+                        height={36}
                         className="h-9 w-9 shrink-0 rounded-lg border border-line object-cover"
                       />
                     )}
