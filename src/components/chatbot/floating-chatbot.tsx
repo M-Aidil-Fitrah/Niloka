@@ -126,11 +126,15 @@ export function FloatingChatbot() {
     const trimmed = messageText.trim();
     if (!trimmed || isLoading) return;
 
-    const nextMessages = [...messages, createMessage("user", trimmed)].slice(-20);
+    const requestTime = Date.now();
+    const userMsg = createMessage("user", trimmed);
+    userMsg.sentAt = requestTime;
+
+    const nextMessages = [...messages, userMsg].slice(-20);
     setMessages(nextMessages);
     setInput("");
     setStreamState("waiting"); // show typing indicator
-    setStreamStartedAt(Date.now());
+    setStreamStartedAt(requestTime);
     setLastResponse(null);
 
     try {
@@ -180,13 +184,15 @@ export function FloatingChatbot() {
       setStreamState(null);
 
       const assistantMsg = createMessage("assistant", finalText);
-      // Use the streamStartedAt as the timestamp for assistant message
-      assistantMsg.sentAt = streamStartedAt;
+      // Use the requestTime as the timestamp for assistant message
+      assistantMsg.sentAt = requestTime;
       setMessages((cur) => [...cur.slice(-19), assistantMsg]);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Asisten tidak bisa merespons. Coba lagi.";
       setStreamState(null);
-      setMessages((cur) => [...cur.slice(-19), createMessage("assistant", msg)]);
+      const assistantErrorMsg = createMessage("assistant", msg);
+      assistantErrorMsg.sentAt = requestTime;
+      setMessages((cur) => [...cur.slice(-19), assistantErrorMsg]);
     }
   }
 
