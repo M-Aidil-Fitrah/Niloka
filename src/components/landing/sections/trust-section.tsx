@@ -21,9 +21,6 @@ export function TrustSection({ reviews }: TrustSectionProps) {
             <span className="font-accent italic text-brand-700"> komunitas</span>.
           </h2>
         </div>
-        <p className="section-copy">
-          Ulasan jujur dari pembeli produk nilam B2C dan B2B ampas nilam yang telah bertransaksi.
-        </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

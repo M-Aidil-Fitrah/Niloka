@@ -86,8 +86,8 @@ const storyMetrics: StoryMetric[] = [
   },
   {
     id: "models",
-    value: "B2C+B2B",
-    label: "dua model transaksi dalam satu marketplace terkurasi",
+    value: "Satuan + Grosir",
+    label: "opsi pembelian ampas nilam yang fleksibel",
   },
 ];
 
@@ -135,11 +135,11 @@ export async function getLandingPageData(): Promise<LandingPageData> {
   const categoryTiles: CategoryTile[] = [
     {
       id: "aroma",
-      label: "Artikel & Berita",
+      label: "Nilam Insight",
       description:
-        "Temukan panduan praktis pengolahan limbah nilam dan budidaya tani sirkular.",
-      imageUrl: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3e%3crect fill='%23e5e7eb' width='700' height='700'/%3e%3c/svg%3e",
-      imageAlt: "Produk kosmetik dan aromaterapi di atas meja.",
+        "Analisis kesehatan tanaman berbasis AI dan panduan budidaya, pengolahan limbah nilam.",
+      imageUrl: "/images/landing/nilam-insight.jpg",
+      imageAlt: "Analisis kesehatan daun nilam menggunakan AI.",
       href: "/artikel",
     },
     ...(featuredProductCategory
@@ -161,7 +161,7 @@ export async function getLandingPageData(): Promise<LandingPageData> {
             id: "ampas",
             label: "Ampas Nilam",
             description:
-              "Listing B2B untuk kompos, briket, media tanam, dan biomassa.",
+              "Listing ampas untuk kompos, briket, media tanam, dan biomassa.",
             imageUrl: featuredAmpasListing.image.src,
             imageAlt: featuredAmpasListing.image.alt,
             href: "#circular",

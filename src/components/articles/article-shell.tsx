@@ -3,8 +3,17 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, Play, BookOpen, Clock, X, FileText, Video } from "lucide-react";
+import {
+  Search,
+  Play,
+  BookOpen,
+  Clock,
+  X,
+  FileText,
+  Video,
+} from "lucide-react";
 import type { Article, ArticleCategory } from "@/lib/contracts";
+import { DiagnoseWidget } from "@/components/articles/diagnose-widget";
 
 const CATEGORIES: { value: "all" | ArticleCategory; label: string }[] = [
   { value: "all", label: "Semua Kategori" },
@@ -22,7 +31,8 @@ const TYPES = [
 
 function getYouTubeId(url: string) {
   if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const regExp =
+    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   const match = url.match(regExp);
   return match && match[2].length === 11 ? match[2] : null;
 }
@@ -34,8 +44,12 @@ type ArticleShellProps = {
 export function ArticleShell({ articles }: ArticleShellProps) {
   const allArticles = useMemo(() => articles, [articles]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<"all" | ArticleCategory>("all");
-  const [selectedType, setSelectedType] = useState<"all" | "text" | "video">("all");
+  const [selectedCategory, setSelectedCategory] = useState<
+    "all" | ArticleCategory
+  >("all");
+  const [selectedType, setSelectedType] = useState<"all" | "text" | "video">(
+    "all",
+  );
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
   const [activeVideoTitle, setActiveVideoTitle] = useState<string | null>(null);
 
@@ -61,7 +75,9 @@ export function ArticleShell({ articles }: ArticleShellProps) {
         const matchTitle = article.title.toLowerCase().includes(q);
         const matchExcerpt = article.excerpt.toLowerCase().includes(q);
         const matchAuthor = article.author.toLowerCase().includes(q);
-        const matchTags = article.tags.some((tag) => tag.toLowerCase().includes(q));
+        const matchTags = article.tags.some((tag) =>
+          tag.toLowerCase().includes(q),
+        );
         return matchTitle || matchExcerpt || matchAuthor || matchTags;
       }
 
@@ -102,19 +118,20 @@ export function ArticleShell({ articles }: ArticleShellProps) {
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header / Hero */}
       <div className="relative mb-12 overflow-hidden px-4 py-4 text-center text-white-soft sm:px-4 lg:py-4">
-        
         <div className="relative z-10 mx-auto max-w-3xl">
-          <span className="inline-block rounded-full bg-gold-500/10 border border-gold-500/30 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gold-500">
-            Pusat Edukasi &amp; Tani Sirkular
-          </span>
           <h1 className="mt-6 text-2xl font-extrabold text-brand-950 tracking-tight sm:text-3xl md:text-4xl">
-            Panduan &amp; Artikel <span className="text-brand-900 font-accent italic">Limbah Nilam</span>
+            Nilam{" "}
+            <span className="text-brand-900 font-accent italic">Insight</span>
           </h1>
           <p className="mt-6 text-base text-ink-600 sm:text-lg">
-            Temukan panduan praktis, teknik pertanian ramah lingkungan, pembuatan energi terbarukan, dan optimalisasi ekonomi sirkular dari pengolahan limbah tanaman nilam.
+            Analisis kesehatan tanaman berbasis AI, panduan budidaya dan
+            pengolahan, hingga teknik pertanian ramah lingkungan dan ekonomi
+            sirkular dari limbah nilam.
           </p>
         </div>
       </div>
+
+      <DiagnoseWidget />
 
       {/* Controls: Search and Filters */}
       <div className="mb-10 space-y-6">
@@ -206,7 +223,7 @@ export function ArticleShell({ articles }: ArticleShellProps) {
                   {/* Category overlay */}
                   <span
                     className={`absolute top-4 left-4 rounded-full border px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider shadow-sm backdrop-blur-sm ${getCategoryBadgeColor(
-                      article.category
+                      article.category,
                     )}`}
                   >
                     {getCategoryLabel(article.category)}
@@ -227,7 +244,11 @@ export function ArticleShell({ articles }: ArticleShellProps) {
 
                   {/* Type icon top-right */}
                   <div className="absolute top-4 right-4 flex h-7 w-7 items-center justify-center rounded-full bg-brand-950/60 text-white-soft backdrop-blur-sm shadow-sm">
-                    {isVideo ? <Video className="h-3.5 w-3.5" /> : <FileText className="h-3.5 w-3.5" />}
+                    {isVideo ? (
+                      <Video className="h-3.5 w-3.5" />
+                    ) : (
+                      <FileText className="h-3.5 w-3.5" />
+                    )}
                   </div>
                 </div>
 
@@ -237,10 +258,17 @@ export function ArticleShell({ articles }: ArticleShellProps) {
                   <div className="mb-3 flex items-center gap-4 text-xs font-semibold text-ink-600">
                     <span className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
-                      {isVideo ? `${article.videoDuration} durasi` : article.readTime}
+                      {isVideo
+                        ? `${article.videoDuration} durasi`
+                        : article.readTime}
                     </span>
                     <span>•</span>
-                    <span>{new Date(article.publishedAt).toLocaleDateString("id-ID", { year: "numeric", month: "short", day: "numeric" })}</span>
+                    <span>
+                      {new Date(article.publishedAt).toLocaleDateString(
+                        "id-ID",
+                        { year: "numeric", month: "short", day: "numeric" },
+                      )}
+                    </span>
                   </div>
 
                   {/* Title */}
@@ -253,7 +281,10 @@ export function ArticleShell({ articles }: ArticleShellProps) {
                         {article.title}
                       </button>
                     ) : (
-                      <Link href={`/artikel/${article.slug}`} className="hover:underline">
+                      <Link
+                        href={`/artikel/${article.slug}`}
+                        className="hover:underline"
+                      >
                         {article.title}
                       </Link>
                     )}
@@ -267,9 +298,13 @@ export function ArticleShell({ articles }: ArticleShellProps) {
                   <div className="mt-auto pt-4 border-t border-line/40 flex items-center justify-between">
                     {/* Author */}
                     <div>
-                      <p className="text-xs font-bold text-brand-950">{article.author}</p>
+                      <p className="text-xs font-bold text-brand-950">
+                        {article.author}
+                      </p>
                       {article.authorRole && (
-                        <p className="text-[10px] text-ink-600">{article.authorRole}</p>
+                        <p className="text-[10px] text-ink-600">
+                          {article.authorRole}
+                        </p>
                       )}
                     </div>
 
@@ -286,7 +321,10 @@ export function ArticleShell({ articles }: ArticleShellProps) {
                         href={`/artikel/${article.slug}`}
                         className="flex items-center gap-1 text-xs font-extrabold text-brand-800 hover:text-brand-700"
                       >
-                        Baca Selengkapnya <span className="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+                        Baca Selengkapnya{" "}
+                        <span className="transition-transform duration-200 group-hover:translate-x-0.5">
+                          →
+                        </span>
                       </Link>
                     )}
                   </div>
@@ -301,9 +339,13 @@ export function ArticleShell({ articles }: ArticleShellProps) {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-cream-100 text-brand-700 mb-4">
             <Search className="h-8 w-8" />
           </div>
-          <h3 className="text-lg font-bold text-brand-950">Tidak ada hasil ditemukan</h3>
+          <h3 className="text-lg font-bold text-brand-950">
+            Tidak ada hasil ditemukan
+          </h3>
           <p className="mt-2 text-sm text-ink-600 max-w-sm">
-            Tidak ada artikel atau video yang cocok dengan pencarian &quot;{searchQuery}&quot; di kategori ini. Coba periksa ejaan atau ubah filter Anda.
+            Tidak ada artikel atau video yang cocok dengan pencarian &quot;
+            {searchQuery}&quot; di kategori ini. Coba periksa ejaan atau ubah
+            filter Anda.
           </p>
           <button
             onClick={() => {
@@ -326,7 +368,9 @@ export function ArticleShell({ articles }: ArticleShellProps) {
             <div className="flex items-center justify-between px-6 py-4 bg-brand-900 border-b border-white-soft/10">
               <div className="flex items-center gap-2 text-white-soft">
                 <Video className="h-5 w-5 text-gold-500" />
-                <h3 className="font-bold text-sm md:text-base line-clamp-1">{activeVideoTitle}</h3>
+                <h3 className="font-bold text-sm md:text-base line-clamp-1">
+                  {activeVideoTitle}
+                </h3>
               </div>
               <button
                 onClick={() => {

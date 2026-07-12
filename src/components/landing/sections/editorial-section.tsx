@@ -25,9 +25,8 @@ export function EditorialSection({ metrics }: EditorialSectionProps) {
               Nilam Aceh bukan sekadar komoditas mentah.
             </h2>
             <p className="mt-5 text-sm leading-7 text-white-soft/82 sm:text-base">
-              NILOKA memindahkan nilai tambah ke ekosistem lokal:
-              mempertemukan UMKM, penyuling, pembeli, dan pelaku usaha B2B
-              dalam pengalaman digital yang jelas.
+              NILOKA mempertemukan UMKM, penyuling, pembeli, dan pelaku usaha
+              dalam ekositem toko online yang lengkap.
             </p>
           </div>
         </div>

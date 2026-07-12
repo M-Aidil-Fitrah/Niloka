@@ -23,7 +23,7 @@ export function CircularSection({ circularUses }: CircularSectionProps) {
       <div className="absolute inset-0 bg-gradient-to-r from-brand-950/95 via-brand-950/70 to-transparent" />
       <div className="relative flex min-h-[500px] flex-col justify-between p-6 sm:p-8 h-full flex-1">
         <div>
-          <Badge tone="light">Ekonomi sirkular B2B</Badge>
+          <Badge tone="light">Ekonomi sirkular</Badge>
           <h2 className="mt-5 max-w-xl text-4xl font-bold leading-tight sm:text-5xl">
             Ampas nilam menjadi
             <span className="font-accent italic font-medium"> bahan bernilai</span>.

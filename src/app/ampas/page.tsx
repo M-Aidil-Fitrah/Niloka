@@ -25,7 +25,7 @@ export default async function AmpasPage() {
 
   return (
     <SectionShell
-      eyebrow="Ekonomi Sirkular B2B"
+      eyebrow="Ekonomi Sirkular"
       title="Bursa Ampas Nilam"
       description="Direktori sisa ampas penyulingan nilam Aceh. Hubungi langsung penyuling untuk pemanfaatan kompos, briket, atau bahan baku industri."
     >

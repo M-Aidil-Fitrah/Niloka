@@ -24,9 +24,6 @@ export function NewArrivalsSection({ products }: NewArrivalsSectionProps) {
             <span className="font-accent italic text-brand-700"> NILOKA</span>.
           </h2>
         </div>
-        <p className="section-copy">
-          Produk nilam terbaru yang segar dari penyulingan dan UMKM terkurasi di Aceh.
-        </p>
       </div>
 
       <div className="product-grid grid gap-3 md:grid-cols-2 xl:grid-cols-3">

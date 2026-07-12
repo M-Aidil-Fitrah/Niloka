@@ -17,11 +17,6 @@ export function CategorySection({ categoryTiles }: CategorySectionProps) {
             <span className="font-accent italic text-brand-700"> nilam Aceh</span>.
           </h2>
         </div>
-        <p className="section-copy">
-          Dari produk siap pakai untuk konsumen sampai ampas nilam untuk
-          pelaku usaha, semua dirancang transparan, terkurasi, dan mudah
-          dikembangkan ke backend PostgreSQL nanti.
-        </p>
       </div>
 
       <div className="category-strip grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
