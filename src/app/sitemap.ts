@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const siteUrl = "https://niloka.my.id";
+const siteUrl = "https://niloka.store";
 
 const publicRoutes = [
   { path: "/", priority: 1, changeFrequency: "weekly" },

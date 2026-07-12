@@ -156,7 +156,7 @@ export function ProductDrawer({
                 </div>
 
                 {[1, 2, 3].map((num) => {
-                  const hasImage = activeProduct.gallery && activeProduct.gallery[num - 1];
+                  const galleryImage = activeProduct.gallery?.[num - 1];
                   return (
                     <div
                       key={num}
@@ -169,11 +169,11 @@ export function ProductDrawer({
                       }}
                       className="relative aspect-square border-2 border-dashed border-line hover:border-brand-900/40 rounded-xl overflow-hidden bg-cream-50/20 flex flex-col items-center justify-center p-1 cursor-pointer transition-all"
                     >
-                      {hasImage ? (
+                      {galleryImage ? (
                         <>
                           <Image
-                            src={activeProduct.gallery![num - 1].src}
-                            alt={activeProduct.gallery![num - 1].alt}
+                            src={galleryImage.src}
+                            alt={galleryImage.alt}
                             fill
                             className="object-cover"
                           />

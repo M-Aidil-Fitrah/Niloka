@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const siteUrl = "https://niloka.my.id";
+const siteUrl = "https://niloka.store";
 
 export default function robots(): MetadataRoute.Robots {
   return {

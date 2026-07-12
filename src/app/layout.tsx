@@ -18,7 +18,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://niloka.my.id"),
+  metadataBase: new URL("https://niloka.store"),
   title: {
     default: "NILOKA",
     template: "%s | NILOKA",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://niloka.my.id",
+    url: "https://niloka.store",
     siteName: "NILOKA",
     title: "NILOKA",
     description:
@@ -44,11 +44,28 @@ export const metadata: Metadata = {
     description:
       "Marketplace terkurasi produk nilam Aceh dengan Nilam Passport dan ekosistem sirkular ampas nilam.",
   },
+  // PWA — Apple Web App support
+  appleWebApp: {
+    capable: true,
+    title: "NILOKA",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    apple: [
+      { url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // Android Chrome toolbar and iOS status bar color
+  themeColor: "#20341f",
 };
 
 import { CartProvider } from "@/context/cart-context";
@@ -56,6 +73,8 @@ import { AuthProvider } from "@/context/auth-context";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { FloatingChatbot } from "@/components/chatbot/floating-chatbot";
 import { ToastProvider } from "@/components/ui/toast";
+import { PWARegister } from "@/components/ui/pwa-register";
+import { OfflineBanner } from "@/components/ui/offline-banner";
 
 export default function RootLayout({
   children,
@@ -71,10 +90,12 @@ export default function RootLayout({
       <body className="min-h-full bg-cream-50 text-ink-900" suppressHydrationWarning>
         <AuthProvider>
           <CartProvider>
+            <OfflineBanner />
             {children}
             <CartDrawer />
             <FloatingChatbot />
             <ToastProvider />
+            <PWARegister />
           </CartProvider>
         </AuthProvider>
       </body>

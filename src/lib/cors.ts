@@ -1,4 +1,4 @@
-const ALLOWED_ORIGINS = ["http://localhost:3000", "https://niloka.my.id"];
+const ALLOWED_ORIGINS = ["http://localhost:3000", "https://niloka.store"];
 
 export function corsHeaders(origin: string | null): Record<string, string> {
   const allowedOrigin =
