@@ -42,9 +42,7 @@ export function ChatClient() {
       ChatService.getOrCreateThread(sellerId, { productId, listingId }).then(
         (thread) => {
           setActiveThreadId(thread.id);
-          if (isMobileView) {
-            setShowMobileChat(true);
-          }
+          setShowMobileChat(true);
           // Clear parameters to keep URL clean
           window.history.replaceState({}, document.title, "/chat");
         },
@@ -66,10 +64,7 @@ export function ChatClient() {
             setActiveThreadId(sorted[0].id);
           }
         } else {
-          // Default for buyer (show first thread)
-          if (currentThreads.length > 0 && !activeThreadId) {
-            setActiveThreadId(currentThreads[0].id);
-          }
+          // Default for buyer: do not auto-select any thread to show list first
         }
       });
     }
@@ -120,7 +115,12 @@ export function ChatClient() {
                 new Date(a.updatedAt).getTime(),
             );
 
-            setActiveThreadId(sorted[0]?.id || null);
+            if (currentUserRole === "seller") {
+              setActiveThreadId(sorted[0]?.id || null);
+            } else {
+              setActiveThreadId(null);
+              setShowMobileChat(false);
+            }
           });
         }
       });
@@ -152,11 +152,18 @@ export function ChatClient() {
 
   return (
     <BuyerChatView
+      displayedThreads={threads}
+      activeThreadId={activeThreadId}
+      setActiveThreadId={setActiveThreadId}
       activeThread={activeThread}
       inputText={inputText}
       setInputText={setInputText}
       handleSendMessage={handleSendMessage}
+      handleDeleteThread={handleDeleteThread}
       messagesEndRef={messagesEndRef}
+      isMobileView={isMobileView}
+      showMobileChat={showMobileChat}
+      setShowMobileChat={setShowMobileChat}
     />
   );
 }

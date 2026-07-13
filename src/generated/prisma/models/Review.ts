@@ -266,6 +266,7 @@ export type ReviewOrderByWithRelationInput = {
 
 export type ReviewWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  productId_userId?: Prisma.ReviewProductIdUserIdCompoundUniqueInput
   AND?: Prisma.ReviewWhereInput | Prisma.ReviewWhereInput[]
   OR?: Prisma.ReviewWhereInput[]
   NOT?: Prisma.ReviewWhereInput | Prisma.ReviewWhereInput[]
@@ -280,7 +281,7 @@ export type ReviewWhereUniqueInput = Prisma.AtLeast<{
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
-}, "id">
+}, "id" | "productId_userId">
 
 export type ReviewOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -411,6 +412,11 @@ export type EnumReviewTagNullableListFilter<$PrismaModel = never> = {
   hasEvery?: $Enums.ReviewTag[] | Prisma.ListEnumReviewTagFieldRefInput<$PrismaModel>
   hasSome?: $Enums.ReviewTag[] | Prisma.ListEnumReviewTagFieldRefInput<$PrismaModel>
   isEmpty?: boolean
+}
+
+export type ReviewProductIdUserIdCompoundUniqueInput = {
+  productId: string
+  userId: string
 }
 
 export type ReviewCountOrderByAggregateInput = {
