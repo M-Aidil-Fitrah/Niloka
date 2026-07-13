@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, ShoppingCart, Ticket, Copy, Check } from "lucide-react";
+import { CheckCircle, ShoppingCart, Ticket, Copy, Check, Store } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
 import { MapPinIcon, StarIcon } from "@/components/ui/icons";
 import type { Product, Seller, Promo } from "@/lib/contracts";
@@ -123,24 +123,44 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
         <div className="flex items-start justify-between gap-4">
           <div>
             <h3 className="text-sm font-semibold text-brand-950">Penjual</h3>
-            <p className="mt-1 text-base font-bold text-brand-900">
-              {seller.displayName}
-            </p>
-            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-600">
+            <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
+              <Link
+                href={`/sellers/${seller.slug}`}
+                className="text-base font-bold text-brand-900 hover:text-brand-700 hover:underline transition-colors"
+              >
+                {seller.displayName}
+              </Link>
+              {seller.verificationStatus === "verified" && (
+                <Badge tone="brand" className="text-[10px] py-0 px-1.5 min-h-5 flex items-center font-bold">
+                  Terverifikasi
+                </Badge>
+              )}
+            </div>
+            <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-ink-600">
               <span className="flex items-center gap-1">
                 <MapPinIcon className="h-3.5 w-3.5 text-brand-700" />
                 {seller.location.city}, {seller.location.province}
               </span>
               <span className="capitalize">Tipe: {seller.type}</span>
             </div>
+            
+            <div className="mt-4">
+              <Link
+                href={`/sellers/${seller.slug}`}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-900 hover:text-white-soft border border-brand-900/30 rounded-xl px-3 py-2 bg-white hover:bg-brand-900 transition-all shadow-sm duration-200"
+              >
+                <Store className="h-3.5 w-3.5" />
+                Kunjungi Toko
+              </Link>
+            </div>
           </div>
 
-          <div className="flex flex-col items-end shrink-0">
-            <span className="flex items-center gap-1 text-sm font-bold text-brand-950">
+          <div className="flex flex-col items-end shrink-0 bg-cream-50/50 border border-line/40 rounded-xl p-2.5">
+            <span className="flex items-center gap-1 text-sm font-black text-brand-950">
               <StarIcon className="h-4 w-4 text-gold-500" />
               {seller.ratingAverage.toFixed(1)}
             </span>
-            <span className="mt-1 text-[11px] text-ink-600">
+            <span className="mt-1 text-[10px] font-semibold text-ink-650">
               {seller.totalReviews} Ulasan
             </span>
           </div>

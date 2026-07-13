@@ -17,6 +17,12 @@ type ProductWithGallery = Prisma.ProductGetPayload<{
         sortOrder: "asc";
       };
     };
+    seller: {
+      select: {
+        displayName: true;
+        slug: true;
+      };
+    };
   };
 }>;
 
@@ -60,16 +66,23 @@ function mapProduct(row: ProductWithGallery): Product {
     featuredRank: row.featuredRank,
     createdAt: toIsoString(row.createdAt),
     updatedAt: toIsoString(row.updatedAt),
+    sellerName: row.seller?.displayName,
+    sellerSlug: row.seller?.slug,
   };
 }
 
 export async function getPublishedProductsDto(params?: {
   searchQuery?: string;
   limit?: number;
+  sellerId?: string;
 }): Promise<Product[]> {
   const where: Prisma.ProductWhereInput = {
     status: ProductStatus.PUBLISHED,
   };
+
+  if (params?.sellerId) {
+    where.sellerId = params.sellerId;
+  }
 
   if (params?.searchQuery) {
     const q = params.searchQuery.trim();
@@ -90,6 +103,12 @@ export async function getPublishedProductsDto(params?: {
       passport: {
         select: {
           id: true,
+        },
+      },
+      seller: {
+        select: {
+          displayName: true,
+          slug: true,
         },
       },
     },
@@ -122,6 +141,12 @@ export async function getFeaturedProductsDto(limit: number): Promise<Product[]> 
       passport: {
         select: {
           id: true,
+        },
+      },
+      seller: {
+        select: {
+          displayName: true,
+          slug: true,
         },
       },
     },
@@ -157,6 +182,12 @@ export async function getProductBySlugDto(
       passport: {
         select: {
           id: true,
+        },
+      },
+      seller: {
+        select: {
+          displayName: true,
+          slug: true,
         },
       },
     },

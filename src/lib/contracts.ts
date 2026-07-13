@@ -139,6 +139,8 @@ export type Product = {
   featuredRank: number;
   createdAt: string;
   updatedAt: string;
+  sellerName?: string;
+  sellerSlug?: string;
 };
 
 export type NilamPassport = {
