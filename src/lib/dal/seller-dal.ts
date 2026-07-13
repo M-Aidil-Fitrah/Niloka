@@ -71,3 +71,16 @@ export async function getSellerByIdDto(
 
   return row ? mapSeller(row) : null;
 }
+
+export async function getSellerBySlugDto(
+  slug: string,
+): Promise<Seller | null> {
+  const row = await prisma.seller.findUnique({
+    where: {
+      slug,
+    },
+  });
+
+  return row ? mapSeller(row) : null;
+}
+
