@@ -603,8 +603,8 @@ export const ampasListings: AmpasListing[] = [
     usageTags: ["compost", "briquette", "mulch", "industrial-cellulose"],
     status: "active",
     image: {
-      src: "/images/ampas/ampas-basah.png",
-      alt: "Bahan alami dan minyak nilam sebagai bagian ekonomi sirkular.",
+      src: "/images/ampas/ampas-kering.png",
+      alt: "Limbah ampas nilam kering dari proses penyulingan minyak atsiri.",
     },
     disclaimer:
       "Tag penggunaan adalah klaim seller; NILOKA tidak memverifikasi kandungan atau kualitas ampas.",
@@ -630,8 +630,8 @@ export const ampasListings: AmpasListing[] = [
     usageTags: ["compost", "mushroom-media", "animal-feed"],
     status: "active",
     image: {
-      src: "/images/ampas/ampas-kering.png",
-      alt: "Produk natural dan bahan produksi tersusun rapi.",
+      src: "/images/ampas/ampas-basah.png",
+      alt: "Limbah ampas nilam basah dari proses penyulingan minyak atsiri.",
     },
     disclaimer:
       "Tag penggunaan adalah klaim seller; NILOKA tidak memverifikasi kandungan atau kualitas ampas.",
