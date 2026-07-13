@@ -603,7 +603,7 @@ export const ampasListings: AmpasListing[] = [
     usageTags: ["compost", "briquette", "mulch", "industrial-cellulose"],
     status: "active",
     image: {
-      src: "https://images.unsplash.com/photo-1515377905703-c4788e51af15",
+      src: "/images/ampas/ampas-basah.png",
       alt: "Bahan alami dan minyak nilam sebagai bagian ekonomi sirkular.",
     },
     disclaimer:
@@ -630,7 +630,7 @@ export const ampasListings: AmpasListing[] = [
     usageTags: ["compost", "mushroom-media", "animal-feed"],
     status: "active",
     image: {
-      src: "https://images.unsplash.com/photo-1612817288484-6f916006741a",
+      src: "/images/ampas/ampas-kering.png",
       alt: "Produk natural dan bahan produksi tersusun rapi.",
     },
     disclaimer:
