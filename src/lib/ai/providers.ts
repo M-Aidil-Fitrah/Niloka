@@ -126,8 +126,8 @@ function getGroqTextModel(): string {
   return process.env.GROQ_TEXT_MODEL || process.env.GROQ_FALLBACK_MODEL || "llama-3.3-70b-versatile";
 }
 
-function getGroqVisionModel(): string {
-  return process.env.GROQ_VISION_MODEL || "llama-3.2-11b-vision-preview";
+function getGroqVisionModel(): string | null {
+  return process.env.GROQ_VISION_MODEL?.trim() || null;
 }
 
 function isUnavailableStatus(status: number): boolean {
@@ -469,11 +469,11 @@ async function generateVisionWithGroq(
   const apiKey = process.env.GROQ_API_KEY;
   const model = getGroqVisionModel();
 
-  if (!apiKey) {
+  if (!apiKey || !model) {
     throw new AiProviderError(
       "AI_PROVIDER_UNCONFIGURED",
       "Groq vision fallback is not configured.",
-      { provider: "groq", model },
+      { provider: "groq", model: model ?? undefined },
     );
   }
 
@@ -585,4 +585,15 @@ export async function generateAiVisionText(
       });
     }
   }
+}
+
+export async function generateAiVisionTextWithGroq(
+  prompt: string,
+  imageBase64: string,
+  mimeType: string,
+): Promise<VisionTextResult> {
+  return {
+    text: await generateVisionWithGroq(prompt, imageBase64, mimeType),
+    providerUsed: "groq",
+  };
 }

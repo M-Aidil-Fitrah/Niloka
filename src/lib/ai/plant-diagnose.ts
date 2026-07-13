@@ -1,5 +1,9 @@
 import type { AiProvider } from "@/lib/contracts";
-import { AiProviderError, generateAiVisionText } from "./providers";
+import {
+  AiProviderError,
+  generateAiVisionText,
+  generateAiVisionTextWithGroq,
+} from "./providers";
 
 const DISEASE_CRITERIA = `
 Kamu adalah asisten identifikasi penyakit dan hama tanaman nilam (Pogostemon cablin).
@@ -131,15 +135,8 @@ function normalizeDiagnoseResult(
   };
 }
 
-export async function diagnosePlantImage(
-  imageBase64: string,
-  mimeType: string,
-  conditions: SelectedConditions,
-): Promise<DiagnoseResult> {
-  const conditionsText = formatConditions(conditions);
-  const prompt = `${DISEASE_CRITERIA}\n\n${conditionsText}`;
-  const result = await generateAiVisionText(prompt, imageBase64, mimeType);
-  const cleaned = cleanAiJson(result.text);
+function parseDiagnoseResult(text: string, providerUsed: AiProvider): DiagnoseResult {
+  const cleaned = cleanAiJson(text);
 
   let parsed: unknown;
   try {
@@ -148,9 +145,37 @@ export async function diagnosePlantImage(
     throw new AiProviderError(
       "AI_RESPONSE_INVALID",
       "Vision AI response could not be parsed as JSON.",
-      { provider: result.providerUsed },
+      { provider: providerUsed },
     );
   }
 
-  return normalizeDiagnoseResult(parsed, result.providerUsed);
+  return normalizeDiagnoseResult(parsed, providerUsed);
+}
+
+export async function diagnosePlantImage(
+  imageBase64: string,
+  mimeType: string,
+  conditions: SelectedConditions,
+): Promise<DiagnoseResult> {
+  const conditionsText = formatConditions(conditions);
+  const prompt = `${DISEASE_CRITERIA}\n\n${conditionsText}`;
+  const result = await generateAiVisionText(prompt, imageBase64, mimeType);
+
+  try {
+    return parseDiagnoseResult(result.text, result.providerUsed);
+  } catch (error) {
+    if (
+      error instanceof AiProviderError &&
+      error.code === "AI_RESPONSE_INVALID" &&
+      result.providerUsed === "gemini"
+    ) {
+      const fallbackResult = await generateAiVisionTextWithGroq(
+        prompt,
+        imageBase64,
+        mimeType,
+      );
+      return parseDiagnoseResult(fallbackResult.text, fallbackResult.providerUsed);
+    }
+    throw error;
+  }
 }

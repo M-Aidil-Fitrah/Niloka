@@ -241,6 +241,8 @@ AUTH_SECRET="replace-with-random-secret"
 AUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="replace-with-random-secret"
 NEXTAUTH_URL="http://localhost:3000"
+DEPLOYMENT_VERSION=""
+NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=""
 
 UPLOAD_MAX_IMAGE_BYTES="2097152"
 UPLOAD_PUBLIC_PREFIX="/uploads"
@@ -253,7 +255,7 @@ GEMINI_VISION_MODEL="gemini-3.5-flash"
 # AI fallback: Groq
 GROQ_API_KEY=""
 GROQ_TEXT_MODEL="llama-3.3-70b-versatile"
-GROQ_VISION_MODEL="llama-3.2-11b-vision-preview"
+GROQ_VISION_MODEL="meta-llama/llama-4-scout-17b-16e-instruct"
 
 # Legacy optional fallback, sementara
 GEMINI_MODEL=""
@@ -268,6 +270,8 @@ Catatan:
 
 - `.env` tidak boleh di-commit.
 - `DATABASE_URL`, `NEXTAUTH_SECRET`, dan `MIDTRANS_SERVER_KEY` divalidasi oleh `src/lib/env.ts` pada flow yang memakai env validation.
+- `DEPLOYMENT_VERSION` sebaiknya diisi dengan Git SHA/build ID saat deploy agar Next.js bisa menangani version skew pada Server Actions.
+- `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` wajib konsisten antar instance/container untuk deployment yang sama. Gunakan nilai base64 16/24/32 byte dan simpan sebagai secret server.
 - AI tetap bisa dikembangkan tanpa API key, tetapi route AI dapat mengembalikan error/fallback aman sesuai implementasi.
 - Untuk development tanpa payment asli, isi `MIDTRANS_SERVER_KEY` dengan nilai dummy hanya jika flow yang dijalankan membutuhkan env tersebut.
 

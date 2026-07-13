@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  deploymentId: process.env.DEPLOYMENT_VERSION || process.env.NEXT_DEPLOYMENT_ID,
+
   images: {
     remotePatterns: [
       {
@@ -51,4 +53,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
