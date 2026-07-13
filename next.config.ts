@@ -1,13 +1,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  deploymentId: process.env.DEPLOYMENT_VERSION || process.env.NEXT_DEPLOYMENT_ID,
+  deploymentId:
+    process.env.DEPLOYMENT_VERSION || process.env.NEXT_DEPLOYMENT_ID,
 
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
+
+      {
+        protocol: "https",
+        hostname: "i.pinimg.com",
         pathname: "/**",
       },
     ],

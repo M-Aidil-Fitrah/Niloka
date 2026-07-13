@@ -78,8 +78,8 @@ export const productCategories: ProductCategory[] = [
     description: "Roll-on, essential oil, dan diffuser berbasis nilam Aceh.",
     targetMarket: "b2c",
     image: {
-      src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=900&q=80",
-      alt: "Botol essential oil amber di atas dudukan kayu.",
+      src: "https://i.pinimg.com/736x/10/f9/d9/10f9d9a5cd3a8973c3113231ed2b9633.jpg",
+      alt: "Botol roll-on Roll-on Nilam Relief untuk relaksasi harian.",
     },
   },
   {
@@ -89,8 +89,8 @@ export const productCategories: ProductCategory[] = [
     description: "Sabun, body oil, dan perawatan natural dengan profil nilam.",
     targetMarket: "b2c",
     image: {
-      src: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=900&q=80",
-      alt: "Produk sabun natural di studio cerah.",
+      src: "https://i.pinimg.com/736x/d2/bc/84/d2bc84b5f29ce980ab3f88323c64aea0.jpg",
+      alt: "Botol Body Oil Luxury berisi minyak nilam murni untuk hidrasi kulit.",
     },
   },
   {
@@ -100,8 +100,8 @@ export const productCategories: ProductCategory[] = [
     description: "Diffuser blend dan parfum ruangan dengan aroma woody.",
     targetMarket: "b2c",
     image: {
-      src: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
-      alt: "Botol parfum dan diffuser di meja elegan.",
+      src: "https://i.pinimg.com/1200x/10/85/21/1085218280d9404167c63cb210a998ab.jpg",
+      alt: "Reed diffuser Diffuser Blend Patchouli untuk aroma ruangan tenang.",
     },
   },
 ];
@@ -123,13 +123,13 @@ export const products: Product[] = [
     stock: 42,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80",
-      alt: "Produk kosmetik natural dengan kuas dan botol kecil.",
+      src: "https://i.pinimg.com/736x/10/f9/d9/10f9d9a5cd3a8973c3113231ed2b9633.jpg",
+      alt: "Botol roll-on Roll-on Nilam Relief untuk relaksasi harian.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80",
-        alt: "Flatlay produk roll-on dan kosmetik natural.",
+        src: "https://i.pinimg.com/736x/10/f9/d9/10f9d9a5cd3a8973c3113231ed2b9633.jpg",
+        alt: "Botol roll-on Roll-on Nilam Relief untuk relaksasi harian.",
       },
     ],
     featuredRank: 1,
@@ -152,13 +152,13 @@ export const products: Product[] = [
     stock: 26,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=900&q=80",
-      alt: "Botol essential oil amber di atas dudukan kayu.",
+      src: "https://i.pinimg.com/1200x/51/a2/f0/51a2f047f3bf72f567df1c99719ad20f.jpg",
+      alt: "Botol essential oil amber dengan nuansa earthy.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=900&q=80",
-        alt: "Botol essential oil dengan bayangan daun.",
+        src: "https://i.pinimg.com/1200x/51/a2/f0/51a2f047f3bf72f567df1c99719ad20f.jpg",
+        alt: "Botol essential oil amber dengan nuansa earthy.",
       },
     ],
     featuredRank: 2,
@@ -181,13 +181,13 @@ export const products: Product[] = [
     stock: 64,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=900&q=80",
-      alt: "Produk sabun natural di studio cerah.",
+      src: "https://i.pinimg.com/1200x/66/2e/56/662e565046340b7bb0d5e4a6d981cb16.jpg",
+      alt: "Batangan Sabun Nilam Artisan buatan tangan dengan aroma earthy.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=900&q=80",
-        alt: "Sabun natural dengan kemasan bersih.",
+        src: "https://i.pinimg.com/1200x/66/2e/56/662e565046340b7bb0d5e4a6d981cb16.jpg",
+        alt: "Batangan Sabun Nilam Artisan buatan tangan dengan aroma earthy.",
       },
     ],
     featuredRank: 3,
@@ -201,7 +201,8 @@ export const products: Product[] = [
     categoryId: "category-home-fragrance",
     passportId: "passport-diffuser-blend",
     name: "Diffuser Blend Patchouli",
-    shortDescription: "Blend diffuser patchouli untuk suasana ruang yang tenang.",
+    shortDescription:
+      "Blend diffuser patchouli untuk suasana ruang yang tenang.",
     form: "diffuser",
     functions: ["home-fragrance", "focus"],
     tags: ["aroma-calm"],
@@ -210,13 +211,13 @@ export const products: Product[] = [
     stock: 31,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
-      alt: "Botol parfum dan aroma diffuser di meja elegan.",
+      src: "https://i.pinimg.com/1200x/10/85/21/1085218280d9404167c63cb210a998ab.jpg",
+      alt: "Reed diffuser Diffuser Blend Patchouli untuk aroma ruangan tenang.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
-        alt: "Botol diffuser premium di studio.",
+        src: "https://i.pinimg.com/1200x/10/85/21/1085218280d9404167c63cb210a998ab.jpg",
+        alt: "Reed diffuser Diffuser Blend Patchouli untuk aroma ruangan tenang.",
       },
     ],
     featuredRank: 4,
@@ -230,7 +231,8 @@ export const products: Product[] = [
     categoryId: "category-body-care",
     passportId: "passport-body-oil-lux",
     name: "Body Oil Luxury",
-    shortDescription: "Body oil premium dengan kandungan minyak nilam murni untuk hidrasi kulit.",
+    shortDescription:
+      "Body oil premium dengan kandungan minyak nilam murni untuk hidrasi kulit.",
     form: "body-oil",
     functions: ["skin-care", "relaxation"],
     tags: ["new-arrival", "nilam-passport"],
@@ -239,13 +241,13 @@ export const products: Product[] = [
     stock: 18,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=900&q=80",
-      alt: "Botol body oil premium amber.",
+      src: "https://i.pinimg.com/736x/d2/bc/84/d2bc84b5f29ce980ab3f88323c64aea0.jpg",
+      alt: "Botol Body Oil Luxury berisi minyak nilam murni untuk hidrasi kulit.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=900&q=80",
-        alt: "Detail botol body oil premium.",
+        src: "https://i.pinimg.com/736x/d2/bc/84/d2bc84b5f29ce980ab3f88323c64aea0.jpg",
+        alt: "Botol Body Oil Luxury berisi minyak nilam murni untuk hidrasi kulit.",
       },
     ],
     featuredRank: 5,
@@ -259,7 +261,8 @@ export const products: Product[] = [
     categoryId: "category-aromatherapy",
     passportId: "passport-candles-set",
     name: "Lilin Aromaterapi Nilam",
-    shortDescription: "Lilin aromaterapi nilam & lavender untuk membantu kualitas tidur.",
+    shortDescription:
+      "Lilin aromaterapi nilam & lavender untuk membantu kualitas tidur.",
     form: "essential-oil",
     functions: ["relaxation", "sleep-support"],
     tags: ["new-arrival"],
@@ -268,13 +271,13 @@ export const products: Product[] = [
     stock: 22,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=900&q=80",
-      alt: "Lilin aromaterapi menyala.",
+      src: "https://i.pinimg.com/1200x/e2/69/ea/e269ea2b61add9e93db0b37f829e9f7a.jpg",
+      alt: "Lilin aromaterapi Lilin Aromaterapi Nilam menyala dengan aroma nilam.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=900&q=80",
-        alt: "Lilin aromaterapi.",
+        src: "https://i.pinimg.com/1200x/e2/69/ea/e269ea2b61add9e93db0b37f829e9f7a.jpg",
+        alt: "Lilin aromaterapi Lilin Aromaterapi Nilam menyala dengan aroma nilam.",
       },
     ],
     featuredRank: 6,
@@ -288,7 +291,8 @@ export const products: Product[] = [
     categoryId: "category-aromatherapy",
     passportId: "passport-perfume-local",
     name: "Parfum Nilam Lokal",
-    shortDescription: "Parfum eau de toilette dengan base note nilam Aceh autentik.",
+    shortDescription:
+      "Parfum eau de toilette dengan base note nilam Aceh autentik.",
     form: "perfume",
     functions: ["gift", "relaxation"],
     tags: ["best-seller", "nilam-passport"],
@@ -297,13 +301,13 @@ export const products: Product[] = [
     stock: 15,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
-      alt: "Botol parfum nilam lokal premium.",
+      src: "https://i.pinimg.com/1200x/f4/05/93/f405938257dde3582db6df363bfa5a5f.jpg",
+      alt: "Botol parfum Parfum Nilam Lokal dengan base note nilam Aceh.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
-        alt: "Detail botol parfum nilam.",
+        src: "https://i.pinimg.com/1200x/f4/05/93/f405938257dde3582db6df363bfa5a5f.jpg",
+        alt: "Botol parfum Parfum Nilam Lokal dengan base note nilam Aceh.",
       },
     ],
     featuredRank: 7,
@@ -317,7 +321,8 @@ export const products: Product[] = [
     categoryId: "category-aromatherapy",
     passportId: "passport-roll-on-focus",
     name: "Roll-on Nilam Focus",
-    shortDescription: "Roll-on aromaterapi untuk meningkatkan konsentrasi saat bekerja.",
+    shortDescription:
+      "Roll-on aromaterapi untuk meningkatkan konsentrasi saat bekerja.",
     form: "roll-on",
     functions: ["focus", "relaxation"],
     tags: ["new-arrival"],
@@ -326,13 +331,13 @@ export const products: Product[] = [
     stock: 35,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80",
-      alt: "Roll-on aromaterapi untuk fokus.",
+      src: "https://i.pinimg.com/1200x/b6/bd/c0/b6bdc0c397f681eedd6ea48ddd6b4104.jpg",
+      alt: "Botol roll-on Roll-on Nilam Focus untuk meningkatkan konsentrasi.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80",
-        alt: "Detail roll-on aromaterapi.",
+        src: "https://i.pinimg.com/1200x/b6/bd/c0/b6bdc0c397f681eedd6ea48ddd6b4104.jpg",
+        alt: "Botol roll-on Roll-on Nilam Focus untuk meningkatkan konsentrasi.",
       },
     ],
     featuredRank: 8,
@@ -346,7 +351,8 @@ export const products: Product[] = [
     categoryId: "category-body-care",
     passportId: "passport-soap-gift-set",
     name: "Sabun Nilam Gift Set",
-    shortDescription: "Set tiga sabun artisan nilam dalam kemasan hadiah premium.",
+    shortDescription:
+      "Set tiga sabun artisan nilam dalam kemasan hadiah premium.",
     form: "soap",
     functions: ["skin-care", "gift"],
     tags: ["best-seller"],
@@ -355,13 +361,13 @@ export const products: Product[] = [
     stock: 28,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=900&q=80",
-      alt: "Set sabun nilam dalam kemasan hadiah.",
+      src: "https://i.pinimg.com/1200x/8a/8a/13/8a8a13d67f62c0be35365e9374997bd3.jpg",
+      alt: "Kemasan hadiah Sabun Nilam Gift Set berisi tiga sabun artisan.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=900&q=80",
-        alt: "Detail sabun nilam gift set.",
+        src: "https://i.pinimg.com/1200x/8a/8a/13/8a8a13d67f62c0be35365e9374997bd3.jpg",
+        alt: "Kemasan hadiah Sabun Nilam Gift Set berisi tiga sabun artisan.",
       },
     ],
     featuredRank: 9,
@@ -375,7 +381,8 @@ export const products: Product[] = [
     categoryId: "category-body-care",
     passportId: "passport-lotion-nilam",
     name: "Losion Nilam Hydrate",
-    shortDescription: "Losion pelembap ringan dengan ekstrak nilam untuk kulit kering.",
+    shortDescription:
+      "Losion pelembap ringan dengan ekstrak nilam untuk kulit kering.",
     form: "body-oil",
     functions: ["skin-care"],
     tags: ["nilam-passport"],
@@ -384,13 +391,13 @@ export const products: Product[] = [
     stock: 50,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=900&q=80",
-      alt: "Botol losion nilam untuk hidrasi kulit.",
+      src: "https://i.pinimg.com/736x/2c/13/1c/2c131c5a6098a0e5f8d861961bc39fab.jpg",
+      alt: "Botol losion Losion Nilam Hydrate untuk kulit kering.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=900&q=80",
-        alt: "Detail losion nilam.",
+        src: "https://i.pinimg.com/736x/2c/13/1c/2c131c5a6098a0e5f8d861961bc39fab.jpg",
+        alt: "Botol losion Losion Nilam Hydrate untuk kulit kering.",
       },
     ],
     featuredRank: 10,
@@ -404,7 +411,8 @@ export const products: Product[] = [
     categoryId: "category-home-fragrance",
     passportId: "passport-reed-diffuser",
     name: "Reed Diffuser Patchouli",
-    shortDescription: "Reed diffuser elegan dengan aroma patchouli untuk ruang tamu dan kamar.",
+    shortDescription:
+      "Reed diffuser elegan dengan aroma patchouli untuk ruang tamu dan kamar.",
     form: "diffuser",
     functions: ["home-fragrance", "relaxation"],
     tags: ["new-arrival", "aroma-calm"],
@@ -413,13 +421,13 @@ export const products: Product[] = [
     stock: 12,
     status: "published",
     image: {
-      src: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
-      alt: "Reed diffuser patchouli di meja.",
+      src: "https://i.pinimg.com/736x/b7/da/f4/b7daf4f6114734a97ce094cc11058a1f.jpg",
+      alt: "Reed diffuser Reed Diffuser Patchouli dengan stik reed untuk ruang tamu.",
     },
     gallery: [
       {
-        src: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
-        alt: "Detail reed diffuser patchouli.",
+        src: "https://i.pinimg.com/736x/b7/da/f4/b7daf4f6114734a97ce094cc11058a1f.jpg",
+        alt: "Reed diffuser Reed Diffuser Patchouli dengan stik reed untuk ruang tamu.",
       },
     ],
     featuredRank: 11,
@@ -488,7 +496,8 @@ export const nilamPassports: NilamPassport[] = [
     productKind: "diffuser",
     aromaProfile: ["woody", "amber", "calming"],
     functions: ["home-fragrance", "focus"],
-    usage: "Tuang pada diffuser reed atau electric diffuser sesuai petunjuk alat.",
+    usage:
+      "Tuang pada diffuser reed atau electric diffuser sesuai petunjuk alat.",
     safetyNotes: "Jauhkan dari sumber api dan permukaan mudah rusak.",
     validationStatus: "validated",
     validatedBy: "admin-niloka-curation",
@@ -501,7 +510,8 @@ export const nilamPassports: NilamPassport[] = [
     productKind: "essential-oil",
     aromaProfile: ["woody", "lavender", "calming"],
     functions: ["relaxation", "sleep-support"],
-    usage: "Nyalakan di ruangan berventilasi baik, jauhkan dari benda mudah terbakar.",
+    usage:
+      "Nyalakan di ruangan berventilasi baik, jauhkan dari benda mudah terbakar.",
     safetyNotes: "Jangan tinggalkan lilin menyala tanpa pengawasan.",
     validationStatus: "validated",
     validatedBy: "admin-niloka-curation",
@@ -566,7 +576,8 @@ export const nilamPassports: NilamPassport[] = [
     productKind: "diffuser",
     aromaProfile: ["deep patchouli", "woody", "warm"],
     functions: ["home-fragrance", "relaxation"],
-    usage: "Tempatkan di meja, balik reed stick setiap minggu untuk menjaga aroma.",
+    usage:
+      "Tempatkan di meja, balik reed stick setiap minggu untuk menjaga aroma.",
     safetyNotes: "Jauhkan dari jangkauan anak-anak dan sumber api.",
     validationStatus: "validated",
     validatedBy: "admin-niloka-curation",
@@ -587,12 +598,13 @@ export const ampasListings: AmpasListing[] = [
       city: "Gayo Lues",
       district: "Blangkejeren",
     },
-    distillationProcess: "Penyulingan uap batch kecil, dikeringanginkan 48 jam.",
+    distillationProcess:
+      "Penyulingan uap batch kecil, dikeringanginkan 48 jam.",
     usageTags: ["compost", "briquette", "mulch", "industrial-cellulose"],
     status: "active",
     image: {
-      src: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=900&q=80",
-      alt: "Bahan alami dan minyak nilam sebagai bagian ekonomi sirkular.",
+      src: "/images/ampas/ampas-kering.png",
+      alt: "Limbah ampas nilam kering dari proses penyulingan minyak atsiri.",
     },
     disclaimer:
       "Tag penggunaan adalah klaim seller; NILOKA tidak memverifikasi kandungan atau kualitas ampas.",
@@ -618,8 +630,8 @@ export const ampasListings: AmpasListing[] = [
     usageTags: ["compost", "mushroom-media", "animal-feed"],
     status: "active",
     image: {
-      src: "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=900&q=80",
-      alt: "Produk natural dan bahan produksi tersusun rapi.",
+      src: "/images/ampas/ampas-basah.png",
+      alt: "Limbah ampas nilam basah dari proses penyulingan minyak atsiri.",
     },
     disclaimer:
       "Tag penggunaan adalah klaim seller; NILOKA tidak memverifikasi kandungan atau kualitas ampas.",
@@ -869,7 +881,8 @@ export const adminValidationItems: AdminValidationItem[] = [
     status: "queued",
     submittedBy: "seller-aceh-aroma",
     submittedAt: "2026-07-01T14:30:00.000Z",
-    notes: "Produk baru dari seller terverifikasi. Perlu review klaim bahan alami.",
+    notes:
+      "Produk baru dari seller terverifikasi. Perlu review klaim bahan alami.",
   },
   {
     id: "validation-passport-essential-oil",
@@ -914,7 +927,8 @@ export const adminValidationItems: AdminValidationItem[] = [
     status: "rejected",
     submittedBy: "seller-nilam-lestari",
     submittedAt: "2026-06-28T13:20:00.000Z",
-    notes: "Ditolak: klaim 'menyembuhkan penyakit kulit' melanggar regulasi BPOM. Perlu revisi deskripsi.",
+    notes:
+      "Ditolak: klaim 'menyembuhkan penyakit kulit' melanggar regulasi BPOM. Perlu revisi deskripsi.",
   },
 ];
 
@@ -923,7 +937,8 @@ export const articles: Article[] = [
     id: "art-1",
     slug: "meracik-parfum-budget-kecil",
     title: "Meracik Parfum dengan Budget Yang Kecil, Bisa?",
-    excerpt: "Temukan rahasia meracik parfum berkualitas premium menggunakan minyak nilam murni sebagai pengikat aroma (fixative) dengan modal yang sangat ekonomis.",
+    excerpt:
+      "Temukan rahasia meracik parfum berkualitas premium menggunakan minyak nilam murni sebagai pengikat aroma (fixative) dengan modal yang sangat ekonomis.",
     content: `## Rahasia Meracik Parfum Premium dengan Budget Ekonomis
 
 Minyak nilam (*patchouli oil*) dikenal luas di industri wewangian dunia sebagai **fixative** atau bahan pengikat aroma. Sifatnya yang tidak mudah menguap membuat keharuman parfum bertahan jauh lebih lama. 
@@ -945,18 +960,20 @@ Tonton video lengkapnya untuk mempelajari takaran detail dan tips pemasaran parf
     author: "Muhammad Haikal",
     authorRole: "Founder Neelam Geutanyo",
     publishedAt: "2026-05-12T10:00:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=600",
     category: "olahan",
     videoUrl: "https://youtu.be/WxyB91h8l-c",
     videoDuration: "14:25",
     readTime: "3 min read",
-    tags: ["parfum", "neelam geutanyo", "umkm", "atsiri", "peluang usaha"]
+    tags: ["parfum", "neelam geutanyo", "umkm", "atsiri", "peluang usaha"],
   },
   {
     id: "art-2",
     slug: "nilam-aceh-smart-choice-daily-needs",
     title: "NILAM ACEH: Smart Choice for Your Daily Needs",
-    excerpt: "Bagaimana minyak nilam Aceh yang mendunia dapat diintegrasikan ke dalam produk kebutuhan harian seperti sabun, disinfektan, dan kosmetik.",
+    excerpt:
+      "Bagaimana minyak nilam Aceh yang mendunia dapat diintegrasikan ke dalam produk kebutuhan harian seperti sabun, disinfektan, dan kosmetik.",
     content: `## Mengapa Nilam Aceh Menjadi Pilihan Cerdas Kebutuhan Harian?
 
 Minyak nilam Aceh terkenal di pasar global karena memiliki kadar **Patchouli Alcohol (PA)** yang sangat tinggi (sering kali di atas 30-34%). Kualitas ini menjadikannya salah satu minyak atsiri terbaik di dunia.
@@ -970,18 +987,20 @@ Atsiri Research Center (ARC) Universitas Syiah Kuala terus mengembangkan inovasi
     author: "ARC USK",
     authorRole: "Atsiri Research Center",
     publishedAt: "2026-06-01T09:30:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&q=80&w=600",
     category: "olahan",
     videoUrl: "https://youtu.be/1qJucuC-d1Q",
     videoDuration: "08:12",
     readTime: "4 min read",
-    tags: ["arc usk", "atsiri", "produk harian", "inovasi", "aceh"]
+    tags: ["arc usk", "atsiri", "produk harian", "inovasi", "aceh"],
   },
   {
     id: "art-3",
     slug: "budidaya-nilam-dari-awal-hingga-suling",
     title: "Panduan Lengkap Budidaya Nilam dari Awal Hingga Penyulingan",
-    excerpt: "Pelajari metode menanam nilam yang benar, pemeliharaan tanaman dari hama, hingga teknik penyulingan minyak atsiri bernilai tinggi.",
+    excerpt:
+      "Pelajari metode menanam nilam yang benar, pemeliharaan tanaman dari hama, hingga teknik penyulingan minyak atsiri bernilai tinggi.",
     content: `## Panduan Praktis Pertanian Nilam Modern
 
 Menanam nilam membutuhkan ketelatenan, namun menawarkan keuntungan ekonomi yang menjanjikan. Berikut adalah rangkuman tahapan budidaya nilam dari penyiapan lahan hingga menghasilkan minyak suling yang jernih:
@@ -1001,18 +1020,20 @@ Menanam nilam membutuhkan ketelatenan, namun menawarkan keuntungan ekonomi yang 
     author: "Tani Mandiri",
     authorRole: "Kelompok Tani Atsiri",
     publishedAt: "2026-04-20T11:15:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=600",
     category: "budidaya",
     videoUrl: "https://youtu.be/vpoid8g-4lM",
     videoDuration: "25:40",
     readTime: "6 min read",
-    tags: ["budidaya", "penyulingan", "panduan tani", "distilasi"]
+    tags: ["budidaya", "penyulingan", "panduan tani", "distilasi"],
   },
   {
     id: "art-4",
     slug: "pemanfaatan-limbah-suling-menjadi-pupuk",
     title: "Pemanfaatan Limbah Suling Nilam Menjadi Pupuk Organik Cair",
-    excerpt: "Jangan buang ampas hasil penyulingan nilam! Pelajari cara mengolah limbah padat dan cair nilam menjadi pupuk organik kaya nutrisi.",
+    excerpt:
+      "Jangan buang ampas hasil penyulingan nilam! Pelajari cara mengolah limbah padat dan cair nilam menjadi pupuk organik kaya nutrisi.",
     content: `## Zero Waste Farming: Mengubah Limbah Nilam Menjadi Pupuk Premium
 
 Proses penyulingan minyak nilam menyisakan dua jenis limbah: ampas padat (daun/batang rebus) dan limbah cair (air sisa distilasi). Melalui metode *zero waste*, kedua bahan ini dapat diproses menjadi pupuk berkualitas tinggi untuk menyuburkan kembali kebun nilam Anda.
@@ -1030,18 +1051,20 @@ Proses penyulingan minyak nilam menyisakan dua jenis limbah: ampas padat (daun/b
     author: "Dr. Ir. Rahmat M.Sc",
     authorRole: "Pakar Pertanian Atsiri",
     publishedAt: "2026-05-30T08:00:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=600",
     category: "pupuk",
     videoUrl: "https://youtu.be/Q5LlJb3WEe8",
     videoDuration: "18:30",
     readTime: "5 min read",
-    tags: ["pupuk", "pupuk-cair", "zero-waste", "fermentasi", "limbah-nilam"]
+    tags: ["pupuk", "pupuk-cair", "zero-waste", "fermentasi", "limbah-nilam"],
   },
   {
     id: "art-5",
     slug: "pemberian-pupuk-npk-ditabur-atau-dikocor",
     title: "Pemberian Pupuk NPK Pada Tanaman Nilam: Ditabur atau Dikocor?",
-    excerpt: "Perbandingan metode pengaplikasian pupuk NPK pada nilam untuk penyerapan nutrisi yang optimal dan pencegahan kerusakan akar.",
+    excerpt:
+      "Perbandingan metode pengaplikasian pupuk NPK pada nilam untuk penyerapan nutrisi yang optimal dan pencegahan kerusakan akar.",
     content: `## Mana yang Lebih Efektif untuk Tanaman Nilam: Ditabur atau Dikocor?
 
 Pupuk NPK sangat penting untuk menunjang pertumbuhan vegetatif tanaman nilam, khususnya pembentukan daun baru yang kaya akan kelenjar minyak atsiri. Namun, cara pemberian pupuk sangat memengaruhi efektivitas penyerapan nutrisi.
@@ -1060,18 +1083,20 @@ Simak video untuk melihat panduan perbandingan dosis dan demonstrasi penerapanny
     author: "Agro Atsiri Channel",
     authorRole: "Edukator Tani",
     publishedAt: "2026-06-15T14:00:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    imageUrl:
+      "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     category: "budidaya",
     videoUrl: "https://youtu.be/Y5sQCAdh26U",
     videoDuration: "10:45",
     readTime: "3 min read",
-    tags: ["pupuk-npk", "pemupukan", "nutrisi", "tips-tani"]
+    tags: ["pupuk-npk", "pemupukan", "nutrisi", "tips-tani"],
   },
   {
     id: "art-6",
     slug: "kapan-pupuk-pertama-buat-nilam",
     title: "Kapan Pupuk Pertama Buat Nilam & Jenis Pupuk Terbaik",
-    excerpt: "Menentukan waktu krusial pemupukan pertama tanaman nilam pasca tanam dan rekomendasi jenis pupuk agar bibit tumbuh cepat.",
+    excerpt:
+      "Menentukan waktu krusial pemupukan pertama tanaman nilam pasca tanam dan rekomendasi jenis pupuk agar bibit tumbuh cepat.",
     content: `## Menentukan Fase Emas Pemupukan Awal Tanaman Nilam
 
 Banyak petani pemula melakukan kesalahan dengan langsung memberikan pupuk kimia dosis tinggi sesaat setelah bibit nilam dipindahkan ke lahan. Hal ini justru berisiko membuat akar bibit terbakar dan layu.
@@ -1088,18 +1113,20 @@ Ikuti petunjuk praktis ini agar tanaman nilam Anda tidak stres dan tumbuh seraga
     author: "Penyuluh Tani Aceh",
     authorRole: "Dinas Pertanian",
     publishedAt: "2026-03-10T10:00:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=600",
     category: "budidaya",
     videoUrl: "https://youtu.be/chE8XciUqJI",
     videoDuration: "12:15",
     readTime: "4 min read",
-    tags: ["pemupukan-awal", "pupuk-organik", "tunas-nilam", "fase-vegetatif"]
+    tags: ["pemupukan-awal", "pupuk-organik", "tunas-nilam", "fase-vegetatif"],
   },
   {
     id: "art-7",
     slug: "rahasia-agar-nilam-subur-lebat",
     title: "Rahasia Agar Tanaman Nilam Tumbuh Subur dan Daun Lebat",
-    excerpt: "Tips dan trik dari petani berpengalaman untuk mengoptimalkan rimbunnya daun nilam yang menjadi kunci utama tingginya produksi minyak.",
+    excerpt:
+      "Tips dan trik dari petani berpengalaman untuk mengoptimalkan rimbunnya daun nilam yang menjadi kunci utama tingginya produksi minyak.",
     content: `## Kunci Sukses Daun Nilam Rimbun & Kaya Kandungan Minyak
 
 Dalam budidaya nilam, target utama kita adalah menghasilkan **biomassa daun yang lebat** karena di sinilah kelenjar minyak atsiri (*glandular trichomes*) terbentuk. Berikut rahasia perawatan agar daun nilam tumbuh subur:
@@ -1113,18 +1140,26 @@ Penerapan tips ini secara konsisten terbukti dapat meningkatkan rendemen minyak 
     author: "Pak Sugeng",
     authorRole: "Petani Nilam Senior",
     publishedAt: "2026-06-25T16:30:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?auto=format&fit=crop&q=80&w=600",
     category: "budidaya",
     videoUrl: "https://youtu.be/3iRdwMYPr3c",
     videoDuration: "15:50",
     readTime: "4 min read",
-    tags: ["daun-lebat", "tips-petani", "pruning", "hama-ulat", "rendemen-tinggi"]
+    tags: [
+      "daun-lebat",
+      "tips-petani",
+      "pruning",
+      "hama-ulat",
+      "rendemen-tinggi",
+    ],
   },
   {
     id: "art-8",
     slug: "briket-ampas-nilam-energi-alternatif",
     title: "Mengubah Ampas Nilam Menjadi Briket Energi Alternatif",
-    excerpt: "Teknik memproses sisa limbah padat batang dan daun nilam menjadi briket bahan bakar padat berdaya kalori tinggi untuk kebutuhan industri rumah tangga.",
+    excerpt:
+      "Teknik memproses sisa limbah padat batang dan daun nilam menjadi briket bahan bakar padat berdaya kalori tinggi untuk kebutuhan industri rumah tangga.",
     content: `## Biobriket Ampas Nilam: Mengubah Limbah Menjadi Sumber Energi Terbarukan
 
 Penyulingan nilam menyisakan limbah padat berupa ampas daun dan batang dalam jumlah yang sangat melimpah. Jika dibiarkan menumpuk, limbah ini dapat menimbulkan bau kurang sedap. Salah satu solusi tercerdas adalah mengolahnya menjadi **biobriket**.
@@ -1144,16 +1179,25 @@ Biobriket ini siap digunakan sebagai bahan bakar bersih dengan aroma khas nilam 
     author: "Ir. Hendra Saputra",
     authorRole: "Peneliti Biomassa Energi",
     publishedAt: "2026-06-29T10:00:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1605980776566-0486c3ac7617?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1605980776566-0486c3ac7617?auto=format&fit=crop&q=80&w=600",
     category: "energi",
     readTime: "5 min read",
-    tags: ["briket", "biomassa", "energi-terbarukan", "pengarangan", "limbah-padat"]
+    tags: [
+      "briket",
+      "biomassa",
+      "energi-terbarukan",
+      "pengarangan",
+      "limbah-padat",
+    ],
   },
   {
     id: "art-9",
     slug: "hidrosol-pestisida-nabati",
-    title: "Cara Mengolah Air Hidrosol Sisa Penyulingan Nilam Menjadi Pestisida Nabati",
-    excerpt: "Air sisa hasil kondensasi penyulingan nilam (air hidrosol) ternyata mengandung senyawa aktif anti-serangga. Pelajari cara membuatnya di sini.",
+    title:
+      "Cara Mengolah Air Hidrosol Sisa Penyulingan Nilam Menjadi Pestisida Nabati",
+    excerpt:
+      "Air sisa hasil kondensasi penyulingan nilam (air hidrosol) ternyata mengandung senyawa aktif anti-serangga. Pelajari cara membuatnya di sini.",
     content: `## Memanfaatkan Air Hidrosol Nilam sebagai Pelindung Tanaman Organik
 
 Saat menyuling nilam dengan metode uap-air, diperoleh dua fraksi cair: minyak nilam murni di lapisan atas, dan **air hidrosol (air bunga nilam)** di lapisan bawah. Seringkali air hidrosol ini dibuang begitu saja ke saluran air, padahal menyimpan manfaat luar biasa sebagai pestisida nabati.
@@ -1173,16 +1217,18 @@ Meskipun minyak nilam utama telah terpisah, air hidrosol masih mengandung moleku
     author: "Koperasi Nilam Lestari",
     authorRole: "Tim Litbang",
     publishedAt: "2026-07-03T09:00:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=600",
     category: "olahan",
     readTime: "4 min read",
-    tags: ["hidrosol", "pestisida-nabati", "organik", "hama-tanaman"]
+    tags: ["hidrosol", "pestisida-nabati", "organik", "hama-tanaman"],
   },
   {
     id: "art-10",
     slug: "pupuk-kompos-nilam",
     title: "Panduan Pembuatan Pupuk Kompos Organik dari Daun dan Batang Nilam",
-    excerpt: "Mengubah ampas nilam yang melimpah menjadi pupuk kompos organik gembur yang kaya unsur hara makro untuk memperbaiki kesuburan tanah perkebunan.",
+    excerpt:
+      "Mengubah ampas nilam yang melimpah menjadi pupuk kompos organik gembur yang kaya unsur hara makro untuk memperbaiki kesuburan tanah perkebunan.",
     content: `## Menghidupkan Kembali Tanah Kebun dengan Kompos Ampas Nilam
 
 Tanaman nilam mengambil banyak unsur hara dari dalam tanah selama siklus pertumbuhannya. Mengembalikan ampas nilam yang telah didekomposisi (dikomposkan) ke kebun adalah langkah terbaik untuk menjaga kelestarian unsur hara tanah.
@@ -1201,16 +1247,19 @@ Aplikasikan kompos gembur ini sebanyak 1-2 kg per lubang tanam saat penyiapan la
     author: "Bakti Tani Lestari",
     authorRole: "Yayasan Pemberdayaan Petani",
     publishedAt: "2026-06-20T11:00:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=600",
     category: "pupuk",
     readTime: "5 min read",
-    tags: ["kompos", "pupuk-organik", "mikroba", "kesuburan-tanah"]
+    tags: ["kompos", "pupuk-organik", "mikroba", "kesuburan-tanah"],
   },
   {
     id: "art-11",
     slug: "media-tanam-jamur-ampas-nilam",
-    title: "Pemanfaatan Ampas Nilam sebagai Media Tanam Jamur Tiram yang Bernilai Ekonomis",
-    excerpt: "Ampas nilam kering ternyata menjadi media pertumbuhan yang sangat disukai jamur tiram. Pelajari cara pembuatan baglog jamur dari ampas nilam.",
+    title:
+      "Pemanfaatan Ampas Nilam sebagai Media Tanam Jamur Tiram yang Bernilai Ekonomis",
+    excerpt:
+      "Ampas nilam kering ternyata menjadi media pertumbuhan yang sangat disukai jamur tiram. Pelajari cara pembuatan baglog jamur dari ampas nilam.",
     content: `## Peluang Usaha Baru: Budidaya Jamur Tiram Berbasis Limbah Atsiri
 
 Salah satu pemanfaatan limbah padat nilam yang memiliki nilai ekonomi tinggi secara instan adalah menjadikannya bahan campuran media tanam (baglog) **jamur tiram putih**. Kandungan lignoselulosa yang tinggi dalam ampas batang nilam sangat cocok sebagai nutrisi pertumbuhan miselium jamur.
@@ -1233,16 +1282,25 @@ Miselium jamur tumbuh subur pada media ampas nilam karena struktur serat selulos
     author: "Rian Hidayat",
     authorRole: "Pengusaha Jamur & Alumni ARC",
     publishedAt: "2026-07-05T13:00:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&fit=crop&q=80&w=600",
     category: "olahan",
     readTime: "5 min read",
-    tags: ["jamur-tiram", "baglog", "peluang-bisnis", "selulosa", "limbah-padat"]
+    tags: [
+      "jamur-tiram",
+      "baglog",
+      "peluang-bisnis",
+      "selulosa",
+      "limbah-padat",
+    ],
   },
   {
     id: "art-12",
     slug: "zero-waste-pakan-ternak",
-    title: "Zero Waste Atsiri: Mengintegrasikan Limbah Nilam dengan Pakan Ternak Koperasi",
-    excerpt: "Bagaimana koperasi tani di Aceh menyiasati tingginya biaya pakan ternak sapi dengan memanfaatkan fermentasi silase ampas daun nilam.",
+    title:
+      "Zero Waste Atsiri: Mengintegrasikan Limbah Nilam dengan Pakan Ternak Koperasi",
+    excerpt:
+      "Bagaimana koperasi tani di Aceh menyiasati tingginya biaya pakan ternak sapi dengan memanfaatkan fermentasi silase ampas daun nilam.",
     content: `## Inovasi Pakan Ternak Murah Berbasis Fermentasi Ampas Nilam
 
 Konsep pertanian sirkular (*circular farming*) menyatukan sub-sektor perkebunan nilam dengan peternakan sapi/kambing dalam satu siklus tanpa limbah. Koperasi tani di Gayo Lues dan Aceh Jaya kini berhasil menghemat biaya pakan hingga 40% melalui integrasi ini.
@@ -1265,9 +1323,10 @@ Kotoran sapi dari peternakan ini nantinya dikumpulkan dan diolah kembali di unit
     author: "Drh. Fahmi Rizal",
     authorRole: "Pakar Peternakan Sirkular",
     publishedAt: "2026-07-06T15:00:00.000Z",
-    imageUrl: "https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?auto=format&fit=crop&q=80&w=600",
+    imageUrl:
+      "https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?auto=format&fit=crop&q=80&w=600",
     category: "pupuk",
     readTime: "6 min read",
-    tags: ["pakan-ternak", "silase", "sirkular", "koperasi-tani", "fermentasi"]
-  }
+    tags: ["pakan-ternak", "silase", "sirkular", "koperasi-tani", "fermentasi"],
+  },
 ];

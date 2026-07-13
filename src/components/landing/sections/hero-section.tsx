@@ -12,7 +12,7 @@ export function HeroSection() {
           fill
           priority
           sizes="100vw"
-          src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=2200&q=85"
+          src="/images/landing/niloka-hero.png"
         />
 
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_68%_18%,rgba(214,170,91,0.22),transparent_28%),linear-gradient(90deg,rgba(23,34,23,0.96),rgba(32,52,31,0.72),rgba(32,52,31,0.1))]" />
@@ -20,7 +20,8 @@ export function HeroSection() {
         <div className="relative flex h-full flex-col p-5 sm:p-7 lg:p-9 justify-end">
           <div className="max-w-5xl pb-4 pt-12 sm:pt-24">
             <h1 className="hero-title text-4xl font-extrabold leading-[0.95] sm:text-6xl lg:text-[5rem] xl:text-[5.75rem]">
-              Minyak Nilam <span className="font-accent italic font-medium">murni</span>
+              Minyak Nilam{" "}
+              <span className="font-accent italic font-medium">murni</span>
               <br />
               Aceh, langsung
               <br />
@@ -28,8 +29,8 @@ export function HeroSection() {
             </h1>
 
             <p className="hero-copy mt-4 sm:mt-6 max-w-2xl text-sm sm:text-lg font-medium leading-6 sm:leading-7 text-white-soft/82">
-              Temukan keharuman mewah minyak atsiri murni, sabun artisan alami, 
-              dan lilin aromaterapi buatan pengrajin lokal Aceh secara langsung 
+              Temukan keharuman mewah minyak atsiri murni, sabun artisan alami,
+              dan lilin aromaterapi buatan pengrajin lokal Aceh secara langsung
               dengan transparansi kualitas terlacak.
             </p>
 
