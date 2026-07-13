@@ -22,17 +22,18 @@ ATURAN PENTING:
 - Saat menulis "alasan", JANGAN pernah menyebut kata "user" atau merujuk pada orang yang menginput. Rujuk semuanya ke "gambar yang diinput" atau "info tambahan yang diberikan", seolah menjelaskan langsung ke pembaca hasil analisis.
 - Satu tanaman bisa menunjukkan gejala dari LEBIH DARI SATU klasifikasi sekaligus (misalnya bercak daun bersamaan dengan busuk batang). Kalau ada indikasi lebih dari satu masalah di gambar, sebutkan masalah utama (paling dominan/jelas) di "diagnosis", dan masalah kedua di "kemungkinanTambahan". Kalau cuma ada satu masalah atau tidak ada, isi "kemungkinanTambahan" dengan null.
 
-Balas HANYA dalam format JSON persis seperti ini, tanpa markdown, tanpa teks lain:
-{
-  "diagnosis": "salah satu dari: Budok, Bercak Daun, Mosaik Nilam, Busuk Akar & Pangkal Batang, Sehat",
-  "confidence": 85,
-  "kemungkinanTambahan": "nama klasifikasi kedua jika ada indikasi ganda, atau null",
-  "penyebab": "nama organisme penyebab sesuai daftar di atas, atau 'Tidak ada' jika Sehat",
-  "alasan": "penjelasan detail ciri visual di gambar yang mendukung diagnosis, sebutkan juga jika ada info tambahan yang cocok atau tidak cocok dengan gambar, tanpa menyebut kata 'user'",
-  "rekomendasi": ["langkah 1 yang konkret", "langkah 2 yang konkret", "langkah 3 yang konkret"]
-}
+Balas HANYA object JSON valid, tanpa markdown, tanpa code fence, tanpa teks pembuka/penutup.
 
-Field "confidence" WAJIB angka integer 0-100. Field "rekomendasi" WAJIB array berisi 2-4 langkah konkret dan actionable, bukan kalimat umum. Kalau diagnosis "Sehat", isi rekomendasi dengan langkah perawatan pencegahan singkat.
+Kontrak JSON wajib:
+- "diagnosis": salah satu string ini saja: "Budok", "Bercak Daun", "Mosaik Nilam", "Busuk Akar & Pangkal Batang", "Sehat".
+- "confidence": integer 0-100.
+- "kemungkinanTambahan": salah satu string diagnosis di atas jika ada indikasi ganda, atau null. Jangan tulis "null" sebagai string.
+- "penyebab": nama organisme penyebab sesuai daftar, atau "Tidak ada" jika diagnosis "Sehat".
+- "alasan": string penjelasan detail berbasis visual gambar dan info tambahan, tanpa menyebut kata "user".
+- "rekomendasi": array berisi 2-4 string langkah konkret.
+
+Contoh bentuk JSON valid:
+{"diagnosis":"Sehat","confidence":85,"kemungkinanTambahan":null,"penyebab":"Tidak ada","alasan":"Gambar yang diinput menunjukkan daun hijau dan bentuk tanaman normal tanpa gejala penyakit yang jelas.","rekomendasi":["Pantau kondisi daun secara berkala","Jaga drainase media tanam","Berikan pemupukan seimbang sesuai kebutuhan"]}
 `;
 
 export type DiagnoseResult = {
@@ -75,7 +76,18 @@ const ALLOWED_DIAGNOSES = [
 ] as const;
 
 function cleanAiJson(text: string): string {
-  return text.replace(/```json|```/g, "").trim();
+  const withoutFence = text
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+  const start = withoutFence.indexOf("{");
+  const end = withoutFence.lastIndexOf("}");
+
+  if (start >= 0 && end > start) {
+    return withoutFence.slice(start, end + 1).trim();
+  }
+
+  return withoutFence;
 }
 
 function isAllowedDiagnosis(value: unknown): value is (typeof ALLOWED_DIAGNOSES)[number] {
@@ -99,7 +111,10 @@ function normalizeDiagnoseResult(
 
   const result = value as Partial<DiagnoseResult>;
   const recommendations = Array.isArray(result.rekomendasi)
-    ? result.rekomendasi.filter((item): item is string => typeof item === "string")
+    ? result.rekomendasi
+        .filter((item): item is string => typeof item === "string")
+        .map((item) => item.trim())
+        .filter(Boolean)
     : [];
 
   if (

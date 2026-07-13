@@ -41,6 +41,13 @@ type GeminiStreamChunk = {
   }>;
 };
 
+type GeminiInteractionResponse = {
+  steps?: Array<{
+    type?: string;
+    content?: Array<{ text?: string; type?: string }>;
+  }>;
+};
+
 type GroqChoice = {
   message?: {
     content?: string;
@@ -58,7 +65,12 @@ type GroqStreamChunk = {
   }>;
 };
 
-const AI_TIMEOUT_MS = 20_000;
+function getAiTimeoutMs(): number {
+  const configured = Number(process.env.AI_TIMEOUT_MS);
+  return Number.isFinite(configured) && configured > 0
+    ? configured
+    : 75_000;
+}
 
 export class AiProviderError extends Error {
   constructor(
@@ -119,7 +131,7 @@ function getGeminiTextModel(): string {
 }
 
 function getGeminiVisionModel(): string {
-  return process.env.GEMINI_VISION_MODEL || process.env.GEMINI_MODEL || "gemini-3.5-flash";
+  return process.env.GEMINI_VISION_MODEL || "gemini-3.5-flash";
 }
 
 function getGroqTextModel(): string {
@@ -136,7 +148,7 @@ function isUnavailableStatus(status: number): boolean {
 
 async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), getAiTimeoutMs());
 
   try {
     return await fetch(url, {
@@ -150,6 +162,17 @@ async function fetchWithTimeout(url: string, init: RequestInit): Promise<Respons
 
 function getGeminiText(data: GeminiResponse): string {
   return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+}
+
+function getGeminiInteractionText(data: GeminiInteractionResponse): string {
+  const outputStep = data.steps?.find((step) => step.type === "model_output");
+  return (
+    outputStep?.content
+      ?.map((part) => part.text?.trim() ?? "")
+      .filter(Boolean)
+      .join("\n")
+      .trim() ?? ""
+  );
 }
 
 function getGroqText(data: GroqResponse): string {
@@ -415,30 +438,74 @@ async function generateVisionWithGemini(
     );
   }
 
-  const response = await fetchWithTimeout(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-    {
-      body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: [
-              { text: prompt },
-              { inlineData: { data: imageBase64, mimeType } },
-            ],
+  const response = await fetchWithTimeout("https://generativelanguage.googleapis.com/v1beta/interactions", {
+    body: JSON.stringify({
+      model,
+      input: [
+        { type: "text", text: prompt },
+        { type: "image", data: imageBase64, mime_type: mimeType },
+      ],
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
+          properties: {
+            diagnosis: {
+              type: "string",
+              enum: [
+                "Budok",
+                "Bercak Daun",
+                "Mosaik Nilam",
+                "Busuk Akar & Pangkal Batang",
+                "Sehat",
+              ],
+            },
+            confidence: { type: "integer", minimum: 0, maximum: 100 },
+            kemungkinanTambahan: {
+              anyOf: [
+                {
+                  type: "string",
+                  enum: [
+                    "Budok",
+                    "Bercak Daun",
+                    "Mosaik Nilam",
+                    "Busuk Akar & Pangkal Batang",
+                    "Sehat",
+                  ],
+                },
+                { type: "null" },
+              ],
+            },
+            penyebab: { type: "string" },
+            alasan: { type: "string" },
+            rekomendasi: {
+              type: "array",
+              minItems: 2,
+              maxItems: 4,
+              items: { type: "string" },
+            },
           },
-        ],
-        generationConfig: {
-          temperature: 0.2,
-          topP: 0.8,
-          maxOutputTokens: 900,
-          responseMimeType: "application/json",
+          required: [
+            "diagnosis",
+            "confidence",
+            "kemungkinanTambahan",
+            "penyebab",
+            "alasan",
+            "rekomendasi",
+          ],
         },
-      }),
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
+      },
+      generation_config: {
+        thinking_level: "minimal",
+      },
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey,
     },
-  );
+    method: "POST",
+  });
 
   if (!response.ok) {
     throw new AiProviderError(
@@ -448,8 +515,8 @@ async function generateVisionWithGemini(
     );
   }
 
-  const data: GeminiResponse = await response.json();
-  const text = getGeminiText(data);
+  const data: GeminiInteractionResponse = await response.json();
+  const text = getGeminiInteractionText(data);
 
   if (!text) {
     throw new AiProviderError("AI_RESPONSE_INVALID", "Gemini vision returned empty response.", {
