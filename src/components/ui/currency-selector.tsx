@@ -19,11 +19,6 @@ export function CurrencySelector({
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -67,7 +62,7 @@ export function CurrencySelector({
   const isDarkNavbar = theme === "dark";
 
   // Render mobile bottom sheet inside React Portal
-  const mobileDrawer = isOpen && mounted && typeof document !== "undefined" ? createPortal(
+  const mobileDrawer = isOpen && typeof document !== "undefined" ? createPortal(
     <div className="fixed inset-0 z-50 lg:hidden">
       {/* Overlay */}
       <div

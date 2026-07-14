@@ -78,12 +78,15 @@ export function CartDrawer() {
     refreshCart();
 
     if (items.length === 0) {
-      setDetails([]);
       return;
     }
 
     let cancelled = false;
-    setIsLoadingDetails(true);
+    queueMicrotask(() => {
+      if (!cancelled) {
+        setIsLoadingDetails(true);
+      }
+    });
 
     getCartItemsDetailAction(items.map((i) => i.id))
       .then(({ items: d, unavailableIds }) => {

@@ -22,7 +22,6 @@ import { ChatService } from "@/lib/services/chat-service";
 import { useAuth } from "@/context/auth-context";
 import { searchProductPreviewAction } from "@/lib/actions/product-actions";
 import type { SearchPreviewItem } from "@/lib/actions/product-actions";
-import { formatRupiah } from "@/lib/formatters";
 import { useCurrency } from "@/context/currency-context";
 import { CurrencySelector } from "@/components/ui/currency-selector";
 

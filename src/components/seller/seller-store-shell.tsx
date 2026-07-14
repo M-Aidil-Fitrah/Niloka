@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Search,
-  Store,
   MapPin,
   Star,
   MessageSquare,
@@ -20,7 +19,6 @@ import {
 import type { Product, Seller, Promo, ProductCategory } from "@/lib/contracts";
 import { ProductCard } from "@/components/catalog/product-card";
 import { Pagination } from "@/components/ui/pagination";
-import { Badge } from "@/components/ui/badge";
 import { formatRupiah } from "@/lib/formatters";
 import { cn } from "@/lib/styles";
 import { ChevronLeftIcon } from "@/components/ui/icons";
