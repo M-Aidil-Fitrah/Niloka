@@ -405,6 +405,7 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
         unitPriceCurrency: item.product.priceCurrency,
         productName: item.product.name,
         productImage: item.product.imageSrc || "",
+        isValid: true,
       };
     }
 
@@ -428,6 +429,7 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
         unitPriceCurrency: item.ampasListing.pricePerKgCurrency,
         productName: ampasName,
         productImage: item.ampasListing.imageSrc || "",
+        isValid: true,
       };
     }
 
@@ -436,8 +438,17 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
       sellerId: getCartItemSellerId(item),
       productName: "Produk Nilam",
       productImage: "",
+      isValid: false,
     };
   });
+
+  const hasInvalidItems = resolvedItems.some((item) => !item.isValid);
+  if (hasInvalidItems) {
+    return {
+      ok: false,
+      message: "Beberapa produk di keranjang Anda sudah tidak tersedia. Silakan buka keranjang belanja untuk membersihkannya otomatis.",
+    };
+  }
 
   const subtotal = resolvedItems.reduce(
     (total, item) => total + item.unitPriceAmount * item.quantity,
