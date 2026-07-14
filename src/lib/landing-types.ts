@@ -13,8 +13,8 @@ export type ProductCard = {
   id: string;
   name: string;
   tag: string;
-  price: string;
-  originalPrice?: string;
+  price: number;
+  originalPrice?: number;
   imageUrl: string;
   imageAlt: string;
 };

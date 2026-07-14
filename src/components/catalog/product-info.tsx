@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, ShoppingCart, Ticket, Copy, Check, Store } from "lucide-react";
-import { formatRupiah } from "@/lib/formatters";
+import { PriceDisplay } from "@/components/ui/price-display";
 import { MapPinIcon, StarIcon } from "@/components/ui/icons";
 import type { Product, Seller, Promo } from "@/lib/contracts";
 import { useCart } from "@/context/cart-context";
@@ -87,12 +87,12 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
       {/* Price */}
       <div className="mt-3 flex items-baseline gap-3 flex-wrap">
         <span className="text-3xl font-extrabold text-brand-900">
-          {formatRupiah(product.price.amount)}
+          <PriceDisplay amount={product.price.amount} />
         </span>
         {product.originalPrice && product.originalPrice.amount > product.price.amount && (
           <>
             <span className="text-sm font-semibold text-ink-600/50 line-through">
-              {formatRupiah(product.originalPrice.amount)}
+              <PriceDisplay amount={product.originalPrice.amount} showTooltip={false} />
             </span>
             <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-wider">
               Hemat {Math.round(((product.originalPrice.amount - product.price.amount) / product.originalPrice.amount) * 100)}%
@@ -194,14 +194,18 @@ export function ProductInfo({ product, seller, promos = [] }: ProductInfoProps) 
                     )}
                   </div>
                   <span className="text-xs font-black text-brand-950 block pt-0.5">
-                    {promo.type === "percentage"
-                      ? `Diskon ${promo.value}%`
-                      : promo.type === "fixed-amount"
-                      ? `Potongan Rp ${promo.value.toLocaleString("id-ID")}`
-                      : "Bebas Ongkos Kirim"}
+                    {promo.type === "percentage" ? (
+                      `Diskon ${promo.value}%`
+                    ) : promo.type === "fixed-amount" ? (
+                      <span className="flex items-center gap-0.5">
+                        Potongan <PriceDisplay amount={promo.value} showTooltip={false} className="border-none p-0 font-black inline" />
+                      </span>
+                    ) : (
+                      "Bebas Ongkos Kirim"
+                    )}
                   </span>
                   <span className="text-[9px] text-ink-600 block leading-tight">
-                    Min. Belanja {formatRupiah(promo.minSubtotal.amount)}
+                    Min. Belanja <PriceDisplay amount={promo.minSubtotal.amount} showTooltip={false} />
                   </span>
                 </div>
                 

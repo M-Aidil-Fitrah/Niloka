@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { PriceDisplay } from "@/components/ui/price-display";
 import type { AmpasListing } from "@/lib/contracts";
 
 type AmpasCardProps = {
@@ -18,7 +19,6 @@ const usageLabels: Record<string, string> = {
 };
 
 export function AmpasCard({ listing, viewMode }: AmpasCardProps) {
-  const formattedPrice = `Rp ${listing.pricePerKg.amount.toLocaleString("id-ID")}/Kg`;
   const locationString = `${listing.location.district}, ${listing.location.city}`;
 
   const conditionBadge =
@@ -71,7 +71,9 @@ export function AmpasCard({ listing, viewMode }: AmpasCardProps) {
               </div>
               <div>
                 <span className="text-ink-600 block text-[9px] font-bold uppercase">Harga per Kg</span>
-                <span className="font-extrabold text-brand-950">{formattedPrice}</span>
+                <span className="font-extrabold text-brand-955 flex items-center gap-0.5">
+                  <PriceDisplay amount={listing.pricePerKg.amount} />/Kg
+                </span>
               </div>
               <div className="col-span-2">
                 <span className="text-ink-600 block text-[9px] font-bold uppercase">Metode Suling</span>
@@ -99,7 +101,7 @@ export function AmpasCard({ listing, viewMode }: AmpasCardProps) {
           <div className="text-right hidden md:block">
             <span className="text-[10px] text-ink-600 block">Total Nilai Batch</span>
             <span className="text-sm font-extrabold text-brand-950">
-              Rp {(listing.pricePerKg.amount * listing.quantityKg).toLocaleString("id-ID")}
+              <PriceDisplay amount={listing.pricePerKg.amount * listing.quantityKg} />
             </span>
           </div>
           <Link
@@ -159,7 +161,9 @@ export function AmpasCard({ listing, viewMode }: AmpasCardProps) {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-ink-600 font-medium">Harga per Kg</span>
-              <span className="font-extrabold text-brand-950">{formattedPrice}</span>
+              <span className="font-extrabold text-brand-950 flex items-center gap-0.5">
+                <PriceDisplay amount={listing.pricePerKg.amount} />/Kg
+              </span>
             </div>
             <div className="pt-1.5 border-t border-line/40">
               <span className="text-[9px] text-ink-600 block font-bold uppercase">Deskripsi Penyulingan</span>

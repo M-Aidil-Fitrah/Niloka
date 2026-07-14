@@ -70,6 +70,7 @@ export const viewport: Viewport = {
 
 import { CartProvider } from "@/context/cart-context";
 import { AuthProvider } from "@/context/auth-context";
+import { CurrencyProvider } from "@/context/currency-context";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { FloatingChatbot } from "@/components/chatbot/floating-chatbot";
 import { ToastProvider } from "@/components/ui/toast";
@@ -90,12 +91,14 @@ export default function RootLayout({
       <body className="min-h-full bg-cream-50 text-ink-900" suppressHydrationWarning>
         <AuthProvider>
           <CartProvider>
-            <OfflineBanner />
-            {children}
-            <CartDrawer />
-            <FloatingChatbot />
-            <ToastProvider />
-            <PWARegister />
+            <CurrencyProvider>
+              <OfflineBanner />
+              {children}
+              <CartDrawer />
+              <FloatingChatbot />
+              <ToastProvider />
+              <PWARegister />
+            </CurrencyProvider>
           </CartProvider>
         </AuthProvider>
       </body>

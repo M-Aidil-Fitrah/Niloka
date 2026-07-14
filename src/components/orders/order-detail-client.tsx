@@ -7,6 +7,8 @@ import { CheckCircle2, Clock, ExternalLink, RefreshCw, XCircle } from "lucide-re
 import type { OrderTracking } from "@/lib/contracts";
 import { cn } from "@/lib/styles";
 
+import { PriceDisplay } from "@/components/ui/price-display";
+
 type OrderDetailClientProps = {
   order: OrderTracking;
 };
@@ -85,7 +87,7 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
 
       {/* Items */}
       <div className="rounded-2xl border border-line bg-white-soft p-4 shadow-sm">
-        <h4 className="text-xs font-extrabold text-brand-950 mb-3">Barang ({order.items.length})</h4>
+        <h4 className="text-xs font-extrabold text-brand-955 mb-3">Barang ({order.items.length})</h4>
         <div className="divide-y divide-line/40">
           {order.items.map((item) => (
             <div key={item.id} className="flex gap-3 py-2.5 text-xs items-center first:pt-0 last:pb-0">
@@ -109,9 +111,13 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="font-bold text-brand-950 truncate">{item.name}</p>
-                <p className="text-ink-600 mt-0.5">x{item.quantity} @ Rp {item.unitPrice.amount.toLocaleString("id-ID")}</p>
+                <p className="text-ink-600 mt-0.5 flex items-center gap-0.5 flex-wrap">
+                  x{item.quantity} @ <PriceDisplay amount={item.unitPrice.amount} showTooltip={false} />
+                </p>
               </div>
-              <p className="font-bold text-brand-950 shrink-0 ml-4">Rp {item.subtotal.amount.toLocaleString("id-ID")}</p>
+              <p className="font-bold text-brand-950 shrink-0 ml-4">
+                <PriceDisplay amount={item.subtotal.amount} />
+              </p>
             </div>
           ))}
         </div>
@@ -127,14 +133,14 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
 
       {/* Total */}
       <div className="rounded-2xl border border-line bg-white-soft p-4 shadow-sm text-xs space-y-1.5">
-        <div className="flex justify-between text-ink-600"><span>Subtotal</span><span className="font-bold text-brand-950">Rp {order.subtotal.amount.toLocaleString("id-ID")}</span></div>
-        <div className="flex justify-between text-ink-600"><span>Biaya Platform</span><span className="font-bold text-brand-950">Rp {order.platformFee.amount.toLocaleString("id-ID")}</span></div>
-        <div className="flex justify-between text-ink-600"><span>Ongkir</span><span className="font-bold text-brand-950">Rp {order.shippingEstimate.amount.toLocaleString("id-ID")}</span></div>
-        {order.discount.amount > 0 && <div className="flex justify-between text-emerald-700 font-bold"><span>Diskon</span><span>-Rp {order.discount.amount.toLocaleString("id-ID")}</span></div>}
-        <div className="flex justify-between pt-2 border-t text-sm font-extrabold text-brand-950"><span>Total</span><span>Rp {order.grandTotal.amount.toLocaleString("id-ID")}</span></div>
+        <div className="flex justify-between text-ink-600"><span>Subtotal</span><span className="font-bold text-brand-950"><PriceDisplay amount={order.subtotal.amount} /></span></div>
+        <div className="flex justify-between text-ink-600"><span>Biaya Platform</span><span className="font-bold text-brand-950"><PriceDisplay amount={order.platformFee.amount} /></span></div>
+        <div className="flex justify-between text-ink-600"><span>Ongkir</span><span className="font-bold text-brand-950"><PriceDisplay amount={order.shippingEstimate.amount} /></span></div>
+        {order.discount.amount > 0 && <div className="flex justify-between text-emerald-700 font-bold"><span>Diskon</span><span className="flex items-center">-<PriceDisplay amount={order.discount.amount} showTooltip={false} /></span></div>}
+        <div className="flex justify-between pt-2 border-t text-sm font-extrabold text-brand-950"><span>Total</span><span><PriceDisplay amount={order.grandTotal.amount} /></span></div>
       </div>
 
-      <Link href="/orders" className="inline-flex h-10 px-4 rounded-2xl border border-line text-xs font-bold text-brand-950 hover:bg-cream-100 transition-colors items-center gap-1.5">← Semua Pesanan</Link>
+      <Link href="/orders" className="inline-flex h-10 px-4 rounded-2xl border border-line text-xs font-bold text-brand-955 hover:bg-cream-100 transition-colors items-center gap-1.5">← Semua Pesanan</Link>
     </div>
   );
 }

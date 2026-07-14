@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { CartIcon } from "@/components/ui/icons";
+import { PriceDisplay } from "@/components/ui/price-display";
 import type { ProductCard } from "@/lib/landing-types";
 
 type NewArrivalsSectionProps = {
@@ -49,11 +50,11 @@ export function NewArrivalsSection({ products }: NewArrivalsSectionProps) {
               <div className="mt-5 flex items-center justify-between gap-3">
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <span className="text-sm font-bold text-ink-900">
-                    {product.price}
+                    <PriceDisplay amount={product.price} />
                   </span>
                   {product.originalPrice && (
                     <span className="text-xs text-ink-600/50 line-through font-semibold">
-                      {product.originalPrice}
+                      <PriceDisplay amount={product.originalPrice} showTooltip={false} />
                     </span>
                   )}
                 </div>
