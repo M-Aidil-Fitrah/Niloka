@@ -21,6 +21,17 @@ export type CommunityCommentDto = {
   replies?: CommunityCommentDto[];
 };
 
+export type CommunityDiagnoseResultDto = {
+  diagnosis?: string;
+  confidence?: number;
+  kemungkinanTambahan?: string;
+  penyebab?: string;
+  alasan?: string;
+  rekomendasi?: string[];
+  timestamp?: string | number | Date;
+  [key: string]: unknown;
+};
+
 export type CommunityPostDto = {
   id: string;
   title: string | null;
@@ -28,7 +39,7 @@ export type CommunityPostDto = {
   images: string[];
   category: string;
   location: string | null;
-  diagnoseResult: any | null;
+  diagnoseResult: CommunityDiagnoseResultDto | null;
   createdAt: string;
   updatedAt: string;
   author: {
@@ -44,6 +55,118 @@ export type CommunityPostDto = {
   likedByCurrentUser: boolean;
   comments: CommunityCommentDto[];
 };
+
+const communityPostDtoInclude = {
+  author: {
+    select: {
+      id: true,
+      name: true,
+      role: true,
+      isFarmer: true,
+      image: true,
+      seller: {
+        select: {
+          verificationStatus: true,
+        },
+      },
+    },
+  },
+  likes: {
+    select: {
+      userId: true,
+    },
+  },
+  comments: {
+    orderBy: {
+      createdAt: "asc",
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          role: true,
+          isFarmer: true,
+          image: true,
+          seller: {
+            select: {
+              verificationStatus: true,
+            },
+          },
+        },
+      },
+    },
+  },
+} as const satisfies Prisma.CommunityPostInclude;
+
+type CommunityPostWithDtoRelations = Prisma.CommunityPostGetPayload<{
+  include: typeof communityPostDtoInclude;
+}>;
+
+function mapCommunityPostToDto(
+  post: CommunityPostWithDtoRelations,
+  currentUserId?: string | null
+): CommunityPostDto {
+  const likesCount = post.likes.length;
+  const likedByCurrentUser = currentUserId
+    ? post.likes.some((l) => l.userId === currentUserId)
+    : false;
+
+  const allCommentsMapped: CommunityCommentDto[] = post.comments.map((c) => ({
+    id: c.id,
+    postId: c.postId,
+    userId: c.userId,
+    parentId: c.parentId,
+    content: c.content,
+    createdAt: c.createdAt.toISOString(),
+    author: {
+      id: c.user.id,
+      name: c.user.name ?? "Pengguna NILOKA",
+      role: c.user.role,
+      isFarmer: c.user.isFarmer,
+      image: c.user.image,
+      sellerVerified: c.user.seller?.verificationStatus === "VERIFIED",
+    },
+    replies: [],
+  }));
+
+  const rootComments = allCommentsMapped.filter((c) => c.parentId === null);
+  const replyComments = allCommentsMapped.filter((c) => c.parentId !== null);
+
+  replyComments.forEach((reply) => {
+    const parent = rootComments.find((p) => p.id === reply.parentId);
+    if (parent) {
+      parent.replies = parent.replies || [];
+      parent.replies.push(reply);
+    } else {
+      rootComments.push(reply);
+    }
+  });
+
+  return {
+    id: post.id,
+    title: post.title,
+    content: post.content,
+    images: post.images,
+    category: post.category,
+    location: post.location,
+    diagnoseResult: post.diagnoseResult as CommunityDiagnoseResultDto | null,
+    createdAt: post.createdAt.toISOString(),
+    updatedAt: post.updatedAt.toISOString(),
+    author: {
+      id: post.author.id,
+      name: post.author.name ?? "Pengguna NILOKA",
+      role: post.author.role,
+      isFarmer: post.author.isFarmer,
+      image: post.author.image,
+      sellerVerified: post.author.seller?.verificationStatus === "VERIFIED",
+    },
+    likesCount,
+    commentsCount: post.comments.length,
+    likedByCurrentUser,
+    comments: rootComments,
+  };
+}
 
 export async function getCommunityPostsDto(options: {
   searchQuery?: string;
@@ -87,117 +210,27 @@ export async function getCommunityPostsDto(options: {
   const posts = await prisma.communityPost.findMany({
     where,
     orderBy,
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          role: true,
-          isFarmer: true,
-          image: true,
-          seller: {
-            select: {
-              verificationStatus: true,
-            },
-          },
-        },
-      },
-      likes: {
-        select: {
-          userId: true,
-        },
-      },
-      comments: {
-        orderBy: {
-          createdAt: "asc",
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              role: true,
-              isFarmer: true,
-              image: true,
-              seller: {
-                select: {
-                  verificationStatus: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+    include: communityPostDtoInclude,
   });
 
-  return posts.map((post) => {
-    const likesCount = post.likes.length;
-    const likedByCurrentUser = currentUserId
-      ? post.likes.some((l) => l.userId === currentUserId)
-      : false;
-
-    // Process comments: Map to Dto and thread them (1-level reply nesting)
-    const allCommentsMapped: CommunityCommentDto[] = post.comments.map((c) => ({
-      id: c.id,
-      postId: c.postId,
-      userId: c.userId,
-      parentId: c.parentId,
-      content: c.content,
-      createdAt: c.createdAt.toISOString(),
-      author: {
-        id: c.user.id,
-        name: c.user.name ?? "Pengguna NILOKA",
-        role: c.user.role,
-        isFarmer: c.user.isFarmer,
-        image: c.user.image,
-        sellerVerified: c.user.seller?.verificationStatus === "VERIFIED",
-      },
-      replies: [],
-    }));
-
-    const rootComments = allCommentsMapped.filter((c) => c.parentId === null);
-    const replyComments = allCommentsMapped.filter((c) => c.parentId !== null);
-
-    // Nest replies under parents
-    replyComments.forEach((reply) => {
-      const parent = rootComments.find((p) => p.id === reply.parentId);
-      if (parent) {
-        parent.replies = parent.replies || [];
-        parent.replies.push(reply);
-      } else {
-        // If parent is not a root comment (due to anomalies), treat reply as a root comment
-        rootComments.push(reply);
-      }
-    });
-
-    return {
-      id: post.id,
-      title: post.title,
-      content: post.content,
-      images: post.images,
-      category: post.category,
-      location: post.location,
-      diagnoseResult: post.diagnoseResult,
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt.toISOString(),
-      author: {
-        id: post.author.id,
-        name: post.author.name ?? "Pengguna NILOKA",
-        role: post.author.role,
-        isFarmer: post.author.isFarmer,
-        image: post.author.image,
-        sellerVerified: post.author.seller?.verificationStatus === "VERIFIED",
-      },
-      likesCount,
-      commentsCount: post.comments.length,
-      likedByCurrentUser,
-      comments: rootComments,
-    };
-  });
+  return posts.map((post) => mapCommunityPostToDto(post, currentUserId));
 }
 
-export async function getUserPastDiagnoses(userId: string): Promise<any[]> {
+export async function getCommunityPostByIdDto(options: {
+  postId: string;
+  currentUserId?: string | null;
+}): Promise<CommunityPostDto | null> {
+  const post = await prisma.communityPost.findUnique({
+    where: { id: options.postId },
+    include: communityPostDtoInclude,
+  });
+
+  if (!post) return null;
+
+  return mapCommunityPostToDto(post, options.currentUserId);
+}
+
+export async function getUserPastDiagnoses(): Promise<unknown[]> {
   // Wait, let's check how plant diagnoses are logged in the database, if at all!
   // In `plant-diagnose.ts` and `diagnose/route.ts` we saw that diagnose results are NOT saved in the database currently!
   // Oh! Let's double check if they are saved.
