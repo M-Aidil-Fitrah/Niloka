@@ -31,7 +31,6 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: "Shop", href: "/products" },
-  { label: "Bundles", href: "/bundles" },
   { label: "Nilam Insight", href: "/artikel" },
   { label: "Nilam Passport", href: "/passport" },
   { label: "Ampas Nilam", href: "/ampas" },
