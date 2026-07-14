@@ -157,3 +157,18 @@ export type AdminValidationItem = Prisma.AdminValidationItemModel
  * 
  */
 export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model CommunityPost
+ * 
+ */
+export type CommunityPost = Prisma.CommunityPostModel
+/**
+ * Model CommunityLike
+ * 
+ */
+export type CommunityLike = Prisma.CommunityLikeModel
+/**
+ * Model CommunityComment
+ * 
+ */
+export type CommunityComment = Prisma.CommunityCommentModel

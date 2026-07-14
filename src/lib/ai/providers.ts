@@ -131,7 +131,7 @@ function getGeminiTextModel(): string {
 }
 
 function getGeminiVisionModel(): string {
-  return process.env.GEMINI_VISION_MODEL || "gemini-3.5-flash";
+  return process.env.GEMINI_VISION_MODEL?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-3.5-flash";
 }
 
 function getGroqTextModel(): string {
@@ -139,7 +139,7 @@ function getGroqTextModel(): string {
 }
 
 function getGroqVisionModel(): string | null {
-  return process.env.GROQ_VISION_MODEL?.trim() || null;
+  return process.env.GROQ_VISION_MODEL?.trim() || process.env.GROQ_FALLBACK_MODEL?.trim() || null;
 }
 
 function isUnavailableStatus(status: number): boolean {

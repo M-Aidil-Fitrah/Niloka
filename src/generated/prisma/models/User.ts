@@ -34,6 +34,7 @@ export type UserMinAggregateOutputType = {
   role: $Enums.UserRole | null
   passwordHash: string | null
   sellerId: string | null
+  isFarmer: boolean | null
   locationProvince: string | null
   locationCity: string | null
   locationDistrict: string | null
@@ -51,6 +52,7 @@ export type UserMaxAggregateOutputType = {
   role: $Enums.UserRole | null
   passwordHash: string | null
   sellerId: string | null
+  isFarmer: boolean | null
   locationProvince: string | null
   locationCity: string | null
   locationDistrict: string | null
@@ -68,6 +70,7 @@ export type UserCountAggregateOutputType = {
   role: number
   passwordHash: number
   sellerId: number
+  isFarmer: number
   locationProvince: number
   locationCity: number
   locationDistrict: number
@@ -87,6 +90,7 @@ export type UserMinAggregateInputType = {
   role?: true
   passwordHash?: true
   sellerId?: true
+  isFarmer?: true
   locationProvince?: true
   locationCity?: true
   locationDistrict?: true
@@ -104,6 +108,7 @@ export type UserMaxAggregateInputType = {
   role?: true
   passwordHash?: true
   sellerId?: true
+  isFarmer?: true
   locationProvince?: true
   locationCity?: true
   locationDistrict?: true
@@ -121,6 +126,7 @@ export type UserCountAggregateInputType = {
   role?: true
   passwordHash?: true
   sellerId?: true
+  isFarmer?: true
   locationProvince?: true
   locationCity?: true
   locationDistrict?: true
@@ -211,6 +217,7 @@ export type UserGroupByOutputType = {
   role: $Enums.UserRole
   passwordHash: string | null
   sellerId: string | null
+  isFarmer: boolean
   locationProvince: string | null
   locationCity: string | null
   locationDistrict: string | null
@@ -249,6 +256,7 @@ export type UserWhereInput = {
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
   sellerId?: Prisma.StringNullableFilter<"User"> | string | null
+  isFarmer?: Prisma.BoolFilter<"User"> | boolean
   locationProvince?: Prisma.StringNullableFilter<"User"> | string | null
   locationCity?: Prisma.StringNullableFilter<"User"> | string | null
   locationDistrict?: Prisma.StringNullableFilter<"User"> | string | null
@@ -265,6 +273,9 @@ export type UserWhereInput = {
   sellerApplications?: Prisma.SellerApplicationListRelationFilter
   buyerChatThreads?: Prisma.ChatThreadListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  communityPosts?: Prisma.CommunityPostListRelationFilter
+  communityLikes?: Prisma.CommunityLikeListRelationFilter
+  communityComments?: Prisma.CommunityCommentListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -277,6 +288,7 @@ export type UserOrderByWithRelationInput = {
   role?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   sellerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isFarmer?: Prisma.SortOrder
   locationProvince?: Prisma.SortOrderInput | Prisma.SortOrder
   locationCity?: Prisma.SortOrderInput | Prisma.SortOrder
   locationDistrict?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -293,6 +305,9 @@ export type UserOrderByWithRelationInput = {
   sellerApplications?: Prisma.SellerApplicationOrderByRelationAggregateInput
   buyerChatThreads?: Prisma.ChatThreadOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
+  communityPosts?: Prisma.CommunityPostOrderByRelationAggregateInput
+  communityLikes?: Prisma.CommunityLikeOrderByRelationAggregateInput
+  communityComments?: Prisma.CommunityCommentOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -308,6 +323,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
   sellerId?: Prisma.StringNullableFilter<"User"> | string | null
+  isFarmer?: Prisma.BoolFilter<"User"> | boolean
   locationProvince?: Prisma.StringNullableFilter<"User"> | string | null
   locationCity?: Prisma.StringNullableFilter<"User"> | string | null
   locationDistrict?: Prisma.StringNullableFilter<"User"> | string | null
@@ -324,6 +340,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   sellerApplications?: Prisma.SellerApplicationListRelationFilter
   buyerChatThreads?: Prisma.ChatThreadListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  communityPosts?: Prisma.CommunityPostListRelationFilter
+  communityLikes?: Prisma.CommunityLikeListRelationFilter
+  communityComments?: Prisma.CommunityCommentListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -336,6 +355,7 @@ export type UserOrderByWithAggregationInput = {
   role?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   sellerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isFarmer?: Prisma.SortOrder
   locationProvince?: Prisma.SortOrderInput | Prisma.SortOrder
   locationCity?: Prisma.SortOrderInput | Prisma.SortOrder
   locationDistrict?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -359,6 +379,7 @@ export type UserScalarWhereWithAggregatesInput = {
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
   passwordHash?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   sellerId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  isFarmer?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   locationProvince?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   locationCity?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   locationDistrict?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -374,6 +395,7 @@ export type UserCreateInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -390,6 +412,9 @@ export type UserCreateInput = {
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -402,6 +427,7 @@ export type UserUncheckedCreateInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -416,6 +442,9 @@ export type UserUncheckedCreateInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -426,6 +455,7 @@ export type UserUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -442,6 +472,9 @@ export type UserUpdateInput = {
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -454,6 +487,7 @@ export type UserUncheckedUpdateInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -468,6 +502,9 @@ export type UserUncheckedUpdateInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -480,6 +517,7 @@ export type UserCreateManyInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -495,6 +533,7 @@ export type UserUpdateManyMutationInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -512,6 +551,7 @@ export type UserUncheckedUpdateManyInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -529,6 +569,7 @@ export type UserCountOrderByAggregateInput = {
   role?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
+  isFarmer?: Prisma.SortOrder
   locationProvince?: Prisma.SortOrder
   locationCity?: Prisma.SortOrder
   locationDistrict?: Prisma.SortOrder
@@ -546,6 +587,7 @@ export type UserMaxOrderByAggregateInput = {
   role?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
+  isFarmer?: Prisma.SortOrder
   locationProvince?: Prisma.SortOrder
   locationCity?: Prisma.SortOrder
   locationDistrict?: Prisma.SortOrder
@@ -563,6 +605,7 @@ export type UserMinOrderByAggregateInput = {
   role?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
+  isFarmer?: Prisma.SortOrder
   locationProvince?: Prisma.SortOrder
   locationCity?: Prisma.SortOrder
   locationDistrict?: Prisma.SortOrder
@@ -604,6 +647,10 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
 
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -830,6 +877,48 @@ export type UserUpdateOneWithoutAuditLogsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.UserUpdateWithoutAuditLogsInput>, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
 }
 
+export type UserCreateNestedOneWithoutCommunityPostsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityPostsInput, Prisma.UserUncheckedCreateWithoutCommunityPostsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityPostsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCommunityPostsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityPostsInput, Prisma.UserUncheckedCreateWithoutCommunityPostsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityPostsInput
+  upsert?: Prisma.UserUpsertWithoutCommunityPostsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommunityPostsInput, Prisma.UserUpdateWithoutCommunityPostsInput>, Prisma.UserUncheckedUpdateWithoutCommunityPostsInput>
+}
+
+export type UserCreateNestedOneWithoutCommunityLikesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityLikesInput, Prisma.UserUncheckedCreateWithoutCommunityLikesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityLikesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCommunityLikesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityLikesInput, Prisma.UserUncheckedCreateWithoutCommunityLikesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityLikesInput
+  upsert?: Prisma.UserUpsertWithoutCommunityLikesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommunityLikesInput, Prisma.UserUpdateWithoutCommunityLikesInput>, Prisma.UserUncheckedUpdateWithoutCommunityLikesInput>
+}
+
+export type UserCreateNestedOneWithoutCommunityCommentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityCommentsInput, Prisma.UserUncheckedCreateWithoutCommunityCommentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityCommentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCommunityCommentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityCommentsInput, Prisma.UserUncheckedCreateWithoutCommunityCommentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityCommentsInput
+  upsert?: Prisma.UserUpsertWithoutCommunityCommentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommunityCommentsInput, Prisma.UserUpdateWithoutCommunityCommentsInput>, Prisma.UserUncheckedUpdateWithoutCommunityCommentsInput>
+}
+
 export type UserCreateWithoutAccountsInput = {
   id?: string
   name?: string | null
@@ -838,6 +927,7 @@ export type UserCreateWithoutAccountsInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -853,6 +943,9 @@ export type UserCreateWithoutAccountsInput = {
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -865,6 +958,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -878,6 +972,9 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -904,6 +1001,7 @@ export type UserUpdateWithoutAccountsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -919,6 +1017,9 @@ export type UserUpdateWithoutAccountsInput = {
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -931,6 +1032,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -944,6 +1046,9 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -954,6 +1059,7 @@ export type UserCreateWithoutSessionsInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -969,6 +1075,9 @@ export type UserCreateWithoutSessionsInput = {
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -981,6 +1090,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -994,6 +1104,9 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1020,6 +1133,7 @@ export type UserUpdateWithoutSessionsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1035,6 +1149,9 @@ export type UserUpdateWithoutSessionsInput = {
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1047,6 +1164,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1060,6 +1178,9 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSellerInput = {
@@ -1070,6 +1191,7 @@ export type UserCreateWithoutSellerInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1085,6 +1207,9 @@ export type UserCreateWithoutSellerInput = {
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSellerInput = {
@@ -1096,6 +1221,7 @@ export type UserUncheckedCreateWithoutSellerInput = {
   imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1110,6 +1236,9 @@ export type UserUncheckedCreateWithoutSellerInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSellerInput = {
@@ -1151,6 +1280,7 @@ export type UserScalarWhereInput = {
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
   sellerId?: Prisma.StringNullableFilter<"User"> | string | null
+  isFarmer?: Prisma.BoolFilter<"User"> | boolean
   locationProvince?: Prisma.StringNullableFilter<"User"> | string | null
   locationCity?: Prisma.StringNullableFilter<"User"> | string | null
   locationDistrict?: Prisma.StringNullableFilter<"User"> | string | null
@@ -1166,6 +1296,7 @@ export type UserCreateWithoutSellerApplicationsInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1181,6 +1312,9 @@ export type UserCreateWithoutSellerApplicationsInput = {
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSellerApplicationsInput = {
@@ -1193,6 +1327,7 @@ export type UserUncheckedCreateWithoutSellerApplicationsInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1206,6 +1341,9 @@ export type UserUncheckedCreateWithoutSellerApplicationsInput = {
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSellerApplicationsInput = {
@@ -1232,6 +1370,7 @@ export type UserUpdateWithoutSellerApplicationsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1247,6 +1386,9 @@ export type UserUpdateWithoutSellerApplicationsInput = {
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSellerApplicationsInput = {
@@ -1259,6 +1401,7 @@ export type UserUncheckedUpdateWithoutSellerApplicationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1272,6 +1415,9 @@ export type UserUncheckedUpdateWithoutSellerApplicationsInput = {
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -1282,6 +1428,7 @@ export type UserCreateWithoutReviewsInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1297,6 +1444,9 @@ export type UserCreateWithoutReviewsInput = {
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -1309,6 +1459,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1322,6 +1473,9 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -1348,6 +1502,7 @@ export type UserUpdateWithoutReviewsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1363,6 +1518,9 @@ export type UserUpdateWithoutReviewsInput = {
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -1375,6 +1533,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1388,6 +1547,9 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCartsInput = {
@@ -1398,6 +1560,7 @@ export type UserCreateWithoutCartsInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1413,6 +1576,9 @@ export type UserCreateWithoutCartsInput = {
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCartsInput = {
@@ -1425,6 +1591,7 @@ export type UserUncheckedCreateWithoutCartsInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1438,6 +1605,9 @@ export type UserUncheckedCreateWithoutCartsInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCartsInput = {
@@ -1464,6 +1634,7 @@ export type UserUpdateWithoutCartsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1479,6 +1650,9 @@ export type UserUpdateWithoutCartsInput = {
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCartsInput = {
@@ -1491,6 +1665,7 @@ export type UserUncheckedUpdateWithoutCartsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1504,6 +1679,9 @@ export type UserUncheckedUpdateWithoutCartsInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -1514,6 +1692,7 @@ export type UserCreateWithoutOrdersInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1529,6 +1708,9 @@ export type UserCreateWithoutOrdersInput = {
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -1541,6 +1723,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1554,6 +1737,9 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -1580,6 +1766,7 @@ export type UserUpdateWithoutOrdersInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1595,6 +1782,9 @@ export type UserUpdateWithoutOrdersInput = {
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -1607,6 +1797,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1620,6 +1811,9 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutUploadedAssetsInput = {
@@ -1630,6 +1824,7 @@ export type UserCreateWithoutUploadedAssetsInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1645,6 +1840,9 @@ export type UserCreateWithoutUploadedAssetsInput = {
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUploadedAssetsInput = {
@@ -1657,6 +1855,7 @@ export type UserUncheckedCreateWithoutUploadedAssetsInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1670,6 +1869,9 @@ export type UserUncheckedCreateWithoutUploadedAssetsInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUploadedAssetsInput = {
@@ -1685,6 +1887,7 @@ export type UserCreateWithoutImageAssetInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1700,6 +1903,9 @@ export type UserCreateWithoutImageAssetInput = {
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutImageAssetInput = {
@@ -1711,6 +1917,7 @@ export type UserUncheckedCreateWithoutImageAssetInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1725,6 +1932,9 @@ export type UserUncheckedCreateWithoutImageAssetInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutImageAssetInput = {
@@ -1756,6 +1966,7 @@ export type UserUpdateWithoutUploadedAssetsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1771,6 +1982,9 @@ export type UserUpdateWithoutUploadedAssetsInput = {
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUploadedAssetsInput = {
@@ -1783,6 +1997,7 @@ export type UserUncheckedUpdateWithoutUploadedAssetsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1796,6 +2011,9 @@ export type UserUncheckedUpdateWithoutUploadedAssetsInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithWhereUniqueWithoutImageAssetInput = {
@@ -1822,6 +2040,7 @@ export type UserCreateWithoutBuyerChatThreadsInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1837,6 +2056,9 @@ export type UserCreateWithoutBuyerChatThreadsInput = {
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBuyerChatThreadsInput = {
@@ -1849,6 +2071,7 @@ export type UserUncheckedCreateWithoutBuyerChatThreadsInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1862,6 +2085,9 @@ export type UserUncheckedCreateWithoutBuyerChatThreadsInput = {
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBuyerChatThreadsInput = {
@@ -1888,6 +2114,7 @@ export type UserUpdateWithoutBuyerChatThreadsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1903,6 +2130,9 @@ export type UserUpdateWithoutBuyerChatThreadsInput = {
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBuyerChatThreadsInput = {
@@ -1915,6 +2145,7 @@ export type UserUncheckedUpdateWithoutBuyerChatThreadsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1928,6 +2159,9 @@ export type UserUncheckedUpdateWithoutBuyerChatThreadsInput = {
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -1938,6 +2172,7 @@ export type UserCreateWithoutAuditLogsInput = {
   image?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1953,6 +2188,9 @@ export type UserCreateWithoutAuditLogsInput = {
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -1965,6 +2203,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -1978,6 +2217,9 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -2004,6 +2246,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2019,6 +2262,9 @@ export type UserUpdateWithoutAuditLogsInput = {
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -2031,6 +2277,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2044,6 +2291,405 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCommunityPostsInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  isFarmer?: boolean
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
+  buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCommunityPostsInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  imageAssetId?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  sellerId?: string | null
+  isFarmer?: boolean
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
+  buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCommunityPostsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityPostsInput, Prisma.UserUncheckedCreateWithoutCommunityPostsInput>
+}
+
+export type UserUpsertWithoutCommunityPostsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCommunityPostsInput, Prisma.UserUncheckedUpdateWithoutCommunityPostsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityPostsInput, Prisma.UserUncheckedCreateWithoutCommunityPostsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCommunityPostsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCommunityPostsInput, Prisma.UserUncheckedUpdateWithoutCommunityPostsInput>
+}
+
+export type UserUpdateWithoutCommunityPostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
+  buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCommunityPostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
+  buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCommunityLikesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  isFarmer?: boolean
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
+  buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCommunityLikesInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  imageAssetId?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  sellerId?: string | null
+  isFarmer?: boolean
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
+  buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCommunityLikesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityLikesInput, Prisma.UserUncheckedCreateWithoutCommunityLikesInput>
+}
+
+export type UserUpsertWithoutCommunityLikesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCommunityLikesInput, Prisma.UserUncheckedUpdateWithoutCommunityLikesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityLikesInput, Prisma.UserUncheckedCreateWithoutCommunityLikesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCommunityLikesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCommunityLikesInput, Prisma.UserUncheckedUpdateWithoutCommunityLikesInput>
+}
+
+export type UserUpdateWithoutCommunityLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
+  buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCommunityLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
+  buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCommunityCommentsInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  isFarmer?: boolean
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  seller?: Prisma.SellerCreateNestedOneWithoutUsersInput
+  imageAsset?: Prisma.UploadedAssetCreateNestedOneWithoutUserAvatarsInput
+  uploadedAssets?: Prisma.UploadedAssetCreateNestedManyWithoutUploadedByInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  sellerApplications?: Prisma.SellerApplicationCreateNestedManyWithoutUserInput
+  buyerChatThreads?: Prisma.ChatThreadCreateNestedManyWithoutBuyerInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCommunityCommentsInput = {
+  id?: string
+  name?: string | null
+  email?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  imageAssetId?: string | null
+  role?: $Enums.UserRole
+  passwordHash?: string | null
+  sellerId?: string | null
+  isFarmer?: boolean
+  locationProvince?: string | null
+  locationCity?: string | null
+  locationDistrict?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedCreateNestedManyWithoutUploadedByInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  sellerApplications?: Prisma.SellerApplicationUncheckedCreateNestedManyWithoutUserInput
+  buyerChatThreads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutBuyerInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput
+  communityLikes?: Prisma.CommunityLikeUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCommunityCommentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityCommentsInput, Prisma.UserUncheckedCreateWithoutCommunityCommentsInput>
+}
+
+export type UserUpsertWithoutCommunityCommentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCommunityCommentsInput, Prisma.UserUncheckedUpdateWithoutCommunityCommentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityCommentsInput, Prisma.UserUncheckedCreateWithoutCommunityCommentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCommunityCommentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCommunityCommentsInput, Prisma.UserUncheckedUpdateWithoutCommunityCommentsInput>
+}
+
+export type UserUpdateWithoutCommunityCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  seller?: Prisma.SellerUpdateOneWithoutUsersNestedInput
+  imageAsset?: Prisma.UploadedAssetUpdateOneWithoutUserAvatarsNestedInput
+  uploadedAssets?: Prisma.UploadedAssetUpdateManyWithoutUploadedByNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
+  buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCommunityCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedAssets?: Prisma.UploadedAssetUncheckedUpdateManyWithoutUploadedByNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
+  buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManySellerInput = {
@@ -2055,6 +2701,7 @@ export type UserCreateManySellerInput = {
   imageAssetId?: string | null
   role?: $Enums.UserRole
   passwordHash?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -2070,6 +2717,7 @@ export type UserUpdateWithoutSellerInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2085,6 +2733,9 @@ export type UserUpdateWithoutSellerInput = {
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSellerInput = {
@@ -2096,6 +2747,7 @@ export type UserUncheckedUpdateWithoutSellerInput = {
   imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2110,6 +2762,9 @@ export type UserUncheckedUpdateWithoutSellerInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutSellerInput = {
@@ -2121,6 +2776,7 @@ export type UserUncheckedUpdateManyWithoutSellerInput = {
   imageAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2137,6 +2793,7 @@ export type UserCreateManyImageAssetInput = {
   role?: $Enums.UserRole
   passwordHash?: string | null
   sellerId?: string | null
+  isFarmer?: boolean
   locationProvince?: string | null
   locationCity?: string | null
   locationDistrict?: string | null
@@ -2152,6 +2809,7 @@ export type UserUpdateWithoutImageAssetInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2167,6 +2825,9 @@ export type UserUpdateWithoutImageAssetInput = {
   sellerApplications?: Prisma.SellerApplicationUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutImageAssetInput = {
@@ -2178,6 +2839,7 @@ export type UserUncheckedUpdateWithoutImageAssetInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2192,6 +2854,9 @@ export type UserUncheckedUpdateWithoutImageAssetInput = {
   sellerApplications?: Prisma.SellerApplicationUncheckedUpdateManyWithoutUserNestedInput
   buyerChatThreads?: Prisma.ChatThreadUncheckedUpdateManyWithoutBuyerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput
+  communityLikes?: Prisma.CommunityLikeUncheckedUpdateManyWithoutUserNestedInput
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutImageAssetInput = {
@@ -2203,6 +2868,7 @@ export type UserUncheckedUpdateManyWithoutImageAssetInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFarmer?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locationProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationDistrict?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2225,6 +2891,9 @@ export type UserCountOutputType = {
   sellerApplications: number
   buyerChatThreads: number
   auditLogs: number
+  communityPosts: number
+  communityLikes: number
+  communityComments: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2237,6 +2906,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   sellerApplications?: boolean | UserCountOutputTypeCountSellerApplicationsArgs
   buyerChatThreads?: boolean | UserCountOutputTypeCountBuyerChatThreadsArgs
   auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
+  communityPosts?: boolean | UserCountOutputTypeCountCommunityPostsArgs
+  communityLikes?: boolean | UserCountOutputTypeCountCommunityLikesArgs
+  communityComments?: boolean | UserCountOutputTypeCountCommunityCommentsArgs
 }
 
 /**
@@ -2312,6 +2984,27 @@ export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.AuditLogWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCommunityPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommunityPostWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCommunityLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommunityLikeWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCommunityCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommunityCommentWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2323,6 +3016,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   role?: boolean
   passwordHash?: boolean
   sellerId?: boolean
+  isFarmer?: boolean
   locationProvince?: boolean
   locationCity?: boolean
   locationDistrict?: boolean
@@ -2339,6 +3033,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   sellerApplications?: boolean | Prisma.User$sellerApplicationsArgs<ExtArgs>
   buyerChatThreads?: boolean | Prisma.User$buyerChatThreadsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  communityPosts?: boolean | Prisma.User$communityPostsArgs<ExtArgs>
+  communityLikes?: boolean | Prisma.User$communityLikesArgs<ExtArgs>
+  communityComments?: boolean | Prisma.User$communityCommentsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2352,6 +3049,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   role?: boolean
   passwordHash?: boolean
   sellerId?: boolean
+  isFarmer?: boolean
   locationProvince?: boolean
   locationCity?: boolean
   locationDistrict?: boolean
@@ -2371,6 +3069,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   role?: boolean
   passwordHash?: boolean
   sellerId?: boolean
+  isFarmer?: boolean
   locationProvince?: boolean
   locationCity?: boolean
   locationDistrict?: boolean
@@ -2390,6 +3089,7 @@ export type UserSelectScalar = {
   role?: boolean
   passwordHash?: boolean
   sellerId?: boolean
+  isFarmer?: boolean
   locationProvince?: boolean
   locationCity?: boolean
   locationDistrict?: boolean
@@ -2397,7 +3097,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "imageAssetId" | "role" | "passwordHash" | "sellerId" | "locationProvince" | "locationCity" | "locationDistrict" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "imageAssetId" | "role" | "passwordHash" | "sellerId" | "isFarmer" | "locationProvince" | "locationCity" | "locationDistrict" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.User$sellerArgs<ExtArgs>
   imageAsset?: boolean | Prisma.User$imageAssetArgs<ExtArgs>
@@ -2410,6 +3110,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   sellerApplications?: boolean | Prisma.User$sellerApplicationsArgs<ExtArgs>
   buyerChatThreads?: boolean | Prisma.User$buyerChatThreadsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  communityPosts?: boolean | Prisma.User$communityPostsArgs<ExtArgs>
+  communityLikes?: boolean | Prisma.User$communityLikesArgs<ExtArgs>
+  communityComments?: boolean | Prisma.User$communityCommentsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2435,6 +3138,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     sellerApplications: Prisma.$SellerApplicationPayload<ExtArgs>[]
     buyerChatThreads: Prisma.$ChatThreadPayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+    communityPosts: Prisma.$CommunityPostPayload<ExtArgs>[]
+    communityLikes: Prisma.$CommunityLikePayload<ExtArgs>[]
+    communityComments: Prisma.$CommunityCommentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2446,6 +3152,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     role: $Enums.UserRole
     passwordHash: string | null
     sellerId: string | null
+    isFarmer: boolean
     locationProvince: string | null
     locationCity: string | null
     locationDistrict: string | null
@@ -2856,6 +3563,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   sellerApplications<T extends Prisma.User$sellerApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sellerApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   buyerChatThreads<T extends Prisma.User$buyerChatThreadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$buyerChatThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  communityPosts<T extends Prisma.User$communityPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  communityLikes<T extends Prisma.User$communityLikesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityLikesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  communityComments<T extends Prisma.User$communityCommentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityCommentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2894,6 +3604,7 @@ export interface UserFieldRefs {
   readonly role: Prisma.FieldRef<"User", 'UserRole'>
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly sellerId: Prisma.FieldRef<"User", 'String'>
+  readonly isFarmer: Prisma.FieldRef<"User", 'Boolean'>
   readonly locationProvince: Prisma.FieldRef<"User", 'String'>
   readonly locationCity: Prisma.FieldRef<"User", 'String'>
   readonly locationDistrict: Prisma.FieldRef<"User", 'String'>
@@ -3551,6 +4262,78 @@ export type User$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
+}
+
+/**
+ * User.communityPosts
+ */
+export type User$communityPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommunityPost
+   */
+  select?: Prisma.CommunityPostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommunityPost
+   */
+  omit?: Prisma.CommunityPostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommunityPostInclude<ExtArgs> | null
+  where?: Prisma.CommunityPostWhereInput
+  orderBy?: Prisma.CommunityPostOrderByWithRelationInput | Prisma.CommunityPostOrderByWithRelationInput[]
+  cursor?: Prisma.CommunityPostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommunityPostScalarFieldEnum | Prisma.CommunityPostScalarFieldEnum[]
+}
+
+/**
+ * User.communityLikes
+ */
+export type User$communityLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommunityLike
+   */
+  select?: Prisma.CommunityLikeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommunityLike
+   */
+  omit?: Prisma.CommunityLikeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommunityLikeInclude<ExtArgs> | null
+  where?: Prisma.CommunityLikeWhereInput
+  orderBy?: Prisma.CommunityLikeOrderByWithRelationInput | Prisma.CommunityLikeOrderByWithRelationInput[]
+  cursor?: Prisma.CommunityLikeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommunityLikeScalarFieldEnum | Prisma.CommunityLikeScalarFieldEnum[]
+}
+
+/**
+ * User.communityComments
+ */
+export type User$communityCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommunityComment
+   */
+  select?: Prisma.CommunityCommentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommunityComment
+   */
+  omit?: Prisma.CommunityCommentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommunityCommentInclude<ExtArgs> | null
+  where?: Prisma.CommunityCommentWhereInput
+  orderBy?: Prisma.CommunityCommentOrderByWithRelationInput | Prisma.CommunityCommentOrderByWithRelationInput[]
+  cursor?: Prisma.CommunityCommentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommunityCommentScalarFieldEnum | Prisma.CommunityCommentScalarFieldEnum[]
 }
 
 /**
