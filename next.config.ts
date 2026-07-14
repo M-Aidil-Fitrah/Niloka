@@ -17,6 +17,32 @@ const nextConfig: NextConfig = {
         hostname: "i.pinimg.com",
         pathname: "/**",
       },
+
+      {
+        protocol: "https",
+        hostname: "encrypted-tbn0.gstatic.com",
+      },
+      {
+        protocol: "https",
+        hostname: "rricoid-assets.obs.ap-southeast-4.myhuaweicloud.com",
+      },
+      {
+        protocol: "https",
+        hostname: "asset.kompas.com",
+      },
+      {
+        protocol: "https",
+        hostname: "agropedia.id",
+      },
+      {
+        protocol: "https",
+        hostname: "andreasdamanik14.wordpress.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.acehprov.go.id",
+        pathname: "/**",
+      },
     ],
   },
 

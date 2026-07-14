@@ -961,7 +961,7 @@ Tonton video lengkapnya untuk mempelajari takaran detail dan tips pemasaran parf
     authorRole: "Founder Neelam Geutanyo",
     publishedAt: "2026-05-12T10:00:00.000Z",
     imageUrl:
-      "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=600",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbTQTf8xuCtKB1ggxFzeA7dKzmz_0cI60bQh39ppg6h_sJF_5VO_sYHo4&s=10?auto=format&fit=crop&q=80&w=600",
     category: "olahan",
     videoUrl: "https://youtu.be/WxyB91h8l-c",
     videoDuration: "14:25",
@@ -1021,7 +1021,7 @@ Menanam nilam membutuhkan ketelatenan, namun menawarkan keuntungan ekonomi yang 
     authorRole: "Kelompok Tani Atsiri",
     publishedAt: "2026-04-20T11:15:00.000Z",
     imageUrl:
-      "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=600",
+      "https://andreasdamanik14.wordpress.com/wp-content/uploads/2012/12/24052011458-1.jpg?auto=format&fit=crop&q=80&w=600",
     category: "budidaya",
     videoUrl: "https://youtu.be/vpoid8g-4lM",
     videoDuration: "25:40",
@@ -1052,7 +1052,7 @@ Proses penyulingan minyak nilam menyisakan dua jenis limbah: ampas padat (daun/b
     authorRole: "Pakar Pertanian Atsiri",
     publishedAt: "2026-05-30T08:00:00.000Z",
     imageUrl:
-      "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=600",
+      "https://agropedia.id/wp-content/uploads/2025/10/pupuk-organik-cair.jpg?auto=format&fit=crop&q=80&w=600",
     category: "pupuk",
     videoUrl: "https://youtu.be/Q5LlJb3WEe8",
     videoDuration: "18:30",
@@ -1114,7 +1114,7 @@ Ikuti petunjuk praktis ini agar tanaman nilam Anda tidak stres dan tumbuh seraga
     authorRole: "Dinas Pertanian",
     publishedAt: "2026-03-10T10:00:00.000Z",
     imageUrl:
-      "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=600",
+      "https://www.acehprov.go.id/thumbnail/700x0/media/2024.05/whatsapp_image_2024-05-02_at_15_30_381.jpeg?auto=format&fit=crop&q=80&w=600",
     category: "budidaya",
     videoUrl: "https://youtu.be/chE8XciUqJI",
     videoDuration: "12:15",
@@ -1141,7 +1141,7 @@ Penerapan tips ini secara konsisten terbukti dapat meningkatkan rendemen minyak 
     authorRole: "Petani Nilam Senior",
     publishedAt: "2026-06-25T16:30:00.000Z",
     imageUrl:
-      "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?auto=format&fit=crop&q=80&w=600",
+      "https://rricoid-assets.obs.ap-southeast-4.myhuaweicloud.com/berita/Manado/o/1737901805503-441498486_7776694189064372_6930846271258053693_n/vaet9f1qjuack22.jpeg",
     category: "budidaya",
     videoUrl: "https://youtu.be/3iRdwMYPr3c",
     videoDuration: "15:50",
@@ -1180,7 +1180,7 @@ Biobriket ini siap digunakan sebagai bahan bakar bersih dengan aroma khas nilam 
     authorRole: "Peneliti Biomassa Energi",
     publishedAt: "2026-06-29T10:00:00.000Z",
     imageUrl:
-      "https://images.unsplash.com/photo-1605980776566-0486c3ac7617?auto=format&fit=crop&q=80&w=600",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy5ziChxJnE_7MhEIDO8-xN-MV037v_M3bmCvmXqWFSsSLO5JR4sPRrVeV&s=10",
     category: "energi",
     readTime: "5 min read",
     tags: [
@@ -1218,7 +1218,7 @@ Meskipun minyak nilam utama telah terpisah, air hidrosol masih mengandung moleku
     authorRole: "Tim Litbang",
     publishedAt: "2026-07-03T09:00:00.000Z",
     imageUrl:
-      "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1656918828509-e674e5e99422?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&q=80&w=600",
     category: "olahan",
     readTime: "4 min read",
     tags: ["hidrosol", "pestisida-nabati", "organik", "hama-tanaman"],
@@ -1248,7 +1248,7 @@ Aplikasikan kompos gembur ini sebanyak 1-2 kg per lubang tanam saat penyiapan la
     authorRole: "Yayasan Pemberdayaan Petani",
     publishedAt: "2026-06-20T11:00:00.000Z",
     imageUrl:
-      "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=600",
+      "https://asset.kompas.com/crops/aYese83y8xV-0P9D2M4xhHBQbeo=/0x0:1000x667/1200x800/data/photo/2022/09/05/6315d53d809e4.jpg?auto=format&fit=crop&q=80&w=600",
     category: "pupuk",
     readTime: "5 min read",
     tags: ["kompos", "pupuk-organik", "mikroba", "kesuburan-tanah"],
@@ -1283,7 +1283,7 @@ Miselium jamur tumbuh subur pada media ampas nilam karena struktur serat selulos
     authorRole: "Pengusaha Jamur & Alumni ARC",
     publishedAt: "2026-07-05T13:00:00.000Z",
     imageUrl:
-      "https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1565057904502-928f4cef69f0?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&q=80&w=600",
     category: "olahan",
     readTime: "5 min read",
     tags: [
