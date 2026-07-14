@@ -23,6 +23,8 @@ import { useAuth } from "@/context/auth-context";
 import { searchProductPreviewAction } from "@/lib/actions/product-actions";
 import type { SearchPreviewItem } from "@/lib/actions/product-actions";
 import { formatRupiah } from "@/lib/formatters";
+import { useCurrency } from "@/context/currency-context";
+import { CurrencySelector } from "@/components/ui/currency-selector";
 
 type NavItem = {
   label: string;
@@ -56,6 +58,7 @@ export function SiteNavbar() {
 
   const isLight = pathname !== "/";
   const { totalCount, openCartDrawer } = useCart();
+  const { formatPrice } = useCurrency();
 
   const closeMenus = useCallback(() => {
     setIsMobileMenuOpen(false);
@@ -261,7 +264,7 @@ export function SiteNavbar() {
                         </p>
                       </div>
                       <span className="shrink-0 text-sm font-extrabold text-brand-900">
-                        {formatRupiah(item.price.amount)}
+                        {formatPrice(item.price.amount)}
                       </span>
                     </Link>
                   ))}
@@ -285,6 +288,11 @@ export function SiteNavbar() {
               </div>
             )}
           </div>
+
+          <CurrencySelector
+            theme={isLight ? "light" : "dark"}
+            className="mr-1 hidden lg:inline-block"
+          />
 
           <Link
             href="/chat"
@@ -483,6 +491,11 @@ export function SiteNavbar() {
               </Link>
             ))}
           </nav>
+
+          <div className="flex items-center justify-between px-4 py-2 border-t border-line/45 pt-4">
+            <span className="text-xs font-bold text-ink-600">Pilih Mata Uang:</span>
+            <CurrencySelector theme="light" />
+          </div>
 
           <div className="pt-3 border-t border-line/45 md:hidden">
             <form
