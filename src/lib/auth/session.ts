@@ -3,6 +3,7 @@ import "server-only";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/auth";
+import { prisma } from "@/lib/db/prisma";
 import type { NilokaSessionRole } from "@/types/next-auth";
 
 export type CurrentUser = {
@@ -18,6 +19,20 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   const user = session?.user;
 
   if (!user?.id || !user.email) {
+    return null;
+  }
+
+  try {
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { id: true },
+    });
+
+    if (!dbUser) {
+      return null;
+    }
+  } catch (e) {
+    console.error("Failed to verify user session against database:", e);
     return null;
   }
 

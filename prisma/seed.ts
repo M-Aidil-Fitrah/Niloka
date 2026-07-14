@@ -405,6 +405,9 @@ function toArticleCategory(value: ContractArticleCategory): ArticleCategory {
 }
 
 async function clearDemoData() {
+  await prisma.communityComment.deleteMany();
+  await prisma.communityLike.deleteMany();
+  await prisma.communityPost.deleteMany();
   await prisma.auditLog.deleteMany();
   await prisma.adminValidationItem.deleteMany();
   await prisma.chatMessage.deleteMany();
@@ -483,6 +486,17 @@ async function seedUsers() {
         email: "admin@niloka.com",
         role: UserRole.ADMIN,
         passwordHash,
+      },
+      {
+        id: "user-farmer-1",
+        name: "Pak Eko (Petani Nilam)",
+        email: "farmer@niloka.com",
+        role: UserRole.BUYER,
+        isFarmer: true,
+        passwordHash,
+        locationProvince: "Aceh",
+        locationCity: "Gayo Lues",
+        locationDistrict: "Blangkejeren",
       },
     ],
   });
@@ -803,6 +817,7 @@ async function main() {
   await seedCommerce();
   await seedCartAndOrders();
   await seedValidationAndArticles();
+  await seedCommunityHub();
 }
 
 main()
@@ -814,3 +829,120 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
+
+async function seedCommunityHub() {
+  const postsData = [
+    {
+      id: "post-1",
+      title: "Daun Nilam Menguning dan Bintik Hitam - Apakah ini Budok?",
+      content:
+        "Selamat malam rekan-rekan petani nilam. Saya Eko dari Gayo Lues, baru-baru ini daun tanaman nilam saya yang berumur 3 bulan mulai menguning dan muncul bintik-bintik hitam di permukaannya. Pertumbuhannya juga agak lambat. Saya lampirkan hasil diagnosa AI di bawah ini. Mohon masukannya apakah ini benar Budok dan bagaimana penanganannya? Terima kasih.",
+      category: "BUDIDAYA" as const,
+      location: "Gayo Lues",
+      authorId: "user-farmer-1",
+      diagnoseResult: {
+        diagnosis: "Budok",
+        confidence: 85,
+        kemungkinanTambahan: "Bercak Daun",
+        penyebab: "Jamur Synchytrium pogostemonis",
+        alasan:
+          "Gambar daun menunjukkan benjolan-benjolan kecil mirip kutil disertai bercak kecokelatan di tepi daun, yang merupakan indikasi kuat infeksi jamur Synchytrium pogostemonis.",
+        rekomendasi: [
+          "Pangkas dan bakar bagian tanaman nilam yang terinfeksi berat",
+          "Semprotkan fungisida kontak berbahan aktif tembaga hidroksida secara berkala",
+          "Perbaiki drainase tanah untuk mengurangi kelembapan tinggi",
+          "Jangan gunakan bibit dari tanaman yang sudah terinfeksi",
+        ],
+        providerUsed: "gemini",
+      },
+      images: ["/images/komunitas/budok.jpg"],
+    },
+    {
+      id: "post-2",
+      title: "Hasil Panen Minyak Nilam Melimpah Batch Juli 2026",
+      content:
+        "Alhamdulillah, penyulingan batch pertama selesai! Minyak nilam super Aceh Selatan kami siap diproduksi menjadi produk aromaterapi dengan campuran minyak kelapa & jojoba. Yuk mampir ke toko kami untuk melihat produk-produk aromaterapi pilihan!",
+      category: "PANEN" as const,
+      location: "Aceh Selatan",
+      authorId: "user-seller-1",
+      diagnoseResult: null,
+      images: ["/images/komunitas/aroma.jpg"],
+    },
+    {
+      id: "post-3",
+      title: "Review Minyak Nilam Niloka - Kualitas Tidur Sangat Membaik",
+      content:
+        "Mau share pengalaman pribadi pakai essential oil Nilam dari brand lokal Aceh Aroma House. Biasanya saya susah tidur nyenyak karena stres kerjaan. Coba pakai diffuser diisi 3 tetes minyak nilam sebelum tidur, aromanya menenangkan banget, woodsy dan manis di saat bersamaan. Tidur jadi lebih pulas dan pas bangun kerasa seger banget. Nilam Passport-nya juga jelas, kelihatan diproduksi berkelanjutan di Aceh Selatan. Highly recommended!",
+      category: "REVIEW" as const,
+      location: "Aceh Selatan",
+      authorId: "user-buyer-1",
+      diagnoseResult: null,
+      images: [],
+    },
+    {
+      id: "post-4",
+      title: "Tanya Update Harga Ampas Nilam Kering untuk Kompos",
+      content:
+        "Halo, ada yang tahu harga pasaran ampas nilam kering per ton di wilayah Aceh Jaya saat ini? Kami berencana membeli dalam jumlah besar (10-15 ton) untuk bahan baku media pupuk organik. Terima kasih.",
+      category: "PASAR" as const,
+      location: "Aceh Jaya",
+      authorId: "user-buyer-1",
+      diagnoseResult: null,
+      images: [],
+    },
+  ];
+
+  for (const post of postsData) {
+    await prisma.communityPost.create({
+      data: {
+        id: post.id,
+        title: post.title,
+        content: post.content,
+        category: post.category,
+        location: post.location,
+        authorId: post.authorId,
+        diagnoseResult: post.diagnoseResult || undefined,
+        images: post.images
+      }
+    });
+  }
+
+  // Seed comment & replies
+  await prisma.communityComment.createMany({
+    data: [
+      {
+        id: "comment-1",
+        postId: "post-1",
+        userId: "user-seller-1",
+        content: "Halo pak Eko. Salam kenal, saya Ahmad dari Tapaktuan. Berdasarkan hasil AI Diagnosa itu betul gejala Budok. Sebaiknya segera dipisahkan tanaman yang kena agar tidak menular ke baris lain. Pengalaman kami, penggunaan bio-fungisida trichoderma saat awal tanam sangat membantu mencegah hal ini.",
+      },
+      {
+        id: "comment-2",
+        postId: "post-1",
+        userId: "user-admin-1",
+        content: "Betul sekali saran dari pak Ahmad. Tim penyuluh kami juga menyarankan rotasi tanaman setelah panen agar jamur Synchytrium pogostemonis tidak menetap di tanah.",
+      }
+    ]
+  });
+
+  // Reply to comment-1 (1-level nesting)
+  await prisma.communityComment.create({
+    data: {
+      id: "reply-1",
+      postId: "post-1",
+      userId: "user-farmer-1",
+      parentId: "comment-1",
+      content: "Terima kasih pak Ahmad masukannya! Sangat membantu. Untuk bio-fungisida trichoderma biasanya bapak beli merk apa ya? Atau bikin sendiri?",
+    }
+  });
+
+  // Likes
+  await prisma.communityLike.createMany({
+    data: [
+      { id: "like-1", postId: "post-1", userId: "user-seller-1" },
+      { id: "like-2", postId: "post-1", userId: "user-admin-1" },
+      { id: "like-3", postId: "post-2", userId: "user-buyer-1" },
+      { id: "like-4", postId: "post-3", userId: "user-seller-1" }
+    ]
+  });
+}

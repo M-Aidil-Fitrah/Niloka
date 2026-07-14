@@ -901,10 +901,6 @@ export type EnumAmpasListingStatusFieldUpdateOperationsInput = {
   set?: $Enums.AmpasListingStatus
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type AmpasListingCreateNestedOneWithoutCartItemsInput = {
   create?: Prisma.XOR<Prisma.AmpasListingCreateWithoutCartItemsInput, Prisma.AmpasListingUncheckedCreateWithoutCartItemsInput>
   connectOrCreate?: Prisma.AmpasListingCreateOrConnectWithoutCartItemsInput

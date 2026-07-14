@@ -35,6 +35,7 @@ const navItems: NavItem[] = [
   { label: "Nilam Insight", href: "/artikel" },
   { label: "Nilam Passport", href: "/passport" },
   { label: "Ampas Nilam", href: "/ampas" },
+  { label: "Nilam Hub", href: "/nilam-hub" },
 ];
 
 export function SiteNavbar() {

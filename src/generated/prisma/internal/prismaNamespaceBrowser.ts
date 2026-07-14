@@ -78,7 +78,10 @@ export const ModelName = {
   ChatThread: 'ChatThread',
   ChatMessage: 'ChatMessage',
   AdminValidationItem: 'AdminValidationItem',
-  AuditLog: 'AuditLog'
+  AuditLog: 'AuditLog',
+  CommunityPost: 'CommunityPost',
+  CommunityLike: 'CommunityLike',
+  CommunityComment: 'CommunityComment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -107,6 +110,7 @@ export const UserScalarFieldEnum = {
   role: 'role',
   passwordHash: 'passwordHash',
   sellerId: 'sellerId',
+  isFarmer: 'isFarmer',
   locationProvince: 'locationProvince',
   locationCity: 'locationCity',
   locationDistrict: 'locationDistrict',
@@ -563,6 +567,45 @@ export const AuditLogScalarFieldEnum = {
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+export const CommunityPostScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  content: 'content',
+  images: 'images',
+  category: 'category',
+  location: 'location',
+  diagnoseResult: 'diagnoseResult',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  authorId: 'authorId'
+} as const
+
+export type CommunityPostScalarFieldEnum = (typeof CommunityPostScalarFieldEnum)[keyof typeof CommunityPostScalarFieldEnum]
+
+
+export const CommunityLikeScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type CommunityLikeScalarFieldEnum = (typeof CommunityLikeScalarFieldEnum)[keyof typeof CommunityLikeScalarFieldEnum]
+
+
+export const CommunityCommentScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  userId: 'userId',
+  parentId: 'parentId',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CommunityCommentScalarFieldEnum = (typeof CommunityCommentScalarFieldEnum)[keyof typeof CommunityCommentScalarFieldEnum]
 
 
 export const SortOrder = {

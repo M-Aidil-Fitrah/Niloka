@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Sparkles, Upload, Loader2, AlertCircle, Check } from "lucide-react";
 import type { DiagnoseResult } from "@/lib/ai/plant-diagnose";
 
@@ -64,6 +65,7 @@ function ConfidenceBar({ value }: { value: number }) {
 }
 
 export function DiagnoseWidget() {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [conditions, setConditions] =
@@ -141,6 +143,15 @@ export function DiagnoseWidget() {
       }
       const data = await res.json();
       setResult(data);
+      try {
+        const stored = localStorage.getItem("niloka_recent_diagnoses");
+        const list = stored ? JSON.parse(stored) : [];
+        const newItem = { ...data, timestamp: new Date().toISOString() };
+        const updated = [newItem, ...list].slice(0, 5);
+        localStorage.setItem("niloka_recent_diagnoses", JSON.stringify(updated));
+      } catch (e) {
+        console.error("Failed to save diagnosis to localStorage:", e);
+      }
     } catch (err: unknown) {
       setError(
         err instanceof Error
@@ -315,6 +326,33 @@ export function DiagnoseWidget() {
                   ))}
                 </ul>
               </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      try {
+                        const result = reader.result as string;
+                        const base64Data = result.split(",")[1];
+                        sessionStorage.setItem("niloka_share_image_base64", base64Data);
+                        sessionStorage.setItem("niloka_share_image_name", file.name);
+                        sessionStorage.setItem("niloka_share_image_type", file.type);
+                      } catch (e) {
+                        console.error("Failed to save image to sessionStorage (likely size limit):", e);
+                      }
+                      router.push("/nilam-hub?share_diagnose=true");
+                    };
+                    reader.readAsDataURL(file);
+                  } else {
+                    router.push("/nilam-hub?share_diagnose=true");
+                  }
+                }}
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-brand-900 bg-brand-50 px-6 py-2.5 text-xs font-bold text-brand-900 hover:bg-brand-100 transition-all cursor-pointer"
+              >
+                <Sparkles className="h-4 w-4 text-brand-700 animate-pulse" />
+                Bagikan & Tanya Petani di Nilam Hub
+              </button>
             </div>
           )}
         </div>

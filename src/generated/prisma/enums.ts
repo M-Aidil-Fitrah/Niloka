@@ -265,3 +265,14 @@ export const UploadedAssetKind = {
 } as const
 
 export type UploadedAssetKind = (typeof UploadedAssetKind)[keyof typeof UploadedAssetKind]
+
+
+export const CommunityCategory = {
+  BUDIDAYA: 'BUDIDAYA',
+  PANEN: 'PANEN',
+  REVIEW: 'REVIEW',
+  PASAR: 'PASAR',
+  UMUM: 'UMUM'
+} as const
+
+export type CommunityCategory = (typeof CommunityCategory)[keyof typeof CommunityCategory]
