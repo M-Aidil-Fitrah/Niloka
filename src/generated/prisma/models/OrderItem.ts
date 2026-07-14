@@ -43,6 +43,8 @@ export type OrderItemMinAggregateOutputType = {
   productId: string | null
   ampasListingId: string | null
   sellerId: string | null
+  productName: string | null
+  productImage: string | null
   quantity: number | null
   unitPriceAmount: number | null
   unitPriceCurrency: string | null
@@ -55,6 +57,8 @@ export type OrderItemMaxAggregateOutputType = {
   productId: string | null
   ampasListingId: string | null
   sellerId: string | null
+  productName: string | null
+  productImage: string | null
   quantity: number | null
   unitPriceAmount: number | null
   unitPriceCurrency: string | null
@@ -67,6 +71,8 @@ export type OrderItemCountAggregateOutputType = {
   productId: number
   ampasListingId: number
   sellerId: number
+  productName: number
+  productImage: number
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency: number
@@ -91,6 +97,8 @@ export type OrderItemMinAggregateInputType = {
   productId?: true
   ampasListingId?: true
   sellerId?: true
+  productName?: true
+  productImage?: true
   quantity?: true
   unitPriceAmount?: true
   unitPriceCurrency?: true
@@ -103,6 +111,8 @@ export type OrderItemMaxAggregateInputType = {
   productId?: true
   ampasListingId?: true
   sellerId?: true
+  productName?: true
+  productImage?: true
   quantity?: true
   unitPriceAmount?: true
   unitPriceCurrency?: true
@@ -115,6 +125,8 @@ export type OrderItemCountAggregateInputType = {
   productId?: true
   ampasListingId?: true
   sellerId?: true
+  productName?: true
+  productImage?: true
   quantity?: true
   unitPriceAmount?: true
   unitPriceCurrency?: true
@@ -214,6 +226,8 @@ export type OrderItemGroupByOutputType = {
   productId: string | null
   ampasListingId: string | null
   sellerId: string | null
+  productName: string
+  productImage: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency: string
@@ -249,6 +263,8 @@ export type OrderItemWhereInput = {
   productId?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   ampasListingId?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   sellerId?: Prisma.StringNullableFilter<"OrderItem"> | string | null
+  productName?: Prisma.StringFilter<"OrderItem"> | string
+  productImage?: Prisma.StringFilter<"OrderItem"> | string
   quantity?: Prisma.IntFilter<"OrderItem"> | number
   unitPriceAmount?: Prisma.IntFilter<"OrderItem"> | number
   unitPriceCurrency?: Prisma.StringFilter<"OrderItem"> | string
@@ -264,6 +280,8 @@ export type OrderItemOrderByWithRelationInput = {
   productId?: Prisma.SortOrderInput | Prisma.SortOrder
   ampasListingId?: Prisma.SortOrderInput | Prisma.SortOrder
   sellerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  productName?: Prisma.SortOrder
+  productImage?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   unitPriceAmount?: Prisma.SortOrder
   unitPriceCurrency?: Prisma.SortOrder
@@ -282,6 +300,8 @@ export type OrderItemWhereUniqueInput = Prisma.AtLeast<{
   productId?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   ampasListingId?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   sellerId?: Prisma.StringNullableFilter<"OrderItem"> | string | null
+  productName?: Prisma.StringFilter<"OrderItem"> | string
+  productImage?: Prisma.StringFilter<"OrderItem"> | string
   quantity?: Prisma.IntFilter<"OrderItem"> | number
   unitPriceAmount?: Prisma.IntFilter<"OrderItem"> | number
   unitPriceCurrency?: Prisma.StringFilter<"OrderItem"> | string
@@ -297,6 +317,8 @@ export type OrderItemOrderByWithAggregationInput = {
   productId?: Prisma.SortOrderInput | Prisma.SortOrder
   ampasListingId?: Prisma.SortOrderInput | Prisma.SortOrder
   sellerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  productName?: Prisma.SortOrder
+  productImage?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   unitPriceAmount?: Prisma.SortOrder
   unitPriceCurrency?: Prisma.SortOrder
@@ -317,6 +339,8 @@ export type OrderItemScalarWhereWithAggregatesInput = {
   productId?: Prisma.StringNullableWithAggregatesFilter<"OrderItem"> | string | null
   ampasListingId?: Prisma.StringNullableWithAggregatesFilter<"OrderItem"> | string | null
   sellerId?: Prisma.StringNullableWithAggregatesFilter<"OrderItem"> | string | null
+  productName?: Prisma.StringWithAggregatesFilter<"OrderItem"> | string
+  productImage?: Prisma.StringWithAggregatesFilter<"OrderItem"> | string
   quantity?: Prisma.IntWithAggregatesFilter<"OrderItem"> | number
   unitPriceAmount?: Prisma.IntWithAggregatesFilter<"OrderItem"> | number
   unitPriceCurrency?: Prisma.StringWithAggregatesFilter<"OrderItem"> | string
@@ -326,6 +350,8 @@ export type OrderItemCreateInput = {
   id?: string
   kind: $Enums.CartItemKind
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -341,6 +367,8 @@ export type OrderItemUncheckedCreateInput = {
   productId?: string | null
   ampasListingId?: string | null
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -350,6 +378,8 @@ export type OrderItemUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kind?: Prisma.EnumCartItemKindFieldUpdateOperationsInput | $Enums.CartItemKind
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -365,6 +395,8 @@ export type OrderItemUncheckedUpdateInput = {
   productId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ampasListingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -377,6 +409,8 @@ export type OrderItemCreateManyInput = {
   productId?: string | null
   ampasListingId?: string | null
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -386,6 +420,8 @@ export type OrderItemUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kind?: Prisma.EnumCartItemKindFieldUpdateOperationsInput | $Enums.CartItemKind
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -398,6 +434,8 @@ export type OrderItemUncheckedUpdateManyInput = {
   productId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ampasListingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -420,6 +458,8 @@ export type OrderItemCountOrderByAggregateInput = {
   productId?: Prisma.SortOrder
   ampasListingId?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
+  productName?: Prisma.SortOrder
+  productImage?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   unitPriceAmount?: Prisma.SortOrder
   unitPriceCurrency?: Prisma.SortOrder
@@ -437,6 +477,8 @@ export type OrderItemMaxOrderByAggregateInput = {
   productId?: Prisma.SortOrder
   ampasListingId?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
+  productName?: Prisma.SortOrder
+  productImage?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   unitPriceAmount?: Prisma.SortOrder
   unitPriceCurrency?: Prisma.SortOrder
@@ -449,6 +491,8 @@ export type OrderItemMinOrderByAggregateInput = {
   productId?: Prisma.SortOrder
   ampasListingId?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
+  productName?: Prisma.SortOrder
+  productImage?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   unitPriceAmount?: Prisma.SortOrder
   unitPriceCurrency?: Prisma.SortOrder
@@ -589,6 +633,8 @@ export type OrderItemCreateWithoutProductInput = {
   id?: string
   kind: $Enums.CartItemKind
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -602,6 +648,8 @@ export type OrderItemUncheckedCreateWithoutProductInput = {
   kind: $Enums.CartItemKind
   ampasListingId?: string | null
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -643,6 +691,8 @@ export type OrderItemScalarWhereInput = {
   productId?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   ampasListingId?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   sellerId?: Prisma.StringNullableFilter<"OrderItem"> | string | null
+  productName?: Prisma.StringFilter<"OrderItem"> | string
+  productImage?: Prisma.StringFilter<"OrderItem"> | string
   quantity?: Prisma.IntFilter<"OrderItem"> | number
   unitPriceAmount?: Prisma.IntFilter<"OrderItem"> | number
   unitPriceCurrency?: Prisma.StringFilter<"OrderItem"> | string
@@ -652,6 +702,8 @@ export type OrderItemCreateWithoutAmpasListingInput = {
   id?: string
   kind: $Enums.CartItemKind
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -665,6 +717,8 @@ export type OrderItemUncheckedCreateWithoutAmpasListingInput = {
   kind: $Enums.CartItemKind
   productId?: string | null
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -700,6 +754,8 @@ export type OrderItemCreateWithoutOrderInput = {
   id?: string
   kind: $Enums.CartItemKind
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -713,6 +769,8 @@ export type OrderItemUncheckedCreateWithoutOrderInput = {
   productId?: string | null
   ampasListingId?: string | null
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -750,6 +808,8 @@ export type OrderItemCreateManyProductInput = {
   kind: $Enums.CartItemKind
   ampasListingId?: string | null
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -759,6 +819,8 @@ export type OrderItemUpdateWithoutProductInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kind?: Prisma.EnumCartItemKindFieldUpdateOperationsInput | $Enums.CartItemKind
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -772,6 +834,8 @@ export type OrderItemUncheckedUpdateWithoutProductInput = {
   kind?: Prisma.EnumCartItemKindFieldUpdateOperationsInput | $Enums.CartItemKind
   ampasListingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -783,6 +847,8 @@ export type OrderItemUncheckedUpdateManyWithoutProductInput = {
   kind?: Prisma.EnumCartItemKindFieldUpdateOperationsInput | $Enums.CartItemKind
   ampasListingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -794,6 +860,8 @@ export type OrderItemCreateManyAmpasListingInput = {
   kind: $Enums.CartItemKind
   productId?: string | null
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -803,6 +871,8 @@ export type OrderItemUpdateWithoutAmpasListingInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kind?: Prisma.EnumCartItemKindFieldUpdateOperationsInput | $Enums.CartItemKind
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -816,6 +886,8 @@ export type OrderItemUncheckedUpdateWithoutAmpasListingInput = {
   kind?: Prisma.EnumCartItemKindFieldUpdateOperationsInput | $Enums.CartItemKind
   productId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -827,6 +899,8 @@ export type OrderItemUncheckedUpdateManyWithoutAmpasListingInput = {
   kind?: Prisma.EnumCartItemKindFieldUpdateOperationsInput | $Enums.CartItemKind
   productId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -838,6 +912,8 @@ export type OrderItemCreateManyOrderInput = {
   productId?: string | null
   ampasListingId?: string | null
   sellerId?: string | null
+  productName?: string
+  productImage?: string
   quantity: number
   unitPriceAmount: number
   unitPriceCurrency?: string
@@ -847,6 +923,8 @@ export type OrderItemUpdateWithoutOrderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kind?: Prisma.EnumCartItemKindFieldUpdateOperationsInput | $Enums.CartItemKind
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -860,6 +938,8 @@ export type OrderItemUncheckedUpdateWithoutOrderInput = {
   productId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ampasListingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -871,6 +951,8 @@ export type OrderItemUncheckedUpdateManyWithoutOrderInput = {
   productId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ampasListingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productImage?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   unitPriceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -885,6 +967,8 @@ export type OrderItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   productId?: boolean
   ampasListingId?: boolean
   sellerId?: boolean
+  productName?: boolean
+  productImage?: boolean
   quantity?: boolean
   unitPriceAmount?: boolean
   unitPriceCurrency?: boolean
@@ -900,6 +984,8 @@ export type OrderItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   productId?: boolean
   ampasListingId?: boolean
   sellerId?: boolean
+  productName?: boolean
+  productImage?: boolean
   quantity?: boolean
   unitPriceAmount?: boolean
   unitPriceCurrency?: boolean
@@ -915,6 +1001,8 @@ export type OrderItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   productId?: boolean
   ampasListingId?: boolean
   sellerId?: boolean
+  productName?: boolean
+  productImage?: boolean
   quantity?: boolean
   unitPriceAmount?: boolean
   unitPriceCurrency?: boolean
@@ -930,12 +1018,14 @@ export type OrderItemSelectScalar = {
   productId?: boolean
   ampasListingId?: boolean
   sellerId?: boolean
+  productName?: boolean
+  productImage?: boolean
   quantity?: boolean
   unitPriceAmount?: boolean
   unitPriceCurrency?: boolean
 }
 
-export type OrderItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "kind" | "productId" | "ampasListingId" | "sellerId" | "quantity" | "unitPriceAmount" | "unitPriceCurrency", ExtArgs["result"]["orderItem"]>
+export type OrderItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "kind" | "productId" | "ampasListingId" | "sellerId" | "productName" | "productImage" | "quantity" | "unitPriceAmount" | "unitPriceCurrency", ExtArgs["result"]["orderItem"]>
 export type OrderItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   product?: boolean | Prisma.OrderItem$productArgs<ExtArgs>
@@ -966,6 +1056,8 @@ export type $OrderItemPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     productId: string | null
     ampasListingId: string | null
     sellerId: string | null
+    productName: string
+    productImage: string
     quantity: number
     unitPriceAmount: number
     unitPriceCurrency: string
@@ -1401,6 +1493,8 @@ export interface OrderItemFieldRefs {
   readonly productId: Prisma.FieldRef<"OrderItem", 'String'>
   readonly ampasListingId: Prisma.FieldRef<"OrderItem", 'String'>
   readonly sellerId: Prisma.FieldRef<"OrderItem", 'String'>
+  readonly productName: Prisma.FieldRef<"OrderItem", 'String'>
+  readonly productImage: Prisma.FieldRef<"OrderItem", 'String'>
   readonly quantity: Prisma.FieldRef<"OrderItem", 'Int'>
   readonly unitPriceAmount: Prisma.FieldRef<"OrderItem", 'Int'>
   readonly unitPriceCurrency: Prisma.FieldRef<"OrderItem", 'String'>

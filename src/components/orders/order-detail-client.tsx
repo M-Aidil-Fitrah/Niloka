@@ -88,8 +88,29 @@ export function OrderDetailClient({ order }: OrderDetailClientProps) {
         <h4 className="text-xs font-extrabold text-brand-950 mb-3">Barang ({order.items.length})</h4>
         <div className="divide-y divide-line/40">
           {order.items.map((item) => (
-            <div key={item.id} className="flex justify-between py-2 text-xs">
-              <div><p className="font-bold text-brand-950">{item.name}</p><p className="text-ink-600">x{item.quantity} @ Rp {item.unitPrice.amount.toLocaleString("id-ID")}</p></div>
+            <div key={item.id} className="flex gap-3 py-2.5 text-xs items-center first:pt-0 last:pb-0">
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-line/40 bg-cream-100">
+                {item.imageSrc ? (
+                  <Image
+                    src={item.imageSrc}
+                    alt={item.name}
+                    className="object-cover"
+                    fill
+                    sizes="40px"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                ) : (
+                  <div className="h-full w-full bg-cream-100 flex items-center justify-center">
+                    <span className="text-[10px] text-ink-400 font-bold">N/A</span>
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-bold text-brand-950 truncate">{item.name}</p>
+                <p className="text-ink-600 mt-0.5">x{item.quantity} @ Rp {item.unitPrice.amount.toLocaleString("id-ID")}</p>
+              </div>
               <p className="font-bold text-brand-950 shrink-0 ml-4">Rp {item.subtotal.amount.toLocaleString("id-ID")}</p>
             </div>
           ))}

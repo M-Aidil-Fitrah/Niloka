@@ -26,12 +26,14 @@ type OrderWithRelations = Prisma.OrderGetPayload<{
         product: {
           select: {
             name: true;
+            imageSrc: true;
             sellerId: true;
           };
         };
         ampasListing: {
           select: {
             slug: true;
+            imageSrc: true;
             sellerId: true;
           };
         };
@@ -154,10 +156,11 @@ function getPaymentStatus(payments: OrderWithRelations["payments"]): PaymentStat
 function mapOrderItem(item: OrderWithRelations["items"][number]): OrderLineItem {
   const sellerId =
     item.sellerId ?? item.product?.sellerId ?? item.ampasListing?.sellerId ?? "";
-  const name =
+  const name = item.productName || (
     item.kind === CartItemKind.PRODUCT
       ? item.product?.name ?? "Produk Nilam"
-      : getAmpasName(item.ampasListing?.slug);
+      : getAmpasName(item.ampasListing?.slug)
+  );
   const subtotalAmount = item.unitPriceAmount * item.quantity;
 
   return {
@@ -176,6 +179,11 @@ function mapOrderItem(item: OrderWithRelations["items"][number]): OrderLineItem 
       amount: subtotalAmount,
       currency: "IDR",
     },
+    imageSrc: item.productImage || (
+      item.kind === CartItemKind.PRODUCT
+        ? item.product?.imageSrc || ""
+        : item.ampasListing?.imageSrc || ""
+    ),
   };
 }
 
@@ -271,12 +279,14 @@ export async function getBuyerOrdersDto(userId: string): Promise<OrderTracking[]
           product: {
             select: {
               name: true,
+              imageSrc: true,
               sellerId: true,
             },
           },
           ampasListing: {
             select: {
               slug: true,
+              imageSrc: true,
               sellerId: true,
             },
           },
@@ -324,12 +334,14 @@ export async function getBuyerOrderDto(
           product: {
             select: {
               name: true,
+              imageSrc: true,
               sellerId: true,
             },
           },
           ampasListing: {
             select: {
               slug: true,
+              imageSrc: true,
               sellerId: true,
             },
           },
@@ -378,12 +390,14 @@ export async function getSellerOrdersDto(
           product: {
             select: {
               name: true,
+              imageSrc: true,
               sellerId: true,
             },
           },
           ampasListing: {
             select: {
               slug: true,
+              imageSrc: true,
               sellerId: true,
             },
           },

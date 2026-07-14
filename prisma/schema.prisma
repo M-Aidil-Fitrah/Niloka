@@ -594,6 +594,8 @@ model OrderItem {
   productId         String?       @map("product_id")
   ampasListingId    String?       @map("ampas_listing_id")
   sellerId          String?       @map("seller_id")
+  productName       String        @default("") @map("product_name")
+  productImage      String        @default("") @map("product_image")
   quantity          Int
   unitPriceAmount   Int           @map("unit_price_amount")
   unitPriceCurrency String        @default("IDR") @map("unit_price_currency")

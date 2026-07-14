@@ -42,8 +42,8 @@ export async function getSellerOrderDetailAction(orderId: string) {
       items: {
         where: { sellerId },
         include: {
-          product: { select: { name: true, sellerId: true } },
-          ampasListing: { select: { slug: true, sellerId: true } },
+          product: { select: { name: true, imageSrc: true, sellerId: true } },
+          ampasListing: { select: { slug: true, imageSrc: true, sellerId: true } },
         },
       },
       payments: { orderBy: { createdAt: "desc" } },
@@ -86,13 +86,22 @@ export async function getSellerOrderDetailAction(orderId: string) {
       name: buyer?.name ?? "Pembeli",
       email: buyer?.email ?? "",
     },
-    items: orderData.items.map((item) => ({
-      id: item.id,
-      name: item.product?.name ?? "Produk",
-      quantity: item.quantity,
-      unitPriceAmount: item.unitPriceAmount,
-      subtotalAmount: item.unitPriceAmount * item.quantity,
-    })),
+    items: orderData.items.map((item) => {
+      const name = item.productName || (
+        item.kind === "PRODUCT"
+          ? item.product?.name ?? "Produk"
+          : item.ampasListing?.slug
+            ? item.ampasListing.slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+            : "Ampas"
+      );
+      return {
+        id: item.id,
+        name,
+        quantity: item.quantity,
+        unitPriceAmount: item.unitPriceAmount,
+        subtotalAmount: item.unitPriceAmount * item.quantity,
+      };
+    }),
     payments: orderData.payments.map((p) => ({
       id: p.id,
       method: p.paymentMethod,

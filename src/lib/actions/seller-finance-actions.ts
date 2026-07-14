@@ -76,16 +76,22 @@ export async function getSellerFinanceSummaryAction(): Promise<{
     pendingPassports: passports,
     ratingAverage: sellerProfile?.ratingAverage ?? 0,
     totalReviews: sellerProfile?.totalReviews ?? 0,
-    recentTransactions: orders.map((o) => ({
-      id: o.id,
-      productName: o.items[0]?.product?.name
-        ?? o.items[0]?.ampasListing?.slug?.split("-").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
-        ?? "Produk Nilam",
-      buyerName: o.user?.name ?? "Pembeli",
-      amount: o.grandTotalAmount,
-      date: o.createdAt.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
-      status: o.status === "PAID" || o.status === "FULFILLED" ? "success" as const : "pending" as const,
-    })),
+    recentTransactions: orders.map((o) => {
+      const firstItem = o.items[0];
+      const productName = firstItem?.productName || (
+        firstItem?.product?.name
+        ?? firstItem?.ampasListing?.slug?.split("-").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+        ?? "Produk Nilam"
+      );
+      return {
+        id: o.id,
+        productName,
+        buyerName: o.user?.name ?? "Pembeli",
+        amount: o.grandTotalAmount,
+        date: o.createdAt.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+        status: o.status === "PAID" || o.status === "FULFILLED" ? "success" as const : "pending" as const,
+      };
+    }),
     dailySales: (() => {
       const dayTotals = new Map<string, number>();
       for (const o of sellerOrders) {

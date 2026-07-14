@@ -2867,6 +2867,8 @@ export const OrderItemScalarFieldEnum = {
   productId: 'productId',
   ampasListingId: 'ampasListingId',
   sellerId: 'sellerId',
+  productName: 'productName',
+  productImage: 'productImage',
   quantity: 'quantity',
   unitPriceAmount: 'unitPriceAmount',
   unitPriceCurrency: 'unitPriceCurrency'

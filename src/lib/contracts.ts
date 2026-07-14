@@ -277,6 +277,7 @@ export type OrderLineItem = {
   quantity: number;
   unitPrice: Money;
   subtotal: Money;
+  imageSrc?: string;
 };
 
 export type OrderPayment = {

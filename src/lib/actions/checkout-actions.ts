@@ -368,6 +368,8 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
         include: {
           product: {
             select: {
+              name: true,
+              imageSrc: true,
               sellerId: true,
               priceAmount: true,
               priceCurrency: true,
@@ -375,6 +377,8 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
           },
           ampasListing: {
             select: {
+              slug: true,
+              imageSrc: true,
               sellerId: true,
               pricePerKgAmount: true,
               pricePerKgCurrency: true,
@@ -399,6 +403,8 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
         sellerId: item.product.sellerId,
         unitPriceAmount: item.product.priceAmount,
         unitPriceCurrency: item.product.priceCurrency,
+        productName: item.product.name,
+        productImage: item.product.imageSrc || "",
       };
     }
 
@@ -411,17 +417,25 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
           ? item.ampasListing.wholesalePricePerKgAmount
           : item.ampasListing.pricePerKgAmount;
 
+      const ampasName = item.ampasListing.slug
+        ? item.ampasListing.slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+        : "Ampas Nilam B2B";
+
       return {
         ...item,
         sellerId: item.ampasListing.sellerId,
         unitPriceAmount: wholesalePrice,
         unitPriceCurrency: item.ampasListing.pricePerKgCurrency,
+        productName: ampasName,
+        productImage: item.ampasListing.imageSrc || "",
       };
     }
 
     return {
       ...item,
       sellerId: getCartItemSellerId(item),
+      productName: "Produk Nilam",
+      productImage: "",
     };
   });
 
@@ -478,6 +492,8 @@ export async function checkoutAction(payload: CheckoutInput): Promise<CheckoutRe
               quantity: item.quantity,
               unitPriceAmount: item.unitPriceAmount,
               unitPriceCurrency: item.unitPriceCurrency,
+              productName: item.productName,
+              productImage: item.productImage,
             }))
           },
           fulfillments: {
