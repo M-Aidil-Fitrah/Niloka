@@ -24,7 +24,7 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
   // Helper: Get seller by ID
   const getSellerName = (sellerId: string) => {
     const s = sellers.find((item) => item.id === sellerId);
-    return s ? s.displayName : "Penyuling Lokal";
+    return s ? s.displayName : "Toko Lokal";
   };
 
   // Find first selected product's seller to enforce "Single Seller"
@@ -123,7 +123,7 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
           Bursa Paket Atsiri NILOKA
         </h1>
         <p className="text-sm text-ink-600 leading-relaxed">
-          Temukan paket kurasi dari penyuling atsiri terpercaya atau rakit sendiri kombinasi minyak atsiri pilihan Anda untuk mendapatkan diskon langsung 15%!
+          Temukan paket kurasi dari toko atsiri terpercaya atau rakit sendiri kombinasi minyak atsiri pilihan Anda untuk mendapatkan diskon langsung 15%!
         </p>
       </div>
 
@@ -140,7 +140,7 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
         <div className="border-b border-line/60 pb-3 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-extrabold text-brand-950">Paket Rekomendasi NILOKA</h2>
-            <p className="text-xs text-ink-600">Kurasi terbaik dari penyuling atsiri lokal dengan harga promo terjangkau</p>
+            <p className="text-xs text-ink-600">Kurasi terbaik dari toko atsiri lokal dengan harga promo terjangkau</p>
           </div>
         </div>
 
@@ -159,7 +159,7 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
                   <div className="flex justify-between items-start gap-2">
                     <div>
                       <span className="text-[9px] font-extrabold uppercase tracking-wider text-gold-600 bg-gold-100/40 px-2 py-0.5 rounded-lg border border-gold-200/40">
-                        {bundle.type === "single-seller" ? "Satu Penyuling" : "Lintas Penyuling"}
+                        {bundle.type === "single-seller" ? "Satu Toko" : "Lintas Toko"}
                       </span>
                       <h3 className="text-base font-extrabold text-brand-950 mt-1">{bundle.title}</h3>
                     </div>
@@ -228,7 +228,7 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
                   : "text-brand-950 hover:bg-cream-200/50"
               }`}
             >
-              Satu Penyuling
+              Satu Toko
             </button>
             <button
               onClick={() => handleTypeChange("cross-seller")}
@@ -238,7 +238,7 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
                   : "text-brand-950 hover:bg-cream-200/50"
               }`}
             >
-              Lintas Penyuling
+              Lintas Toko
             </button>
           </div>
         </div>
@@ -254,7 +254,7 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
             {bundleType === "single-seller" && activeSellerId && (
               <div className="bg-cream-50 border border-line/70 rounded-xl p-3 text-[11px] text-brand-950 font-bold flex items-center justify-between">
                 <span>
-                  📍 Membatasi produk hanya dari penyuling:{" "}
+                  📍 Membatasi produk hanya dari toko:{" "}
                   <span className="text-brand-850 underline">
                     {getSellerName(activeSellerId)}
                   </span>

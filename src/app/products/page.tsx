@@ -4,6 +4,8 @@ import {
   getProductCategoriesDto,
   getPublicPromoSuggestionsDto,
   getPublishedProductsDto,
+  getBundlesDto,
+  getSellersDto,
 } from "@/lib/dal/marketplace";
 import { SectionShell } from "@/components/ui/section-shell";
 import { CatalogSkeleton } from "@/components/ui/skeletons";
@@ -30,10 +32,12 @@ export default async function ProductsPage({
   searchParams: Promise<{ search?: string }>;
 }) {
   const { search } = await searchParams;
-  const [products, categories, promos] = await Promise.all([
+  const [products, categories, promos, bundles, sellers] = await Promise.all([
     getPublishedProductsDto({ searchQuery: search }),
     getProductCategoriesDto(),
     getPublicPromoSuggestionsDto(),
+    getBundlesDto(),
+    getSellersDto(),
   ]);
 
   return (
@@ -46,6 +50,8 @@ export default async function ProductsPage({
           products={products}
           categories={categories}
           promos={promos}
+          bundles={bundles}
+          sellers={sellers}
           initialSearchQuery={search ?? ""}
         />
       </div>
