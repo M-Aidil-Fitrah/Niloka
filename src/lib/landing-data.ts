@@ -112,7 +112,7 @@ export async function getLandingPageData(): Promise<LandingPageData> {
       id: product.id,
       name: product.name,
       tag: getProductTagLabel(product.tags),
-      price: formatRupiah(product.price.amount),
+      price: product.price.amount,
       imageUrl: product.image.src,
       imageAlt: product.image.alt,
     }));
@@ -124,9 +124,9 @@ export async function getLandingPageData(): Promise<LandingPageData> {
       id: product.id,
       name: product.name,
       tag: "New arrival",
-      price: formatRupiah(product.price.amount),
+      price: product.price.amount,
       originalPrice: product.originalPrice
-        ? formatRupiah(product.originalPrice.amount)
+        ? product.originalPrice.amount
         : undefined,
       imageUrl: product.image.src,
       imageAlt: product.image.alt,

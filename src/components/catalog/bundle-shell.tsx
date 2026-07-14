@@ -6,6 +6,7 @@ import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import type { Product, Bundle, Seller } from "@/lib/contracts";
+import { PriceDisplay } from "@/components/ui/price-display";
 
 type BundleShellProps = {
   products: Product[];
@@ -163,9 +164,13 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
                       </span>
                       <h3 className="text-base font-extrabold text-brand-950 mt-1">{bundle.title}</h3>
                     </div>
-                    <div className="text-right">
-                      <span className="text-[10px] text-ink-600 line-through block">Rp {originalSum.toLocaleString("id-ID")}</span>
-                      <span className="text-sm font-extrabold text-brand-950 block">Rp {bundle.price.amount.toLocaleString("id-ID")}</span>
+                    <div className="text-right flex flex-col items-end">
+                      <span className="text-[10px] text-ink-600 line-through block">
+                        <PriceDisplay amount={originalSum} showTooltip={false} />
+                      </span>
+                      <span className="text-sm font-extrabold text-brand-950 block">
+                        <PriceDisplay amount={bundle.price.amount} />
+                      </span>
                     </div>
                   </div>
 
@@ -190,8 +195,8 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
                 </div>
 
                 <div className="pt-5 border-t border-line/60 mt-4 flex items-center justify-between gap-3">
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/40 px-2 py-1 rounded-lg">
-                    Hemat Rp {savings.toLocaleString("id-ID")}
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/40 px-2 py-1 rounded-lg flex items-center gap-0.5">
+                    Hemat <PriceDisplay amount={savings} showTooltip={false} className="border-none p-0 inline font-extrabold text-emerald-705" />
                   </span>
                   <button
                     onClick={() => handleAddPreconfiguredBundle(bundle)}
@@ -210,7 +215,7 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
       <div className="rounded-[36px] border border-line bg-white-soft p-6 sm:p-8 space-y-6 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line/60 pb-5">
           <div>
-            <h2 className="text-xl font-extrabold text-brand-950">
+            <h2 className="text-xl font-extrabold text-brand-955">
               🛠️ NILOKA Atsiri Bundle Builder
             </h2>
             <p className="text-xs text-ink-600 mt-0.5">
@@ -301,9 +306,9 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
                       <span className="text-[9px] font-bold text-ink-600 uppercase tracking-wider block">
                         {getSellerName(product.sellerId)}
                       </span>
-                      <h4 className="text-sm font-bold text-brand-950 mt-0.5 truncate">{product.name}</h4>
+                      <h4 className="text-sm font-bold text-brand-955 mt-0.5 truncate">{product.name}</h4>
                       <span className="text-xs font-extrabold text-brand-900 block mt-1">
-                        Rp {product.price.amount.toLocaleString("id-ID")}
+                        <PriceDisplay amount={product.price.amount} />
                       </span>
                     </div>
                   </button>
@@ -322,7 +327,7 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
                   {builderSelectedProducts.map((p) => (
                     <div key={p.id} className="pt-2 first:pt-0 flex justify-between items-center text-[11px]">
                       <span className="font-semibold text-brand-950 truncate max-w-44">{p.name}</span>
-                      <span className="font-bold text-brand-900 shrink-0 ml-2">Rp {p.price.amount.toLocaleString("id-ID")}</span>
+                      <span className="font-bold text-brand-900 shrink-0 ml-2"><PriceDisplay amount={p.price.amount} showTooltip={false} /></span>
                     </div>
                   ))}
                 </div>
@@ -332,15 +337,15 @@ export function BundleShell({ products, bundles, sellers }: BundleShellProps) {
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between items-center text-ink-600">
                     <span>Subtotal Rakitan:</span>
-                    <span className="font-semibold text-brand-950">Rp {builderSubtotal.toLocaleString("id-ID")}</span>
+                    <span className="font-semibold text-brand-950"><PriceDisplay amount={builderSubtotal} showTooltip={false} /></span>
                   </div>
                   <div className="flex justify-between items-center text-emerald-700 font-bold">
                     <span>Hemat Paket (15%):</span>
-                    <span>-Rp {builderDiscount.toLocaleString("id-ID")}</span>
+                    <span className="flex items-center">-<PriceDisplay amount={builderDiscount} showTooltip={false} /></span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-line/60">
                     <span className="font-bold text-brand-950">Harga Paket:</span>
-                    <span className="text-sm font-extrabold text-brand-950">Rp {builderTotal.toLocaleString("id-ID")}</span>
+                    <span className="text-sm font-extrabold text-brand-950"><PriceDisplay amount={builderTotal} /></span>
                   </div>
                 </div>
 

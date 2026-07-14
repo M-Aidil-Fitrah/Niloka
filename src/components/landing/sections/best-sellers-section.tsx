@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { CartIcon } from "@/components/ui/icons";
+import { PriceDisplay } from "@/components/ui/price-display";
 import type { ProductCard } from "@/lib/landing-types";
 
 type BestSellersSectionProps = {
@@ -43,9 +44,9 @@ export function BestSellersSection({ products }: BestSellersSectionProps) {
                 {product.name}
               </h3>
               <div className="mt-5 flex items-center justify-between gap-3">
-                <p className="text-sm font-bold text-ink-900">
-                  {product.price}
-                </p>
+                <div className="text-sm font-bold text-ink-900">
+                  <PriceDisplay amount={product.price} />
+                </div>
                 <Link
                   href="/products"
                   className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 bg-brand-900 text-white-soft hover:bg-brand-700 hover:ring-2 hover:ring-gold-500/40 hover:scale-[1.02] active:scale-[0.98] h-9 px-4 text-sm"
