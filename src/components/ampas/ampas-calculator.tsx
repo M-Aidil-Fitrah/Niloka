@@ -5,6 +5,7 @@ import type { AmpasListing, Money } from "@/lib/contracts";
 import { Button } from "@/components/ui/button";
 import { Calculator, Send, ShoppingCart, CheckCircle } from "lucide-react";
 import { useCart } from "@/context/cart-context";
+import { PriceDisplay } from "@/components/ui/price-display";
 
 type AmpasCalculatorProps = {
   listings: AmpasListing[];
@@ -56,7 +57,7 @@ export function AmpasCalculator({
           <Calculator className="h-5 w-5" />
         </div>
         <div>
-          <h4 className="text-sm font-extrabold text-brand-950">Kalkulator Grosir & Eceran</h4>
+          <h4 className="text-sm font-extrabold text-brand-955">Kalkulator Grosir & Eceran</h4>
           <p className="text-[10px] text-ink-600 leading-relaxed mt-1">
             Hitung perkiraan biaya ampas nilam secara instan dan tambahkan ke keranjang belanja Anda.
           </p>
@@ -116,17 +117,17 @@ export function AmpasCalculator({
               <span>Harga per Kg:</span>
               <div className="text-right">
                 {wholesaleAppliedInCalc && selectedListing.wholesalePricePerKg ? (
-                  <>
-                    <span className="text-[10px] text-ink-600/50 line-through mr-1.5 font-semibold">
-                      Rp {selectedListing.pricePerKg.amount.toLocaleString("id-ID")}
+                  <div className="flex items-center gap-1.5 justify-end">
+                    <span className="text-[10px] text-ink-600/50 line-through font-semibold">
+                      <PriceDisplay amount={selectedListing.pricePerKg.amount} showTooltip={false} />
                     </span>
                     <span className="font-extrabold text-brand-950">
-                      Rp {selectedListing.wholesalePricePerKg.amount.toLocaleString("id-ID")}
+                      <PriceDisplay amount={selectedListing.wholesalePricePerKg.amount} showTooltip={false} />
                     </span>
-                  </>
+                  </div>
                 ) : (
                   <span className="font-semibold text-brand-950">
-                    Rp {selectedListing.pricePerKg.amount.toLocaleString("id-ID")}
+                    <PriceDisplay amount={selectedListing.pricePerKg.amount} showTooltip={false} />
                   </span>
                 )}
               </div>
@@ -137,8 +138,8 @@ export function AmpasCalculator({
                 <span className="text-[9px] font-bold text-emerald-800 uppercase bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
                   Harga Grosir Diterapkan
                 </span>
-                <span className="text-[10px] font-extrabold text-emerald-700">
-                  Hemat Rp {((selectedListing.pricePerKg.amount - (selectedListing.wholesalePricePerKg?.amount || 0)) * calcWeight).toLocaleString("id-ID")}
+                <span className="text-[10px] font-extrabold text-emerald-700 flex items-center gap-0.5">
+                  Hemat <PriceDisplay amount={(selectedListing.pricePerKg.amount - (selectedListing.wholesalePricePerKg?.amount || 0)) * calcWeight} showTooltip={false} className="border-none p-0 inline font-extrabold animate-in fade-in" />
                 </span>
               </div>
             )}
@@ -155,7 +156,7 @@ export function AmpasCalculator({
             <div className="flex justify-between items-center pt-2 border-t border-line/40">
               <span className="font-bold text-brand-950">Estimasi Total:</span>
               <span className="text-base font-extrabold text-brand-950">
-                Rp {estimatedCost.toLocaleString("id-ID")}
+                <PriceDisplay amount={estimatedCost} />
               </span>
             </div>
             

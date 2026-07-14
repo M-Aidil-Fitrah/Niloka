@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, MapPin, Calendar, Truck, ShoppingCart, Send, Scale } from "lucide-react";
-import { formatRupiah } from "@/lib/formatters";
+import { PriceDisplay } from "@/components/ui/price-display";
 import type { AmpasListing, Seller } from "@/lib/contracts";
 import { useCart } from "@/context/cart-context";
 
@@ -118,10 +118,10 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
         {isWholesaleApplied && localListing.wholesalePricePerKg ? (
           <>
             <span className="text-3xl font-extrabold text-brand-900">
-              {formatRupiah(localListing.wholesalePricePerKg.amount)}
+              <PriceDisplay amount={localListing.wholesalePricePerKg.amount} />
             </span>
             <span className="text-xs font-semibold text-ink-500 line-through">
-              {formatRupiah(localListing.pricePerKg.amount)}
+              <PriceDisplay amount={localListing.pricePerKg.amount} showTooltip={false} />
             </span>
             <span className="text-xs font-bold text-ink-600">/ kg</span>
             <span className="text-[10px] font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-250 px-2 py-0.5 rounded-md uppercase tracking-wider">
@@ -131,7 +131,7 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
         ) : (
           <>
             <span className="text-3xl font-extrabold text-brand-900">
-              {formatRupiah(localListing.pricePerKg.amount)}
+              <PriceDisplay amount={localListing.pricePerKg.amount} />
             </span>
             <span className="text-xs font-bold text-ink-600">/ kg</span>
           </>
@@ -149,14 +149,14 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
           <div className="grid grid-cols-3 gap-4 text-xs font-semibold text-ink-800">
             <div>
               <span className="text-[9px] text-ink-600 block">Harga Normal</span>
-              <span className="text-sm font-extrabold text-brand-950">
-                {formatRupiah(localListing.pricePerKg.amount)}/kg
+              <span className="text-sm font-extrabold text-brand-950 flex items-center">
+                <PriceDisplay amount={localListing.pricePerKg.amount} showTooltip={false} />/kg
               </span>
             </div>
             <div>
               <span className="text-[9px] text-ink-600 block">Harga Grosir</span>
-              <span className="text-sm font-extrabold text-amber-950">
-                {formatRupiah(localListing.wholesalePricePerKg.amount)}/kg
+              <span className="text-sm font-extrabold text-amber-950 flex items-center">
+                <PriceDisplay amount={localListing.wholesalePricePerKg.amount} showTooltip={false} />/kg
               </span>
             </div>
             <div>
@@ -255,7 +255,7 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
           <div className="animate-in fade-in duration-200">
             <p className="text-[10.5px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-250 p-2.5 rounded-xl flex items-center gap-1.5">
               <CheckCircle className="h-4 w-4 shrink-0 text-emerald-600" />
-              <span>✓ Harga grosir diterapkan! Hemat <strong>{formatRupiah((localListing.pricePerKg.amount - (localListing.wholesalePricePerKg?.amount || 0)) * quantity)}</strong></span>
+              <span>✓ Harga grosir diterapkan! Hemat <strong><PriceDisplay amount={(localListing.pricePerKg.amount - (localListing.wholesalePricePerKg?.amount || 0)) * quantity} showTooltip={false} className="border-none p-0 inline font-extrabold" /></strong></span>
             </p>
           </div>
         )}
@@ -268,21 +268,21 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
               {isWholesaleApplied && localListing.wholesalePricePerKg ? (
                 <div className="flex items-center gap-1.5 justify-end">
                   <span className="text-[10px] text-ink-500 line-through font-semibold">
-                    {formatRupiah(localListing.pricePerKg.amount)}
+                    <PriceDisplay amount={localListing.pricePerKg.amount} showTooltip={false} />
                   </span>
                   <span className="font-extrabold text-emerald-700">
-                    {formatRupiah(localListing.wholesalePricePerKg.amount)}/kg
+                    <PriceDisplay amount={localListing.wholesalePricePerKg.amount} showTooltip={false} />/kg
                   </span>
                 </div>
               ) : (
-                <span>{formatRupiah(localListing.pricePerKg.amount)}/kg</span>
+                <span className="flex items-center gap-0.5"><PriceDisplay amount={localListing.pricePerKg.amount} showTooltip={false} />/kg</span>
               )}
             </div>
           </div>
           {isWholesaleApplied && localListing.wholesalePricePerKg && (
             <div className="flex justify-between text-[10px] text-emerald-800 bg-emerald-50/50 border border-emerald-100 p-2 rounded-xl">
               <span>Rincian Grosir:</span>
-              <span className="font-bold">Hemat {formatRupiah(localListing.pricePerKg.amount - localListing.wholesalePricePerKg.amount)}/kg</span>
+              <span className="font-bold">Hemat <PriceDisplay amount={localListing.pricePerKg.amount - localListing.wholesalePricePerKg.amount} showTooltip={false} className="border-none p-0 inline" />/kg</span>
             </div>
           )}
           <div className="flex justify-between">
@@ -291,7 +291,7 @@ export function AmpasDetailInfo({ listing, seller }: AmpasDetailInfoProps) {
           </div>
           <div className="flex justify-between font-extrabold text-brand-950 text-sm border-t border-line/40 pt-2">
             <span>Total Harga:</span>
-            <span className="text-base text-brand-900">{formatRupiah(totalCost)}</span>
+            <span className="text-base text-brand-900"><PriceDisplay amount={totalCost} /></span>
           </div>
         </div>
 
