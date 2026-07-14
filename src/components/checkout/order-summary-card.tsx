@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Ticket, Trash2, HelpCircle, Lock } from "lucide-react";
 import type { Promo } from "@/lib/contracts";
+import { PriceDisplay } from "@/components/ui/price-display";
+import React from "react";
 
 type OrderSummaryCardProps = {
   subtotal: number;
@@ -45,26 +47,26 @@ export function OrderSummaryCard({
         <div className="flex justify-between items-center text-ink-600">
           <span>Subtotal Produk:</span>
           <span className="font-semibold text-brand-950">
-            Rp {subtotal.toLocaleString("id-ID")}
+            <PriceDisplay amount={subtotal} />
           </span>
         </div>
         <div className="flex justify-between items-center text-ink-600">
           <span>Biaya Platform:</span>
           <span className="font-semibold text-brand-950">
-            Rp {platformFee.toLocaleString("id-ID")}
+            <PriceDisplay amount={platformFee} />
           </span>
         </div>
         <div className="flex justify-between items-center text-ink-600">
           <span>Ongkos Kirim:</span>
           <span className="font-semibold text-brand-950">
-            Rp {shippingFee.toLocaleString("id-ID")}
+            <PriceDisplay amount={shippingFee} />
           </span>
         </div>
         {discountAmount > 0 && (
           <div className="flex justify-between items-center text-emerald-700 font-bold">
             <span>Diskon Promo:</span>
-            <span>
-              -Rp {discountAmount.toLocaleString("id-ID")}
+            <span className="flex items-center">
+              -<PriceDisplay amount={discountAmount} showTooltip={false} />
             </span>
           </div>
         )}
@@ -120,11 +122,15 @@ export function OrderSummaryCard({
               <span className="text-[9px] font-bold text-ink-600 uppercase tracking-wider block">Pilih Kupon Toko:</span>
               <div className="space-y-1.5">
                 {availablePromos.map((promo) => {
-                  let benefit = "";
+                  let benefit: React.ReactNode = "";
                   if (promo.type === "percentage") {
                     benefit = `${promo.value}% OFF`;
                   } else if (promo.type === "fixed-amount") {
-                    benefit = `-Rp ${(promo.value / 1000)}k`;
+                    benefit = (
+                      <span className="flex items-center gap-0.5">
+                        -<PriceDisplay amount={promo.value} showTooltip={false} className="border-none p-0 inline text-[9px] font-bold text-emerald-800 hover:scale-100" />
+                      </span>
+                    );
                   } else if (promo.type === "free-shipping") {
                     benefit = "Free Ongkir";
                   }
@@ -139,11 +145,11 @@ export function OrderSummaryCard({
                         <span className="text-[10px] font-extrabold font-mono uppercase tracking-wider group-hover:text-emerald-800">
                           {promo.code}
                         </span>
-                        <span className="text-[8.5px] text-ink-600 leading-tight">
-                          Min. Belanja Rp {promo.minSubtotal.amount.toLocaleString("id-ID")}
+                        <span className="text-[8.5px] text-ink-600 leading-tight flex items-center gap-0.5">
+                          Min. Belanja <PriceDisplay amount={promo.minSubtotal.amount} showTooltip={false} />
                         </span>
                       </div>
-                      <span className="text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-100 px-1.5 py-0.5 rounded shrink-0">
+                      <span className="text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-100 px-1.5 py-0.5 rounded shrink-0 flex items-center justify-center">
                         {benefit}
                       </span>
                     </button>
@@ -160,8 +166,26 @@ export function OrderSummaryCard({
       <div className="flex justify-between items-center">
         <span className="font-bold text-brand-950">Total Pembayaran:</span>
         <span className="text-base font-extrabold text-brand-950">
-          Rp {grandTotal.toLocaleString("id-ID")}
+          <PriceDisplay amount={grandTotal} />
         </span>
+      </div>
+
+      {/* Dynamic Currency Disclaimer (for Option 1 transaprency) */}
+      <div className="rounded-2xl border border-line/50 bg-cream-50/60 p-3.5 text-[10px] text-ink-600 leading-relaxed space-y-1.5">
+        <div className="flex gap-1.5 items-start">
+          <HelpCircle className="h-4 w-4 text-brand-700 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-bold text-brand-950">Pemberitahuan Transaksi Internasional:</p>
+            <p className="mt-0.5">
+              Niloka menampilkan estimasi harga dalam mata uang pilihan Anda. Namun, demi mematuhi ketentuan gerbang pembayaran, tagihan akhir Anda akan didebit dalam <span className="font-extrabold text-brand-900">Rupiah (IDR)</span> senilai <span className="font-extrabold text-brand-950">
+                {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(grandTotal)}
+              </span>.
+            </p>
+            <p className="mt-1">
+              Konversi mata uang yang sebenarnya akan ditentukan oleh bank penerbit kartu kredit atau debit Anda.
+            </p>
+          </div>
+        </div>
       </div>
 
       <Button

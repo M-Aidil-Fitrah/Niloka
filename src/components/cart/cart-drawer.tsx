@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useCart } from "@/context/cart-context";
 import { Plus, Minus, Trash2, ShoppingBag, X, ChevronRight, Store, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PriceDisplay } from "@/components/ui/price-display";
 import { getCartItemsDetailAction } from "@/lib/actions/checkout-actions";
 import { showToast } from "@/lib/toast";
 
@@ -280,8 +281,8 @@ export function CartDrawer() {
                               {item.kind === "product" ? "Produk Nilam" : "Ampas Nilam"}
                             </span>
                             <p className="text-sm font-bold text-brand-950 truncate">{detail.name}</p>
-                            <p className="text-xs font-extrabold text-brand-950 mt-0.5">
-                              Rp {item.unitPrice.amount.toLocaleString("id-ID")}
+                            <p className="text-xs font-extrabold text-brand-950 mt-0.5 flex items-center gap-0.5">
+                              <PriceDisplay amount={item.unitPrice.amount} />
                               {item.kind === "ampas-listing" && <span className="text-[10px] text-ink-600">/kg</span>}
                             </p>
                             <div className="mt-1.5 flex items-center justify-between">
@@ -308,7 +309,7 @@ export function CartDrawer() {
           <div className="border-t border-line bg-cream-50 p-5 space-y-3">
             <div className="flex items-center justify-between text-sm">
               <span className="font-semibold text-ink-600">{selectedSubtotal > 0 ? `${selectedIds.size} barang dipilih` : "Belum ada barang dipilih"}</span>
-              <span className="font-extrabold text-brand-950">Rp {selectedSubtotal.toLocaleString("id-ID")}</span>
+              <span className="font-extrabold text-brand-950"><PriceDisplay amount={selectedSubtotal} /></span>
             </div>
             <Link
               href={selectedIds.size > 0 ? `/checkout?selected=${Array.from(selectedIds).join(",")}` : "#"}

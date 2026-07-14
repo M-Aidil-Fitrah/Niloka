@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
 import type { CartItem, Money } from "@/lib/contracts";
+import { PriceDisplay } from "@/components/ui/price-display";
 
 type CartItemsListProps = {
   resolvedItems: (CartItem & {
@@ -21,7 +22,7 @@ export function CartItemsList({ resolvedItems, updateQuantity, removeItem }: Car
     <div className="rounded-[32px] border border-line bg-white-soft p-5 sm:p-6 shadow-sm space-y-4">
       <div className="flex items-center gap-2 border-b border-line/60 pb-3">
         <ShoppingBag className="h-5 w-5 text-brand-900" />
-        <h3 className="text-base font-extrabold text-brand-950">
+        <h3 className="text-base font-extrabold text-brand-955">
           Keranjang Belanja
         </h3>
       </div>
@@ -49,8 +50,8 @@ export function CartItemsList({ resolvedItems, updateQuantity, removeItem }: Car
                     {item.kind === "product" ? "Produk Nilam" : "Ampas Nilam"}
                   </span>
                   <h4 className="text-sm font-bold text-brand-950 mt-1 truncate">{item.name}</h4>
-                  <p className="text-xs font-extrabold text-brand-950 mt-1">
-                    Rp {item.unitPrice.amount.toLocaleString("id-ID")}
+                  <p className="text-xs font-extrabold text-brand-950 mt-1 flex items-center gap-0.5">
+                    <PriceDisplay amount={item.unitPrice.amount} />
                     {item.kind === "ampas-listing" && <span className="text-[10px] text-ink-600 font-semibold">/kg</span>}
                   </p>
                 </div>
@@ -98,15 +99,15 @@ export function CartItemsList({ resolvedItems, updateQuantity, removeItem }: Car
                       <span>Harga Grosir Diterapkan</span>
                     </div>
                     <div className="space-y-0.5 pl-3">
-                      <p>
+                      <p className="flex items-center gap-1 flex-wrap">
                         Menggunakan harga grosir:{" "}
-                        <strong className="text-brand-950">
-                          Rp {item.unitPrice.amount.toLocaleString("id-ID")}/kg
+                        <strong className="text-brand-950 flex items-center gap-0.5">
+                          <PriceDisplay amount={item.unitPrice.amount} showTooltip={false} />/kg
                         </strong>{" "}
-                        (Harga Normal: Rp {(item.normalPricePerKg?.amount || 0).toLocaleString("id-ID")}/kg)
+                        (Harga Normal: <PriceDisplay amount={item.normalPricePerKg?.amount || 0} showTooltip={false} />/kg)
                       </p>
-                      <p className="text-emerald-700 font-bold">
-                        Total Penghematan: Rp {(((item.normalPricePerKg?.amount || 0) - item.unitPrice.amount) * item.quantity).toLocaleString("id-ID")}
+                      <p className="text-emerald-700 font-bold flex items-center gap-1 flex-wrap">
+                        Total Penghematan: <PriceDisplay amount={((item.normalPricePerKg?.amount || 0) - item.unitPrice.amount) * item.quantity} showTooltip={false} className="border-none p-0 inline font-extrabold" />
                       </p>
                     </div>
                   </div>

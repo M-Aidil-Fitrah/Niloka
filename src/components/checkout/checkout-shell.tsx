@@ -27,6 +27,7 @@ import type {
 import { checkoutAction } from "@/lib/actions/checkout-actions";
 import { courierRates } from "@/lib/constants/courier";
 import { cn } from "@/lib/styles";
+import { PriceDisplay } from "@/components/ui/price-display";
 
 type CheckoutShellProps = {
   products: Product[];
@@ -193,17 +194,19 @@ export function CheckoutShell({ products, ampasListings, promos, selectedIds }: 
                     {item.imageSrc && <Image src={item.imageSrc} alt={item.imageAlt} fill className="object-cover" sizes="40px" />}
                   </div>
                   <div className="min-w-0 flex-1"><p className="font-bold text-brand-950 truncate">{item.name}</p><p className="text-ink-600">x{item.quantity}</p></div>
-                  <p className="font-bold text-brand-950 shrink-0">Rp {(item.unitPrice.amount * item.quantity).toLocaleString("id-ID")}</p>
+                  <p className="font-bold text-brand-950 shrink-0">
+                    <PriceDisplay amount={item.unitPrice.amount * item.quantity} />
+                  </p>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="border-t border-line/60 pt-3 space-y-1.5 text-xs">
-            <div className="flex justify-between text-ink-600"><span>Subtotal</span><span className="font-bold text-brand-950">Rp {subtotal.toLocaleString("id-ID")}</span></div>
+            <div className="flex justify-between text-ink-600"><span>Subtotal</span><span className="font-bold text-brand-950"><PriceDisplay amount={subtotal} /></span></div>
             <div className="flex justify-between text-ink-600"><span>Biaya Platform</span><span className="font-bold text-brand-950">*(dihitung saat bayar)</span></div>
-            <div className="flex justify-between text-ink-600"><span>{courierRates[courier]?.name || "Kurir"}</span><span className="font-bold text-brand-950">{sf > 0 ? `Rp ${sf.toLocaleString("id-ID")}` : "—"}</span></div>
-            {disc > 0 && <div className="flex justify-between text-emerald-700 font-bold"><span>Diskon</span><span>-Rp {disc.toLocaleString("id-ID")}</span></div>}
+            <div className="flex justify-between text-ink-600"><span>{courierRates[courier]?.name || "Kurir"}</span><span className="font-bold text-brand-950">{sf > 0 ? <PriceDisplay amount={sf} /> : "—"}</span></div>
+            {disc > 0 && <div className="flex justify-between text-emerald-700 font-bold"><span>Diskon</span><span className="flex items-center">-<PriceDisplay amount={disc} showTooltip={false} /></span></div>}
           </div>
 
           <Button onClick={() => setStep(2)} disabled={!shippingValid} className="w-full h-11 rounded-2xl bg-brand-950 hover:bg-brand-900 text-white-soft text-xs font-bold">
@@ -242,7 +245,12 @@ export function CheckoutShell({ products, ampasListings, promos, selectedIds }: 
           <div className="rounded-2xl border border-line bg-white-soft p-4 shadow-sm">
             <h4 className="text-xs font-extrabold text-brand-950 mb-2">Promo</h4>
             {appliedPromo ? (
-              <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-2.5 text-xs"><span className="font-bold text-emerald-800">{appliedPromo.code} — -Rp {disc.toLocaleString("id-ID")}</span><button onClick={() => { setAppliedPromo(null); setPromoOk(""); }} className="text-[10px] font-bold text-red-600 underline cursor-pointer" type="button">Hapus</button></div>
+              <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-2.5 text-xs">
+                <span className="font-bold text-emerald-800 flex items-center gap-1">
+                  {appliedPromo.code} — -<PriceDisplay amount={disc} showTooltip={false} className="border-none p-0 inline font-bold text-emerald-800" />
+                </span>
+                <button onClick={() => { setAppliedPromo(null); setPromoOk(""); }} className="text-[10px] font-bold text-red-650 hover:text-red-500 underline cursor-pointer" type="button">Hapus</button>
+              </div>
             ) : (
               <div className="flex gap-2"><input type="text" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} placeholder="Kode promo" className="flex-1 h-9 rounded-xl border bg-cream-50 px-3 text-xs font-semibold outline-none focus:ring-2 focus:ring-brand-900/30" /><Button onClick={handleApplyPromo} className="h-9 px-3 rounded-xl bg-brand-900 text-white text-xs font-bold">Pakai</Button></div>
             )}
@@ -258,18 +266,30 @@ export function CheckoutShell({ products, ampasListings, promos, selectedIds }: 
           </div>
 
           <div className="rounded-2xl border border-line bg-white-soft p-4 shadow-sm space-y-1.5 text-xs">
-            <div className="flex justify-between text-ink-600"><span>Subtotal</span><span className="font-bold text-brand-950">Rp {subtotal.toLocaleString("id-ID")}</span></div>
+            <div className="flex justify-between text-ink-600"><span>Subtotal</span><span className="font-bold text-brand-950"><PriceDisplay amount={subtotal} /></span></div>
             <div className="flex justify-between text-ink-600"><span>Biaya Platform</span><span className="font-bold text-brand-950">(berdasarkan metode bayar)</span></div>
-            <div className="flex justify-between text-ink-600"><span>{courierRates[courier]?.name || "Kurir"}</span><span className="font-bold text-brand-950">{sf > 0 ? `Rp ${sf.toLocaleString("id-ID")}` : "—"}</span></div>
-            {disc > 0 && <div className="flex justify-between text-emerald-700 font-bold"><span>Diskon</span><span>-Rp {disc.toLocaleString("id-ID")}</span></div>}
+            <div className="flex justify-between text-ink-600"><span>{courierRates[courier]?.name || "Kurir"}</span><span className="font-bold text-brand-950">{sf > 0 ? <PriceDisplay amount={sf} /> : "—"}</span></div>
+            {disc > 0 && <div className="flex justify-between text-emerald-700 font-bold"><span>Diskon</span><span className="flex items-center">-<PriceDisplay amount={disc} showTooltip={false} /></span></div>}
           </div>
 
-          {payError && <p className="text-[10px] text-red-600 font-semibold flex items-center gap-1"><AlertCircle className="h-3 w-3" />{payError}</p>}
+          {/* Dynamic Currency Disclaimer (transparency warning) */}
+          <div className="rounded-2xl border border-line bg-cream-50/50 p-4 text-[10px] text-ink-600 leading-relaxed space-y-1.5">
+            <p className="font-bold text-brand-950">Catatan Pembayaran & Konversi:</p>
+            <p>
+              Tagihan akhir Anda akan didebit dalam <span className="font-extrabold text-brand-900">Rupiah (IDR)</span> senilai <span className="font-extrabold text-brand-950">{new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(subtotal + sf - disc)}</span> melalui gerbang pembayaran Midtrans Core. Konversi mata uang yang ditampilkan adalah estimasi.
+            </p>
+          </div>
+
+          {payError && <p className="text-[10px] text-red-600 font-semibold flex items-center gap-1"><AlertCircle className="h-3 w-3" strokeWidth={3} />{payError}</p>}
 
           <div className="flex gap-3">
             <button onClick={() => setStep(1)} className="h-12 px-5 rounded-2xl border border-line text-xs font-bold text-brand-950 hover:bg-cream-100 transition-colors cursor-pointer flex items-center gap-1.5" type="button"><ChevronLeft className="h-4 w-4" /> Kembali</button>
-            <Button onClick={handlePay} disabled={isCreating || !shippingValid} className="flex-1 h-12 rounded-2xl bg-brand-950 hover:bg-brand-900 text-white text-sm font-bold">
-              {isCreating ? "Memproses..." : `Bayar Rp ${(subtotal + sf - disc).toLocaleString("id-ID")}`}
+            <Button onClick={handlePay} disabled={isCreating || !shippingValid} className="flex-1 h-12 rounded-2xl bg-brand-950 hover:bg-brand-900 text-white text-sm font-bold flex items-center justify-center gap-1">
+              {isCreating ? "Memproses..." : (
+                <>
+                  Bayar Sekarang (<PriceDisplay amount={subtotal + sf - disc} showTooltip={false} className="border-none p-0 inline font-bold text-white-soft text-sm" />)
+                </>
+              )}
             </Button>
           </div>
         </div>

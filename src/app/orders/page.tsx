@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth/session";
 import { getBuyerOrdersDto } from "@/lib/dal/orders";
 import { SectionShell } from "@/components/ui/section-shell";
 import { ChevronRight, Package } from "lucide-react";
+import { PriceDisplay } from "@/components/ui/price-display";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,9 @@ export default async function OrdersPage() {
               <div className="space-y-1 text-xs">
                 <p className="font-mono font-bold text-brand-950">{order.id}</p>
                 <p className="text-ink-600">{new Date(order.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
-                <p className="font-semibold">{order.items.length} barang — Rp {order.grandTotal.amount.toLocaleString("id-ID")}</p>
+                <p className="font-semibold flex items-center gap-1">
+                  {order.items.length} barang — <PriceDisplay amount={order.grandTotal.amount} />
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase ${order.paymentStatus === "paid" ? "bg-emerald-100 text-emerald-800" : order.paymentStatus === "pending" ? "bg-amber-100 text-amber-800" : "bg-red-100 text-red-800"}`}>
