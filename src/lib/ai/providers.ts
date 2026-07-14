@@ -69,7 +69,7 @@ function getAiTimeoutMs(): number {
   const configured = Number(process.env.AI_TIMEOUT_MS);
   return Number.isFinite(configured) && configured > 0
     ? configured
-    : 60_000;
+    : 90_000;
 }
 
 export class AiProviderError extends Error {
