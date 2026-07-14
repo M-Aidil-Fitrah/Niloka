@@ -40,7 +40,6 @@ export default async function ProductsPage({
     <SectionShell
       eyebrow="Marketplace"
       title="Katalog Produk Nilam"
-      description="Koleksi produk berkualitas tinggi langsung dari produsen lokal Aceh yang terverifikasi."
     >
       <div className="mt-8">
         <CatalogShell
