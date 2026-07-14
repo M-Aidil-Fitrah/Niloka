@@ -8,10 +8,10 @@ export const runtime = "nodejs";
 
 export async function GET(
   _request: NextRequest,
-  context: RouteContext<"/api/payments/[orderId]/status">,
+  { params }: { params: Promise<{ orderId: string }> },
 ) {
   const user = await requireUser();
-  const { orderId } = await context.params;
+  const { orderId } = await params;
   const order = await getBuyerOrderDto(user.id, orderId);
 
   if (!order) {

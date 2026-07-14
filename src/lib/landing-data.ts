@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { ProductTag } from "@/lib/contracts";
-import { formatRupiah } from "@/lib/formatters";
 import {
   getFeaturedAmpasListingDto,
   getFeaturedPassportDto,

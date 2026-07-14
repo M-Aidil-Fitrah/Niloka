@@ -77,8 +77,8 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const savedCurrency = localStorage.getItem("niloka_currency");
     if (savedCurrency && SUPPORTED_CURRENCIES[savedCurrency]) {
-      setCurrentCurrencyState(savedCurrency);
       document.cookie = `niloka_currency=${savedCurrency}; path=/; max-age=31536000; SameSite=Lax`;
+      queueMicrotask(() => setCurrentCurrencyState(savedCurrency));
     }
 
     const fetchRates = async () => {

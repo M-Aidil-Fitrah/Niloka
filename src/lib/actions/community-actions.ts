@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { requireUser } from "@/lib/auth/session";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { CommunityCategory } from "@/generated/prisma/client";
+import { CommunityCategory, Prisma } from "@/generated/prisma/client";
 import { storeImageAsWebp } from "@/lib/uploads/image-upload";
 
 const postSchema = z.object({
@@ -69,7 +69,7 @@ export async function createPostAction(
     }
 
     // Parse AI DiagnoseResult JSON if attached
-    let parsedDiagnose: any = null;
+    let parsedDiagnose: Prisma.InputJsonValue | undefined;
     if (data.diagnoseResult) {
       try {
         parsedDiagnose = JSON.parse(data.diagnoseResult);
@@ -85,13 +85,14 @@ export async function createPostAction(
         content: data.content,
         category: data.category,
         location: data.location || null,
-        diagnoseResult: parsedDiagnose || undefined,
+        diagnoseResult: parsedDiagnose,
         images,
         authorId: user.id,
       },
     });
 
     revalidatePath("/nilam-hub");
+    revalidatePath(`/nilam-hub/${post.id}`);
 
     return {
       ok: true,
@@ -134,6 +135,7 @@ export async function likePostAction(
         },
       });
       revalidatePath("/nilam-hub");
+      revalidatePath(`/nilam-hub/${postId}`);
       return { ok: true, message: "Batal menyukai.", liked: false };
     } else {
       // Like
@@ -144,6 +146,7 @@ export async function likePostAction(
         },
       });
       revalidatePath("/nilam-hub");
+      revalidatePath(`/nilam-hub/${postId}`);
       return { ok: true, message: "Menyukai postingan.", liked: true };
     }
   } catch (error) {
@@ -197,6 +200,7 @@ export async function commentPostAction(
     }
 
     revalidatePath("/nilam-hub");
+    revalidatePath(`/nilam-hub/${postId}`);
     return { ok: true, message: "Komentar berhasil dikirim." };
   } catch (error) {
     console.error("Error in commentPostAction:", error);
@@ -229,6 +233,7 @@ export async function deletePostAction(
     });
 
     revalidatePath("/nilam-hub");
+    revalidatePath(`/nilam-hub/${postId}`);
     return { ok: true, message: "Postingan berhasil dihapus." };
   } catch (error) {
     console.error("Error in deletePostAction:", error);
