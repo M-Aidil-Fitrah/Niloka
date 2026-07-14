@@ -33,7 +33,6 @@ export default async function PassportPage() {
     <SectionShell
       eyebrow="Transparansi"
       title="Nilam Passport"
-      description="Sistem transparansi rantai pasok untuk melacak asal daerah, kegunaan, dan profil aroma produk nilam Aceh."
     >
       <div className="mt-8">
         <PassportShell products={products} passports={passports} />

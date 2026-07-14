@@ -27,7 +27,6 @@ export default async function AmpasPage() {
     <SectionShell
       eyebrow="Ekonomi Sirkular"
       title="Bursa Ampas Nilam"
-      description="Direktori sisa ampas penyulingan nilam Aceh. Hubungi langsung penyuling untuk pemanfaatan kompos, briket, atau bahan baku industri."
     >
       <div className="mt-8">
         <AmpasShell listings={listings} />
