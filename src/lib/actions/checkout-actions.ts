@@ -657,9 +657,27 @@ export async function confirmPaymentAction(
   }
 }
 
+type CartItemDetail = {
+  id: string;
+  kind: "product" | "ampas-listing";
+  name: string;
+  imageSrc: string;
+  imageAlt: string;
+  quantity: number;
+  unitPriceAmount: number;
+  unitPriceCurrency: string;
+  sellerName: string;
+};
+
+type CartItemsDetailResult = {
+  items: CartItemDetail[];
+  /** IDs of cart items that were orphaned (their product/listing was deleted) and auto-removed from the cart. */
+  unavailableIds: string[];
+};
+
 export async function getCartItemsDetailAction(
   itemIds: string[],
-): Promise<{ id: string; kind: "product" | "ampas-listing"; name: string; imageSrc: string; imageAlt: string; quantity: number; unitPriceAmount: number; unitPriceCurrency: string; sellerName: string }[]> {
+): Promise<CartItemsDetailResult> {
   const user = await requireUser();
 
   const cartItems = await prisma.cartItem.findMany({
@@ -673,10 +691,36 @@ export async function getCartItemsDetailAction(
     },
   });
 
-  const sellerIds = cartItems
+  // Detect orphaned items: CartItem exists but the referenced product/ampasListing was deleted (onDelete: SetNull)
+  const orphanedIds = cartItems
+    .filter((item) => {
+      if (item.kind === "PRODUCT") return item.productId !== null && item.product === null;
+      if (item.kind === "AMPAS_LISTING") return item.ampasListingId !== null && item.ampasListing === null;
+      return false;
+    })
+    .map((item) => item.id);
+
+  // Also detect items where both foreign keys are null (completely dangling)
+  const danglingIds = cartItems
+    .filter((item) => item.productId === null && item.ampasListingId === null)
+    .map((item) => item.id);
+
+  const unavailableIds = [...new Set([...orphanedIds, ...danglingIds])];
+
+  // Auto-remove unavailable items from the cart
+  if (unavailableIds.length > 0) {
+    await prisma.cartItem.deleteMany({
+      where: { id: { in: unavailableIds }, cart: { userId: user.id } },
+    });
+  }
+
+  // Only process valid items
+  const validItems = cartItems.filter((item) => !unavailableIds.includes(item.id));
+
+  const sellerIds = validItems
     .filter((i) => i.kind === "PRODUCT" && i.product?.sellerId)
     .map((i) => i.product!.sellerId!);
-  const ampasSellerIds = cartItems
+  const ampasSellerIds = validItems
     .filter((i) => i.kind === "AMPAS_LISTING" && i.ampasListing?.sellerId)
     .map((i) => i.ampasListing!.sellerId);
 
@@ -690,7 +734,7 @@ export async function getCartItemsDetailAction(
     : [];
   const sellerMap = new Map(sellers.map((s) => [s.id, s.displayName]));
 
-  return cartItems.map((item) => {
+  const items: CartItemDetail[] = validItems.map((item) => {
     const name =
       item.kind === "PRODUCT"
         ? (item.product?.name ?? "Produk Nilam")
@@ -719,4 +763,6 @@ export async function getCartItemsDetailAction(
       sellerName: ownerId ? (sellerMap.get(ownerId) ?? "Penjual") : "Penjual",
     };
   });
+
+  return { items, unavailableIds };
 }
